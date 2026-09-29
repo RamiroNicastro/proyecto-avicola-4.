@@ -38,3 +38,17 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | OPEX | Costos operativos recurrentes (operating expenditure). |
 | VAN / TIR | Valor Actual Neto / Tasa Interna de Retorno. |
 | Prefactibilidad | Estudio preliminar para decidir si un proyecto justifica un estudio de factibilidad detallado. |
+| IAAP (HPAI) | Influenza aviar altamente patógena (*Highly Pathogenic Avian Influenza*). Su detección en aves comerciales hace perder el estatus de país libre y cierra mercados de exportación. |
+| ENC | Enfermedad de Newcastle. Argentina es libre (SENASA). |
+| OMSA (WOAH) | Organización Mundial de Sanidad Animal (*World Organisation for Animal Health*). Registra estatus sanitarios y autodeclaraciones de país libre. |
+| Faena SENASA | Faena en establecimientos con habilitación nacional (tránsito federal). No incluye plantas provinciales ni municipales. |
+| Consumo aparente | Producción + importación − exportación (± variación de stock). Dividido por la población da el consumo per cápita aparente. |
+| Avimetría | Estimación de la producción a partir de datos de aves (alojamiento, pesos, faena) cuando no hay registro completo de faena. |
+| CMS | Carne mecánicamente separada: pasta de carne obtenida de carcasas, insumo de la industria de elaborados. |
+| Garras | Patas de pollo (tarso y dedos). Bajo valor en el mercado interno; alto valor en exportación a China. |
+| Producto gancho | Producto que el minorista vende con margen mínimo o negativo para atraer clientes (por ejemplo, el pollo entero). |
+| FOB | *Free On Board*: valor de exportación puesto a bordo, sin flete ni seguro internacional. |
+| Listado de exportación | Registro de plantas habilitadas por SENASA y aceptadas por el país importador (ej.: GACC en China, listas UE). |
+| Compartimento libre | Establecimiento o grupo de establecimientos con sistema de bioseguridad común reconocido como libre de una enfermedad (Res. SENASA 484/2017). |
+| Concurso preventivo | Procedimiento judicial en que una empresa en cesación de pagos negocia con sus acreedores para evitar la quiebra. |
+| PSD / GAIN | Base de datos de producción, oferta y demanda (*Production, Supply and Distribution*) e informes de agregados agrícolas (*Global Agricultural Information Network*) del USDA. |

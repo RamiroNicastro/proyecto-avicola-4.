@@ -33,12 +33,25 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | Fecha | Hito | Estado |
 |---|---|---|
 | 2026-09-29 | Estructura del repositorio y reglas (`CLAUDE.md`) | Completado |
-| — | Relevamiento de mercado (`01_mercado`) | Pendiente |
+| 2026-09-29 | Relevamiento de mercado (`01_mercado`): radiografía 2026, competidores, exportaciones y conclusiones | Completado v1 (verificación documental pendiente: DPV-009) |
 | — | Validación de demanda (`02_clientes_demanda`) | Pendiente |
 | — | Balance de masa preliminar (`04_balance_masa`) | Pendiente |
 | — | Escenarios CAPEX/OPEX y modelo financiero | Pendiente |
 | — | Informe de prefactibilidad | Pendiente |
 
+## Resultado del relevamiento de mercado (2026-09-29)
+
+Síntesis en [`../01_mercado/conclusiones_mercado.md`](../01_mercado/conclusiones_mercado.md):
+
+- Mercado grande y maduro: ~2,1–2,2 Mt de consumo aparente, ~47–49 kg/hab/año, faena SENASA estancada en ~740–750 M cabezas.
+- El líder (Granja Tres Arroyos) está en concurso preventivo (sept-2026). La oferta está en reconfiguración.
+- Riesgo sanitario recurrente (IAAP en 2023, 2025 y 2026) con cierres de exportación y sobreoferta interna.
+- La validación del canal supermercados pasa a ser el cuello de botella del estudio.
+
 ## Próximos pasos
+
+1. Validación de demanda de la red de supermercados y ubicación de la red (`02_clientes_demanda`; DPV-002, DPV-003, DPV-018).
+2. Verificación documental de las cifras de mercado y completado de series (DPV-009, DPV-010, DPV-013).
+3. Relevamiento de faena a façon, pollito BB y activos liberados por la crisis de GTA (DPV-006, DPV-016).
 
 Ver [`decisiones_pendientes.md`](decisiones_pendientes.md) y [`datos_por_validar.md`](datos_por_validar.md).
