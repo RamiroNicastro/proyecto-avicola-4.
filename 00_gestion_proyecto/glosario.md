@@ -116,3 +116,7 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Gumboro (IBD) | Bursitis infecciosa: enfermedad viral inmunosupresora de las aves jóvenes; se controla con vacunación y bioseguridad. |
 | Marek | Enfermedad viral de las aves; se vacuna en la planta de incubación. |
 | Coccidiosis | Enfermedad parasitaria intestinal ligada a la cama; empeora conversión y uniformidad. |
+| Aves cargadas | Aves vivas que salen de la granja hacia la planta (pollitos alojados menos mortalidad en granja). |
+| Aves faenadas | Aves vivas que llegan a la planta y se faenan (aves cargadas menos mortalidad en transporte). "Planta de N aves/día" en este proyecto = N aves faenadas por día de faena. |
+| Semana plena (de faena) | Semana sin feriados, con todos los días de faena previstos (5 o 6). Base para dimensionar galpones y el suministro de pollitos; el promedio semanal anual es menor. |
+| Aves simultáneas | Aves vivas presentes al mismo tiempo en el conjunto de granjas; se calcula con la ley de Little (ritmo de alojamiento × edad × supervivencia media). |

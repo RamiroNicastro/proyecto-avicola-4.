@@ -37,7 +37,7 @@ La carga se regula por **superficie por kg de ave en el cajón**, ajustada por p
 | Escenarios del proyecto | 0,2 / 0,3 / 0,5 % | `[SUPUESTO]` SUP-026 |
 | **Merma de peso** (ayuno + transporte) | Del orden de **0,2–0,5 % del peso vivo por hora** de ayuno; se debe **predominantemente al ayuno** y solo en parte al transporte | `[ESTIMACIÓN]` a validar; la atribución al ayuno: FTE-156 `[PVDP]` |
 
-**Efecto económico (sin precios):** en una planta de 10.000 aves/día con aves de 2,9 kg, **cada 0,1 % de DOA = 10 aves/día ≈ 2.500 aves/año** (5 d/semana), y **cada 1 % de merma = ~290 kg vivo/día**. Si el pollo se compra o liquida en **kg vivo en granja** vs **kg vivo en planta**, la merma cambia de dueño: debe estar en el contrato ([`modelos_integracion.md`](modelos_integracion.md)).
+**Efecto económico (sin precios):** en una planta de 10.000 aves faenadas/día con aves de 2,9 kg, **cada 0,1 % de DOA ≈ 10 aves cargadas adicionales por día de faena ≈ 2.500 aves/año** (5 d/semana), y **cada 1 % de merma = ~290 kg vivo/día**. Si el pollo se compra o liquida en **kg vivo en granja** vs **kg vivo en planta**, la merma cambia de dueño: debe estar en el contrato ([`modelos_integracion.md`](modelos_integracion.md)).
 
 ## 4. Tiempo y distancia máximos razonables
 
@@ -49,7 +49,7 @@ La carga se regula por **superficie por kg de ave en el cajón**, ajustada por p
 
 Supuesto: **4.000–7.000 aves por camión** según peso, clima y equipo (cajones o módulos) `[SUPUESTO]` SUP-033, a validar con contratistas (DPV-054).
 
-| Planta (aves/día) | kg vivo/día (2,9 kg) | Camiones por día de faena | Cuadrillas de captura por noche |
+| Planta (aves **faenadas**/día; aves cargadas ≈ +0,2–0,5 %) | kg vivo cargado/día (2,9 kg) | Camiones por día de faena | Cuadrillas de captura por noche |
 |---|---|---|---|
 | 2.500 | ~7,3 t | ~1 | 1 |
 | 5.000 | ~14,5 t | ~1–2 | 1 |

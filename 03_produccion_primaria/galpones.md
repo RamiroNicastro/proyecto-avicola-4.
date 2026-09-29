@@ -42,7 +42,7 @@ Escala cualitativa: **+** bajo · **++** medio · **+++** alto. Sin cotizaciones
 | **CAPEX relativo por m²** | + | ++ | +++ | +++ | + adicional |
 | **Consumo eléctrico** | + | ++ | +++ (extractores, bombas) | +++ | + |
 | **Productividad** (kg/m²/año, FCR, mortalidad) | + | ++ | +++ | +++ | Mejora la consistencia |
-| **Riesgos principales** | Golpe de calor, frío, dependencia del operario y del clima | Fallas de extractores | **Dependencia total de la energía**: un corte en verano puede matar el lote en minutos | Idem túnel | Fallas de sensores/controlador; ciberseguridad y conectividad rural |
+| **Riesgos principales** | Golpe de calor, frío, dependencia del operario y del clima | Fallas de extractores | **Dependencia total de la energía**: una falla de ventilación con calor puede causar rápidamente estrés térmico y mortalidad significativa | Idem túnel | Fallas de sensores/controlador; ciberseguridad y conectividad rural |
 
 Capacidades y dimensiones: `[ESTIMACIÓN]` a partir de la densidad (§4 de [`ciclo_productivo.md`](ciclo_productivo.md)) y de referencias de dimensión `[PVDP]`: galpones de ~12 m de ancho y 100–150 m de largo (FTE-150); promedio de ~1.400 m² por granja en Entre Ríos (FTE-048). Densidades: FTE-143 y FTE-144 `[PVDP]`.
 
@@ -54,7 +54,7 @@ Capacidades y dimensiones: `[ESTIMACIÓN]` a partir de la densidad (§4 de [`cic
 | 1.800 m² | ~18.600 (~19.600) | ~21.700 (~22.900) | ~24.200 (~25.500) |
 | 2.400 m² | ~24.800 (~26.100) | ~29.000 (~30.500) | ~32.300 (~34.000) |
 
-`[ESTIMACIÓN]`. La **capacidad de un galpón no es su producción anual**: un galpón de 1.800 m² a 35 kg/m² con 5,7 ciclos/año produce ~124.000 aves/año, no 22.900.
+`[ESTIMACIÓN]`. La **capacidad de un galpón no es su producción anual**: un galpón de 1.800 m² a 35 kg/m² con 5,7 ciclos/año entrega hasta ~124.000 aves cargadas/año (≈ 22.900 × 5,71 × 0,95; ~119.000 con la utilización anual de ~0,96 por feriados), no 22.900.
 
 ### 2.2 Lógica económica (sin cifras)
 
@@ -77,21 +77,20 @@ Capacidades y dimensiones: `[ESTIMACIÓN]` a partir de la densidad (§4 de [`cic
 | **Cooling** | Enfriamiento evaporativo (paneles, nebulización) | Electricidad (bombas) + agua | Estacional (verano) |
 | **Iluminación** | Programa de luz | Electricidad (LED) | Bajo con LED |
 | **Comederos, bebederos, bombas de agua** | Motores de líneas, sinfines, bombas | Electricidad | Bajo–medio |
-| **Consumo eléctrico anual (referencia externa)** | — | — | **8,7–23,6 kWh/m²/año** según tamaño de ave (estudio extranjero, FTE-158 `[PVDP · débil]`). Para 36.000 m² (escenario medio de 10.000 aves/día): ~0,3–0,85 GWh/año `[ESTIMACIÓN]`, a validar con datos argentinos (DPV-052) |
+| **Consumo eléctrico anual (referencia externa)** | — | — | **8,7–23,6 kWh/m²/año** según tamaño de ave (estudio extranjero, FTE-158 `[PVDP · débil]`). Para ~38.000 m² (escenario medio de 10.000 aves faenadas/día): ~0,33–0,90 GWh/año `[ESTIMACIÓN]`, a validar con datos argentinos (DPV-052) |
 | **Potencia instalada (planificación)** | — | — | Sin dato utilizable. Un extracto indica "0,08–0,12 kW por ave" (FTE-158 `[PVDP · débil]`), que implicaría 2.000–3.000 kW para un galpón de 25.000 aves: **inconsistente, descartado** (ver nota). A dimensionar con proveedores y datos argentinos (DPV-052) |
 | **Generador de emergencia** | Respaldo del 100 % de la carga crítica (ventilación, agua, alarmas, controlador) con **transferencia automática** | Gasoil / gas | Obligatorio de hecho en galpones cerrados; la prensa registra mortandades por caídas de tensión (FTE-157) |
 | **Alarmas** | Temperatura alta/baja, corte de energía, falla de agua, puerta abierta; aviso remoto (SMS/app) | Batería / red | Requiere conectividad rural confiable |
 
 > **Nota de control de calidad:** el extracto "0,08–0,12 kW por ave" implicaría 2.000–3.000 kW para 25.000 aves, incompatible con 8,7–23,6 kWh/m²/año (para 1.800 m²: ~16.000–42.000 kWh/año, es decir **~2–5 kW de potencia media**; la potencia instalada es mayor por los picos de ventilación de verano, pero no en ese orden). Se descarta hasta verificar la fuente (DPV-052).
 
-### 3.2 Por qué una falla eléctrica puede matar un lote en minutos
+### 3.2 Por qué una falla eléctrica es un riesgo crítico
 
-**Estimación de orden de magnitud** (galpón cerrado, perfil medio, final de crianza, verano) `[ESTIMACIÓN]`:
+**En galpones intensivos/climatizados, una falla de ventilación durante períodos de calor puede provocar rápidamente estrés térmico y mortalidad significativa; por ello se requieren generación de respaldo, alarmas y procedimientos de emergencia.**
 
-1. Un pollo de ~2,9 kg come ~0,2 kg/día de alimento con ~3.100 kcal/kg → ~620 kcal/día ≈ **30 W** de energía ingerida; la mayor parte termina como **calor**: del orden de **~15–20 W por ave**.
-2. A 12 aves/m² → **~180–240 W/m²**. Un galpón de 1.800 m² genera **~330–430 kW** de calor, como decenas de estufas encendidas.
-3. El aire del galpón (1.800 m² × ~3 m de altura media ≈ 5.400 m³) tiene una capacidad calorífica de ~6,5 MJ/°C. Sin ventilación, aunque solo la mitad del calor fuera sensible, **la temperatura subiría del orden de 1–2 °C por minuto**.
-4. Con temperatura y humedad altas el ave no puede disipar calor (jadeo), y en **10–30 minutos** pueden producirse muertes masivas.
+Razón conceptual: las aves producen calor en forma continua y, al final de la crianza, la biomasa por m² es máxima; en un galpón cerrado ese calor solo se retira con la ventilación mecánica. Si la ventilación se detiene con calor, el ave no logra disipar calor (jadeo) y la mortalidad puede crecer en poco tiempo.
+
+> **Versión 1.1 (auditoría):** se retiró una estimación propia de velocidad de aumento de temperatura ("1–2 °C por minuto") y de tiempo hasta la mortalidad masiva ("10–30 minutos"), porque no tiene respaldo documental verificado. La velocidad real depende de temperatura y humedad exteriores, densidad, peso, aislación, volumen del galpón y apertura de emergencia; debe tomarse de manuales técnicos de ambiente (FTE-143) y de la experiencia de productores (DPV-052).
 
 En galpones abiertos el riesgo es menor pero existe (días sin viento). En **galpones túnel y dark house**, sin ventanas que abrir, la dependencia es total. Mitigaciones: generador con arranque y transferencia automáticos probado semanalmente, alarmas remotas, cortinas o paneles de apertura de emergencia (*drop curtains*), presencia de personal de guardia, contrato de suministro y calidad de red (caídas de tensión, no solo cortes). La prensa registra casos en Entre Ríos (2026-03, caída de tensión con calor extremo, granja de un integrador) y Santa Fe (FTE-157 `[PVDP]`).
 

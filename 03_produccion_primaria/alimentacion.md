@@ -55,28 +55,30 @@ Alimento por ave faenada = **peso vivo × FCR**.
 | 2,9 kg | +0,29 kg | **+290 t** | +5,9 % |
 | 3,4 kg | +0,34 kg | **+340 t** | +5,9 % |
 
-En el escenario medio de 10.000 aves/día (2,5 M aves/año), **+0,1 de FCR ≈ +727 t de alimento por año** (≈ 26 camiones de 28 t). Como el alimento es el principal costo de la crianza (se cita habitualmente "65–70 %", dato a validar: DPV-019), **el FCR es el indicador económico número uno de la granja**. Pasar de FCR 1,85 (desfavorable) a 1,60 (favorable) ahorra ~15 % del alimento.
+En el escenario medio de 10.000 aves faenadas/día (2,5 M aves faenadas/año), **+0,1 de FCR ≈ +727 t de alimento por año** (≈ 26 camiones de 28 t). Como el alimento es el principal costo de la crianza (se cita habitualmente "65–70 %", dato a validar: DPV-019), **el FCR es el indicador económico número uno de la granja**. Pasar de FCR 1,85 (desfavorable) a 1,60 (favorable) ahorra ~15 % del alimento.
 
 ---
 
 ## 2. Alimento por escenario
 
-Total = aves cargadas × peso vivo × FCR de campo. Formato **favorable / medio / desfavorable** (FCR 1,60 / 1,70 / 1,85; mortalidad 3/5/8 %), **perfil medio** (47 d, 2,9 kg).
+Total = aves cargadas × peso vivo × FCR de campo. "Planta de N aves/día" = N **aves faenadas** por día de faena. Formato **favorable / medio / desfavorable** (FCR 1,60 / 1,70 / 1,85; mortalidad 3/5/8 %), **perfil medio** (47 d, 2,9 kg).
 
-| Planta (aves/día) | Días/sem | kg de alimento por ave faenada | t/semana | t/mes | t/año |
-|---|---|---|---|---|---|
-| 2.500 | 5 | 4,65 / 4,94 / 5,39 | 56 / 59 / 65 | 242 / 258 / 281 | 2.906 / 3.091 / 3.370 |
-| 2.500 | 6 | 4,65 / 4,94 / 5,39 | 67 / 71 / 78 | 291 / 309 / 337 | 3.487 / 3.709 / 4.044 |
-| 5.000 | 5 | 4,65 / 4,94 / 5,39 | 112 / 119 / 130 | 484 / 515 / 562 | 5.812 / 6.181 / 6.740 |
-| 5.000 | 6 | 4,65 / 4,94 / 5,39 | 134 / 143 / 156 | 581 / 618 / 674 | 6.974 / 7.417 / 8.088 |
-| 10.000 | 5 | 4,65 / 4,94 / 5,39 | 224 / 238 / 259 | 969 / 1.030 / 1.123 | 11.623 / 12.362 / 13.480 |
-| 10.000 | 6 | 4,65 / 4,94 / 5,39 | 268 / 285 / 311 | 1.162 / 1.236 / 1.348 | 13.948 / 14.835 / 16.176 |
-| 20.000 | 5 | 4,65 / 4,94 / 5,39 | 447 / 475 / 518 | 1.937 / 2.060 / 2.247 | 23.246 / 24.724 / 26.960 |
-| 20.000 | 6 | 4,65 / 4,94 / 5,39 | 536 / 571 / 622 | 2.325 / 2.472 / 2.696 | 27.896 / 29.669 / 32.352 |
+| Planta (aves **faenadas**/día) | Días/sem | kg de alimento por ave faenada | t/semana plena | t/semana (promedio anual) | t/mes (promedio) | t/año | t de un ciclo de crianza a ritmo pleno* |
+|---|---|---|---|---|---|---|---|
+| 2.500 | 5 | 4,65 / 4,94 / 5,39 | 58 / 62 / 67 | 56 / 59 / 65 | 242 / 258 / 281 | 2.906 / 3.091 / 3.370 | 390 / 415 / 453 |
+| 2.500 | 6 | 4,65 / 4,94 / 5,39 | 70 / 74 / 81 | 67 / 71 / 78 | 291 / 309 / 337 | 3.487 / 3.709 / 4.044 | 468 / 498 / 543 |
+| 5.000 | 5 | 4,65 / 4,94 / 5,39 | 116 / 124 / 135 | 111 / 119 / 129 | 484 / 515 / 562 | 5.812 / 6.181 / 6.740 | 780 / 830 / 905 |
+| 5.000 | 6 | 4,65 / 4,94 / 5,39 | 139 / 148 / 162 | 134 / 142 / 155 | 581 / 618 / 674 | 6.974 / 7.417 / 8.088 | 937 / 996 / 1.086 |
+| 10.000 | 5 | 4,65 / 4,94 / 5,39 | 232 / 247 / 270 | 223 / 237 / 259 | 969 / 1.030 / 1.123 | 11.623 / 12.362 / 13.480 | 1.561 / 1.660 / 1.810 |
+| 10.000 | 6 | 4,65 / 4,94 / 5,39 | 279 / 297 / 324 | 267 / 284 / 310 | 1.162 / 1.236 / 1.348 | 13.948 / 14.835 / 16.176 | 1.873 / 1.992 / 2.172 |
+| 20.000 | 5 | 4,65 / 4,94 / 5,39 | 465 / 494 / 539 | 446 / 474 / 517 | 1.937 / 2.060 / 2.247 | 23.246 / 24.724 / 26.960 | 3.122 / 3.320 / 3.620 |
+| 20.000 | 6 | 4,65 / 4,94 / 5,39 | 558 / 593 / 647 | 535 / 569 / 620 | 2.325 / 2.472 / 2.696 | 27.896 / 29.669 / 32.352 | 3.746 / 3.984 / 4.344 |
 
-`[ESTIMACIÓN]` · ESCENARIO. El kg por ave faenada es algo mayor que peso × FCR porque incluye el alimento de las aves muertas en transporte. Con perfiles liviano y pesado (desempeño medio, 10.000 aves/día, 5 d/sem): **3,80 kg/ave y 9.509 t/año** (liviano) y **6,21 kg/ave y 15.517 t/año** (pesado). Rango completo en el CSV (2.200–40.400 t/año según planta y supuestos).
+\* Alimento de todos los lotes de un ciclo de crianza (edad de faena) al ritmo de la semana plena = t/semana plena × edad / 7. Es una **medida física del capital de trabajo** (cota superior del alimento inmovilizado en aves en crianza), sin plazos de pago ni de cobro. Versión 1.1: se distinguen semana plena y promedio anual (antes se informaba el total anual / 52 como "t/semana").
 
-**Orden de magnitud logístico** `[ESTIMACIÓN]`: con camiones graneleros de ~28 t, el escenario medio de 10.000 aves/día (238 t/semana) implica **~8–9 entregas de alimento por semana** a granjas; el de 20.000, ~17. Cada entrega es también un riesgo de bioseguridad ([`bioseguridad.md`](bioseguridad.md)).
+`[ESTIMACIÓN]` · ESCENARIO. El kg por ave faenada es algo mayor que peso × FCR porque incluye el alimento de las aves muertas en transporte. Con perfiles liviano y pesado (desempeño medio, 10.000 aves faenadas/día, 5 d/sem): **3,80 kg/ave y 9.509 t/año** (liviano) y **6,21 kg/ave y 15.517 t/año** (pesado). Rango completo en el CSV (2.200–40.400 t/año según planta y supuestos).
+
+**Orden de magnitud logístico** `[ESTIMACIÓN]`: con camiones graneleros de ~28 t, el escenario medio de 10.000 aves faenadas/día (247 t por semana plena) implica **~9 entregas de alimento por semana** a granjas; el de 20.000, ~18. Cada entrega es también un riesgo de bioseguridad ([`bioseguridad.md`](bioseguridad.md)).
 
 ---
 
@@ -118,7 +120,7 @@ Total = aves cargadas × peso vivo × FCR de campo. Formato **favorable / medio 
 
 Supuesto ilustrativo: 60 % maíz y 30 % harina de soja (SUP-032). Perfil medio, desempeño medio, 5 d/semana.
 
-| Planta (aves/día) | Alimento (t/año) | Maíz (t/año) | Harina de soja (t/año) | Otros (t/año) |
+| Planta (aves faenadas/día) | Alimento (t/año) | Maíz (t/año) | Harina de soja (t/año) | Otros (t/año) |
 |---|---|---|---|---|
 | 2.500 | 3.091 | ~1.850 | ~930 | ~310 |
 | 5.000 | 6.181 | ~3.710 | ~1.850 | ~620 |
@@ -146,14 +148,14 @@ Supuesto ilustrativo: 60 % maíz y 30 % harina de soja (SUP-032). Perfil medio, 
 
 Agua de bebida = alimento × 1,8 L/kg. Perfil medio, formato favorable / medio / desfavorable.
 
-| Planta (aves/día) | Días/sem | m³/año | m³/día promedio | m³/día en pico de verano (×2–3, orientativo) |
+| Planta (aves faenadas/día) | Días/sem | m³/año | m³/día promedio | m³/día en pico de verano (×2–3, orientativo) |
 |---|---|---|---|---|
-| 2.500 | 5 | 5.230 / 5.560 / 6.070 | 14 / 15 / 17 | ~30–50 |
-| 5.000 | 5 | 10.460 / 11.130 / 12.130 | 29 / 30 / 33 | ~60–100 |
-| 10.000 | 5 | 20.920 / 22.250 / 24.260 | 57 / 61 / 66 | ~120–200 |
-| 20.000 | 5 | 41.840 / 44.500 / 48.530 | 115 / 122 / 133 | ~240–400 |
+| 2.500 | 5 | 5.230 / 5.563 / 6.066 | 14 / 15 / 17 | ~30–50 |
+| 5.000 | 5 | 10.461 / 11.126 / 12.132 | 29 / 30 / 33 | ~60–100 |
+| 10.000 | 5 | 20.922 / 22.252 / 24.264 | 57 / 61 / 66 | ~120–200 |
+| 20.000 | 5 | 41.844 / 44.504 / 48.528 | 115 / 122 / 133 | ~240–400 |
 
-`[ESTIMACIÓN]` · ESCENARIO. Con 6 días de faena, +20 %. El factor de pico (×2–3) combina el calor (hasta ×2) y la concentración de galpones en terminación; es orientativo y debe calcularse con el calendario real de alojamientos.
+`[ESTIMACIÓN]` · ESCENARIO. Sin cambio en la versión 1.1 (el agua depende del alimento anual). Con 6 días de faena, +20 %. En una semana plena el consumo promedio diario es ~4 % mayor que el promedio anual. El factor de pico (×2–3) combina el calor (hasta ×2) y la concentración de galpones en terminación; es orientativo y debe calcularse con el calendario real de alojamientos.
 
 **No incluye:** (a) **agua de los paneles evaporativos** (*cooling*), que en verano puede ser una demanda del mismo orden que la de bebida o mayor en galpones túnel (a cuantificar en `11_agua_efluentes`, DPV-053); (b) nebulización; (c) lavado y desinfección entre lotes; (d) uso doméstico del personal.
 

@@ -10,7 +10,7 @@
 
 | # | KPI | Fórmula | Unidad | Qué indica | Rango orientativo (perfil medio) | Frecuencia |
 |---|---|---|---|---|---|---|
-| 1 | **Mortalidad acumulada** | (aves muertas + descartadas) / pollitos alojados | % | Salud, calidad del pollito, manejo, clima | 3 % (favorable) – 5 % (medio) – 8 %+ (desfavorable); local 7,7–9,5 % (FTE-151 `[PVDP]`) | Diaria y por lote |
+| 1 | **Mortalidad acumulada** | (aves muertas + descartadas) / pollitos alojados | % | Salud, calidad del pollito, manejo, clima | 3 % (favorable) – 5 % (medio) – 8 %+ (desfavorable); un estudio local de Entre Ríos registró 7,7–9,5 % (FTE-151 `[PVDP]`; señal de riesgo a validar, no promedio argentino) | Diaria y por lote |
 | 1a | Mortalidad de 7 días | muertes 0–7 d / alojados | % | **Calidad del pollito y de la recepción** (se usa para reclamar a la incubadora) | ≤ 1 % como objetivo habitual `[PVDP]` | Semana 1 |
 | 1b | Mortalidad diaria acumulada vs umbral UE | 1 % + 0,06 % × edad (Dir. 2007/43/CE) | % | Referencia de bienestar para densidades altas | 3,8 % a 47 d | Por lote |
 | 2 | **FCR (conversión alimenticia)** | alimento entregado / kg vivo cargado (de campo) | kg/kg | **Eficiencia económica principal** (alimento ≈ mayor costo) | 1,60 – 1,70 – 1,85 | Por lote |

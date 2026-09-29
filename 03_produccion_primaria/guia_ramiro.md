@@ -8,22 +8,22 @@
 
 ## 1. Los 10 conceptos que tenés que poder defender
 
-1. **Pollitos alojados ≠ aves faenadas.** Entre ambos están la mortalidad en granja (3–8 % o más) y la del transporte (0,2–0,5 %). Para faenar 10.000 aves hay que alojar ~10.500–11.000 pollitos.
+1. **Pollitos alojados ≠ aves faenadas.** Entre ambos están la mortalidad en granja (3–8 % o más) y la del transporte (0,2–0,5 %). Para faenar 10.000 aves hay que alojar ~10.330–10.920 pollitos (10.558 en el escenario medio); para una semana plena de 5 días de faena, ~52.800 pollitos, no 50.000. Siempre aclarar si un número son pollitos alojados, aves cargadas o aves faenadas.
 2. **El alimento es el costo principal y el FCR lo gobierna.** Alimento = kg vivo × FCR. Empeorar 0,1 punto el FCR = **+5,9 % de alimento** (+290 t por millón de aves de 2,9 kg).
 3. **El FCR depende del peso:** un ave más pesada siempre convierte peor. Nunca compares FCR de lotes con pesos distintos sin corregir.
-4. **Capacidad de galpón ≠ producción anual.** Producción = capacidad × ciclos/año × supervivencia. Un galpón de 1.800 m² aloja ~23.000 pollitos pero produce ~124.000 aves/año.
+4. **Capacidad de galpón ≠ producción anual.** Producción = capacidad × ciclos/año × supervivencia. Un galpón de 1.800 m² aloja ~23.000 pollitos pero entrega hasta ~124.000 aves cargadas/año (~119.000 si en las semanas con feriados se aloja menos).
 5. **Ciclos/año ≠ 365/edad.** Hay que sumar captura, limpieza, desinfección, vacío sanitario y preparación (10–21 días): con 47 días de crianza salen **~5,7 ciclos**, no 7,8.
 6. **La densidad se mide en kg/m² al final, no en pollitos/m² al inicio.** Es la variable de superficie más potente (30 vs 39 kg/m² = −23 % de m²), pero la limitan el bienestar, el clima y la tecnología del galpón.
 7. **El peso de faena es una decisión comercial**, no técnica: sale del mix de productos (entero, trozado, deshuese) y del principio de ingreso total por ave. Cambia alimento, m² y FCR.
 8. **Bioseguridad = acceso a mercados.** Un brote de influenza aviar no solo mata aves: cierra exportaciones y hunde el precio interno. Regionalización y compartimentación son activos comerciales.
-9. **Un galpón cerrado depende 100 % de la electricidad.** Sin ventilación, en verano la temperatura sube del orden de 1–2 °C por minuto y el lote puede morir en 10–30 minutos. Generador automático y alarmas no son opcionales.
+9. **Un galpón cerrado depende 100 % de la electricidad.** En galpones intensivos/climatizados, una falla de ventilación durante períodos de calor puede provocar rápidamente estrés térmico y mortalidad significativa; por eso generación de respaldo, alarmas y procedimientos de emergencia no son opcionales.
 10. **Granjas propias, integrados o compra no es una decisión técnica sino de capital, control y riesgo.** Integrar a productores es el modelo dominante porque traslada el CAPEX de galpones, pero exige capital de trabajo (alimento y pollitos del ciclo completo) y know-how. La compra spot es flexible pero inestable y débil en bioseguridad.
 
 ## 2. Los 10 indicadores que tenés que entender
 
 | # | Indicador | En una frase | Valor de referencia (perfil medio, a validar) |
 |---|---|---|---|
-| 1 | **Mortalidad (%)** | Cuántos pollitos no llegan a la carga | 3 / 5 / 8 % (local: 7,7–9,5 %) |
+| 1 | **Mortalidad (%)** | Cuántos pollitos no llegan a la carga | 3 / 5 / 8 % (un estudio de Entre Ríos: 7,7–9,5 %, a validar) |
 | 2 | **Mortalidad de 7 días** | Calidad del pollito y de la recepción | ≤ 1 % |
 | 3 | **FCR** | kg de alimento por kg vivo | 1,60 / 1,70 / 1,85 |
 | 4 | **Peso vivo final** | Lo que se vende (y define el ingreso) | 2,7–3,0 kg |
