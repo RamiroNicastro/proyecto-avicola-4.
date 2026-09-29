@@ -56,3 +56,18 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Ingreso total por ave | Suma del ingreso de todas las partes de un ave (pechuga, pata-muslo, alas, garras, menudencias, recortes, subproductos), cada una vendida en su mejor mercado accesible, neto de costos de separación, frío y logística. Principio estratégico del proyecto. |
 | Halal | Conjunto de requisitos religiosos islámicos para alimentos (incluye el método de faena), certificado por entidades reconocidas por el país importador (ej.: CIRA en Argentina). |
 | Regionalización / zonificación | Reconocimiento por un país importador de zonas libres de una enfermedad dentro de un país afectado, que permite seguir exportando desde esas zonas. |
+| CIF / CFR | *Cost, Insurance and Freight* / *Cost and Freight*: precio que incluye el flete marítimo (y el seguro en CIF) hasta el puerto de destino. No es comparable directamente con un precio FOB. |
+| Net-back | Precio neto que recibe la planta por un producto vendido en un mercado, después de descontar logística, derechos, certificaciones, costos incrementales, financiamiento y mermas. Base de comparación entre exportar y vender localmente (SUP-017). |
+| Reefer | Contenedor refrigerado con equipo de frío propio. Mantiene la temperatura del producto (no está diseñado para congelarlo). |
+| TEU | Unidad equivalente a un contenedor de 20 pies; mide el movimiento portuario de contenedores. |
+| Cuota arancelaria (TRQ) | Volumen que un país importa con arancel reducido o nulo; fuera de la cuota rige el arancel general (NMF). Ej.: cuota aviar UE–Mercosur. |
+| NMF | Arancel de nación más favorecida: arancel general que aplica un país a las importaciones de miembros de la OMC sin acuerdo preferencial. |
+| Derechos de exportación (DEX) | Impuesto argentino sobre el valor FOB exportado ("retenciones"). |
+| Cuarto trasero (*leg quarter*) | Pata-muslo con parte del lomo; principal producto de exportación de carne oscura de EE.UU. |
+| Griller | Pollo entero de peso chico, congelado, típico de la exportación a Medio Oriente. |
+| Aturdimiento | Insensibilización del ave antes del degüello (eléctrico o por gases). Exigido por normas de bienestar animal. Su admisión en la faena Halal de aves varía según el país y la certificadora (Arabia Saudita: pendiente de verificación normativa, DPV-034). |
+| GACC | Administración General de Aduanas de China; registra las plantas extranjeras autorizadas a exportar alimentos a China. |
+| SFDA | *Saudi Food and Drug Authority*, autoridad sanitaria de Arabia Saudita; designa las certificadoras Halal reconocidas. |
+| Plan CREHA | Plan Nacional de Control de Residuos e Higiene en Alimentos de SENASA; su aprobación es condición de acceso a la UE. |
+| Carta de crédito | Instrumento bancario por el cual el banco del comprador garantiza el pago contra la presentación de documentos de embarque. |
+| Precio-aceptante | Productor cuyo volumen es demasiado pequeño para influir en el precio del mercado. |
