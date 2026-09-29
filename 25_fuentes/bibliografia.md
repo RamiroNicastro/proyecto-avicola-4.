@@ -8,6 +8,8 @@ Formato sugerido: `FTE-### — Autor/Organismo (año). Título. Editorial/Sitio.
 >
 > **Nota (2026-09-29, sesión de exportación):** FTE-087 a FTE-139 se consultaron también solo mediante extractos de buscador (lectura directa bloqueada por la red del entorno). Todas quedan PENDIENTES DE VERIFICACIÓN DOCUMENTAL PRIMARIA.
 
+> **Nota (2026-09-29, sesión de demanda):** FTE-140 y FTE-141 se consultaron solo mediante extractos de buscador (lectura directa bloqueada). Quedan PENDIENTES DE VERIFICACIÓN DOCUMENTAL PRIMARIA. Las entrevistas de campo de la validación de demanda se registrarán con `tipo_fuente = entrevista`.
+
 ## Organismos oficiales argentinos
 _(SENASA, Secretaría de Agricultura, Ganadería y Pesca, INTA, INTI, INDEC, organismos provinciales)_
 
@@ -42,6 +44,7 @@ _(SENASA, Secretaría de Agricultura, Ganadería y Pesca, INTA, INTI, INDEC, org
 - FTE-101 — INDEC (2026). *Complejos exportadores. Primer semestre de 2026 (Comercio exterior Vol. 10 n° 14)*. https://www.indec.gob.ar/uploads/informesdeprensa/complejos_08_26084E913425.pdf. Consultado 2026-09-29. Confiabilidad A.
 - FTE-110 — SENASA (2026). *Plan CREHA Animal - Plan Nacional de Control de Residuos e Higiene en Alimentos*. https://www.argentina.gob.ar/senasa/programas-sanitarios/plan-creha/plan-creha-animal. Consultado 2026-09-29. Confiabilidad A.
 - FTE-132 — Cancillería Argentina (2023). *Argentina regained UK market for poultry and poultry products*. https://www.cancilleria.gob.ar/en/announcements/news/argentina-regained-uk-market-poultry-and-poultry-products. Consultado 2026-09-29. Confiabilidad A.
+- FTE-141 — INDEC (2023). *Censo Nacional de Población, Hogares y Viviendas 2022 — resultados (total país; CABA y 24 partidos del Gran Buenos Aires)*. https://censo.gob.ar/index.php/datos_definitivos_total_pais/. Consultado 2026-09-29. Confiabilidad A.
 
 ## Organismos internacionales
 _(FAO, USDA, OMSA/WOAH, Codex Alimentarius)_
@@ -68,6 +71,7 @@ _(FAO, USDA, OMSA/WOAH, Codex Alimentarius)_
 _(manuales de líneas genéticas, fabricantes, normas, papers)_
 
 - FTE-062 — UNLP (SEDICI / Revista Aportes) (s/f). *El complejo agroindustrial avícola argentino: reconversión (documento académico)*. http://sedici.unlp.edu.ar/bitstream/handle/10915/1783/Documento_completo.pdf-PDFA.pdf?sequence=1&isAllowed=y. Consultado 2026-09-29. Confiabilidad B.
+- FTE-140 — Cobb-Vantress (s/f). *Cobb500 Broiler Yield (póster de rendimientos) / Broiler Performance & Nutrition Supplement*. https://www.cobbgenetics.com/assets/Cobb-Files/Broiler-Yield-Poster-English.pdf. Consultado 2026-09-29. Confiabilidad A.
 
 ## Cámaras sectoriales y fuentes comerciales
 _(uso complementario; identificar como tales)_

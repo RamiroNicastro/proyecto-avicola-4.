@@ -71,3 +71,17 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Plan CREHA | Plan Nacional de Control de Residuos e Higiene en Alimentos de SENASA; su aprobación es condición de acceso a la UE. |
 | Carta de crédito | Instrumento bancario por el cual el banco del comprador garantiza el pago contra la presentación de documentos de embarque. |
 | Precio-aceptante | Productor cuyo volumen es demasiado pequeño para influir en el precio del mercado. |
+| Demanda base / en desarrollo / potencial accesible / mercado potencial (A/B/C/D) | Clasificación de la demanda por nivel de evidencia: A contratos, órdenes o historial; B negociación concreta; C clientes identificados sin negociación; D mercado general. Solo A y, parcialmente, B sirven para dimensionar (`02_clientes_demanda/modelo_demanda.md` §1). |
+| Peso comercial equivalente canal | kg de canal eviscerada por ave usados para convertir kg de producto en aves faenadas (SUP-019). |
+| Factor de mix (f_mix) | Aves necesarias para cubrir la parte limitante del mix / aves calculadas con los kg totales. Es ≥ 1 cuando el cliente pide más de una parte que la proporción natural del ave. |
+| Centro de distribución (CD) | Depósito de una cadena que recibe la mercadería de los proveedores y la redistribuye a sus locales. |
+| Marca blanca | Producto fabricado por un proveedor y vendido con la marca del cliente (por ejemplo, del supermercado). |
+| Carta de intención (LOI, *letter of intent*) | Documento, normalmente no vinculante, en que un comprador expresa interés en comprar volúmenes y condiciones de referencia. |
+| Fill rate | kg (o unidades) entregados / kg pedidos. |
+| OTIF (*On Time In Full*) | Porcentaje de pedidos entregados completos y dentro de la ventana horaria acordada; medida del nivel de servicio. |
+| DSO (*Days Sales Outstanding*) | Días de cobro: cuentas por cobrar / ventas diarias. |
+| HHI (índice Herfindahl-Hirschman) | Suma de los cuadrados de las participaciones (en %) de cada cliente o competidor; mide concentración (0–10.000). |
+| MAPE (*Mean Absolute Percentage Error*) | Error absoluto porcentual medio entre pronóstico y real. |
+| Pipeline comercial | Registro de clientes potenciales con su volumen estimado, categoría de demanda y evidencia, usado para seguir la conversión en ventas. |
+| Precio de lista / neto / cobrado | Lista: precio publicado sin IVA. Neto: después de descuentos, bonificaciones y promociones. Cobrado: efectivo recibido neto de devoluciones, débitos y costo financiero del plazo (`02_clientes_demanda/estrategia_comercial.md` §2). |
+| Partes vinculadas | Personas o empresas relacionadas por propiedad o control (por ejemplo, un inversor que es también dueño de un cliente). |
