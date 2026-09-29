@@ -4,7 +4,7 @@ Listado de referencias consultadas, agrupadas por tipo. Cada entrada debe corres
 
 Formato sugerido: `FTE-### — Autor/Organismo (año). Título. Editorial/Sitio. URL. Consultado AAAA-MM-DD.`
 
-> **Nota (2026-09-29):** las fuentes de la sesión de mercado se consultaron mediante extractos de buscador porque la red del entorno bloqueó el acceso directo a los documentos. Verificación documental pendiente (DPV-009).
+> **Nota (2026-09-29, v2):** las fuentes de la sesión de mercado se consultaron mediante extractos de buscador porque la red del entorno bloqueó el acceso directo a los documentos en dos intentos. **Todas están PENDIENTES DE VERIFICACIÓN DOCUMENTAL PRIMARIA** (DPV-009).
 
 ## Organismos oficiales argentinos
 _(SENASA, Secretaría de Agricultura, Ganadería y Pesca, INTA, INTI, INDEC, organismos provinciales)_
@@ -27,6 +27,11 @@ _(SENASA, Secretaría de Agricultura, Ganadería y Pesca, INTA, INTI, INDEC, org
 - FTE-016 — Poder Ejecutivo Nacional / SENASA (1968). *Decreto 4238/1968 - Reglamento de Inspección de Productos Subproductos y Derivados de Origen Animal*. https://servicios.infoleg.gob.ar/infolegInternet/verNorma.do?id=24788. Consultado 2026-09-29. Confiabilidad A.
 - FTE-017 — Poder Ejecutivo Nacional (leído vía Ámbito y La Nación) (2025). *Decreto 685/2025 - derechos de exportación 0% transitorio para carnes*. https://www.ambito.com/economia/el-gobierno-oficializo-eliminacion-temporal-las-retenciones-la-carne-vacuna-y-aviar-n6193687. Consultado 2026-09-29. Confiabilidad A.
 - FTE-069 — SENASA - SAGyP (2023). *Arabia Saudita habilitó el ingreso de productos aviares / Argentina retoma el comercio de productos aviares con Emiratos Árabes y Sudáfrica*. https://www.argentina.gob.ar/noticias/argentina-retoma-el-comercio-de-productos-aviares-con-emiratos-arabes-y-sudafrica. Consultado 2026-09-29. Confiabilidad A.
+- FTE-071 — SAGyP - Área Avícola (2026). *Anuario Avícola 2025 - proyección de pollitos BB y reproductoras en postura*. https://www.magyp.gob.ar/sitio/areas/aves/informes/boletines/_archivos//250000_Anuario%20Avicola%202025.pdf. Consultado 2026-09-29. Confiabilidad A.
+- FTE-073 — Dirección General de Estadística y Censos de Entre Ríos (DGEC) (2024). *Informe del sector avícola - provincia de Entre Ríos*. https://www.entrerios.gov.ar/dgec/wp-content/uploads/2024/03/Informe-avicola-2021.pdf. Consultado 2026-09-29. Confiabilidad A.
+- FTE-083 — SENASA (2026). *Resolución SENASA 593/2026 - habilitación de destinos de exportación de productos de origen animal*. https://www.argentina.gob.ar/noticias/el-gobierno-simplifica-el-sistema-de-habilitacion-para-exportar-productos-de-origen-animal. Consultado 2026-09-29. Confiabilidad A.
+- FTE-085 — SAGyP - Alimentos Argentinos (s/f). *Guía básica para exportar carne aviar y sus subproductos*. https://alimentosargentinos.magyp.gob.ar/contenido/publicaciones/calidad/Guias/GT-Avicola.pdf. Consultado 2026-09-29. Confiabilidad A.
+- FTE-086 — SENASA / CAPIA (vía extracto) (s/f). *Habilitación de granjas de producción avícola (establecimientos registrados)*. https://www.argentina.gob.ar/servicio/habilitar-granjas-de-produccion-avicola-0. Consultado 2026-09-29. Confiabilidad A.
 
 ## Organismos internacionales
 _(FAO, USDA, OMSA/WOAH, Codex Alimentarius)_
@@ -56,6 +61,9 @@ _(uso complementario; identificar como tales)_
 - FTE-029 — CAPIA (vía Cadena Avícola) (2026). *Precio del pollo parrillero vivo - semana 06/07/2026 (datos CAPIA)*. https://cadenaavicola.com/precio-del-huevo-semanal/. Consultado 2026-09-29. Confiabilidad B.
 - FTE-030 — Cincap / CEPA (vía La Nación 2026-05-17) (2026). *La carne de pollo llegó a la cima del podio de consumo (informe Cincap con datos CEPA)*. https://www.lanacion.com.ar/economia/campo/la-carne-de-pollo-llego-en-2025-a-la-cima-del-podio-de-consumo-segun-un-informe-nid17052026/. Consultado 2026-09-29. Confiabilidad B.
 - FTE-063 — BCR (2024). *El consumo per cápita de carnes se recupera en Argentina*. https://www.bcr.com.ar/es/mercados/investigacion-y-desarrollo/informativo-semanal/noticias-informativo-semanal/el-consumo. Consultado 2026-09-29. Confiabilidad B.
+- FTE-070 — BCR (con datos SAGyP) (2026). *Carnes en 2025: mayor producción consumo y valor exportado*. https://www.bcr.com.ar/es/mercados/investigacion-y-desarrollo/informativo-semanal/noticias-informativo-semanal/carnes-en-2025. Consultado 2026-09-29. Confiabilidad B.
+- FTE-072 — Bolsa de Comercio de Córdoba - IIE (s/f). *Sector avícola - encadenamiento productivo (Balance de la Economía Argentina)*. https://bolsacba.com.ar/buscador/?p=1220. Consultado 2026-09-29. Confiabilidad B.
+- FTE-082 — Centro Islámico de la República Argentina; SAGyP; APEA (s/f). *Certificación Halal (CIRA) / nuevo sistema de acreditación Halal en Argentina / requisitos Halal para exportar carne*. https://halal.org.ar/. Consultado 2026-09-29. Confiabilidad B.
 
 **Prensa y fuentes comerciales (confiabilidad C):**
 
@@ -95,6 +103,15 @@ _(uso complementario; identificar como tales)_
 - FTE-066 — avicultura.com (2020). *Las 40 principales integradoras argentinas vuelcan más pollo para el mercado interno*. https://avicultura.com/las-40-principales-integradoras-argentinas-vuelcan-mas-pollo-para-el-mercado-interno/. Consultado 2026-09-29. Confiabilidad C.
 - FTE-067 — Infocampo; Agrofy News; La Nación (2014). *Entró en concurso la segunda productora de pollos del país (Rasic Hnos. / Cresta Roja)*. https://www.infocampo.com.ar/entro-en-concurso-la-segunda-productora-de-pollos-del-pais/. Consultado 2026-09-29. Confiabilidad C.
 - FTE-068 — Infobae (Revista Chacra) (2025). *Argentina sexto consumidor mundial de carne aviar busca expandirse en el mercado global*. https://www.infobae.com/revista-chacra/2025/06/10/argentina-sexto-consumidor-mundial-de-carne-aviar-busca-expandirse-en-el-mercado-global/. Consultado 2026-09-29. Confiabilidad C.
+- FTE-074 — Valor Local / Uno Entre Ríos / Cadena Avícola (2026). *Entre Ríos consolida su liderazgo avícola (datos SENASA)*. https://www.valorlocal.com.ar/19/05/2026/entre-rios-consolida-su-liderazgo-avicola-mientras-crece-el-consumo-de-carne-porcina/. Consultado 2026-09-29. Confiabilidad C.
+- FTE-075 — Infobae (datos INDEC) (2025). *Las importaciones de carne aviar aumentaron casi 300% en lo que va del año*. https://www.infobae.com/economia/2025/09/11/las-importaciones-de-carne-aviar-aumentaron-casi-300-en-lo-que-va-del-ano-mientras-que-las-exportaciones-cayeron/. Consultado 2026-09-29. Confiabilidad C.
+- FTE-076 — La Nación (2026). *Negocio avícola: reclaman apoyo político para reabrir China y avanzar con una baja de impuestos*. https://www.lanacion.com.ar/economia/campo/negocio-avicola-reclaman-apoyo-politico-para-reabrir-china-y-avanzar-con-una-baja-de-impuestos-nid02072026/. Consultado 2026-09-29. Confiabilidad C.
+- FTE-077 — Agrositio (declaraciones CEPA/CAPIA) (2026). *Récord Avícola 2026 (CEPA 60 años - Día de la Avicultura)*. https://www.agrositio.com.ar/noticia/247145-record-avicola-2026-comemos-50-kg-de-pollo-430-huevos-al-ano-y-se-generan-115000-empleos-us9100-mill-facturados.html. Consultado 2026-09-29. Confiabilidad C.
+- FTE-078 — La Nación (2026-09-15 y 2026-09-17); Análisis Digital; Cadena Láser (2026). *Granja Tres Arroyos se presentó en concurso / declaró un pasivo de $536.000 millones*. https://www.lanacion.com.ar/economia/campo/gigante-concursado-granja-tres-arroyos-declaro-un-pasivo-de-536000-millones-y-mas-de-126000-millones-nid17092026/. Consultado 2026-09-29. Confiabilidad C.
+- FTE-079 — iProfesional (2026). *Crisis de Granja Tres Arroyos: las cuatro sociedades del grupo deben más de USD 540 millones*. https://www.iprofesional.com/negocios/464687-granja-tres-arroyos-cuatro-sociedades-del-grupo-deben-mas-de-540-millones-dolares. Consultado 2026-09-29. Confiabilidad C.
+- FTE-080 — La Nación (2026). *Granja Tres Arroyos perdió el 60% de sus productores*. https://www.lanacion.com.ar/economia/campo/exodo-en-crisis-granja-tres-arroyos-perdio-el-60-de-sus-productores-y-tuvo-una-abrupta-caida-del-nid27032026/. Consultado 2026-09-29. Confiabilidad C.
+- FTE-081 — TotalNews Agency; Infobae 2026-05-27 (2026). *Entre Ríos: cierre en Tres Arroyos e inversión de Las Camelias*. https://totalnewsagency.com/2026/06/02/entre-rios-muestra-las-dos-caras-de-la-avicultura-cierre-por-conflicto-gremial-en-tres-arroyos-y-una-inversion-millonaria-de-las-camelias/. Consultado 2026-09-29. Confiabilidad C.
+- FTE-084 — Bichos de Campo / El Sitio Avícola (declaraciones CEPA) (2023). *Argentina no logra que China y Chile reabran sus mercados (2023)*. https://bichosdecampo.com/argentina-no-logra-que-china-y-chile-reabran-sus-mercados-y-las-avicolas-perderan-este-ano-us-180-millones-en-exportaciones/. Consultado 2026-09-29. Confiabilidad C.
 
 ## Cotizaciones
 _(proveedor, fecha, validez; archivos en la carpeta temática correspondiente)_

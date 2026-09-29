@@ -22,5 +22,5 @@
 **Notas sobre `datos_mercado.csv`**
 
 - Separador decimal: punto. Codificación UTF-8.
-- Columnas: `id`, `categoria`, `indicador`, `anio`, `periodo`, `valor`, `unidad`, `base_definicion`, `ambito`, `fuente` (IDs `FTE-###` separados por `;`), `clasificacion` (`VERIFICADO` / `ESTIMACIÓN` / `SUPUESTO` / `PENDIENTE DE VALIDACIÓN`), `verificacion_documental` (`pendiente` = obtenido por extracto de buscador, sin lectura directa del documento), `notas`.
+- Columnas: `id`, `categoria`, `indicador`, `anio`, `periodo`, `valor`, `unidad`, `base_definicion`, `ambito`, `fuente` (IDs `FTE-###` separados por `;`), `clasificacion` (`PENDIENTE DE VERIFICACIÓN DOCUMENTAL PRIMARIA` o `ESTIMACIÓN`; ninguna fila es `VERIFICADO` en la v2), `verificacion_documental`, `solidez` (media = fuente A/B coherente; baja = débil, parcial o contradictoria; derivada = estimación), `notas`.
 - Excepciones: `valor` puede contener rangos (`700-800`) o listas separadas por `|` (M100, M102). En las filas `ESTIMACIÓN`, la fórmula está en `base_definicion`.

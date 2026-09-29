@@ -1,130 +1,117 @@
 # Competidores — industria avícola argentina (pollo parrillero)
 
-**Fecha de referencia:** 2026-09-29 · Contexto de mercado: [`mercado_avicola_argentina.md`](mercado_avicola_argentina.md) · Fuentes: [`registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv)
+**Fecha de referencia:** 2026-09-29 · **Versión 2** · Contexto: [`mercado_avicola_argentina.md`](mercado_avicola_argentina.md) · Fuentes: [`registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv)
 
-> **Objetivo:** entender cómo está estructurada la industria, no copiar competidores ni seleccionar socios o proveedores.
-> **Criterio:** solo información pública. Si un dato no está publicado, se indica "s/d". Las cifras de empresas provienen mayormente de prensa (confiabilidad C) y **muchas no tienen fecha precisa**: sirven como orden de magnitud, no como dato de modelo.
-> **Limitación:** fuentes leídas vía extractos de buscador (ver §0 del documento principal).
+> **Objetivo:** entender la estructura de la industria, no copiar competidores ni seleccionar socios o proveedores.
+> **Criterio:** solo información pública; "s/d" si no está publicada. Las cifras de empresas provienen mayormente de prensa (confiabilidad C), a menudo sin fecha: son **órdenes de magnitud**.
+> **Verificación:** ninguna cifra fue confirmada contra su documento original. Todas son `[PVDP]` o `[PVDP · débil]` (ver §0 del documento principal).
 
 ---
 
 ## 1. Estructura y concentración
 
-| Indicador | Valor | Fuente | Clasificación |
+| Indicador | Valor | Fuente | Estado |
 |---|---|---|---|
-| Empresas integradas que explican la producción | ~40 | FTE-066 (2020) | [PENDIENTE DE VALIDACIÓN] |
-| Participación de las 10 mayores integradoras en la capacidad | >50 % | CEPA (FTE-020) | [VERIFICADO] |
-| Representatividad de CEPA | ~90 % de los productores de carne aviar registrados en SENASA | FTE-020 | [VERIFICADO] |
-| Ranking de faena 2021 | GTA 1°; Soychú 90,9 M cab (12 %); Las Camelias 52,3 M (6,91 %); Noelma 37,2 M (4,92 %) | FTE-041 | [PENDIENTE DE VALIDACIÓN] (desactualizado) |
-| Participación máxima de GTA | ~25 % de la faena nacional con 8 plantas | FTE-037 | [PENDIENTE DE VALIDACIÓN] |
+| Empresas integradas relevantes | ~40 | FTE-066 (2020) | [PVDP · débil] |
+| Participación de las 10 mayores integradoras en la capacidad | >50 % | CEPA (FTE-020) | [PVDP] |
+| Representatividad de CEPA | ~90 % de los productores de carne aviar registrados en SENASA | FTE-020 | [PVDP] |
+| Ranking de faena 2021 | GTA 1°; Soychú 90,9 M cab (12 %); Las Camelias 52,3 M (6,91 %); Noelma 37,2 M (4,92 %) | FTE-041 | [PVDP · débil] (desactualizado) |
+| Participación de GTA | Cifras incompatibles: "~35 %" (histórico), "~25 %" (pico), ">20 % de las t", "3,7–3,8 %" (probable error del extracto). Estimación propia 2025: ~20 %. | FTE-079, FTE-037, FTE-038 | **No usar**; [ESTIMACIÓN] solo como orden de magnitud |
+| Plantas de faena | 69 SENASA (17 inactivas) + >20 provinciales o municipales (año no identificado) | FTE-072 | [PVDP · débil] |
 
 **Lectura:**
 
-- Hacia 2021, GTA (~25 %) más Soychú, Las Camelias y Noelma (~24 % en conjunto) sumaban cerca de la mitad de la faena SENASA `[ESTIMACIÓN]`. Es un oligopolio con franja competitiva de empresas medianas (80.000–200.000 aves/día) concentradas en Entre Ríos.
-- **2026 es un año de reconfiguración:** la faena de GTA cayó de ~700.000 a ~200.000 pollos/día (FTE-036). No hay datos públicos de quién absorbió esa porción (DPV-016).
-- **Antecedentes de quiebras de grandes actores:** Rasic Hnos./Cresta Roja (2014; ~15 % del mercado en su pico, FTE-067) y GTA (2026). **La escala no garantiza la supervivencia.**
+- Es un oligopolio con franja competitiva de empresas medianas (80.000–200.000 aves/día), concentradas en Entre Ríos.
+- Soychú y Las Camelias aparecen en prensa como los principales competidores tras GTA (FTE-081).
+- Hay antecedentes de caída de actores grandes: Rasic/Cresta Roja (2014, FTE-067) y GTA (2026). **La escala no garantiza supervivencia.**
 
 ---
 
 ## 2. Fichas por empresa
 
-### 2.1 Grupo Granja Tres Arroyos (GTA) — incluye Wade (ex Cresta Roja) y Avex
+### 2.1 Grupo Granja Tres Arroyos (GTA)
 
-| Aspecto | Información pública | Fuente |
+#### A. Hechos reportados (todos `[PVDP]` salvo indicación)
+
+| Aspecto | Información | Fuente |
 |---|---|---|
-| Ubicación | Plantas de faena (pre-crisis): Pinazo, Cahuané, Wade 1 y Wade 2 (BA); La China y Becar (ER); Avex, Río Cuarto (Cba); Melilla (Uruguay). También hay referencias a Pilar, Capitán Sarmiento y Esteban Echeverría. | FTE-038, FTE-035, FTE-040 |
-| Marcas | Granja Tres Arroyos, Cresta Roja, La Comarca, Jet Food | FTE-038 |
-| Capacidad | ~760.000 aves/día en 8 plantas (pre-crisis); >20 % de las t nacionales. En 2026: ~200.000 pollos/día. | FTE-038, FTE-036 |
-| Integración | **Total:** alimento balanceado, genética (alianza con Cobb/Tyson), reproductoras, incubación, crianza, faena, prefritos, fiambres y subproductos (incluye harina de plumas) | FTE-038, FTE-035 |
+| Sociedades | Granja Tres Arroyos S.A.C.A.F.I., Holding Agro Industrial SA (HAISA), Wade SA (ex Cresta Roja), Avex SA | FTE-078 |
+| Plantas (pre-crisis) | 8 plantas de faena (BA, ER, Cba y Uruguay), ~760.000 aves/día [PVDP · débil] | FTE-038 |
+| Faena | ~670.000 aves/día (2024) → ~610.000 (2025) → ~200.000 (ago-2026) [PVDP · débil] | FTE-079, FTE-036 |
+| Integración | Total: alimento, genética (alianza con Cobb/Tyson), reproductoras, incubación, crianza, faena, elaborados y subproductos | FTE-038, FTE-035 |
 | Accionistas | Familia De Grazia; Tyson Foods con 34 % desde nov-2022 | FTE-039 |
-| Mercados y exportación | Exportaba ~35 % de su producción a >60 países; proveedor de Tyson | FTE-038 |
-| Situación 2024–2026 | Procedimiento Preventivo de Crisis (dic-2024). Cierre de la planta La China (2026). Paralización "transitoria" de Pilar, Capitán Sarmiento y Esteban Echeverría (desde 2026-08-31). Avex cedida a ACA por deuda de granos. **Concurso preventivo** (sept-2026) de 4 sociedades, deuda ~USD 350,9 M. Pérdida del 85 % de sus integrados. Oferta de pagar parte de los salarios con pollos. | FTE-037, FTE-035, FTE-040, FTE-034, FTE-036 |
-| Causas que invoca | "Estrangulamiento del mercado interno" (techo de demanda), importaciones de Brasil 2024–2026 con techo al precio de góndola, cierre de mercados externos por IAAP, suba de costos (energía, transporte, insumos, salarios) | FTE-034 |
+| Marcas | Granja Tres Arroyos, Cresta Roja, La Comarca, Jet Food | FTE-038 |
+| Cronología de la crisis | Procedimiento Preventivo de Crisis (dic-2024) · cesación de pagos desde el 29-ene (2026, según la presentación judicial) · pérdida del 60 % de los integrados a mar-2026 (otra fuente: 85 %) · cierre de la planta La China (C. del Uruguay, may-2026, ~950 empleos) · Avex cedida a ACA por deuda de granos · paralización de Pilar, Capitán Sarmiento y Esteban Echeverría (desde 2026-08-31) · **concurso preventivo** presentado el 2026-09-09/11 | FTE-037, FTE-078, FTE-080, FTE-036, FTE-081, FTE-040, FTE-035 |
+| Expediente | COM 018558/2026, "Granja Tres Arroyos S.A.C.A.F.I. s/concurso preventivo", Juzgado Nacional Comercial N° 21 (CABA). Hubo un conflicto de competencia con el Juzgado N° 1 y la tramitación conjunta del grupo está en discusión: el trámite está en situación jurídica incierta según prensa. | FTE-078 |
+| Pasivo | Pasivo declarado $536.000 M; >$126.000 M en cheques rechazados; >4.800 acreedores. En USD: 350,9 M (GTA) o >540 M (cuatro sociedades), según la fuente. | FTE-078, FTE-034, FTE-079 |
+| Causas invocadas por la empresa | Techo de la demanda interna, importaciones de Brasil 2024–2026, cierre de mercados por IAAP, suba de costos | FTE-034 (argumento de parte) |
+| Situación laboral | Oferta de pagar parte de los salarios con pollos; ~2.500 operarios activos en otras áreas | FTE-035, FTE-034 |
 
-**Lección estructural:** la integración total y la escala no protegieron a GTA frente a la combinación de mercado interno maduro, shocks sanitarios que cierran la exportación, tipo de cambio e importaciones, y endeudamiento. Para el proyecto, confirma que la **estructura financiera y el capital de trabajo** son tan críticos como la escala.
+#### B. Posibles implicancias para el mercado (no son estrategia del proyecto)
 
-### 2.2 Soychú (Frigorífico de Aves Soychú)
+- **Evento de mercado relevante:** retiro parcial de ~400.000–500.000 aves/día de oferta respecto de 2024–2025 `[ESTIMACIÓN]`. No hay datos públicos sobre quién absorbió esa demanda.
+- **Preguntas abiertas** (DPV-016), **sin supuestos:**
+  - ¿Qué activos quedarán efectivamente disponibles y bajo qué figura (venta en concurso, alquiler, continuidad)?
+  - ¿Los productores integrados que dejaron GTA ya trabajan para otros integradores?
+  - ¿Existe capacidad a façon accesible en plantas paralizadas o en terceros?
+  - ¿Qué clientes de GTA se reasignaron y a quién?
+- **No se asume** que la red de ~90 supermercados le compraba a GTA (DPV-020).
+- **Lección estructural (hecho):** la integración total, la escala y un socio global no evitaron la crisis. La estructura financiera y el capital de trabajo son críticos.
 
-| Aspecto | Información pública | Fuente |
-|---|---|---|
-| Ubicación | Gualeguay (ER); en actividad desde 1962 | FTE-043 |
-| Propiedad | Familia Santángelo (mayoría) | FTE-043 |
-| Capacidad | ~4,5 M pollos/mes (~200.000/día); ~9 M kg/mes | FTE-043 |
-| Integración | Integrada verticalmente | FTE-043 |
-| Productos | Pollo entero, trozado, semipreparados condimentados | FTE-043 |
-| Mercados | 85 % mercado interno. Exporta a Chile, China, Países Bajos, Singapur, EAU y Polinesia Francesa. | FTE-043 |
-| Escala relativa | 2° en faena 2021 (~12 %) | FTE-041 |
-| Observación sectorial | Según su directivo, el sector necesita renovar ~1.200 galpones de ~USD 300.000 cada uno para crecer. Es un dato de contexto sobre el costo de la infraestructura de engorde, **no una cotización**. | FTE-043 |
+### 2.2 Soychú
+
+| Aspecto | Información | Fuente | Estado |
+|---|---|---|---|
+| Ubicación y propiedad | Gualeguay (ER), desde 1962; familia Santángelo. Franco Santángelo preside CEPA en 2026. | FTE-043, FTE-076 | [PVDP] |
+| Capacidad | ~4,5 M pollos/mes (~200.000/día) | FTE-043 | [PVDP · débil] |
+| Productos y mercados | Entero, trozado, condimentados; 85 % mercado interno; exporta a Chile, China, Países Bajos, Singapur, EAU y Polinesia Francesa | FTE-043 | [PVDP · débil] |
+| Contexto sectorial | Hace falta renovar ~1.200 galpones de ~USD 300.000 c/u (declaración; no es una cotización) | FTE-043 | [PVDP · débil] |
 
 ### 2.3 Las Camelias
 
-| Aspecto | Información pública | Fuente |
-|---|---|---|
-| Ubicación | San José (ER); fundada en 1936 | FTE-042 |
-| Capacidad | ~500 t/día de producto, con plan de +15 % (a ~600 t/día) | FTE-042 |
-| Integración | Integrada; ~250 familias o inversores integrados en el engorde; 1.180 empleados (700 en planta). Diversificación a porcinos (Porcomagro). | FTE-042 |
-| Productos | Entero, trozado, deshuesado | FTE-042 |
-| Mercados y exportación | ~38 % exportado, con meta de 45 %; >26 destinos (China, Chile, Países Bajos, Singapur, Sudáfrica); >USD 53 M exportados (dato a nov-2022) | FTE-042 |
-| Inversiones recientes | Granja "El Fortín" en Villaguay, 522.000 aves/ciclo (2026) | FTE-042 |
-| Escala relativa | 3° en faena 2021 (~6,9 %) | FTE-041 |
+| Aspecto | Información | Fuente | Estado |
+|---|---|---|---|
+| Ubicación | San José (ER); fundada en 1936 | FTE-042 | [PVDP] |
+| Capacidad | ~500 t/día de producto, con plan de +15 % | FTE-042 | [PVDP · débil] |
+| Integración | Planta de alimento en Villaguay que abastece ~220 granjas; ~250 familias integradas; 1.180 empleados; también porcinos | FTE-081, FTE-042 | [PVDP · débil] |
+| Mercados | ~38 % exportado; >26 destinos (China, Chile, Países Bajos, Singapur, Sudáfrica) | FTE-042 (2022) | [PVDP · débil] |
+| Inversión 2026 | >USD 6 M en galpones para 522.000 aves/ciclo (Villaguay) | FTE-081 | [PVDP] |
 
 ### 2.4 Noelma
 
-| Aspecto | Información pública | Fuente |
-|---|---|---|
-| Ubicación | Villa Elisa (ER); origen en Armstrong (SF); familia Eggs desde los años 70 | FTE-044 |
-| Capacidad | >150.000 aves/día; 37,2 M cab/año (ranking 2021) | FTE-044, FTE-041 |
-| Integración | Alimento balanceado, reproductoras (huevo fértil), faena y distribución nacional | FTE-044 |
-| Mercados | Nacional (con exportaciones; detalle s/d) | FTE-044 |
+Villa Elisa (ER); integrada (alimento, reproductoras, faena, distribución); >150.000 aves/día (FTE-044) [PVDP · débil].
 
-### 2.5 Fadel S.A.
+### 2.5 Fadel
 
-| Aspecto | Información pública | Fuente |
-|---|---|---|
-| Ubicación | Colón (sede) y Pronunciamiento (planta), ER | FTE-045 |
-| Capacidad | ~160.000 aves/día; ~1,2 M huevos incubados/semana | FTE-045 |
-| Integración | Integración con productores regionales desde 2007; planta de faena propia desde 2012; también porcinos | FTE-045 |
-| Mercados | Mercado interno y exportación (detalle s/d) | FTE-045 |
+Colón / Pronunciamiento (ER); ~160.000 aves/día; ~1,2 M huevos incubados/semana; integración con productores desde 2007; planta de faena propia desde 2012 (FTE-045) [PVDP · débil].
 
-### 2.6 Fepasa (Frigorífico Enterriano de Productos Avícolas S.A.)
+### 2.6 Fepasa
 
-| Aspecto | Información pública | Fuente |
-|---|---|---|
-| Ubicación | Concepción del Uruguay (ER) | FTE-046 |
-| Capacidad | ~80.000 pollos/día; línea de 9.500 aves/h | FTE-046 |
-| Productos | ~60 % del volumen se destina a trozado | FTE-046 |
-| Observación | Reestructurada tras una crisis previa. Es un ejemplo de **planta mediana** que sobrevive enfocada en trozado. | FTE-046 |
+Concepción del Uruguay (ER); ~80.000 pollos/día; línea de 9.500 aves/h; ~60 % del volumen a trozado (FTE-046) [PVDP · débil]. Es un ejemplo de planta mediana enfocada en trozado.
 
-### 2.7 Grupo Cem (AG Humboldt, Carnave, Cía. Avícola)
+### 2.7 Grupo Cem
 
-| Aspecto | Información pública | Fuente |
-|---|---|---|
-| Ubicación | Esperanza / Humboldt (SF) | FTE-047 |
-| Capacidad | ~600.000 pollos/mes (~27.000/día en 22 días hábiles [ESTIMACIÓN]); 50 % de granjas propias y 50 % integradas | FTE-047 |
-| Integración | **Del grano al consumidor:** >3.000 ha sembradas (soja, maíz, trigo), acopio, alimento balanceado, granjas, faena y **>100 locales propios de venta directa** (SF, Cba, Santiago del Estero, Tucumán); también huevo | FTE-047 |
-| Relevancia para el proyecto | Es el caso público más parecido a la idea de "carnicería + canal minorista + integración progresiva". Muestra que una escala regional muy inferior a la de los líderes puede sostenerse **si se captura el margen minorista**. No implica que el modelo sea replicable (DEC-002). | Análisis |
+Esperanza / Humboldt (SF). Integración del grano (>3.000 ha) al consumidor (>100 locales propios Carnave en SF, Cba, Santiago del Estero y Tucumán); ~600.000 pollos/mes; 50 % de granjas propias (FTE-047) [PVDP · débil]. Es el caso público de integración hacia el minorista más cercano a la situación de partida del proyecto. **No es un modelo a copiar:** su escala regional es pequeña frente a la visión de empresa escalable y exportadora.
 
-### 2.8 Otras empresas identificadas (sin ficha por falta de datos públicos)
+### 2.8 Otras
 
-- **Indavisa (Industrias Avícolas S.A.)**, Hernandarias (ER), e **Pollos Calchaquí**: figuran como asociadas a CEPA o habilitadas. Sin datos de escala.
-- **Avícola Capitán Sarmiento S.A.** (BA): perteneciente a GTA. Figura con número de registro GACC (China) en un directorio no oficial; a verificar en el listado SENASA de establecimientos habilitados para China.
-- Listado completo de empresas exportadoras y asociadas: CEPA publica listas en su sitio (aviculturaargentina.com.ar). Pendiente de leer (DPV-016).
+Indavisa (Hernandarias, ER), Pollos Calchaquí (ER) y Avícola Capitán Sarmiento S.A. (grupo GTA): sin datos de escala. El listado de asociadas y exportadoras de CEPA queda pendiente (DPV-016).
 
 ---
 
-## 3. Proveedores estructurales de la cadena (no son competidores directos)
+## 3. Proveedores estructurales (no competidores directos)
 
-| Eslabón | Actores con evidencia | Relevancia |
+| Eslabón | Actores | Relevancia |
 |---|---|---|
-| Genética (abuelas / padres) | Cobb (Tyson), con Reproductores Cobb SA en Santa Elena (ER), de la que dependería ~66 % de la genética nacional; Aviagen (Ross), que regresó al país; Hubbard | Un entrante no integrado depende de pocos proveedores globales y de sus socios locales, algunos ligados a competidores (GTA–Cobb) (FTE-049, FTE-038) |
-| Pollito BB / huevo fértil | Integradores con incubación propia (ej.: Fadel) | Disponibilidad para terceros no relevada (DPV-006) |
-| Granos y alimento | Plantas propias de los integradores; cooperativas (ACA se quedó con la planta de Avex) | Acceso a alimento de terceros a relevar |
+| Genética | Cobb (Tyson) con Reproductores Cobb SA en Santa Elena, ER (~66 % de la genética nacional según prensa [PVDP · débil]); Aviagen (Ross); Hubbard | Dependencia de pocos proveedores globales, algunos asociados a competidores (GTA–Cobb/Tyson) |
+| Pollito BB / huevo fértil | Integradores con incubación propia (~18–20 M pollitos/semana en el país) | Disponibilidad para terceros no relevada (DPV-006) |
+| Granos y alimento | Plantas de integradores; cooperativas (ACA) | El sector consume ~5 Mt de maíz por año (FTE-077) |
 
 ---
 
 ## 4. Implicancias para el proyecto
 
-1. **Escala de referencia de la franja media:** 80.000–200.000 aves/día (Fepasa, Noelma, Fadel, Soychú). Un modelo regional como Grupo Cem opera a ~27.000/día. Son referencias de mercado, **no una propuesta de capacidad** (regla 9 de `CLAUDE.md`).
-2. **Todos los actores relevantes están integrados** al menos en alimento, incubación y faena. El engorde lo hacen productores integrados.
-3. **Entre Ríos concentra a la mayoría de los medianos.** Competir en su zona de influencia implica disputar productores integrados, personal y servicios.
-4. **La crisis de GTA abre una ventana, con riesgos.** Hay activos, integrados y clientes liberados, pero también riesgo de precios de liquidación y de reactivación de plantas por nuevos dueños. Seguimiento en DPV-016.
+1. **Escala de referencia de la franja media:** 80.000–200.000 aves/día; modelo regional (Grupo Cem): ~27.000/día. Son referencias de mercado, **no una propuesta de capacidad** (regla 9 de `CLAUDE.md`).
+2. **Todos los actores relevantes están integrados** al menos en alimento, incubación y faena, y apoyan el engorde en productores integrados.
+3. **Los líderes exportan entre 15 % y 38 %** de su producción (Soychú 15 %, Las Camelias 38 %, GTA ~35 % pre-crisis) [PVDP · débil]. Una empresa con vocación exportadora compite contra ellos también en el exterior, y contra Brasil.
+4. **GTA:** evento de mercado relevante; cualquier implicancia para el proyecto requiere investigación específica (DPV-016).

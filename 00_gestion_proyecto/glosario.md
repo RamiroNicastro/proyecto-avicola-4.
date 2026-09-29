@@ -52,3 +52,7 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Compartimento libre | Establecimiento o grupo de establecimientos con sistema de bioseguridad común reconocido como libre de una enfermedad (Res. SENASA 484/2017). |
 | Concurso preventivo | Procedimiento judicial en que una empresa en cesación de pagos negocia con sus acreedores para evitar la quiebra. |
 | PSD / GAIN | Base de datos de producción, oferta y demanda (*Production, Supply and Distribution*) e informes de agregados agrícolas (*Global Agricultural Information Network*) del USDA. |
+| PVDP | "Pendiente de verificación documental primaria": cifra de fuente identificada que no fue cotejada con el documento original (regla 16 de `CLAUDE.md`). |
+| Ingreso total por ave | Suma del ingreso de todas las partes de un ave (pechuga, pata-muslo, alas, garras, menudencias, recortes, subproductos), cada una vendida en su mejor mercado accesible, neto de costos de separación, frío y logística. Principio estratégico del proyecto. |
+| Halal | Conjunto de requisitos religiosos islámicos para alimentos (incluye el método de faena), certificado por entidades reconocidas por el país importador (ej.: CIRA en Argentina). |
+| Regionalización / zonificación | Reconocimiento por un país importador de zonas libres de una enfermedad dentro de un país afectado, que permite seguir exportando desde esas zonas. |
