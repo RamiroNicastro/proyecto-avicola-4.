@@ -54,7 +54,7 @@ No se obtuvo la participación por destino de 2025 (DPV-010).
 
 ## 4. Estado de acceso a mercados al 2026-09-29 (regla 17: cuatro categorías)
 
-> **Actualización (2026-09-29, sesión de exportación):** esta sección queda como antecedente. La clasificación vigente por país, con China, Halal y UE, está en [`../17_exportacion/mercados_por_pais.md`](../17_exportacion/mercados_por_pais.md). **Corrección:** China está cerrada desde **ago-2025** (caso de Los Toldos), no desde feb-2026 (FTE-092).
+> **Actualización (2026-09-29, sesión de exportación):** esta sección queda como antecedente. La clasificación vigente por país, con China, Halal y UE, está en [`../17_exportacion/mercados_por_pais.md`](../17_exportacion/mercados_por_pais.md). **China:** no se considera un mercado disponible confirmado; la prensa informa una suspensión tras el caso de ago-2025 (FTE-092), pero **la fecha y el alcance exacto de la suspensión quedan pendientes de verificación primaria** (DPV-035).
 
 ### 4.1 Cronología sanitaria
 
@@ -81,7 +81,7 @@ No se obtuvo la participación por destino de 2025 (DPV-010).
 
 | País / bloque | A. Habilitado 2026 | B. Exportación efectiva | C. Potencial | D. Cerrado / suspendido | Evidencia y notas |
 |---|---|---|---|---|---|
-| **China** | No | Sí en 2025 (entre los principales) | Alto (garras, alas, pata-muslo) | **Sí**, desde ago-2025 (corregido; antes se indicaba feb-2026); sin evidencia de reapertura a sept-2026 | FTE-057, FTE-031, FTE-076. CEPA: los temas técnicos están resueltos y falta la decisión china. Mercado decisivo para el valor por ave. |
+| **China** | No | Sí en 2025 (entre los principales) | Alto (garras, alas, pata-muslo) | **No disponible confirmado**; fecha y alcance de la suspensión pendientes de verificación primaria (prensa: ago-2025; antes se indicaba feb-2026; DPV-035); sin evidencia de reapertura a sept-2026 | FTE-057, FTE-031, FTE-076. CEPA: los temas técnicos están resueltos y falta la decisión china. Mercado decisivo para el valor por ave. |
 | **Unión Europea** | **Sí**, desde 2026-08-17 | Histórico (Países Bajos) | Cuota UE–Mercosur de 180.000 t/año para el bloque, 5 años, vigencia provisional desde 2026-05-01 | No | FTE-012, FTE-065. Requiere plantas en listas UE. El reparto de la cuota con Brasil está sin definir. |
 | **Japón** | **Sí**, aves faenadas desde 2026-09-08 | Sin dato de volúmenes recientes | Alto valor; mercado exigente | No | FTE-013. Mercado de ~USD 1.500 M según prensa [PVDP · débil]. |
 | **Chile** | **Sí**, desde jun-2026 | Sí en 2025 (principal destino); 2° o 3° mercado histórico | — | Suspendido entre feb y jun-2026 | FTE-033, FTE-018 |

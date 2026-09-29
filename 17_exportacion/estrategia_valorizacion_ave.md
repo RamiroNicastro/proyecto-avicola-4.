@@ -5,6 +5,7 @@ Antecedente: [`01_mercado/exportaciones.md` §7](../01_mercado/exportaciones.md)
 
 > **Principio estratégico** (`CLAUDE.md`, SUP-013): maximizar el **ingreso total por ave**, asignando cada parte al mercado que mejor la paga **en términos netos**.
 > **Alcance:** conceptual. No se usan rendimientos por parte (dependen de genética, peso de faena y especificación: DPV-008, `04_balance_masa`) ni se fija capacidad (regla 9). Los precios citados son `[PVDP]` o `[PVDP · débil]`: sirven para ordenar, no para calcular.
+> **Precios:** todos los precios de este documento son **preliminares** (fuentes comerciales, estimaciones o mercados distintos). **No se usan para calcular rentabilidad** (SUP-018); en particular, no los ~3.500 USD/t de garras. La cuantificación se hará con precios FOB reales y cotizaciones comerciales (DPV-026, DPV-032).
 > **No se elige** un destino por parte; se describen los mercados que suelen valorizar mejor cada parte y las condiciones para acceder.
 
 ---
@@ -59,7 +60,7 @@ NB_loc = Precio al cliente sin IVA
 | **Habilitación sanitaria del destino** (país y planta listada) | Sin listado, el net-back de ese destino no existe | [`mercados_por_pais.md`](mercados_por_pais.md), [`requisitos_planta_exportadora.md`](requisitos_planta_exportadora.md) |
 | **Lote mínimo = contenedor** (~24–27 t de congelado por reefer de 40', `[PVDP · débil]`) | Días para completar un contenedor de la parte i: `D_i = carga del contenedor / (k_i × aves faenadas por día)`. Las partes de bajo peso por ave (garras, menudencias) requieren **mucha escala o mucha acumulación** en cámara (capital de trabajo, espacio de frío) | [`logistica_exportacion.md`](logistica_exportacion.md); se cuantificará en `04_balance_masa` |
 | Especificación del comprador | Calibre, pelado y clasificación de garras, deshuese japonés, piel, grasa, peso del "griller" | [`productos_exportables.md`](productos_exportables.md) |
-| Halal | Para Golfo e Irak; Arabia Saudita exige faena sin aturdimiento | [`mercados_por_pais.md` §4](mercados_por_pais.md) |
+| Halal | Para Golfo e Irak se requiere certificación Halal reconocida; requisitos de faena (aturdimiento, métodos) por verificar (DPV-034) | [`mercados_por_pais.md` §4](mercados_por_pais.md) |
 | Capacidad de congelado y almacenamiento | Exportar exige congelar (túnel/IQF) y estoquear hasta completar lotes | [`requisitos_planta_exportadora.md`](requisitos_planta_exportadora.md) |
 | Cuotas y aranceles | UE fuera de cuota: prohibitivo; Sudáfrica: 62 % para cortes con hueso | [`mercados_por_pais.md` §5](mercados_por_pais.md) |
 | Riesgo sanitario | Un brote cierra los destinos que exigen país libre; la parte debe tener **salida alternativa** | [`conclusiones_exportacion.md` §5](conclusiones_exportacion.md) |
@@ -69,7 +70,7 @@ NB_loc = Precio al cliente sin IVA
 
 ## 4. Matriz de valorización por producto
 
-Rangos de precio: ver [`productos_exportables.md` §2](productos_exportables.md) (bases y fechas distintas; **no comparables entre filas como si fueran equivalentes**). "Volumen potencial" = profundidad del mercado para un proveedor nuevo (no escala del proyecto).
+Rangos de precio **preliminares**: ver [`productos_exportables.md` §2](productos_exportables.md) (bases y fechas distintas; **no comparables entre filas como si fueran equivalentes**). "Volumen potencial" = profundidad del mercado para un proveedor nuevo (no escala del proyecto).
 
 | Producto | Mercados relevantes | Rango de precio disponible (referencia) | Requisitos | Riesgo | Volumen potencial | Comentarios |
 |---|---|---|---|---|---|---|
@@ -78,7 +79,7 @@ Rangos de precio: ver [`productos_exportables.md` §2](productos_exportables.md)
 | **Muslo deshuesado** | **Japón**, Corea; gastronomía local | ¥370–650/kg mayorista en Japón (2025–2026) | Especificación japonesa; mano de obra de deshuese; listado MAFF | Medio: exigencia de calidad; competencia de Brasil y Tailandia | Medio | Transforma una parte de valor medio en una de mayor valor; requiere proceso adicional |
 | **Cuartos traseros** | México, Angola, Vietnam, Filipinas, Cuba, África | ~1.100–1.200 USD/t (EE.UU., 2024) | Congelado | Alto en precio y cobro (África) | Alto | Alternativa al trozado fino cuando no hay mejor salida |
 | **Alas** | Mercado interno (gastronomía); China y Hong Kong; Vietnam | Sin dato confiable | Clasificación por tamaño | Alto: el mejor destino (China) está cerrado | Medio | Revisar net-back local vs Asia caso por caso |
-| **Garras** | **China** (cerrada desde ago-2025); Hong Kong; Vietnam; 2ª calidad a Medio Oriente | China ~3.100–3.500 USD/t CIF (2025); cotizaciones argentinas 1.050–2.800 USD/t (débiles) | Pelado, sin callos, clasificación por grado; registro GACC; calidad de cama y bienestar en granja (lesiones plantares) | **Muy alto:** dependencia de un solo país; cierre prolongado | Bajo en kg por ave; alto en valor por kg si China abre | Mayor diferencia de valor por destino de toda el ave. **Sin China, su valor cae a destinos alternativos o a harina** |
+| **Garras** | **China** (no disponible confirmado; DPV-035); Hong Kong; Vietnam; 2ª calidad a Medio Oriente | Preliminar: China ~3.100–3.500 USD/t CIF (2025); cotizaciones argentinas 1.050–2.800 USD/t (débiles) | Pelado, sin callos, clasificación por grado; registro GACC; calidad de cama y bienestar en granja (lesiones plantares) | **Muy alto:** dependencia de un solo país; cierre prolongado | Bajo en kg por ave; alto en valor por kg si China abre | Mayor diferencia de valor por destino de toda el ave. **Sin China, su valor cae a destinos alternativos o a harina** |
 | **Menudencias** | Mercado interno (carnicerías); África; China | 300–800 USD/t (ofertas comerciales, débiles) | Congelado en bloque | Medio: flete pesa mucho sobre un precio bajo; cobro en África | Medio | Exportar solo si el mercado interno no absorbe o paga menos que el net-back africano |
 | **Pollo entero** | Mercado interno (supermercados, carnicería, "producto gancho"); Chile; Golfo (Halal); Irak; África | Brasil FOB 1.569–2.316 USD/t según destino (mar-2025) | Calibración de peso; Halal para Golfo | Medio: commodity; Brasil fija precio | Alto | Es la forma de venta que **menos** valoriza las partes; útil como regulador de volumen y para clientes que lo exigen |
 | **CMS / recortes** | Industria local de elaborados (hoy se importa CMS de Brasil); Filipinas; Sudáfrica | Brasil FOB 400–600 USD/t (débil) | Separadora mecánica; microbiología | Bajo en precio | Medio | Probablemente mejor destino local (sustitución de importaciones), a validar |
@@ -101,7 +102,7 @@ PATA-MUSLO ───────────────────────
 ALAS ──────────────────────────────┬─ Mercado interno (gastronomía)
                                    └─ Asia (Hong Kong, Vietnam; China cerrada)
 
-GARRAS ────────────────────────────┬─ China                             [CERRADA desde ago-2025: opción, no base]
+GARRAS ────────────────────────────┬─ China                             [NO DISPONIBLE CONFIRMADO: opción, no base]
                                    ├─ Vietnam / Hong Kong               [a verificar precio y acceso]
                                    └─ Harina (piso)
 
@@ -125,7 +126,7 @@ SUBPRODUCTOS ──────────────────────�
 | Evento | Partes afectadas | Efecto sobre el ingreso por ave |
 |---|---|---|
 | Cierre de China | Garras, alas, pata-muslo | `Δ ingreso = k_garras × (NB_China − NB_alternativo)` + efectos en alas; es el mayor riesgo por kg |
-| Brote de IAAP en Argentina (cierre de destinos que exigen país libre) | Todas las que se exportan a UE, China, Chile, Japón, Corea | Las partes vuelven al mercado interno, que a la vez recibe la sobreoferta de todo el sector (en 2025 hubo ventas ~40 % bajo costo durante ~40 días, FTE-052) |
+| Brote de IAAP en Argentina (cierre de destinos que exigen país libre) | Todas las que se exportan a UE, Chile, Japón, Corea (y China si estuviera abierta) | Las partes vuelven al mercado interno, que a la vez recibe la sobreoferta de todo el sector (en 2025 hubo ventas ~40 % bajo costo durante ~40 días, FTE-052) |
 | Brasil fuera de un mercado (ej.: UE desde 2026-09-03) | Pechuga | Ventana de precio **temporal** |
 | Apreciación del peso | Todas | Reduce el net-back en pesos y abarata las importaciones que compiten con la pechuga local |
 | Suba del flete reefer | Partes de bajo precio (menudencias, cuartos, CMS) | El flete es una proporción mayor de su precio: pueden dejar de convenir |

@@ -65,14 +65,14 @@ Antecedentes del lado argentino (serie de exportación, importaciones): [`../01_
 
 | Líder | Ventajas | Implicancia para un entrante argentino |
 |---|---|---|
-| Brasil | Costo de grano y escala; integradoras globales (BRF, JBS/Seara); >150 destinos; habilitaciones consolidadas (Halal sin aturdimiento para Arabia Saudita, UE, Japón, China); plantas dedicadas por mercado; logística portuaria del sur; **regionalización** que acota cierres (China reabrió ~5,5 meses después del brote de may-2025 y la UE a los ~4 meses, con zonificación: FTE-088) | Compite en los mismos productos y destinos que Argentina, con más escala y más peso diplomático. Es el formador de precio en Medio Oriente, África, Chile y el propio mercado argentino (importaciones) |
+| Brasil | Costo de grano y escala; integradoras globales (BRF, JBS/Seara); >150 destinos; habilitaciones consolidadas (Halal para el Golfo, UE, Japón, China); plantas dedicadas por mercado; logística portuaria del sur; **regionalización** que acota cierres (China reabrió ~5,5 meses después del brote de may-2025 y la UE a los ~4 meses, con zonificación: FTE-088) | Compite en los mismos productos y destinos que Argentina, con más escala y más peso diplomático. Es el formador de precio en Medio Oriente, África, Chile y el propio mercado argentino (importaciones) |
 | EE.UU. | Grano barato; demanda interna de carne blanca que deja la carne oscura (cuartos) como excedente exportable barato | Pone un **techo bajo** al precio internacional del cuarto trasero |
 | Tailandia | Mano de obra y know-how en **cocidos** de alto valor; acceso preferente a Japón, UK y UE (cocidos no sufren las mismas barreras sanitarias por IAAP que la carne cruda) | Muestra que el valor está en el procesado, pero exige otra escala industrial y otra planta |
 | China | Escala y costo; ahora con excedentes | Reduce su demanda de importación y compite como exportador en Asia (Japón, Hong Kong) |
 | Turquía / Ucrania | Cercanía y Halal (Turquía); costo y cuotas UE (Ucrania) | Compiten en Medio Oriente y UE |
 | UE | Estándares altos, mercado interno protegido; exporta partes de bajo valor | Protegida por aranceles; el acceso para terceros se da por cuotas |
 
-**Ventaja transversal de los líderes: poder negociar acceso sanitario (regionalización) y mantener abiertos los mercados durante un brote.** Argentina lo logró parcialmente con Arabia Saudita, EAU, Vietnam, Singapur y Brasil (FTE-097), pero no con China, la UE, Chile ni Japón en 2026 (ver [`mercados_por_pais.md`](mercados_por_pais.md)).
+**Ventaja transversal de los líderes: poder negociar acceso sanitario (regionalización) y mantener abiertos los mercados durante un brote.** Argentina lo logró parcialmente con Arabia Saudita, EAU, Vietnam, Singapur y Brasil (FTE-097), pero no hay evidencia de que la apliquen China, la UE, Chile o Japón en 2026 (ver [`mercados_por_pais.md`](mercados_por_pais.md)).
 
 ---
 
@@ -89,7 +89,7 @@ Antecedentes del lado argentino (serie de exportación, importaciones): [`../01_
 | Qatar / Omán / Kuwait | 147.000 t / ~5,9 % / ~5,5 % del CCG | 2024 | Brasil | FTE-117 | [PVDP · débil] |
 | Filipinas | Brasil: 264,2 kt (2025); 41,3 % del mercado de carnes importadas | 2025 | Brasil (>60 % de su pollo es CMS), EE.UU. | FTE-087, FTE-131 | [PVDP] |
 | Sudáfrica | Brasil: 336 kt (2025) | 2025 | Brasil (>50 % del pollo congelado importado), UE, EE.UU., Argentina | FTE-087, FTE-128 | [PVDP] |
-| China | En caída; garras ~3.500 USD/t | 2025–2026 | Brasil (47,9 % de garras), Rusia (25,9 %), Tailandia, EE.UU., Belarús; Chile y Argentina >10.000 t cada uno en 2025 | FTE-089, FTE-090 | [PVDP] |
+| China | En caída; garras ~3.500 USD/t (**precio preliminar**, CIF, no usar para rentabilidad) | 2025–2026 | Brasil (47,9 % de garras), Rusia (25,9 %), Tailandia, EE.UU., Belarús; Chile y Argentina >10.000 t cada uno en 2025 | FTE-089, FTE-090 | [PVDP] |
 | Vietnam | ~11 % del consumo es importado; 1S-2025: EE.UU. 115–120 kt, UE 28–30 kt, Brasil 24–26 kt | 2025 | EE.UU. (cuartos traseros) | FTE-130 | [PVDP · débil] |
 | Irak | Turquía 180.000 t (2024) | 2024 | Turquía, Brasil, China | FTE-122 | [PVDP] |
 | África subsahariana | Brasil >1 Mt a África en 2025; Angola 106.346 t | 2025 | Brasil, EE.UU., UE | FTE-129 | [PVDP · débil] |
@@ -97,7 +97,7 @@ Antecedentes del lado argentino (serie de exportación, importaciones): [`../01_
 
 **Lectura:**
 
-1. **Mercado grande ≠ mercado accesible.** De los cinco mayores importadores, México no está confirmado como habilitado para Argentina, Japón reabrió recién el 2026-09-08, la UE funciona por cuotas, Arabia Saudita exige Halal sin aturdimiento y China está cerrada (ver [`mercados_por_pais.md`](mercados_por_pais.md)).
+1. **Mercado grande ≠ mercado accesible.** De los cinco mayores importadores, México no está confirmado como habilitado para Argentina, Japón reabrió recién el 2026-09-08, la UE funciona por cuotas, Arabia Saudita exige certificación Halal reconocida (requisitos de faena por verificar, DPV-034) y China no se considera un mercado disponible confirmado (ver [`mercados_por_pais.md`](mercados_por_pais.md)).
 2. **Los importadores del Golfo se autoabastecen cada vez más:** Arabia Saudita pasó de 45 % de autoabastecimiento (2016) a 68 % (2022) con meta de 80 % en 2025; un extracto habla de ~90 % (FTE-114, contradicción registrada). El mercado importador saudita tiende a achicarse.
 3. **China dejó de ser un importador en expansión:** su producción crece más que su demanda, sus importaciones caen y sus exportaciones crecen +51 % (FTE-090). Esto afecta directamente la tesis "garras a China".
 
@@ -107,14 +107,14 @@ Antecedentes del lado argentino (serie de exportación, importaciones): [`../01_
 
 | Fecha | Evento | Efecto | Fuente |
 |---|---|---|---|
-| 2023–2025 | IAAP recurrente en Argentina: cierres de China (mar-2023 a abr-2025 y desde ago-2025), UE, Chile | Exportación argentina volátil; precio medio cae de ~1.700 a ~1.100 USD/t al perder China | [`01_mercado/exportaciones.md`](../01_mercado/exportaciones.md), FTE-092 |
+| 2023–2025 | IAAP recurrente en Argentina: cierres de China (mar-2023 a mar/abr-2025; nuevas restricciones reportadas por prensa tras los eventos de 2025–2026, fecha y alcance pendientes: DPV-035), UE, Chile | Exportación argentina volátil; precio medio cae de ~1.700 a ~1.100 USD/t al perder China | [`01_mercado/exportaciones.md`](../01_mercado/exportaciones.md), FTE-092 |
 | 2025-05-16 | Primer caso de IAAP comercial en Brasil (Montenegro, RS) | China suspende a Brasil hasta nov-2025; la UE cierra ~4 meses con zonificación; precios en Medio Oriente en mínimos (pechuga CIF 2.700 USD/t el 2025-05-30) | FTE-088, FTE-118 |
 | 2025 | Brasil igual logra récord de exportación (5,324 Mt) | Muestra la resiliencia de un exportador diversificado | FTE-087 |
 | 2025–2026 | China pasa a exportador neto creciente | Menor demanda de importación de garras y alas; competencia en Asia | FTE-090 |
 | 2026-05-01 | Aplicación provisional del acuerdo UE–Mercosur (cuota aviar 180.000 t para el bloque) | Acceso con arancel preferencial, reparto intra-Mercosur pendiente | FTE-103, FTE-105 |
 | 2026-04-01 | S&P Global Platts lanza precios diarios CIF Jebel Ali (pollo entero, cuarto trasero, carne para shawarma) | Mejora la transparencia de precios en Medio Oriente | FTE-118 |
 | 2026-09-03 | La UE aplica el art. 118 del Reg. (UE) 2019/6 (antimicrobianos); **Brasil queda excluido** de la lista para aves, bovinos y otros | Ventana temporal para otros proveedores. La auditoría de la Comisión (informe del 2026-09-28) fue favorable para aves de Brasil: su regreso requiere voto de los Estados miembros | FTE-107, FTE-108 |
-| 2026 | Argentina: brote de feb-2026, autodeclaración de país libre (publicada ante la OMSA el 6-may según FTE-098; abril según FTE-011), reaperturas de Chile/Perú (jun), Corea (2026-08-10), UE (2026-08-17), Japón (2026-09-08). China sigue cerrada | Exportación argentina 1S-2026: −27,2 % en valor según INDEC (USD 93 M) o −38 % según el Consejo Agroindustrial (contradicción) | FTE-094, FTE-095, FTE-101, FTE-102 |
+| 2026 | Argentina: brote de feb-2026, autodeclaración de país libre (publicada ante la OMSA el 6-may según FTE-098; abril según FTE-011), reaperturas de Chile/Perú (jun), Corea (2026-08-10), UE (2026-08-17), Japón (2026-09-08). China: no disponible confirmado; en jul-2026 el sector aún reclamaba la reapertura plena | Exportación argentina 1S-2026: −27,2 % en valor según INDEC (USD 93 M) o −38 % según el Consejo Agroindustrial (contradicción) | FTE-094, FTE-095, FTE-101, FTE-102 |
 | 2026-09-16 | Caso de IAAP en aves de traspatio (Carlos Spegazzini, BA) | Según SENASA no afecta el estatus ni el comercio | FTE-099 |
 
 ---

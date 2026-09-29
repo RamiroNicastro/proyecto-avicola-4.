@@ -1,8 +1,8 @@
 # Mercados de exportación por país — acceso real para Argentina
 
-**Fecha de referencia:** 2026-09-29 · **Versión:** 1 · Datos: [`datos_exportacion.csv`](datos_exportacion.csv) · Fuentes: [`registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv)
+**Fecha de referencia:** 2026-09-29 · **Versión:** 1.1 (corrección prudencial 2026-09-29) · Datos: [`datos_exportacion.csv`](datos_exportacion.csv) · Fuentes: [`registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv)
 
-> **Reemplaza y amplía** la clasificación por país de [`01_mercado/exportaciones.md` §4.2](../01_mercado/exportaciones.md) (que queda como antecedente). Cambios principales: China cerrada desde **ago-2025** (no desde feb-2026); se agregan Corea del Sur, Filipinas, México, Reino Unido y otros.
+> **Reemplaza y amplía** la clasificación por país de [`01_mercado/exportaciones.md` §4.2](../01_mercado/exportaciones.md) (que queda como antecedente). Cambios principales: China **no se considera un mercado disponible confirmado** (la fecha y el alcance de la suspensión quedan pendientes de verificación primaria); se agregan Corea del Sur, Filipinas, México, Reino Unido y otros.
 > **Verificación:** todas las cifras y fechas son `[PVDP]` o `[PVDP · débil]` (extractos de buscador; lectura directa bloqueada). El acceso cambia con cada evento sanitario: **revalidar con SENASA antes de usar** (DPV-024, DPV-031).
 > **No se selecciona país objetivo.** La sección 7 identifica mercados a estudiar, sin declararlos "mejores".
 
@@ -19,6 +19,20 @@
 
 "Sin evidencia" **no** significa abierto ni cerrado.
 
+### 1.1 Niveles de acceso que no deben confundirse
+
+La matriz clasifica **países**. La apertura de un país **no** significa que la futura planta del proyecto pueda exportarle. Para que exista una exportación real deben cumplirse, por separado, cinco niveles:
+
+| Nivel | Pregunta | Quién lo determina | Estado para el proyecto |
+|---|---|---|---|
+| 1. País abierto sanitariamente | ¿El importador admite carne aviar argentina? | Autoridad del país importador (comunicado, norma, certificado acordado) | Es lo que mide la categoría A de esta matriz |
+| 2. Establecimiento individual habilitado | ¿La planta figura en la lista del importador? | SENASA propone (Res. 593/2026) y el importador acepta; puede requerir auditoría | **No aplica todavía:** el proyecto no tiene planta |
+| 3. Producto específico autorizado | ¿El producto (entero, cortes, garras, menudencias, cocidos) está en el certificado acordado? | Protocolo o certificado bilateral | **No verificado** por producto (DPV-024) |
+| 4. Existencia de comprador | ¿Hay un importador dispuesto a comprar a ese precio y condiciones? | Mercado | **No verificado** (DPV-032) |
+| 5. Operación comercial efectiva | ¿Hay embarques reales? | Estadística de comercio exterior | Es lo que mide la categoría B, para exportadores **existentes**, no para el proyecto |
+
+Por lo tanto, ningún mercado de este documento es un mercado "confirmado" para el proyecto: como máximo, es un país con acceso sanitario vigente para Argentina.
+
 ---
 
 ## 2. Matriz país por país
@@ -27,7 +41,7 @@
 
 | País | A. Habilitado (post feb-2026) | B. Exportación efectiva | C. Potencial | D. Cerrado / restringido | Evidencia y notas |
 |---|---|---|---|---|---|
-| **China** | **No** | Sí: 2022 (~60 % del valor exportado), abr–ago 2025 (>10.000 t) | Histórico alto (garras, alas, pata-muslo, deshuesados); **estructuralmente decreciente** | **Sí, desde ago-2025** (caso de Los Toldos, BA). Reapertura en trámite frustrada por el brote de feb-2026. Sin evidencia de reapertura al 2026-09-29 | FTE-092, FTE-089, FTE-076, FTE-091. Ver §3 |
+| **China** | **No confirmado** | Sí: 2022 (~60 % del valor exportado) y 2025 (>10.000 t) | Histórico alto (garras, alas, pata-muslo, deshuesados); **estructuralmente decreciente** | **Suspensión o restricción reportada por prensa** tras nuevos eventos de IAAP; **fecha y alcance exacto pendientes de verificación primaria** (DPV-035). En jul-2026 el sector aún reclamaba la reapertura plena | FTE-014, FTE-092, FTE-076, FTE-089. Ver §3 |
 | Hong Kong | Sin evidencia 2026 | Sí, 2024 | Medio: garras y alas, en parte reexportadas a China | Sin evidencia | FTE-010, FTE-129 (débil) |
 | **Vietnam** | Probable: reconoce la regionalización argentina | **Sí: 1° destino en 2024 (17 %), 2025 y 2026 (~20–21 % del volumen)** | Alto en volumen (cuartos traseros, cortes); compite EE.UU. | Sin evidencia | FTE-097, FTE-091, FTE-130. Arancel vietnamita de muslo congelado bajó de 20 % a 15 % (Decreto 73/2025) `[PVDP · débil]` |
 | **Japón** | **Sí: aves faenadas desde 2026-09-08** | Sin datos de volumen reciente | Alto valor (deshuesado de pata, especificación estricta); dominado por Brasil y Tailandia | Suspendido feb–sept 2026 | FTE-013, FTE-127 |
@@ -61,7 +75,7 @@
 
 | País | A | B | C | D | Evidencia y notas |
 |---|---|---|---|---|---|
-| **Arabia Saudita** | Probable: reconoce la regionalización (antecedente: reapertura del 2023-08-31) | Sí: 2022 (33.384 t, >USD 60 M; 3° mercado) y 2024 | Medio y **decreciente** (autoabastecimiento 68 % en 2022, meta 80 %) | **Restricción técnica:** Halal **sin aturdimiento** (SFDA, desde 2018) | FTE-069, FTE-097, FTE-113, FTE-114. Ver §4 |
+| **Arabia Saudita** | Probable: reconoce la regionalización (antecedente: reapertura del 2023-08-31) | Sí: 2022 (33.384 t, >USD 60 M; 3° mercado) y 2024 | Medio y **decreciente** (autoabastecimiento 68 % en 2022, meta 80 %) | Requiere certificación Halal de organismos reconocidos por la SFDA. Requisitos de faena para aves (incluido el aturdimiento) **pendientes de verificación normativa** (DPV-034) | FTE-069, FTE-097, FTE-113, FTE-114. Ver §4 |
 | **Emiratos Árabes Unidos** | Probable: reconoce la regionalización | Sí, 2024 | Alto: mayor importador del Golfo (~573.000 t en 2024) | Requiere Halal con certificadora acreditada por EAU | FTE-097, FTE-117, FTE-116 |
 | Qatar, Kuwait, Omán, Bahréin | Sin evidencia | Sin evidencia | Medio | Halal (normas GSO) | FTE-117 |
 | Irak | Sin evidencia | Sin evidencia | Medio (Turquía y China lo abastecen; política proteccionista) | Sin evidencia | FTE-122, FTE-090 |
@@ -78,13 +92,16 @@
 
 | Categoría | Países con evidencia |
 |---|---|
-| **A con comunicado posterior a feb-2026** | UE, Japón, Corea del Sur, Chile, Perú |
+| **A con comunicado posterior a feb-2026** (solo nivel 1: país abierto; ver §1.1) | UE, Japón, Corea del Sur, Chile, Perú |
 | A probable (regionalización reconocida) | Vietnam, Arabia Saudita, EAU, Singapur, Brasil |
 | **B efectiva en 2026** | Vietnam (principal), Sudáfrica `[débil]`; UE, Chile y Perú desde su reapertura (volúmenes no obtenidos) |
 | B efectiva solo en años anteriores | China (2025), Hong Kong, Angola, RD Congo, Rep. del Congo, Arabia Saudita, EAU, Brasil, Reino Unido, Singapur |
-| **D cerrado sanitario** | China (desde ago-2025), Filipinas (desde sept-2025) |
-| D restricción comercial o técnica | Sudáfrica (arancel 62 %), UE (fuera de cuota), Arabia Saudita (Halal sin aturdimiento) |
+| **D cerrado o no disponible (sanitario)** | China (no disponible confirmado; fecha y alcance pendientes, DPV-035), Filipinas (suspensión reportada en sept-2025) |
+| D restricción comercial o técnica | Sudáfrica (arancel 62 %), UE (fuera de cuota) |
+| Condición de acceso a verificar | Arabia Saudita, EAU y Golfo: certificación Halal reconocida; requisitos de faena por verificar (DPV-034) |
 | Sin evidencia de acceso | México, Hong Kong, Reino Unido, Qatar, Kuwait, Omán, Irak, Egipto, Malasia, Indonesia, Rusia |
+
+**Recordatorio:** que un país figure como A no implica que una futura planta del proyecto quede habilitada, que su producto esté autorizado ni que exista un comprador (§1.1).
 
 **SAGyP informa 24 aperturas y 268 reaperturas de mercados (todas las cadenas) en el 1S-2026** (FTE-096), y la prensa habla de ">75 países" para productos avícolas (FTE-064). **No se obtuvo la lista oficial por producto** (DPV-024).
 
@@ -94,12 +111,16 @@
 
 ### 3.1 Situación sanitaria y comercial al 2026-09-29
 
-- **Cerrada desde ago-2025.** La Aduana china (GACC) suspendió la carne aviar argentina tras el caso de IAAP en ponedoras de Los Toldos (BA), **unos cinco meses después de haberla reabierto**. El aviso no indicó causa ni plazo (FTE-092) `[PVDP]`.
-- En feb-2026 China figuraba entre los mercados "en proceso de reapertura" afectados por el nuevo brote (Ranchos, BA) (FTE-057, FTE-032).
-- 2026-07-02: CEPA pide "apoyo político" para reabrirla; el sector considera resueltos los temas técnicos (FTE-076).
-- **Sin evidencia de reapertura** al 2026-09-29. **No se asume reapertura futura.**
+**Formulación adoptada:** *China no se considera actualmente un mercado disponible confirmado para el proyecto; la fecha y el alcance exacto de la suspensión o restricción están pendientes de verificación primaria* (DPV-035).
 
-> **Corrección al registro previo:** [`01_mercado/exportaciones.md` §4.2](../01_mercado/exportaciones.md) indicaba "cerrada desde feb-2026". La evidencia de esta sesión indica cierre desde **ago-2025**. Se registra la contradicción en [`conclusiones_exportacion.md` §9](conclusiones_exportacion.md).
+Hechos diferenciados (todos `[PVDP]`, ninguno verificado contra un documento primario de la GACC o de SENASA):
+
+1. **Argentina logró la reapertura de la carne aviar a China en marzo de 2025** (acuerdo con la GACC, FTE-014; reanudación efectiva informada para abril de 2025, FTE-092).
+2. **Argentina sufrió nuevos eventos de influenza aviar posteriormente** (ago-2025 en Los Toldos, BA; feb-2026 en Ranchos, BA). La prensa (FTE-092) informa que China suspendió las importaciones tras el caso de ago-2025, pero **no se leyó el aviso de la GACC ni una comunicación de SENASA** que confirme fecha, alcance (productos, zonas, establecimientos) y vigencia.
+3. **En julio de 2026 el sector argentino todavía reclamaba la reapertura plena de China** (CEPA pidió "apoyo político", FTE-076).
+4. No se encontró evidencia de reapertura al 2026-09-29. **No se asume reapertura futura.**
+
+> **Nota sobre el registro previo:** [`01_mercado/exportaciones.md` §4.2](../01_mercado/exportaciones.md) indicaba "cerrada desde feb-2026"; una versión anterior de este documento indicaba "desde ago-2025". **Ninguna de las dos fechas se da por confirmada.** Contradicción registrada en [`conclusiones_exportacion.md` §9](conclusiones_exportacion.md) y en DPV-035.
 
 ### 3.2 Cronología
 
@@ -111,11 +132,11 @@
 | feb/mar-2023 | Cierre por el primer brote de IAAP | FTE-014 | [PVDP] |
 | mar-2025 | Acuerdo de reapertura con la GACC, "con habilitación de nuevos productos" (no identificados) | FTE-014 | [PVDP] |
 | ~2025-04-14 | Reanudación efectiva ("el próximo lunes", nota del 2025-04-08); proyección sectorial: USD 150–200 M/año | FTE-092 | [PVDP] |
-| ~ago-2025 | Nuevo cierre (caso de Los Toldos) | FTE-092 | [PVDP] |
-| feb-2026 | Brote en Ranchos; reapertura en trámite queda frenada | FTE-057 | [PVDP] |
-| jul-2026 | CEPA pide apoyo político para reabrir | FTE-076 | [PVDP] |
+| ago-2025 | Caso de IAAP en Los Toldos (BA); la prensa informa una suspensión china | FTE-092 | [PVDP] — **decisión china no verificada en fuente primaria** (DPV-035) |
+| feb-2026 | Brote en Ranchos (BA); la prensa menciona a China entre los mercados afectados | FTE-057 | [PVDP] |
+| jul-2026 | El sector (CEPA) todavía reclama la reapertura plena | FTE-076 | [PVDP] |
 
-**Tiempo abierto:** entre mar-2023 y sept-2026 (~42 meses), China estuvo abierta para Argentina **~4–5 meses (≈ 10–12 %)** `[ESTIMACIÓN]`. En comparación, a Brasil (brote de may-2025) China le levantó la suspensión en ~5,5 meses (FTE-088).
+**Tiempo abierto:** si se confirmaran las fechas informadas por la prensa, entre mar-2023 y sept-2026 China habría estado abierta para Argentina solo unos pocos meses `[ESTIMACIÓN condicionada a DPV-035; no usar como dato]`. En comparación, a Brasil (brote de may-2025) China le levantó la suspensión en ~5,5 meses (FTE-088).
 
 ### 3.3 Productos exportados históricamente
 
@@ -125,7 +146,7 @@ Garras (patas), alas, pata-muslo, pollo entero (FTE-014) y trozos deshuesados (F
 
 | Indicador | Valor | Período | Fuente | Estado |
 |---|---|---|---|---|
-| Precio medio de importación de garras en China (todas las procedencias; base CIF probable) | **3.519 USD/t** (−3,8 %) | 2025 | USDA ATO Guangzhou (FTE-089) | [PVDP] |
+| Precio medio de importación de garras en China (todas las procedencias; base CIF probable) — **PRELIMINAR** | 3.519 USD/t (−3,8 %) | 2025 | USDA ATO Guangzhou (FTE-089) | [PVDP] |
 | Ídem, diciembre | 3.104 USD/t (−16,3 % interanual) | dic-2025 | FTE-089 | [PVDP] |
 | Proveedores de garras a China | Brasil 47,9 % (−47,8 % en volumen por su suspensión), Rusia 25,9 %, Tailandia, EE.UU., Belarús | 2025 | FTE-089 | [PVDP] |
 | Argentina y Chile | >10.000 t cada uno (productos avícolas a China, crecimiento rápido) | 2025 | FTE-089 | [PVDP] |
@@ -134,7 +155,7 @@ Garras (patas), alas, pata-muslo, pollo entero (FTE-014) y trozos deshuesados (F
 | Otras cotizaciones de garras argentinas | 1.400 y 1.050 USD/t | fecha incierta | FTE-136 | [PVDP · débil] |
 | Precio medio de toda la exportación argentina | 1.050–1.200 USD/t | 2023–2026 | [`01_mercado/exportaciones.md`](../01_mercado/exportaciones.md) | [ESTIMACIÓN] |
 
-**Lectura:** en el mercado interno las garras valen muy poco o se destinan a harina; en China se pagan como un producto de consumo (snack, gastronomía). Es el caso más claro de **diferencia de valor por destino**. Sin China, las garras argentinas van a mercados de menor precio (Vietnam, Hong Kong, Medio Oriente de segunda calidad) o a rendering. **Los precios de garras disponibles son débiles y no comparables** (CIF China vs cotizaciones FOB de fecha incierta).
+**Lectura:** en el mercado interno las garras valen muy poco o se destinan a harina; en China se pagan como un producto de consumo (snack, gastronomía). Es el caso más claro de **diferencia de valor por destino**. Sin China, las garras argentinas van a mercados de menor precio (Vietnam, Hong Kong, Medio Oriente de segunda calidad) o a rendering. **Los precios de garras disponibles son preliminares, débiles y no comparables** (CIF China vs cotizaciones FOB de fecha incierta). **No se usan para calcular la rentabilidad del proyecto** (SUP-018); eso se hará con precios FOB reales y cotizaciones comerciales (DPV-026).
 
 ### 3.5 Precios históricos (efecto China)
 
@@ -142,7 +163,7 @@ Garras (patas), alas, pata-muslo, pollo entero (FTE-014) y trozos deshuesados (F
 |---|---|---|---|---|
 | 2022 | Abierta (60 % del valor) | ~1.743 USD/t | derivado de FTE-026 | [ESTIMACIÓN] |
 | 2023 | Cerrada | ~1.123 USD/t | derivado de FTE-025 | [ESTIMACIÓN] |
-| 2025 | Abierta ~4 meses | ~1.196 USD/t (definición amplia) | derivado de FTE-020 | [ESTIMACIÓN] |
+| 2025 | Abierta parte del año (período exacto pendiente, DPV-035) | ~1.196 USD/t (definición amplia) | derivado de FTE-020 | [ESTIMACIÓN] |
 | ene–feb 2026 | Cerrada | 1.050–1.056 USD/t | FTE-032 | [PVDP · débil] |
 | Proyección sectorial al reabrir (2025) | 80.000 t/año por ~USD 200 M | ≈ 2.500 USD/t | FTE-092 | [ESTIMACIÓN · débil] |
 
@@ -157,7 +178,7 @@ Garras (patas), alas, pata-muslo, pollo entero (FTE-014) y trozos deshuesados (F
 
 | Riesgo | Evidencia |
 |---|---|
-| **Cierre sanitario largo y asimétrico** | Abierta ~10–12 % del tiempo desde mar-2023. China no aplicó a Argentina la regionalización que sí aplican Arabia Saudita, EAU o Vietnam |
+| **Cierres sanitarios largos y asimétricos** | Cerrada entre 2023 y 2025 (~2 años); nuevas restricciones reportadas tras los eventos de 2025–2026 (alcance pendiente, DPV-035). No hay evidencia de que China aplique a Argentina la regionalización que sí aplican Arabia Saudita, EAU o Vietnam |
 | **Decisión política, no solo técnica** | El sector pide "apoyo político" con los temas técnicos resueltos (FTE-076) |
 | Mercado estructuralmente saturado | Producción china creciente; importaciones decrecientes (FTE-090) |
 | Competencia de Brasil y Rusia | Brasil reinstalado desde nov-2025; Rusia gana participación (FTE-088, FTE-089) |
@@ -186,6 +207,8 @@ Garras (patas), alas, pata-muslo, pollo entero (FTE-014) y trozos deshuesados (F
 
 ### 4.2 Certificación
 
+**Lo que sí puede afirmarse (sujeto a la normativa vigente):** las importaciones de carne y productos aviares de Arabia Saudita, EAU y demás países del Golfo **requieren certificación Halal emitida por organismos reconocidos por la autoridad del país importador**. Todo lo demás de esta sección y de la siguiente está pendiente de verificación normativa primaria (DPV-034).
+
 | Requisito | Contenido | Fuente | Estado |
 |---|---|---|---|
 | Base sanitaria | Planta habilitada por SENASA para exportar y listada para el destino | FTE-082 | [PVDP] |
@@ -194,36 +217,36 @@ Garras (patas), alas, pata-muslo, pollo entero (FTE-014) y trozos deshuesados (F
 | Arabia Saudita 2026 | Registro de la empresa en la plataforma de la SFDA, certificado de instalaciones Halal y **certificado Halal por lote** emitido en la plataforma | FTE-138 | [PVDP · débil] (fuente: consultora española) |
 | Reconocimiento de certificadoras argentinas por la SFDA y EAU | **No verificado** | — | DPV-030 |
 
-### 4.3 Requisitos de faena
+### 4.3 Requisitos de faena (no verificados en normativa oficial)
 
-- Faena por matarife musulmán registrado, con invocación, degüello que corte tráquea, esófago y vasos del cuello, y sangrado completo; presencia de inspector de la certificadora (FTE-082) `[PVDP]`.
-- **Arabia Saudita prohíbe desde mayo de 2018 todo aturdimiento o inmovilización previa** en aves (aplicación de GSO 993 por la SFDA). Por esa razón EE.UU. no exporta pollo a Arabia Saudita y la SFDA suspendió 11 plantas brasileñas en 2021 (FTE-113, FTE-114) `[PVDP]`.
-- Brasil opera líneas Halal **separadas**, con matarifes musulmanes, lavado ritual y espacio de oración; solo algunas empresas (tres, según una fuente sin fecha) ofrecen pollo sin aturdimiento (FTE-115) `[PVDP · débil]`.
-- GSO 993:2015 **admitiría el degüello mecánico automatizado** pero no el aturdimiento, según una organización Halal estadounidense (FTE-115) `[PVDP · débil]`. Si la SFDA acepta degüello mecánico **no está verificado** (DPV-030).
-- EAU y otros destinos podrían aceptar aturdimiento no letal: **no verificado** (DPV-030).
+**Advertencia:** no se leyó la normativa oficial vigente de la SFDA, de EAU ni de la GSO. Lo siguiente proviene de fuentes secundarias y **no se presenta como requisito confirmado**. Queda todo en DPV-034.
 
+- Según la certificadora local, la faena Halal requiere matarife musulmán registrado, invocación, degüello que corte tráquea, esófago y vasos del cuello, sangrado completo y presencia de inspector de la certificadora (FTE-082) `[PVDP]`.
+- **Aturdimiento en Arabia Saudita:** fuentes secundarias (informes del USDA y prensa, FTE-113, FTE-114) reportan que la SFDA restringió o prohibió el aturdimiento o la inmovilización de aves a partir de 2018, y que ese tema motivó conflictos con exportadores de EE.UU. y Brasil. **No se verificó** si existe hoy una prohibición normativa específica, para qué productos y procesos aplica, ni si se admite el aturdimiento reversible (DPV-034).
+- Otras fuentes secundarias indican que la norma GSO 993:2015 admitiría el degüello mecánico y restringiría el aturdimiento (FTE-115) `[PVDP · débil]`; y que Brasil opera líneas Halal separadas (FTE-115) `[PVDP · débil]`.
+- EAU, Qatar, Kuwait y otros: métodos admitidos **no verificados** (DPV-034).
 ### 4.4 Trazabilidad, segregación y adaptación de línea
 
 | Aspecto | Implicancia | Tipo |
 |---|---|---|
 | Trazabilidad por lote | Identificar lotes Halal desde el degüello hasta el contenedor; certificado por lote (Arabia Saudita) | Operativa y de sistema |
 | Segregación | Evitar mezcla con producto no Halal en cámaras, empaque y, en elaborados, con ingredientes no Halal | Layout y procedimientos |
-| Puesto de degüello | Espacio para matarifes (el ritmo de la línea queda limitado por su cantidad y rotación), eventual **by-pass del aturdidor** o aturdimiento compatible según destino | Diseño de línea |
+| Puesto de degüello | Posible necesidad de espacio para matarifes certificados; el efecto sobre el ritmo de línea y sobre el aturdimiento depende de requisitos **no verificados** | A definir cuando se validen los requisitos (DPV-034) |
 | Personal | Matarifes certificados por turno; instalaciones para lavado ritual y oración (práctica brasileña) | Costo operativo y obra civil menor |
-| Bienestar animal | La faena sin aturdimiento puede entrar en conflicto con normas de bienestar animal de SENASA (Decreto 4238/68, capítulo de bienestar) y de otros compradores (UE). Requiere verificar la excepción por rito religioso en la normativa argentina | Regulatorio y reputacional (DPV-030) |
-| Alternancia de destinos | Operar la misma línea con aturdimiento (UE, mercado interno) y sin aturdimiento (Arabia Saudita) exige procedimientos de cambio y segregación | Complejidad operativa |
+| Bienestar animal | Si algún destino exigiera condiciones de aturdimiento distintas de las nacionales, habría que verificar su compatibilidad con las normas de bienestar animal de SENASA (Decreto 4238/68) y de otros compradores (UE) | Regulatorio y reputacional (DPV-034) |
+| Compatibilidad entre línea convencional y operación Halal | Si los requisitos de faena difieren entre destinos, operar una misma línea para mercado interno, UE y destinos Halal exigiría procedimientos de cambio y segregación | A verificar (DPV-034) |
 
-**Costos:** no se obtuvieron costos de certificación, de matarifes ni de pérdida de productividad o calidad (hematomas sin aturdimiento). **Faltante registrado (DPV-030).**
+**Costos:** no se obtuvieron costos de certificación, de matarifes ni de efectos sobre productividad o calidad. **Faltante registrado (DPV-030, DPV-034).**
 
 ### 4.5 ¿Conviene diseñar la planta para certificar Halal más adelante?
 
 | A favor | En contra / límites |
 |---|---|
 | Los mercados Halal (Golfo, Irak, parte de África y Asia) son un bloque importador grande y ya reconocen la regionalización argentina (Arabia Saudita, EAU) | **Halal no garantiza ventas:** el precio lo fija Brasil y Arabia Saudita reduce sus importaciones |
-| Prever espacio, flujo y segregación en el diseño suele ser más barato que reformar una planta en operación `[SUPUESTO a validar con proveedores en fase posterior]` | El requisito saudita sin aturdimiento condiciona el diseño y el bienestar animal; no todos los destinos Halal lo exigen |
+| Prever espacio, flujo y segregación en el diseño suele ser más barato que reformar una planta en operación `[SUPUESTO a validar con proveedores en fase posterior]` | Los requisitos de faena por destino (incluido el aturdimiento) no están verificados: invertir antes de conocerlos puede ser inversión prematura |
 | Mercado interno y regional con demanda Halal (nicho) | Costo operativo permanente (matarifes, certificación, auditorías) solo se justifica con volumen exportado |
 
-**Conclusión de esta fase:** es razonable que el diseño conceptual de una eventual planta **no impida** la certificación Halal (layout con espacio para el puesto de degüello manual, posibilidad técnica de operar sin aturdimiento o con aturdimiento compatible, segregación de cámaras y trazabilidad por lote). **No** se justifica, con la evidencia actual, dedicar capacidad ni asumir ventas Halal. Decisión registrada como DEC-012.
+**Conclusión de esta fase:** el principio de diseño es un **diseño que preserve la posibilidad de incorporar procesos y certificaciones Halal una vez definidos los mercados objetivo y sus requisitos específicos**. **No** se diseña todavía ninguna línea especial (en particular, **no** una línea sin aturdimiento), no se dedica capacidad y no se asumen ventas Halal. El objetivo es evitar inversiones prematuras basadas en requisitos no validados (DEC-012, DPV-034).
 
 ---
 

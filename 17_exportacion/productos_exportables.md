@@ -3,6 +3,7 @@
 **Fecha de referencia:** 2026-09-29 · **Versión:** 1 · Datos: [`datos_exportacion.csv`](datos_exportacion.csv) · Fuentes: [`registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv)
 
 > **Verificación:** ninguna cifra verificada contra el documento original (lectura directa bloqueada). Los precios de sitios comerciales o de fecha incierta se marcan `[PVDP · débil]` y **no deben usarse para modelar**, solo para ordenar productos por magnitud.
+> **TODOS LOS PRECIOS DE ESTE DOCUMENTO SON PRELIMINARES.** Provienen de fuentes comerciales, estimaciones propias o mercados distintos al argentino. **No se usan para calcular la rentabilidad del proyecto** (SUP-018) — en particular, **no** los ~3.500 USD/t de garras (precio de importación en China, base CIF, todas las procedencias). La rentabilidad se calculará más adelante con precios FOB reales y cotizaciones comerciales (DPV-026, DPV-032).
 > **Regla de comparación:** no se comparan precios de productos distintos (entero vs cortes vs procesados), ni bases distintas (FOB vs CIF vs mayorista interno) como si fueran equivalentes. Cada precio indica producto, origen/destino, base, fecha y fuente.
 
 ---
@@ -13,14 +14,14 @@ Códigos de referencia (Sistema Armonizado): 0207.11–0207.14 carne y despojos 
 
 | Producto | Principales mercados compradores (evidencia) | Formato habitual | Congelado / refrigerado | Valor aproximado (ver §2) | Requisitos especiales |
 |---|---|---|---|---|---|
-| **Pollo entero congelado** | Medio Oriente (Arabia Saudita, EAU, Qatar), Irak, Egipto, África, Chile | "Griller" de peso chico (ej.: ≥800 g), bolsa individual, caja de 10 aves / 10 kg | Congelado (−18 °C o menos) | Brasil FOB 1.569–2.316 USD/t según destino (2025) | Halal para Medio Oriente (Arabia Saudita sin aturdimiento); calibración estricta de peso |
+| **Pollo entero congelado** | Medio Oriente (Arabia Saudita, EAU, Qatar), Irak, Egipto, África, Chile | "Griller" de peso chico (ej.: ≥800 g), bolsa individual, caja de 10 aves / 10 kg | Congelado (−18 °C o menos) | Brasil FOB 1.569–2.316 USD/t según destino (2025) | Certificación Halal reconocida para Medio Oriente (requisitos de faena por verificar, DPV-034); calibración estricta de peso |
 | **Pollo entero refrigerado** | Mercado interno y países limítrofes | Bandeja o bolsa, cajón | Refrigerado (0–4 °C), vida útil de días | s/d | Solo viable para destinos por camión (Chile, Uruguay, Paraguay, Bolivia) o aéreo; no relevado para Argentina |
 | **Pechuga (filet, supremas)** | UE, Reino Unido, Medio Oriente (shawarma), Japón, Chile; Argentina **importa** pechuga de Brasil | Deshuesada, con o sin piel, IQF o bloque; salada (histórico a la UE) | Congelado; refrigerado solo regional | Medio Oriente CIF 2.700 USD/t (mínimo histórico, may-2025); UE mayorista interno 6,26 €/kg (jul-2026) | Especificación de calibre, grasa, huesos; para UE cuota o arancel alto |
 | **Pata-muslo (con hueso)** | China (histórico), Vietnam, Chile, África, Medio Oriente | Pieza con hueso, IQF o en bloque | Congelado | Referencia de cuartos (§ siguiente) | — |
 | **Cuartos traseros (*leg quarters*)** | México, Angola, Vietnam, Filipinas, Cuba, África; referencia Platts CIF Jebel Ali | Bloque de 15 kg o IQF | Congelado | EE.UU.: ~1.100–1.200 USD/t (2024) | Es el producto "excedente" de EE.UU.: techo bajo de precio |
 | **Muslo deshuesado** | **Japón** (principal), Corea | Deshuesado, calibrado (ej.: 200 g y más), IQF | Congelado | Precio mayorista en Japón ¥370–650/kg (2025–2026) | Especificación japonesa estricta; mano de obra de deshuese |
 | **Alas** | China, Hong Kong, Vietnam, Filipinas; gastronomía | Enteras o en trozos (drumette, flat), IQF | Congelado | s/d confiable | Clasificación por tamaño y aspecto (sin hematomas) |
-| **Patas / garras** | **China**, Hong Kong, Vietnam; segunda calidad a Medio Oriente | Peladas, sin callos, clasificadas por grado (A/B), caja de 10–20 kg | Congelado | China importación ~3.519 USD/t (2025); cotizaciones argentinas 1.050–2.800 USD/t (débiles) | Registro GACC; pelado y clasificación; la calidad (lesiones plantares) define el grado |
+| **Patas / garras** | **China**, Hong Kong, Vietnam; segunda calidad a Medio Oriente | Peladas, sin callos, clasificadas por grado (A/B), caja de 10–20 kg | Congelado | Preliminar: China importación ~3.519 USD/t CIF (2025); cotizaciones argentinas 1.050–2.800 USD/t (débiles) | Registro GACC; pelado y clasificación; la calidad (lesiones plantares) define el grado |
 | **Menudencias (hígado, corazón, molleja, cogote)** | África (Sudáfrica, RD Congo, Angola, Ghana), China | Bloque de 10–15 kg | Congelado | Sitios comerciales: hígado 300–450 USD/t; molleja 400–800 USD/t | Bajo valor: el flete pesa mucho en el precio final |
 | **Carne deshuesada / recortes** | UE, Japón, industria | Bloque o IQF | Congelado | s/d | Especificación por uso |
 | **CMS (carne mecánicamente separada / MDM)** | Filipinas (>60 % del pollo que importa de Brasil), Sudáfrica, México; Argentina la importa de Brasil | Bloque de 10–20 kg | Congelado | Brasil FOB 400–600 USD/t (sitio comercial) | Equipos de separación; microbiología estricta |
@@ -37,7 +38,7 @@ Fuentes de la tabla: FTE-087, FTE-089, FTE-111, FTE-112, FTE-118, FTE-119, FTE-1
 
 ## 2. Precios internacionales de referencia
 
-### 2.1 Tabla de precios
+### 2.1 Tabla de precios (preliminar: referencia de orden de magnitud, no apta para calcular rentabilidad)
 
 | ID CSV | Producto | Origen → destino | Base | Fecha | Valor | Unidad | Fuente | Estado |
 |---|---|---|---|---|---|---|---|---|
@@ -75,7 +76,7 @@ Tipo de cambio: los valores en ¥ y € se dejan en su moneda original (sin conv
 ### 2.2 Lectura: diferencias por producto y por destino
 
 1. **Por producto (orden de magnitud, no precios de modelo):** harinas y CMS (cientos de USD/t) < menudencias < cuartos traseros y entero congelado (~1.100–2.300 USD/t) < cortes y pechuga (~2.700–2.900 USD/t en importación/CIF) < garras en China (~3.100–3.500 USD/t CIF) y cocidos (~3.300 USD/t promedio tailandés). **Las garras son una parte de bajo peso y valor interno que en China se paga como un corte.**
-2. **Por destino (mismo producto):** el entero congelado brasileño se vendió en mar-2025 entre 1.569 USD/t (Egipto) y 2.316 USD/t (Arabia Saudita): **~48 % de diferencia** según destino `[ESTIMACIÓN]`. Arabia Saudita paga más, pero exige Halal sin aturdimiento.
+2. **Por destino (mismo producto):** el entero congelado brasileño se vendió en mar-2025 entre 1.569 USD/t (Egipto) y 2.316 USD/t (Arabia Saudita): **~48 % de diferencia** según destino `[ESTIMACIÓN]`. Arabia Saudita paga más, pero exige certificación Halal reconocida (requisitos de faena por verificar, DPV-034). Precios preliminares de una consultora.
 3. **Argentina vende barato:** su precio medio (~1.050–1.200 USD/t) está debajo del promedio brasileño (~1.839 USD/t) `[ESTIMACIÓN]`, porque su mix es de partes de menor valor (menudos, garras de 2ª, cuartos) y porque sin China pierde el destino que mejor paga las garras. Argentina **importa** producto a ~2.660 USD/t (pechuga, prefritos).
 4. **Volatilidad:** la pechuga en Medio Oriente tocó un mínimo histórico (2.700 USD/t CIF) en may-2025 por el cierre de China y otros a Brasil; las garras cayeron 16,3 % interanual a dic-2025. Los precios internacionales se mueven con **eventos sanitarios de los grandes exportadores**, no con la demanda de fondo.
 

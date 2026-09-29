@@ -65,7 +65,7 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Derechos de exportación (DEX) | Impuesto argentino sobre el valor FOB exportado ("retenciones"). |
 | Cuarto trasero (*leg quarter*) | Pata-muslo con parte del lomo; principal producto de exportación de carne oscura de EE.UU. |
 | Griller | Pollo entero de peso chico, congelado, típico de la exportación a Medio Oriente. |
-| Aturdimiento | Insensibilización del ave antes del degüello (eléctrico o por gases). Exigido por normas de bienestar animal; prohibido por Arabia Saudita para la faena Halal de aves. |
+| Aturdimiento | Insensibilización del ave antes del degüello (eléctrico o por gases). Exigido por normas de bienestar animal. Su admisión en la faena Halal de aves varía según el país y la certificadora (Arabia Saudita: pendiente de verificación normativa, DPV-034). |
 | GACC | Administración General de Aduanas de China; registra las plantas extranjeras autorizadas a exportar alimentos a China. |
 | SFDA | *Saudi Food and Drug Authority*, autoridad sanitaria de Arabia Saudita; designa las certificadoras Halal reconocidas. |
 | Plan CREHA | Plan Nacional de Control de Residuos e Higiene en Alimentos de SENASA; su aprobación es condición de acceso a la UE. |
