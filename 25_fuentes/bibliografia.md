@@ -10,6 +10,8 @@ Formato sugerido: `FTE-### — Autor/Organismo (año). Título. Editorial/Sitio.
 
 > **Nota (2026-09-29, sesión de demanda):** FTE-140 y FTE-141 se consultaron solo mediante extractos de buscador (lectura directa bloqueada). Quedan PENDIENTES DE VERIFICACIÓN DOCUMENTAL PRIMARIA. Las entrevistas de campo de la validación de demanda se registrarán con `tipo_fuente = entrevista`.
 
+> **Nota (2026-09-29, sesión de producción primaria):** FTE-142 a FTE-160 se consultaron solo mediante extractos de buscador; el acceso directo a Cobb, Aviagen, SENASA, INTA y argentina.gob.ar volvió a estar bloqueado. Todas quedan PENDIENTES DE VERIFICACIÓN DOCUMENTAL PRIMARIA (DPV-009, DPV-045, DPV-046). FTE-151 se clasifica B (trabajo académico) y FTE-153 B (análisis sectorial con autores a identificar).
+
 ## Organismos oficiales argentinos
 _(SENASA, Secretaría de Agricultura, Ganadería y Pesca, INTA, INTI, INDEC, organismos provinciales)_
 
@@ -45,6 +47,12 @@ _(SENASA, Secretaría de Agricultura, Ganadería y Pesca, INTA, INTI, INDEC, org
 - FTE-110 — SENASA (2026). *Plan CREHA Animal - Plan Nacional de Control de Residuos e Higiene en Alimentos*. https://www.argentina.gob.ar/senasa/programas-sanitarios/plan-creha/plan-creha-animal. Consultado 2026-09-29. Confiabilidad A.
 - FTE-132 — Cancillería Argentina (2023). *Argentina regained UK market for poultry and poultry products*. https://www.cancilleria.gob.ar/en/announcements/news/argentina-regained-uk-market-poultry-and-poultry-products. Consultado 2026-09-29. Confiabilidad A.
 - FTE-141 — INDEC (2023). *Censo Nacional de Población, Hogares y Viviendas 2022 — resultados (total país; CABA y 24 partidos del Gran Buenos Aires)*. https://censo.gob.ar/index.php/datos_definitivos_total_pais/. Consultado 2026-09-29. Confiabilidad A.
+- FTE-145 — SENASA (2018). *Resolución SENASA 575/2018 — Bienestar animal en sistemas de producción de pollos de engorde (y Res. 542/2010 veterinario responsable)*. https://www.argentina.gob.ar/normativa/nacional/norma-314358/texto. Consultado 2026-09-29. Confiabilidad A.
+- FTE-146 — SENASA (2019). *Resolución SENASA 1699/2019 — Requisitos de bioseguridad, higiene y manejo sanitario para la habilitación de establecimientos avícolas comerciales; Guía rápida de habilitación de granjas*. https://www.argentina.gob.ar/normativa/nacional/resoluci%C3%B3n-1699-2019-333207/texto. Consultado 2026-09-29. Confiabilidad A.
+- FTE-147 — SENASA; SAGyP (citadas en Motivar, Engormix y publicaciones técnicas) (2010-2013). *Resoluciones SENASA 546/2010 y 106/2013 — manejo y reutilización de cama de pollo; Buenas prácticas de manejo de cama (SAGyP)*. https://www.magyp.gob.ar/sitio/areas/aves/informes/otros/_archivos/151216_Buenas%20Practicas%20de%20Manejo%20y%20Utilizacion%20de%20Cama%20de%20Pollo%20y%20Guano%20de%20Gallina.pdf. Consultado 2026-09-29. Confiabilidad A.
+- FTE-148 — SENASA (2016). *Resolución SENASA 86/2016 — Programa de vigilancia y control de Salmonella spp. en granjas avícolas comerciales (manual de procedimientos 2018); Res. 882/2002 reproductoras*. https://www.argentina.gob.ar/sites/default/files/2._manual_de_procedimientos_operativos_vigilancia_y_control_de_salmonella_spp._en_granjas_avicolas_comerciales_-res._senasa_ndeg_86.2016._version_2018_0.pdf. Consultado 2026-09-29. Confiabilidad A.
+- FTE-149 — SENASA (2017). *Compartimentos libres de influenza aviar y enfermedad de Newcastle — Resolución SENASA 484/2017*. https://www.argentina.gob.ar/influenza-aviar/compartimentos-libres-de-influenza-aviar-y-enfermedad-de-newcastle. Consultado 2026-09-29. Confiabilidad A.
+- FTE-150 — SAGyP - Área Avícola (2019-2025). *Relevamiento Integral de Granjas de Pollos Parrilleros — Superficie cubierta y capacidad instalada (2019)*. https://www.magyp.gob.ar/sitio/areas/aves/encuesta/_archivos/250000_Relevamiento%20Granjas%20Pollos%20SAGyP%20-%20Superficie%20cubierta%20y%20Capacidad%20Instalada.pdf. Consultado 2026-09-29. Confiabilidad A.
 
 ## Organismos internacionales
 _(FAO, USDA, OMSA/WOAH, Codex Alimentarius)_
@@ -66,12 +74,19 @@ _(FAO, USDA, OMSA/WOAH, Codex Alimentarius)_
 - FTE-124 — OCDE - FAO (2025). *OECD-FAO Agricultural Outlook 2025-2034 - Meat*. https://www.oecd.org/en/publications/2025/07/oecd-fao-agricultural-outlook-2025-2034_3eb15914/full-report/meat_5462e384.html. Consultado 2026-09-29. Confiabilidad A.
 - FTE-125 — USDA FAS (GAIN) Ciudad de México (2026). *Mexico: Poultry and Products Semi-annual (MX2026-0016)*. https://www.fas.usda.gov/data/gain/2026/03/mexico-poultry-and-products-semi-annual. Consultado 2026-09-29. Confiabilidad A.
 - FTE-139 — USDA (ERS / WAOB) (2026). *Livestock, Dairy, and Poultry Outlook (feb-2026)*. https://www.usda.gov/sites/default/files/documents/2026AOF-livestock-poultry-outlook.pdf. Consultado 2026-09-29. Confiabilidad A.
+- FTE-144 — Unión Europea (EUR-Lex); MAPA España (2007). *Directiva 2007/43/CE del Consejo relativa a la protección de los pollos destinados a la producción de carne (resumen EUR-Lex; RD 692/2010 España)*. https://eur-lex.europa.eu/ES/legal-content/summary/animal-welfare-protection-of-chickens-kept-for-meat-production.html. Consultado 2026-09-29. Confiabilidad A.
+- FTE-159 — Unión Europea (BOE / EUR-Lex) (2005). *Reglamento (CE) 1/2005 relativo a la protección de los animales durante el transporte*. https://www.boe.es/buscar/doc.php?id=DOUE-L-2005-80006. Consultado 2026-09-29. Confiabilidad A.
 
 ## Documentación técnica
 _(manuales de líneas genéticas, fabricantes, normas, papers)_
 
 - FTE-062 — UNLP (SEDICI / Revista Aportes) (s/f). *El complejo agroindustrial avícola argentino: reconversión (documento académico)*. http://sedici.unlp.edu.ar/bitstream/handle/10915/1783/Documento_completo.pdf-PDFA.pdf?sequence=1&isAllowed=y. Consultado 2026-09-29. Confiabilidad B.
 - FTE-140 — Cobb-Vantress (s/f). *Cobb500 Broiler Yield (póster de rendimientos) / Broiler Performance & Nutrition Supplement*. https://www.cobbgenetics.com/assets/Cobb-Files/Broiler-Yield-Poster-English.pdf. Consultado 2026-09-29. Confiabilidad A.
+- FTE-142 — Aviagen (2022). *Ross 308 / Ross 308 FF Broiler Performance Objectives 2022*. https://aviagen.com/assets/Tech_Center/Ross_Broiler/RossxRoss308-BroilerPerformanceObjectives2022-EN.pdf. Consultado 2026-09-29. Confiabilidad A.
+- FTE-143 — Aviagen (2025). *Ross Broiler Management Handbook 2025 / Environmental Management in the Broiler House*. https://aviagen.com/assets/Tech_Center/Ross_Broiler/Aviagen-ROSS-Broiler-Handbook-EN.pdf. Consultado 2026-09-29. Confiabilidad A.
+- FTE-151 — De Luca, A. F. (FAUBA - Universidad de Buenos Aires) (2015). *Impacto sobre los indicadores productivos según el tipo de galpón (convencional vs tecnificado) en pollos parrilleros de Entre Ríos*. https://ri.agro.uba.ar/files/download/articulo/AA2015delucaaugustofabian.pdf. Consultado 2026-09-29. Confiabilidad B.
+- FTE-152 — Bueno, D. J. (INTA EEA Concepción del Uruguay) - Revista FAVE/SciELO (2016). *Producción de pollos parrilleros en países sudamericanos y planes sanitarios nacionales para el control de Salmonella*. https://repositorio.inta.gob.ar/xmlui/bitstream/handle/20.500.12123/5197/INTA_CREntreRios_EEAConcepcion_Bueno_DJ_Producci%C3%B3n_de_pollos_parrilleros_en_pa%C3%ADses_sudamericanos.pdf. Consultado 2026-09-29. Confiabilidad A.
+- FTE-160 — Aviagen; Engormix; Escuela Agrícola Panamericana Zamorano (2024-2025). *Aviagen — Optimizando la nutrición del pollo de engorde moderno / Suplemento nutricional pollo de engorde 2025; literatura sobre aminoácidos en dietas maíz-soja (Engormix, Zamorano)*. https://aviagen.com/assets/Tech_Center/BB_Foreign_Language_Docs/Spanish_TechDocs/Aviagen_Ross_BroilerNutritionSupplement_ES.pdf. Consultado 2026-09-29. Confiabilidad B.
 
 ## Cámaras sectoriales y fuentes comerciales
 _(uso complementario; identificar como tales)_
@@ -171,6 +186,12 @@ _(uso complementario; identificar como tales)_
 - FTE-136 — B2Argentina; Soychú; Bichos de Campo (s/f). *Cotizaciones de garras de pollo de Argentina (B2Argentina) / Soychú exports to China*. https://b2argentina.com.ar/hotsite/marc/patas-de-pollo-para-exportar-a-china. Consultado 2026-09-29. Confiabilidad C.
 - FTE-137 — Tradewheel; Brazil Poultry Food; Feed Ingredients Asia; Accio (2025-2026). *Ofertas comerciales de CMS, menudencias y harina de plumas*. https://www.feedingredientsasia.com/en/market-insights/pricing-indices/feather-meal-price-index-2026-transportation-bulk. Consultado 2026-09-29. Confiabilidad C.
 - FTE-138 — Instituto Halal (España) (2026). *Exportar a Arabia Saudí en 2026: registro obligatorio en la plataforma SFDA y certificado Halal por lote*. https://institutohalal.com/exportar-arabia-saudi-registro-sfda-certificado-halal-lote/. Consultado 2026-09-29. Confiabilidad C.
+- FTE-153 — Engormix / Motivar / Agroempresario (autores del INTA/universidad a identificar) (s/f). *La etapa integrada de producción de parrilleros: algunos elementos para su análisis*. https://www.engormix.com/avicultura/manejo-pollo-engorde/etapa-integrada-produccion-parrilleros_a43606/. Consultado 2026-09-29. Confiabilidad B.
+- FTE-154 — Vetifarma (2022). *Pollo parrillero: evolución, producción y alimentación*. https://www.vetifarma.com.ar/publicaciones/aves/pollo-parrillero-evolucion-produccion-y-alimentacion-10-24-2022/. Consultado 2026-09-29. Confiabilidad C.
+- FTE-155 — Varios (prensa técnica) (s/f). *Relación agua/alimento y consumo de agua en pollos de engorde (El Sitio Avícola; Engormix; Cátedra Avícola; produccion-animal.com.ar)*. https://www.elsitioavicola.com/articles/1755/consumo-de-agua-en-pollos/. Consultado 2026-09-29. Confiabilidad C.
+- FTE-156 — Redalyc/Amelica (Ecuador); Sitio Argentino de Producción Animal; aviNews (s/f). *Mortalidad en transporte y ayuno prefaena (estudio de factores de riesgo granja-planta en la región interandina; Ayuno, captura y transporte - produccion-animal.com.ar; aviNews)*. https://www.redalyc.org/journal/6538/653869486007/html/. Consultado 2026-09-29. Confiabilidad B.
+- FTE-157 — Prensa regional y nacional (2020-2026). *Mortandades de pollos por calor y fallas eléctricas (APFDigital 2026-03-31; Paralelo32; La Nación, Santa Fe)*. https://www.apfdigital.com.ar/noticias/2026/03/31/451090-un-bajon-de-luz-provoco-la-muerte-de-miles-de-pollos-en-una-granja-entrerriana. Consultado 2026-09-29. Confiabilidad C.
+- FTE-158 — Varios (prensa técnica y fichas comerciales) (s/f). *Consumo de energía en granjas de pollos (Virtualpro; construccion-granjas.com; fichas de criadoras a gas)*. https://www.virtualpro.co/articulos/observado-el-uso-de-energia-por-granjas-de-pollos-de-engorde-y-de-ponedoras-157505. Consultado 2026-09-29. Confiabilidad C.
 
 ## Cotizaciones
 _(proveedor, fecha, validez; archivos en la carpeta temática correspondiente)_

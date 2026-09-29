@@ -85,3 +85,34 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Pipeline comercial | Registro de clientes potenciales con su volumen estimado, categoría de demanda y evidencia, usado para seguir la conversión en ventas. |
 | Precio de lista / neto / cobrado | Lista: precio publicado sin IVA. Neto: después de descuentos, bonificaciones y promociones. Cobrado: efectivo recibido neto de devoluciones, débitos y costo financiero del plazo (`02_clientes_demanda/estrategia_comercial.md` §2). |
 | Partes vinculadas | Personas o empresas relacionadas por propiedad o control (por ejemplo, un inversor que es también dueño de un cliente). |
+| FCR de campo | Alimento total entregado a un lote / kg vivo cargado (incluye el alimento comido por aves que murieron). Base usada en `03_produccion_primaria` (SUP-028). Distinto del FCR biológico, del FCR corregido a peso estándar y del FCR sobre kg recibidos en planta. |
+| Pollitos alojados | Pollitos BB ingresados al galpón al inicio del lote. No confundir con aves cargadas (vivas al final) ni con aves faenadas (llegadas a planta). |
+| DOA (*dead on arrival*) | Aves que llegan muertas a la planta de faena; se expresa como % de las aves cargadas. |
+| Merma (de transporte) | Pérdida de peso vivo entre la granja y la planta, causada sobre todo por el ayuno. |
+| Ayuno prefaena | Retiro del alimento (no del agua) horas antes de la captura para vaciar el tracto digestivo; se planifica el ayuno total hasta el colgado. |
+| Todo adentro – todo afuera (*all-in, all-out*) | Manejo en que una granja aloja aves de una sola edad y se vacía por completo antes del lote siguiente. |
+| Intervalo entre lotes | Días entre la salida de un lote y el alojamiento del siguiente: captura, cama, lavado, desinfección, vacío sanitario y preparación. |
+| Capacidad de alojamiento | Pollitos que caben en los galpones al alojar (suma de galpones). Producción anual = capacidad × ciclos/año × supervivencia. |
+| Inventario promedio de aves | Aves vivas presentes en promedio en el conjunto de granjas (menor que la capacidad porque los galpones pasan días vacíos). |
+| Densidad (kg/m²) | kg de peso vivo por m² de piso al final de la crianza; medida principal para bienestar y dimensionamiento de galpones. |
+| Raleo | Retiro de parte de las aves de un galpón antes que el resto (p. ej. para un cliente de aves más livianas); reduce la densidad final. |
+| Uniformidad | Homogeneidad de peso del lote: coeficiente de variación (CV) o % de aves dentro de ±10 % del peso medio. |
+| GDP (ganancia diaria de peso) | (peso final − peso inicial) / edad, en g/ave/día. |
+| IEP / FEP | Índice (o factor) de eficiencia productiva = supervivencia % × peso kg / (edad d × FCR) × 100. Resume desempeño y se usa para comparar integrados. |
+| Galpón convencional | Galpón abierto con cortinas laterales y ventilación natural (con ventiladores de apoyo). |
+| Galpón climatizado / tecnificado / blackout | Galpón con cerramiento más estanco, extractores y control automático; "blackout" indica control de la luz natural. |
+| Ventilación túnel | Sistema en que extractores en un extremo y entradas de aire (con paneles evaporativos) en el otro hacen circular el aire a lo largo del galpón a alta velocidad para enfriar a las aves. |
+| Dark house | Galpón túnel sin luz natural, con programa de luz artificial totalmente controlado (difundido en Brasil). |
+| Panel evaporativo (*cooling pad*) | Panel humedecido por el que entra el aire al galpón túnel; la evaporación del agua baja la temperatura del aire. |
+| Ventilación mínima | Renovación de aire mínima para retirar humedad, CO₂ y amoníaco, aun con frío. |
+| Criadora | Equipo de calefacción (en general a gas) para la zona de cría de pollitos en los primeros días. |
+| Precalentamiento | Calentamiento del piso y del aire del galpón antes de la llegada de los pollitos. |
+| Pododermatitis | Lesiones en la planta de las patas asociadas a cama húmeda; indicador de bienestar y determinante del grado comercial de las garras. |
+| Decomiso (condena) | Eliminación total o parcial de una carcasa en la inspección de faena por lesiones o enfermedad. |
+| Compartimentación (compartimento) | Ver "Compartimento libre": conjunto de establecimientos con bioseguridad común reconocido como libre de una enfermedad, independientemente de la geografía (Res. SENASA 484/2017). |
+| Bioseguridad | Conjunto de medidas para evitar la entrada (bioseguridad externa) y la difusión (interna) de agentes de enfermedad en una granja. |
+| Integrado (contrato de integración) | Productor dueño de galpones que cría aves de un integrador a cambio de un pago por ave o por kg, habitualmente con ajustes por desempeño. |
+| Pollo vivo spot | Pollo vivo comprado a productores independientes sin contrato de largo plazo. |
+| Gumboro (IBD) | Bursitis infecciosa: enfermedad viral inmunosupresora de las aves jóvenes; se controla con vacunación y bioseguridad. |
+| Marek | Enfermedad viral de las aves; se vacuna en la planta de incubación. |
+| Coccidiosis | Enfermedad parasitaria intestinal ligada a la cama; empeora conversión y uniformidad. |
