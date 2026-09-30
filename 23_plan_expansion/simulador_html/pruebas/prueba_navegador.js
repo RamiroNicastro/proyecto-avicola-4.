@@ -68,7 +68,7 @@ const chk = (n, ok, d) => res.push([n, !!ok, d || ""]);
   chk("Demanda > capacidad: utilización y cobertura ≤ 100 %, factor > 100 % y demanda no atendida visible",
     nums.every((x) => x <= 100) && parseFloat(fac.replace(/\./g, "")) > 100 && noAt.length > 0, `${util.join(" / ")} · factor ${fac} · no atendida ${noAt}`);
   const alertas = await page.textContent("#alertas");
-  chk("Alertas de demanda > capacidad y demanda documentada ≈ 0 presentes", /excede la escala/.test(alertas) && /Demanda documentada/.test(alertas));
+  chk("Alertas de demanda > capacidad y demanda documentada ≈ 0 presentes", /excede la capacidad instalada/.test(alertas) && /Demanda documentada/.test(alertas));
 
   // A/B/C independientes en la interfaz
   const nombreB = await page.textContent('[data-slot="B"] .det');
@@ -92,6 +92,52 @@ const chk = (n, ok, d) => res.push([n, !!ok, d || ""]);
   const bloq = await page.textContent("#alertas");
   chk("Entrada incompatible (290 días/año con 5 d/sem) bloquea el cálculo", /Entradas incompatibles/.test(bloq));
   await page.fill('#panel-entradas input[data-k="dias_anio"]', "250");
+
+  // --- auditoría semántica ---
+  await page.click('[data-slot="B"]');
+  await page.click('#pestanas [data-p="resumen"]');
+  const comoLeer = await page.textContent("details.como-leer");
+  const cfg = await page.$$eval('#panel-entradas .chip[data-k="config"]', (bs) => bs.map((b) => b.textContent.trim()));
+  chk("Caja «Cómo leer este simulador» visible y configuraciones sin letras A/B/C",
+    /escenarios físicos, no una recomendación de inversión/.test(comoLeer) && cfg.join("|") === "Pollo entero|Trozado|Deshuesado / mayor procesamiento", cfg.join(" | "));
+  // ejemplo 10.000 aves/día al 50 % con demanda que requiere 8.000 aves/día operativo (M0, trozado, 2,9 kg, 250 d)
+  const D = await page.evaluate(() => 8000 * 250 / 365 * window.SimCalculo.kgPorAve(window.SIMULADOR_DATA, "B", 2.9).comestible);
+  await page.fill('#panel-entradas input[type="range"][data-k="utilizacion"]', "50");
+  await page.selectOption('#panel-entradas select[data-k="demanda_id"]', "MANUAL");
+  await page.fill('#panel-entradas input[data-k="demanda_manual_kg"]', String(Math.round(D * 1000) / 1000));
+  await page.click('#pestanas [data-p="demanda"]');
+  const dem = await page.textContent("#vista");
+  const cobOp = (await page.textContent(".metrica.cob .metrica-valor")).trim();
+  chk("Ejemplo 10.000 al 50 % con demanda de 8.000: la interfaz muestra que la capacidad alcanza pero el escenario operativo cubre 62,5 %",
+    cobOp === "62,5 %" && /sí alcanza técnicamente/.test(dem) && /Máxima posible a plena capacidad: 100 %/.test(dem) && /Capacidad ociosa operativa/.test(dem)
+    && /Capacidad disponible respecto de la demanda/.test(dem), `cobertura operativa mostrada: ${cobOp}`);
+  // escala fuera del rango principal (solo desde el modo avanzado)
+  const simple = '#escala-simple';
+  await page.fill(simple, "1000");
+  const noAplicada = (await page.textContent('[data-slot="B"] .det')).startsWith("10.000");
+  await page.fill('#panel-entradas fieldset:has(legend:text("Escala fuera del rango principal")) input[data-k="escala"]', "1000").catch(async () => {
+    await page.click("#avanzado summary");
+    await page.fill('#panel-entradas fieldset:has(legend:text("Escala fuera del rango principal")) input[data-k="escala"]', "1000");
+  });
+  const al = await page.textContent("#alertas") + await page.textContent(".banderas");
+  chk("Modo simple no acepta escalas fuera de 2.500–20.000; el avanzado sí, con «ESCENARIO FUERA DEL RANGO PRINCIPAL ESTUDIADO»",
+    noAplicada && /ESCENARIO FUERA DEL RANGO PRINCIPAL ESTUDIADO/.test(al));
+  // solo demanda documentada + 100 %
+  await page.fill('#panel-entradas input[type="range"][data-k="utilizacion"]', "100");
+  await page.selectOption('#panel-entradas select[data-k="demanda_id"]', "CERO");
+  const v0 = await page.textContent("#vista"), a0 = await page.textContent("#alertas");
+  chk("Solo demanda documentada: «DEMANDA DOCUMENTADA ACTUAL: NO VALIDADA / PRÁCTICAMENTE NULA» y alerta de producción al 100 % sin respaldo",
+    /DEMANDA DOCUMENTADA ACTUAL: NO VALIDADA \/ PRÁCTICAMENTE NULA/.test(v0) && /simula producción al 100 %, pero actualmente no existe demanda documentada/.test(a0));
+  // etiqueta de certeza
+  let validado = false, calculado = false;
+  for (const p of pestanas) {
+    await page.click(`#pestanas [data-p="${p}"]`);
+    const t = await page.textContent("body");
+    if (/validado por modelo/i.test(t)) validado = true;
+    if (/Calculado por modelo/.test(t)) calculado = true;
+  }
+  chk("Etiqueta «Calculado por modelo» (nunca «Validado por modelo») en todas las pestañas", calculado && !validado);
+  if (CAPTURAS) { await page.click('#pestanas [data-p="demanda"]'); }
 
   // responsive: sin scroll horizontal
   const anchos = [[390, 844, "celular"], [820, 1180, "tablet"], [1366, 900, "notebook"], [1920, 1080, "monitor"]];

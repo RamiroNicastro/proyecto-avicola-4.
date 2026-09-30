@@ -160,6 +160,7 @@ def parametros():
         "items": [{"clave": c, "etiqueta": e, "clase": sorted({mb.DESTINO[x][0] for x in comps})[0],
                    "componentes": sorted(comps)} for c, e, comps in me.ITEMS],
         "items_seccion_8": list(me.ITEMS_SECCION_8),
+        "pesos_estudiados": list(mb.PESOS),          # rango principal del balance (2,2–3,5 kg)
     }
 
 

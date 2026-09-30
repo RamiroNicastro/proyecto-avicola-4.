@@ -30,18 +30,21 @@
   const pct = (x, d) => `${fmt(x * 100, d || 0)} %`;
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const CANALES = { supermercados: "Supermercados", mayoristas_distribuidores: "Mayoristas y distribuidores", carnicerias_pollerias: "Carnicerías y pollerías", gastronomia: "Gastronomía", industria: "Industria", exportacion: "Exportación" };
-  const NOMBRE_CONFIG = { A: "A · pollo entero", B: "B · trozado", C: "C · deshuesado" };
+  const NOMBRE_CONFIG = { A: "Pollo entero", B: "Trozado", C: "Deshuesado / mayor procesamiento" };  // claves internas; nunca se muestran las letras
 
   // ============================================================================================
   // Estado de los datos (regla 4 y 16 de CLAUDE.md)
   // ============================================================================================
   const ESTADOS = {
-    modelo: { corto: "Validado por modelo", tip: "Cálculo aritmético de las entradas, reproducido y verificado contra los modelos aprobados (escenarios_escala.csv). Su certeza depende de las entradas, no del cálculo." },
+    modelo: { corto: "Calculado por modelo", tip: "Calculado por modelo significa que la fórmula y su consistencia matemática fueron verificadas. No significa que el valor haya sido validado en una planta real." },
     supuesto: { corto: "Supuesto", tip: "Depende principalmente de un supuesto de trabajo registrado (SUP-###): parámetros productivos de escenario medio, perfiles ilustrativos o escenarios de demanda de prueba." },
     pvdp: { corto: "PVDP", tip: "Depende de rendimientos o parámetros construidos con fuentes PENDIENTES DE VERIFICACIÓN DOCUMENTAL PRIMARIA (manuales genéticos, bibliografía, prensa). No es una medición de una planta argentina." },
     campo: { corto: "Dato de campo pendiente", tip: "Requiere un dato que todavía no existe y debe relevarse en campo (DPV-###): demanda real, productores, vehículos, receptores de subproductos." },
   };
-  const badge = (tipo, ref) => `<span class="estado ${tipo}" tabindex="0" title="${esc(ESTADOS[tipo].tip + (ref ? " — " + ref : ""))}">${ESTADOS[tipo].corto}</span>`;
+  let ESC_MAT = false;   // se fija en renderVista: la combinación peso–edad–FCR del escenario activo es incoherente
+  const TAG_MAT = '<span class="estado matematico" tabindex="0" title="Escenario matemático. La combinación peso–edad–FCR requiere validación zootécnica.">Escenario matemático</span>';
+  const badgeProd = (ref) => badge("supuesto", ref) + (ESC_MAT ? " " + TAG_MAT : "");
+  const badge = (tipo, ref) => tipo === "prod" ? badgeProd(ref) : `<span class="estado ${tipo}" tabindex="0" title="${esc(ESTADOS[tipo].tip + (ref ? " — " + ref : ""))}">${ESTADOS[tipo].corto}</span>`;
   const PER = {
     op: '<span class="periodo op" title="Día con faena (250 o 300 por año)">por día operativo</span>',
     cal: '<span class="periodo cal" title="Cualquier día del año (365). La demanda se expresa así.">por día calendario</span>',
@@ -68,12 +71,16 @@
       fuente: "23_plan_expansion/guia_ramiro.md §1–§2",
     },
     metricas: {
-      titulo: "Utilización, factor demanda/capacidad y cobertura: tres números distintos",
-      cuerpo: `<ul><li><strong>Utilización</strong> = lo que efectivamente se faena ÷ capacidad. Va de 0 a 100 %, <strong>nunca más</strong>: una planta de 10.000 que faena 5.000 está al 50 %; si le piden 14.000, sigue al 100 %.</li>
-        <li><strong>Factor demanda/capacidad</strong> = lo que pide la demanda ÷ capacidad. <strong>Sí</strong> puede pasar de 100 %: 143 % quiere decir que la planta no alcanza y queda <strong>demanda sin atender</strong>; 46 % quiere decir que sobra <strong>capacidad ociosa</strong>.</li>
-        <li><strong>Cobertura</strong> = lo que la planta puede producir ÷ lo que pide la demanda, hasta 100 %. Con factor 143 %, la cobertura es 70 %: se atiende el 70 % y el 30 % queda afuera.</li></ul>
+      titulo: "Capacidad instalada, utilización asumida, utilización requerida y cobertura",
+      cuerpo: `<ul><li><strong>Capacidad instalada</strong> = aves/día máximas del escenario (la escala).</li>
+        <li><strong>Utilización operativa asumida</strong> = el porcentaje que <em>vos</em> elegís para simular cuánto se procesa realmente. <strong>Producción simulada</strong> = capacidad instalada × utilización asumida.</li>
+        <li><strong>Factor demanda/capacidad instalada</strong> = capacidad requerida por la demanda ÷ capacidad instalada. <strong>Puede</strong> pasar de 100 %: 143 % quiere decir que la planta no alcanza.</li>
+        <li><strong>Utilización requerida por demanda</strong> = mínimo entre ese factor y 100 %. La calcula el modelo; no se elige.</li>
+        <li><strong>Cobertura con la producción simulada</strong> = producción simulada ÷ capacidad requerida (hasta 100 %). <strong>Cobertura máxima a plena capacidad</strong> = capacidad instalada ÷ capacidad requerida (hasta 100 %). Son dos números distintos y no se mezclan.</li>
+        <li><strong>Capacidad ociosa operativa</strong> = capacidad instalada − producción simulada. <strong>Capacidad disponible respecto de la demanda</strong> = capacidad instalada − capacidad requerida por la demanda.</li></ul>
+        <p><strong>Ejemplo:</strong> planta de 10.000 aves/día, utilización asumida 50 % → producción simulada 5.000. Si la demanda requiere 8.000 aves/día, la capacidad instalada sí alcanza (factor 80 %, utilización requerida 80 %), pero con 50 % se cubre solo el 62,5 % de la demanda. Capacidad ociosa operativa: 5.000; capacidad disponible respecto de la demanda: 2.000.</p>
         <p>La demanda está en <strong>kg por día calendario</strong>; la capacidad en <strong>aves por día operativo</strong>. Solo se comparan después de convertir (× días de faena / 365).</p>`,
-      fuente: "23_plan_expansion/guia_ramiro.md concepto 2 · escenarios_escala.md §4.3 · SUP-060",
+      fuente: "23_plan_expansion/guia_ramiro.md concepto 2 · escenarios_escala.md §4.3 · SUP-060 · auditoría semántica v0.1",
     },
     dias: {
       titulo: "Día de faena (operativo) vs día calendario",
@@ -90,7 +97,7 @@
     },
     demanda: {
       titulo: "¿Cómo se lee la demanda?",
-      cuerpo: `<p>Hoy la demanda documentada es <strong>prácticamente cero</strong>: los 90 supermercados son potenciales, los escenarios comerciales son hipótesis de orden de magnitud (categoría C/D) y la exportación no tiene ni un importador identificado.</p>
+      cuerpo: `<p>Hoy la demanda documentada es <strong>prácticamente cero</strong>: los 90 supermercados son potenciales, los escenarios comerciales son hipótesis de orden de magnitud, sin evidencia comercial y la exportación no tiene ni un importador identificado.</p>
         <p>No alcanza con que compren «kilos»: tienen que comprar <strong>todas las partes</strong> del pollo o hay que encontrar a quién venderle el resto. Por eso hay dos formas de convertir kg en aves:</p>
         <ul><li><strong>M0 · ave completa</strong>: se supone que toda la masa comestible del ave se vende dentro de la demanda. Da el <em>mínimo</em> de aves.</li>
         <li><strong>M1–M3 · parte limitante</strong>: con un mix de supermercado (entero dominante / trozado / valor agregado) la parte más pedida (casi siempre la pechuga) fija las aves, y <strong>sobran</strong> pata-muslo, alas, carcasa, cuello y garras.</li></ul>
@@ -151,11 +158,11 @@
     estados: {
       titulo: "¿Por qué los datos tienen distinto color?",
       cuerpo: `<p>No todos los números tienen la misma certeza. Cada cifra lleva una etiqueta:</p>
-        <ul><li>${badge("modelo")} aritmética de las entradas, verificada contra los modelos aprobados.</li>
+        <ul><li>${badge("modelo")} fórmula verificada contra los modelos aprobados; no es una medición real.</li>
         <li>${badge("supuesto")} depende de un supuesto de trabajo registrado (SUP-###).</li>
         <li>${badge("pvdp")} depende de fuentes que todavía no se leyeron en su documento original.</li>
         <li>${badge("campo")} falta un dato que solo se consigue en campo (DPV-###).</li></ul>
-        <p>«Validado por modelo» significa que el <em>cálculo</em> es correcto, no que el <em>dato</em> esté comprobado en la realidad.</p>`,
+        <p><strong>Calculado por modelo significa que la fórmula y su consistencia matemática fueron verificadas. No significa que el valor haya sido validado en una planta real.</strong></p>`,
       fuente: "CLAUDE.md reglas 4, 5 y 16",
     },
   };
@@ -213,16 +220,17 @@
     let h = "";
     for (let i = 0; i <= Math.round((hi - lo) / P.paso_peso); i++) {
       const p = +(lo + i * P.paso_peso).toFixed(1);
-      h += `<option value="${p}"${Math.abs(p - v) < 1e-9 ? " selected" : ""}>${fmt(p, 1)} kg${Math.abs(p - P.peso_ref) < 1e-9 ? " (referencia)" : ""}</option>`;
+      const fuera = p < Math.min(...P.pesos_estudiados) - 1e-9 || p > Math.max(...P.pesos_estudiados) + 1e-9;
+      h += `<option value="${p}"${Math.abs(p - v) < 1e-9 ? " selected" : ""}>${fmt(p, 1)} kg${Math.abs(p - P.peso_ref) < 1e-9 ? " (referencia)" : ""}${fuera ? " · extrapolación" : ""}</option>`;
     }
     return h;
   }
   function opcionesDemanda() {
     const com = DATA.demanda.escenarios.filter((d) => d.bloque === "escenario_comercial");
     const red = DATA.demanda.escenarios.filter((d) => d.bloque === "red_supermercados");
-    return `<optgroup label="Escenarios comerciales (hipótesis C/D)">${com.map((d) => `<option value="${d.id}">${esc(d.nombre)} · ${fmt(d.total_kg_dia)} kg/día cal.</option>`).join("")}</optgroup>
+    return `<optgroup label="Escenarios comerciales (hipótesis)">${com.map((d) => `<option value="${d.id}">${esc(d.nombre)} · ${fmt(d.total_kg_dia)} kg/día cal.</option>`).join("")}</optgroup>
       <optgroup label="Red de ${DATA.demanda.locales} supermercados (hipótesis)">${red.map((d) => `<option value="${d.id}">${esc(d.nombre)} · ${fmt(d.total_kg_dia)} kg/día</option>`).join("")}</optgroup>
-      <optgroup label="Otros"><option value="CERO">Solo demanda documentada (≈ 0 kg/día)</option><option value="MANUAL">Manual (ingresar kg/día calendario)</option></optgroup>`;
+      <optgroup label="Otros"><option value="CERO">Solo demanda documentada actual (≈ 0: no validada)</option><option value="MANUAL">Manual (ingresar kg/día calendario)</option></optgroup>`;
   }
   function descMix(m) {
     const mix = DATA.demanda.mixes[m];
@@ -239,22 +247,26 @@
     <div class="campo"><label for="nombre-esc">Nombre del escenario ${estado.activo}</label><input type="text" id="nombre-esc" data-k="nombre" maxlength="40"></div>
     <fieldset class="grupo"><legend>Lo esencial</legend>
       ${campo("Escala (aves faenadas por día operativo)", chips("escala", P.escalas.map((x) => [x, fmt(x)]), true) +
-        `<div class="en-linea" style="margin-top:6px"><span class="pequeno muted">Otra:</span>${num("escala", 500, 30000, 100)}<span class="pequeno muted">500–30.000</span></div>`,
-        "", "Capacidad operativa de la planta: aves que puede faenar por día de faena trabajando al 100 %. No es una recomendación (SUP-052).")}
-      ${campo("Utilización supuesta", `<div class="en-linea"><input type="range" data-k="utilizacion" data-escala="100" min="10" max="100" step="5">${num("utilizacion", 10, 100, 1, 'data-escala="100"')}<span>%</span></div>`,
-        "Aves realmente faenadas ÷ capacidad. Nunca más de 100 %.", "UTILIZACIÓN de la PLANTA: qué parte de la capacidad se usa. No es la demanda ni la cobertura. 100 % es el punto de dimensionamiento, no un supuesto de operación.")}
-      ${campo("Peso vivo del pollo", `<select data-k="peso" data-num="1">${opcionesPeso(e.peso)}</select>`, "Rango válido del balance: 2,0–3,8 kg (pasos de 0,1).", "Peso vivo en granja = en planta (SUP-058). Cambia rendimientos, alimento y m². Perfil medio: 2,9 kg a 47 días (SUP-027).")}
+        `<div class="en-linea" style="margin-top:6px"><span class="pequeno muted">Otra:</span>${num("escala", 2500, 20000, 100, 'data-rango="2500,20000" id="escala-simple"')}<span class="pequeno muted">2.500–20.000</span></div>
+        <div class="ayuda" id="aviso-escala-simple" hidden>Fuera del rango principal estudiado: usar «Parámetros avanzados».</div>`,
+        "Rango principal estudiado: 2.500–20.000.", "CAPACIDAD INSTALADA: aves máximas por día de faena del escenario (capacidad operativa al 100 %). No es una recomendación (SUP-052).")}
+      ${campo("Utilización operativa asumida", `<div class="en-linea"><input type="range" data-k="utilizacion" data-escala="100" min="10" max="100" step="5">${num("utilizacion", 10, 100, 1, 'data-escala="100"')}<span>%</span></div>`,
+        "La elegís vos: producción simulada = capacidad instalada × este %. No es la utilización requerida por la demanda.", "UTILIZACIÓN OPERATIVA ASUMIDA: porcentaje elegido manualmente para simular cuánto se procesa realmente. La utilización REQUERIDA por la demanda la calcula el modelo y se muestra aparte. 100 % es el punto de dimensionamiento, no un supuesto de operación.")}
+      ${campo("Peso vivo del pollo", `<select data-k="peso" data-num="1">${opcionesPeso(e.peso)}</select>`, "Rango principal estudiado: 2,2–3,5 kg. El motor admite 2,0–3,8 kg (fuera del principal = extrapolación).", "Peso vivo en granja = en planta (SUP-058). Cambia rendimientos, alimento y m². Perfil medio: 2,9 kg a 47 días (SUP-027).")}
       ${campo("Días de faena por año", `<div class="chips"><button type="button" class="chip" data-accion="calendario" data-ds="5">250 días · 5 d/sem</button><button type="button" class="chip" data-accion="calendario" data-ds="6">300 días · 6 d/sem</button></div><div class="ayuda" id="dias-actual"></div>`,
         "", "Días OPERATIVOS (con faena) por año, descontados feriados (SUP-025). Otro valor: en «Parámetros avanzados».")}
-      ${campo("Escenario de demanda", `<select data-k="demanda_id">${opcionesDemanda()}</select>`, "Hipótesis de prueba, no ventas (SUP-021).", "Demanda en kg de producto comercial por DÍA CALENDARIO. Ningún escenario tiene evidencia comercial (categoría C/D).")}
+      ${campo("Escenario de demanda", `<select data-k="demanda_id">${opcionesDemanda()}</select>`, "Hipótesis de prueba, no ventas (SUP-021).", "Demanda en kg de producto comercial por DÍA CALENDARIO. Ningún escenario tiene evidencia comercial.")}
       <div id="campo-manual">${campo("Demanda manual (kg de producto por día calendario)", num("demanda_manual_kg", 0, 200000, 100))}</div>
-      ${campo("Configuración comercial", chips("config", [["A", "A · entero"], ["B", "B · trozado"], ["C", "C · deshuesado"]]),
-        "Referencia B (SUP-050); no es una decisión.", "Cómo se vende la carcasa: entera (A), en cortes con hueso (B) o deshuesada con CMS (C). Cambia productos, coproductos y subproductos.")}
+      ${campo("Configuración comercial", chips("config", [["A", NOMBRE_CONFIG.A], ["B", NOMBRE_CONFIG.B], ["C", NOMBRE_CONFIG.C]]),
+        "Referencia: trozado (SUP-050); no es una decisión.", "Cómo se vende la carcasa: entera, en cortes con hueso (trozado) o deshuesada con separación mecánica (CMS). Cambia productos, coproductos y subproductos. No confundir con los escenarios A/B/C del comparador.")}
       ${campo("Inventario", `<div class="en-linea">${num("dias_inventario", 1, 30, 1)}<span>días de</span></div>` +
         `<div class="chips" style="margin-top:6px"><button type="button" class="chip" data-accion="set" data-k="base_inventario" data-v="dias_produccion">producción en stock</button><button type="button" class="chip" data-accion="set" data-k="base_inventario" data-v="dias_calendario">calendario de cobertura</button></div>`,
         "", "Días de PRODUCCIÓN en stock (jornadas de faena en cámara) o días CALENDARIO de cobertura (días de venta). Son cantidades distintas (SUP-056).")}
     </fieldset>
     <details class="avanzado" id="avanzado"${ui.avanzado ? " open" : ""}><summary>Parámetros avanzados</summary>
+      <fieldset class="grupo"><legend>Escala fuera del rango principal</legend>
+        ${campo("Capacidad instalada (aves/día operativo)", num("escala", 500, 30000, 100), "500–30.000. Fuera de 2.500–20.000: ESCENARIO FUERA DEL RANGO PRINCIPAL ESTUDIADO (extrapolación física, no escala analizada en profundidad).")}
+      </fieldset>
       <fieldset class="grupo"><legend>Calendario y línea</legend>
         <div class="fila-2">
           ${campo("Días/semana", `<select data-k="dias_semana" data-num="1"><option value="5">5</option><option value="6">6</option></select>`)}
@@ -377,6 +389,13 @@
     panel.addEventListener("input", (ev) => {
       const el = ev.target;
       if (!el.dataset.k || el.tagName === "SELECT") return;
+      if (el.dataset.rango) {
+        const [lo, hi] = el.dataset.rango.split(",").map(Number), v = leerValor(el);
+        const fuera = !(v >= lo && v <= hi);
+        $("#aviso-escala-simple").hidden = !fuera;
+        el.setCustomValidity(fuera ? "Fuera del rango principal estudiado" : "");
+        if (fuera) return;
+      }
       cambiar(el.dataset.k, leerValor(el), el);
     });
     panel.addEventListener("change", (ev) => {
@@ -442,7 +461,8 @@
       return;
     }
     const av = r.alertas.filter((a) => a.nivel === "aviso"), inf = r.alertas.filter((a) => a.nivel === "info");
-    const li = (a) => `<li class="alerta ${a.nivel}"><strong>${esc(a.titulo)}</strong>${esc(a.texto)} <span class="ref">(${esc(a.ref)})</span></li>`;
+    const li = (a) => `<li class="alerta ${a.nivel}"${a.ilustrativo ? ` title="${esc(S.TXT_ILUSTRATIVO)}"` : ""}><strong>${esc(a.titulo)}</strong>${esc(a.texto)} <span class="ref">(${esc(a.ref)})</span>` +
+      (a.ilustrativo ? ` ${tip(S.TXT_ILUSTRATIVO)} <span class="ref"><em>Umbral visual ilustrativo: no es una regla industrial.</em></span>` : "") + `</li>`;
     cont.innerHTML = `<details${ui.alertasAbiertas ? " open" : ""} id="det-alertas"><summary>Alertas del escenario ${estado.activo}
       <span class="cuenta aviso">${av.length} aviso${av.length === 1 ? "" : "s"}</span><span class="cuenta info">${inf.length} nota${inf.length === 1 ? "" : "s"}</span>
       <span class="muted pequeno">Informan; no recomiendan inversión.</span></summary><ul>${av.map(li).join("")}${inf.map(li).join("")}</ul></details>`;
@@ -456,10 +476,19 @@
   const kpi = (rotulo, valor, unidad, sec, est, ref, tipTxt) => `<div class="kpi"><div class="kpi-rotulo"><span>${rotulo}</span>${tipTxt ? tip(tipTxt) : ""}</div>
     <div class="kpi-valor num">${valor}</div><div class="kpi-unidad">${unidad}</div>${sec ? `<div class="kpi-sec">${sec}</div>` : ""}<div style="margin-top:4px">${badge(est, ref)}</div></div>`;
 
+  const bandera = (t, tipTxt) => `<span class="bandera" tabindex="0" title="${esc(tipTxt)}">${t}</span>`;
+  function banderas(r) {
+    const b = [];
+    if (r.fuera_rango.escala) b.push(bandera("ESCENARIO FUERA DEL RANGO PRINCIPAL ESTUDIADO", "Extrapolación física del modelo; no es una escala analizada en profundidad (rango principal 2.500–20.000 aves/día)."));
+    if (r.fuera_rango.peso) b.push(bandera("PESO FUERA DEL RANGO PRINCIPAL · EXTRAPOLACIÓN", "Peso fuera del rango principal utilizado en el estudio (2,2–3,5 kg); resultados deben tratarse como extrapolación."));
+    if (r.escenario_matematico) b.push(bandera("ESCENARIO MATEMÁTICO", "La combinación peso–edad–FCR requiere validación zootécnica."));
+    if (r.demanda.escenario.id === "CERO") b.push(bandera("DEMANDA DOCUMENTADA ≈ 0", "Demanda documentada actual: no validada / prácticamente nula."));
+    return b.length ? `<div class="banderas">${b.join("")}</div>` : "";
+  }
   function baseCalculo(r) {
     const e = r.entradas, dm = r.demanda;
-    return `<div class="base-calculo">Escala <strong>${fmt(e.escala)}</strong> aves/día operativo × utilización <strong>${pct(e.utilizacion)}</strong> =
-      <strong>${fmt(r.capacidad.aves_procesadas_dia_op)} aves procesadas por día operativo</strong> · ${fmt(e.dias_anio)} días de faena/año (${e.dias_semana} d/sem) ·
+    return `<div class="base-calculo">Capacidad instalada <strong>${fmt(e.escala)}</strong> aves/día operativo × utilización operativa asumida <strong>${pct(e.utilizacion)}</strong> =
+      <strong>producción simulada de ${fmt(r.capacidad.aves_procesadas_dia_op)} aves por día operativo</strong> · ${fmt(e.dias_anio)} días de faena/año (${e.dias_semana} d/sem) ·
       pollo de <strong>${fmt(e.peso, 1)} kg</strong> · configuración <strong>${NOMBRE_CONFIG[e.config]}</strong> · demanda <strong>${esc(dm.escenario.nombre)}</strong> (${e.metodo})</div>`;
   }
 
@@ -468,48 +497,71 @@
   }
   const tabla = (cab, filas) => `<div class="tabla-envoltura"><table><thead><tr>${cab.map((c, i) => `<th${i === 1 ? ' class="n"' : ""}>${c}</th>`).join("")}</tr></thead><tbody>${filas}</tbody></table></div>`;
 
+  function lecturaDemanda(r) {
+    const s = r.demanda.sel, e = r.entradas, c = r.capacidad;
+    if (!(r.demanda.D > 0)) return "No hay demanda en el escenario: toda la producción simulada queda sin comprador identificado.";
+    if (s.factor_demanda_capacidad > 1 + 1e-9)
+      return `La capacidad instalada <strong>no alcanza</strong>: la demanda requiere ${fmt(s.aves_necesarias_dia_operativo)} aves/día operativo. Aun a plena capacidad se cubriría ${pct(s.cobertura_maxima_plena_capacidad)}; con la utilización asumida (${pct(e.utilizacion)}) se cubre <strong>${pct(s.cobertura_operativa)}</strong>.`;
+    if (e.utilizacion < s.utilizacion_requerida_por_demanda - 1e-9)
+      return `La capacidad instalada <strong>sí alcanza técnicamente</strong> (factor ${pct(s.factor_demanda_capacidad)}), pero con la utilización asumida (${pct(e.utilizacion)}) se producen ${fmt(c.aves_procesadas_dia_op)} de las ${fmt(s.aves_necesarias_dia_operativo)} aves/día operativo requeridas: <strong>el escenario operativo cubre ${pct(s.cobertura_operativa, 1)} de la demanda</strong>, no el 100 %.`;
+    if (e.utilizacion > s.utilizacion_requerida_por_demanda + 1e-9)
+      return `La producción simulada (${fmt(c.aves_procesadas_dia_op)} aves/día operativo) <strong>supera</strong> lo que requiere la demanda (${fmt(s.aves_necesarias_dia_operativo)}): se cubre el 100 % y sobran ${fmt(s.aves_producidas_sin_demanda_dia_op)} aves/día operativo producidas sin destino.`;
+    return "La producción simulada coincide con la capacidad requerida por la demanda.";
+  }
+
   function metricasHTML(r) {
-    const s = r.demanda.sel, e = r.entradas;
+    const s = r.demanda.sel, e = r.entradas, c = r.capacidad;
     const f = s.factor_demanda_capacidad, maxF = Math.max(2, f * 1.1);
     const hayDem = r.demanda.D > 0;
-    return `<div class="metricas">
-      <div class="metrica util"><div class="metrica-cab"><span class="metrica-icono" aria-hidden="true">U</span><div><div class="metrica-de">de la planta</div><div class="metrica-nombre">Utilización</div></div>
-        ${tip("Aves realmente faenadas ÷ capacidad operativa. Siempre entre 0 y 100 %. Mide cuánto se usa la planta, no cuánto se vende.")}</div>
-        <div class="metrica-valor">${pct(e.utilizacion)}</div>
-        <div class="medidor" role="img" aria-label="Utilización supuesta ${pct(e.utilizacion)}"><span style="width:${Math.min(100, e.utilizacion * 100)}%"></span></div>
+    const medidor = (v, extra) => `<div class="medidor" role="img" aria-label="${pct(v)}"><span style="width:${Math.min(100, v * 100)}%"></span>${extra || ""}</div>`;
+    const cadena = `<div class="cadena">
+      <div class="eslabon"><div class="pequeno muted">Capacidad instalada</div><div class="valor">${fmt(c.escala)}</div><div class="pequeno">aves ${PER.op} (máximo del escenario)</div></div><span class="flecha">×</span>
+      <div class="eslabon"><div class="pequeno muted">Utilización operativa asumida</div><div class="valor">${pct(e.utilizacion)}</div><div class="pequeno">elegida por el usuario</div></div><span class="flecha">=</span>
+      <div class="eslabon"><div class="pequeno muted">Producción simulada</div><div class="valor">${fmt(c.aves_procesadas_dia_op)}</div><div class="pequeno">aves procesadas ${PER.op}</div></div>
+      <div class="eslabon" style="border-color:var(--m-cob)"><div class="pequeno muted">Capacidad requerida por la demanda</div><div class="valor">${hayDem ? fmt(s.aves_necesarias_dia_operativo) : "0"}</div><div class="pequeno">aves ${PER.op} (${esc(r.demanda.escenario.nombre)}, ${e.metodo})</div></div></div>`;
+    const tarjetas = `<div class="metricas metricas-4">
+      <div class="metrica util"><div class="metrica-cab"><span class="metrica-icono" aria-hidden="true">U</span><div><div class="metrica-de">elegida por el usuario</div><div class="metrica-nombre">Utilización operativa asumida</div></div>
+        ${tip("Porcentaje elegido manualmente para simular cuánto se procesa realmente. Producción simulada = capacidad instalada × utilización operativa asumida. Siempre 0–100 %.")}</div>
+        <div class="metrica-valor">${pct(e.utilizacion)}</div>${medidor(e.utilizacion)}
         <div class="medidor-escala"><span>0 %</span><span>100 % (máximo)</span></div>
-        <div class="metrica-def">Supuesta en las entradas. La demanda del escenario justifica <strong>${pct(s.utilizacion_planta)}</strong>.</div></div>
-      <div class="metrica factor"><div class="metrica-cab"><span class="metrica-icono" aria-hidden="true">÷</span><div><div class="metrica-de">demanda ÷ capacidad</div><div class="metrica-nombre">Factor demanda/capacidad</div></div>
-        ${tip("Capacidad que requiere la demanda ÷ capacidad instalada. PUEDE superar 100 %: más de 100 % = la escala no alcanza; menos de 100 % = capacidad ociosa. NO es utilización.")}</div>
+        <div class="metrica-def">Producción simulada: ${fmt(c.aves_procesadas_dia_op)} aves/día operativo.</div></div>
+      <div class="metrica req"><div class="metrica-cab"><span class="metrica-icono" aria-hidden="true">R</span><div><div class="metrica-de">exigida por la demanda</div><div class="metrica-nombre">Utilización requerida por demanda</div></div>
+        ${tip("Mínimo entre (capacidad requerida por la demanda ÷ capacidad instalada) y 100 %. La calcula el modelo; no la elige el usuario.")}</div>
+        <div class="metrica-valor">${hayDem ? pct(s.utilizacion_requerida_por_demanda) : "0 %"}</div>${medidor(s.utilizacion_requerida_por_demanda)}
+        <div class="medidor-escala"><span>0 %</span><span>100 % (máximo)</span></div>
+        <div class="metrica-def">${!hayDem ? "Sin demanda en el escenario." : Math.abs(e.utilizacion - s.utilizacion_requerida_por_demanda) < 1e-9 ? "Igual a la asumida." : e.utilizacion < s.utilizacion_requerida_por_demanda ? "<strong>Mayor que la asumida</strong>: falta producción." : "<strong>Menor que la asumida</strong>: sobra producción."}</div></div>
+      <div class="metrica factor"><div class="metrica-cab"><span class="metrica-icono" aria-hidden="true">÷</span><div><div class="metrica-de">demanda ÷ capacidad instalada</div><div class="metrica-nombre">Factor demanda/capacidad</div></div>
+        ${tip("Capacidad requerida por la demanda ÷ capacidad instalada. PUEDE superar 100 %: más de 100 % = la capacidad instalada no alcanza. NO es una utilización.")}</div>
         <div class="metrica-valor">${hayDem ? pct(f) : "0 %"}</div>
         <div class="medidor-factor" role="img" aria-label="Factor ${pct(f)}; la marca indica 100 %"><span style="width:${Math.min(100, f / maxF * 100)}%"></span><i style="left:${1 / maxF * 100}%"></i></div>
         <div class="medidor-escala"><span>0 %</span><span>marca = 100 % de la capacidad</span></div>
-        <div class="metrica-def">${!hayDem ? "Sin demanda en el escenario." : f > 1 ? "<strong>La demanda excede la escala.</strong>" : "La escala excede la demanda: queda capacidad ociosa."}</div></div>
+        <div class="metrica-def">${!hayDem ? "Sin demanda." : f > 1 + 1e-9 ? "<strong>La demanda excede la capacidad instalada.</strong>" : "La capacidad instalada alcanza técnicamente."}</div></div>
       <div class="metrica cob"><div class="metrica-cab"><span class="metrica-icono" aria-hidden="true">✓</span><div><div class="metrica-de">de la demanda</div><div class="metrica-nombre">Cobertura de demanda</div></div>
-        ${tip("Producción posible ÷ demanda requerida. Siempre entre 0 y 100 %. Mide qué parte de la demanda se atiende.")}</div>
-        <div class="metrica-valor">${hayDem ? pct(s.cobertura_demanda) : "—"}</div>
-        <div class="medidor" role="img" aria-label="Cobertura ${pct(s.cobertura_demanda)}"><span style="width:${hayDem ? Math.min(100, s.cobertura_demanda * 100) : 0}%"></span></div>
-        <div class="medidor-escala"><span>0 %</span><span>100 %</span></div>
-        <div class="metrica-def">${hayDem ? `Se atienden ${fmt(s.kg_atendidos_dia_cal)} de ${fmt(r.demanda.D)} kg/día calendario.` : "No hay demanda que cubrir."}</div></div>
-    </div>
-    <div class="resultado-demanda">
-      <div class="caja-estado falta ${f > 1 + 1e-9 ? "activa" : ""}"><div class="pequeno muted">Demanda no atendida ${PER.cal}</div>
-        <div class="valor">${fmt(s.kg_no_atendidos_dia_cal)} kg</div><div class="pequeno">faltan ${fmt(s.aves_faltantes_dia_operativo)} aves ${PER.op}</div></div>
-      <div class="caja-estado sobra ${f < 1 - 1e-9 ? "activa" : ""}"><div class="pequeno muted">Capacidad ociosa según la demanda ${PER.op}</div>
-        <div class="valor">${fmt(s.capacidad_ociosa_aves_dia_operativo)} aves</div><div class="pequeno">= escala × (1 − utilización que justifica la demanda)</div></div>
+        ${tip("Con la producción simulada: producción simulada ÷ capacidad requerida (hasta 100 %). Máxima a plena capacidad: capacidad instalada ÷ capacidad requerida (hasta 100 %). Son dos números distintos.")}</div>
+        <div class="pequeno"><strong>Con la producción simulada</strong></div>
+        <div class="metrica-valor">${hayDem ? pct(s.cobertura_operativa, s.cobertura_operativa < 1 ? 1 : 0) : "—"}</div>${medidor(hayDem ? s.cobertura_operativa : 0)}
+        <div class="pequeno" style="margin-top:6px">Máxima posible a plena capacidad: <strong>${hayDem ? pct(s.cobertura_maxima_plena_capacidad, s.cobertura_maxima_plena_capacidad < 1 ? 1 : 0) : "—"}</strong></div></div>
     </div>`;
+    const caja = (activa, clase, titulo, valor, detalle) => `<div class="caja-estado ${clase} ${activa ? "activa" : ""}"><div class="pequeno muted">${titulo}</div><div class="valor">${valor}</div><div class="pequeno">${detalle}</div></div>`;
+    const cajas = `<div class="resultado-demanda resultado-4">
+      ${caja(hayDem && s.kg_no_atendidos_operativo_dia_cal > 0.5, "falta", `Demanda no atendida con la producción simulada ${PER.cal}`, `${fmt(s.kg_no_atendidos_operativo_dia_cal)} kg`, `faltan ${fmt(s.aves_no_atendidas_operativo_dia_op)} aves ${PER.op} de producción`)}
+      ${caja(hayDem && s.kg_no_atendidos_dia_cal > 0.5, "falta", `Demanda no atendida aun a plena capacidad ${PER.cal}`, `${fmt(s.kg_no_atendidos_dia_cal)} kg`, `faltan ${fmt(s.aves_faltantes_dia_operativo)} aves ${PER.op} de capacidad instalada`)}
+      ${caja(c.capacidad_ociosa_operativa > 0.5, "sobra", `Capacidad ociosa operativa ${PER.op}`, `${fmt(c.capacidad_ociosa_operativa)} aves`, "= capacidad instalada − producción simulada")}
+      ${caja(s.capacidad_disponible_respecto_demanda > 0.5, "sobra", `Capacidad disponible respecto de la demanda ${PER.op}`, `${fmt(s.capacidad_disponible_respecto_demanda)} aves`, "= capacidad instalada − capacidad requerida por la demanda (mínimo 0)")}
+    </div>`;
+    return cadena + `<p class="nota-caja" style="margin-top:12px">${lecturaDemanda(r)}</p>` + tarjetas + cajas;
   }
 
   // ---------- visualización del pollo (Sankey simplificado, SVG propio) ----------
   function gruposPollo(k) {
     return [
-      { n: "Productos principales (clase A)", d: "entero, pechuga, pata-muslo, suprema", v: k.producto_principal, c: "var(--s1)" },
+      { n: "Productos principales", d: "entero, pechuga, pata-muslo, suprema", v: k.producto_principal, c: "var(--s1)" },
       { n: "Otros cortes y carne comestible", d: "alas, carcasa-esqueleto, CMS, recortes y piel", v: k.alas + k.carcasa_esqueleto + k.cms + k.recortes_piel, c: "var(--s7)" },
       { n: "Menudencias y cuello", d: "hígado, corazón, molleja, cuello", v: k.menudencias + k.cuello, c: "var(--s3)" },
       { n: "Garras", d: "grado A + segunda (comestible)", v: k.garras, c: "var(--s4)" },
       { n: "Sangre recuperada", d: "85 % de la sangre drenada", v: k.sangre, c: "var(--s8)" },
       { n: "Plumas (húmedas)", d: "incluye agua de escaldado adherida", v: k.plumas, c: "var(--s2)" },
-      { n: "Vísceras, cabezas, huesos y otros", d: "no comestibles (clase C)", v: k.visceras + k.cabeza + k.huesos + k.otros_c, c: "var(--s5)" },
+      { n: "Vísceras, cabezas, huesos y otros", d: "no comestibles (subproductos)", v: k.visceras + k.cabeza + k.huesos + k.otros_c, c: "var(--s5)" },
       { n: "Residuos, efluentes y pérdidas", d: "contenido intestinal, decomisos, sangre no recuperada, goteo, mermas", v: k.residuos + k.perdidas, c: "var(--gris-serie)" },
     ];
   }
@@ -537,7 +589,7 @@
     const aves = r.capacidad.aves_procesadas_dia_op;
     const ley = g.map((it) => `<li><span class="sw" style="background:${it.c}"></span><span><strong>${it.n}</strong><br><span class="muted pequeno">${it.d}</span></span>
       <span class="num">${fmt(it.v, 3)} kg</span><span class="num muted">${fmtT(it.v * aves / 1000)} t/día</span></li>`).join("");
-    return `<div class="pollo-flujo"><div><svg class="grafico" viewBox="0 0 ${W} ${H}" role="img" aria-label="Destino de la masa de un pollo vivo de ${fmt(e.peso, 1)} kg en la configuración ${e.config}">${svg}</svg>
+    return `<div class="pollo-flujo"><div><svg class="grafico" viewBox="0 0 ${W} ${H}" role="img" aria-label="Destino de la masa de un pollo vivo de ${fmt(e.peso, 1)} kg en la configuración ${esc(NOMBRE_CONFIG[e.config])}">${svg}</svg>
       <p class="pequeno muted">Cada kilo tiene un destino y la suma cierra: ${fmt(k.peso_vivo, 2)} kg vivos + ${fmt(k.agua_incorporada, 3)} kg de agua incorporada (chiller y plumas mojadas) = ${fmt(total, 3)} kg de salidas. Las cantidades de la derecha incluyen esa agua.</p></div>
       <div><ul class="leyenda" aria-label="Tabla de destinos por ave">${ley}</ul>
       <p class="pequeno muted" style="margin-top:6px">kg por ave (configuración ${NOMBRE_CONFIG[e.config]}) y t/día operativo a ${fmt(aves)} aves procesadas. ${badge("pvdp", "balance de masa v1.1, rendimientos de fuentes PVDP")}</p></div></div>`;
@@ -557,15 +609,16 @@
     const kp = `<div class="kpis">
       ${kpi("Aves faenadas por año", fmt(r.central.aves_anio), "aves por año", `${fmt(c.aves_procesadas_dia_op)} ${PER.op}`, "modelo", "", "Aves procesadas por día operativo × días de faena por año.")}
       ${kpi("Masa viva procesada", fmtT(r.central.t_vivas_anio), "t por año (peso vivo)", `${fmtT(r.central.kg_vivo_dia / 1000)} t ${PER.op}`, "supuesto", "peso vivo SUP-027 / SUP-058")}
-      ${kpi("Producto comercial", fmtT(m.comercial.t_dia_op), "t por día operativo", `${fmtT(m.comercial.t_dia_cal)} t ${PER.cal}`, "pvdp", "balance v1.1", "Masa comestible (A + B) con el agua retenida del chiller. Ver pestaña Productos.")}
-      ${kpi("Pollitos BB", fmt(p.pollitos_alojados_semana_plena), "por semana plena", `${fmt(p.pollitos_alojados_semana_promedio)} en semana promedio`, "supuesto", "mortalidad y DOA SUP-026")}
-      ${kpi("Galpones", fmt(p.m2_galpon), "m² de galpón", `≈ ${fmt(p.galpones_2400m2, 1)} galpones de 2.400 m² · ${fmt(p.capacidad_alojamiento_pollitos)} plazas`, "supuesto", "densidad SUP-026")}
-      ${kpi("Alimento", fmt(p.alimento_t_anio), "t por año", `${fmt(p.alimento_t_semana_plena)} t por semana plena`, "supuesto", "FCR SUP-028")}
+      ${kpi("Producto comercial", fmtT(m.comercial.t_dia_op), "t por día operativo", `${fmtT(m.comercial.t_dia_cal)} t ${PER.cal}`, "pvdp", "balance v1.1", "Masa comestible (productos + coproductos) con el agua retenida del chiller. Ver pestaña Productos.")}
+      ${kpi("Pollitos BB", fmt(p.pollitos_alojados_semana_plena), "por semana plena", `${fmt(p.pollitos_alojados_semana_promedio)} en semana promedio`, "prod", "mortalidad y DOA SUP-026")}
+      ${kpi("Galpones", fmt(p.m2_galpon), "m² de galpón", `≈ ${fmt(p.galpones_2400m2, 1)} galpones de 2.400 m² · ${fmt(p.capacidad_alojamiento_pollitos)} plazas`, "prod", "densidad SUP-026")}
+      ${kpi("Alimento", fmt(p.alimento_t_anio), "t por año", `${fmt(p.alimento_t_semana_plena)} t por semana plena`, "prod", "FCR SUP-028")}
       ${kpi("Ritmo de línea necesario", fmt(c.ritmo_aves_h), "aves por hora neta", `con ${fmt(e.horas_netas, 1)} h netas · a capacidad`, "modelo", "SUP-053", "Escala ÷ horas netas de faena. Sin eficiencia de máquina.")}
-      ${kpi("Subproductos a rendering", fmtT(r.subproductos.rendering_potencial.t_dia_op), "t por día operativo", "materia prima potencial (clase C)", "pvdp", "balance v1.1")}
+      ${kpi("Subproductos a rendering", fmtT(r.subproductos.rendering_potencial.t_dia_op), "t por día operativo", "materia prima potencial (subproductos no comestibles)", "pvdp", "balance v1.1")}
       ${kpi("Inventario", fmtT(r.inventario.elegido.comestible_total_t), "t de producto en stock", `${fmt(e.dias_inventario)} días de ${e.base_inventario === "dias_produccion" ? "producción" : "calendario"}`, "supuesto", "SUP-056")}
     </div>`;
-    return tarjeta(`Resumen · ${esc(e.nombre)}`, baseCalculo(r) + `<div style="margin-top:12px">${kp}</div>` + explica("resumen")) +
+    const comoLeer = `<details class="como-leer" open><summary>Cómo leer este simulador</summary><p>El simulador muestra escenarios físicos, no una recomendación de inversión. Los cálculos pueden ser matemáticamente consistentes y aun depender de supuestos o datos pendientes de campo. Antes de decidir capacidad, inversión o rentabilidad deben incorporarse demanda validada, cotizaciones, CAPEX, OPEX y datos reales de operación.</p></details>`;
+    return comoLeer + tarjeta(`Resumen · ${esc(e.nombre)}`, cajaDocumentada(r) + baseCalculo(r) + `<div style="margin-top:12px">${kp}</div>` + explica("resumen")) +
       tarjeta("Planta vs demanda: tres métricas que no se confunden", metricasHTML(r) + explica("metricas")) +
       tarjeta(`¿Qué pasa con cada pollo de ${fmt(e.peso, 1)} kg?`, polloHTML(r) + explica("productos")) +
       tarjeta("Qué tiene que ser verdad en este escenario", tablaCentral(r) + explica("dias"));
@@ -578,16 +631,16 @@
       f("Aves faenadas", fmt(c.aves_anio), "aves", PER.anio, "modelo") +
       f("Masa viva procesada", fmtT(c.kg_vivo_dia / 1000), "t vivas", PER.op, "supuesto", "SUP-027") +
       f("Masa viva procesada", fmt(c.t_vivas_anio), "t vivas", PER.anio, "supuesto", "SUP-027") +
-      f("Pollitos BB alojados", fmt(c.pollitos_semana_plena), "pollitos", PER.semp, "supuesto", "SUP-026") +
-      f("Plazas de granja", fmt(c.plazas_granja), "plazas", PER.stock, "supuesto", "SUP-026") +
-      f("Superficie de galpones", fmt(c.m2_galpones), "m²", "", "supuesto", "SUP-026") +
-      f("Alimento", fmt(c.alimento_t_anio), "t", PER.anio, "supuesto", "SUP-028") +
+      f("Pollitos BB alojados", fmt(c.pollitos_semana_plena), "pollitos", PER.semp, "prod", "SUP-026") +
+      f("Plazas de granja", fmt(c.plazas_granja), "plazas", PER.stock, "prod", "SUP-026") +
+      f("Superficie de galpones", fmt(c.m2_galpones), "m²", "", "prod", "SUP-026") +
+      f("Alimento", fmt(c.alimento_t_anio), "t", PER.anio, "prod", "SUP-028") +
       f("Comestible: masa biológica", fmtT(c.comestible_masa_biologica_t_dia_operativo), "t", PER.op, "pvdp", "balance v1.1") +
       f("Comestible: agua retenida (no es carne)", fmtT(c.agua_retenida_en_producto_t_dia_operativo), "t", PER.op, "pvdp", "SUP-042") +
       f("Comestible: peso comercial", fmtT(c.producto_comercial_t_dia_operativo), "t", PER.op, "pvdp") +
       f("Peso comercial promedio", fmtT(c.producto_comercial_t_dia_calendario_promedio), "t", PER.cal, "pvdp") +
       f("Peso comercial", fmt(c.producto_comercial_t_anio), "t", PER.anio, "pvdp") +
-      f("Producto principal (clase A)", fmtT(c.producto_principal_t_dia), "t", PER.op, "pvdp") +
+      f("Producto principal", fmtT(c.producto_principal_t_dia), "t", PER.op, "pvdp") +
       f("Plumas húmedas", fmtT(c.plumas_t_dia), "t", PER.op, "pvdp") +
       f("Sangre recuperada", fmtT(c.sangre_recuperada_t_dia), "t", PER.op, "pvdp") +
       f("Vísceras no comestibles", fmtT(c.visceras_t_dia), "t", PER.op, "pvdp") +
@@ -598,59 +651,68 @@
       f(`kg por local y día si todo pasara por los ${r.demanda.locales} locales (a la utilización supuesta)`, fmt(c.kg_por_local_dia_si_todo_por_la_red_100pct), "kg", PER.cal, "campo", "rango de la red 25–300 kg/local/día; DPV-037"));
   }
 
+  function cajaDocumentada(r) {
+    return r.demanda.escenario.id === "CERO"
+      ? `<div class="aviso-caja" role="note" style="margin-bottom:10px"><strong>DEMANDA DOCUMENTADA ACTUAL: NO VALIDADA / PRÁCTICAMENTE NULA.</strong> ` +
+        `Este escenario simula producción al ${pct(r.entradas.utilizacion)}, pero actualmente no existe demanda documentada que respalde ese nivel de operación. Es válido solo como escenario hipotético.</div>`
+      : "";
+  }
+
   function vDemanda(r) {
     const dm = r.demanda, s = dm.sel, e = r.entradas, esq = dm.escenario;
     const canales = esq.canales ? Object.keys(esq.canales).filter((k) => esq.canales[k] > 0) : [];
-    const desc = `<p><strong>${esc(esq.nombre)}</strong> — ${esc(esq.descripcion || "")}</p>
-      <div class="kpis">${kpi("Demanda del escenario", fmt(dm.D), "kg de producto comercial", PER.cal, "supuesto", "SUP-021")}
-      ${kpi("Categoría", "C/D", "hipótesis sin evidencia comercial", esc(esq.categoria || ""), "campo", "DPV-003 · DPV-037")}
-      ${kpi("Demanda documentada (A + B)", "≈ 0", "kg por día", "la carnicería familiar no está cuantificada", "campo", "DPV-004")}</div>
+    const esCero = esq.id === "CERO";
+    const desc = cajaDocumentada(r) + `<p><strong>${esc(esq.nombre)}</strong> — ${esc(esq.descripcion || esq.categoria || "")}</p>
+      <div class="kpis">${kpi("Demanda del escenario", fmt(dm.D), "kg de producto comercial", PER.cal, esCero ? "campo" : "supuesto", esCero ? "DPV-003 · DPV-004" : "SUP-021")}
+      ${kpi("Tipo de demanda", esCero ? "Documentada" : "Hipótesis", esCero ? "no validada / prácticamente nula" : "sin evidencia comercial", esCero ? "carnicería familiar sin cuantificar" : "valores de prueba, no pronóstico", "campo", "DPV-003 · DPV-037")}
+      ${kpi("Demanda documentada actual", "≈ 0", "kg por día", "no validada; la carnicería familiar no está cuantificada", "campo", "DPV-004")}</div>
       ${canales.length ? `<h3 style="margin-top:12px">Composición por canal</h3>` + barrasHTML(canales.map((k) => ({ n: CANALES[k] || k, v: esq.canales[k] })), "kg por día calendario") : ""}
-      <div class="aviso-caja" style="margin-top:10px"><strong>No es venta.</strong> ${esc(esq.observaciones || "Hipótesis ingresada para explorar; no es un pronóstico.")}</div>`;
-    // gráfico capacidad vs demanda en aves por día operativo
-    const E = e.escala, nOp = s.aves_necesarias_dia_operativo, max = Math.max(E, nOp, 1) * 1.08;
+      ${esCero ? "" : `<div class="aviso-caja" style="margin-top:10px"><strong>No es venta.</strong> ${esc(esq.observaciones || "Hipótesis ingresada para explorar; no es un pronóstico.")}</div>`}`;
+    // gráfico: tres barras en aves por día operativo, misma escala
+    const E = e.escala, sim = r.capacidad.aves_procesadas_dia_op, nOp = s.aves_necesarias_dia_operativo;
+    const max = Math.max(E, nOp, 1) * 1.1;
     const w = (x) => `${Math.max(0, x / max * 100)}%`;
-    const uMark = e.utilizacion * E;
-    const grafico = `<div class="cap-dem" role="img" aria-label="Capacidad ${fmt(E)} aves por día operativo; demanda convertida ${fmt(nOp)} aves por día operativo">
-      <div class="cap-dem-fila"><span><strong>Capacidad disponible</strong><br><span class="pequeno muted">escala, aves ${PER.op}</span></span>
-        <div class="cap-dem-pista"><span style="left:0;width:${w(Math.min(E, nOp))};background:var(--s1)" title="Capacidad usada por la demanda"></span>
-        ${E > nOp ? `<span style="left:${w(nOp)};width:${w(E - nOp)};background:var(--superficie-2);outline:1px solid var(--borde-fuerte)" title="Capacidad ociosa"></span><em style="left:${w(nOp)}">ociosa ${fmt(E - nOp)}</em>` : ""}
-        <i style="left:${w(uMark)}" title="Utilización supuesta ${pct(e.utilizacion)}"></i></div></div>
-      <div class="cap-dem-fila"><span><strong>Demanda hipotética</strong><br><span class="pequeno muted">convertida a aves ${PER.op} (${e.metodo})</span></span>
-        <div class="cap-dem-pista"><span style="left:0;width:${w(Math.min(E, nOp))};background:var(--s3)" title="Demanda atendida"></span>
-        ${nOp > E ? `<span class="rayado" style="left:${w(E)};width:${w(nOp - E)};background-color:var(--s2)" title="Demanda no atendida"></span><em style="left:${w(E)}">no atendida ${fmt(nOp - E)}</em>` : ""}</div></div>
-      <p class="pequeno muted">Marca vertical en la barra de capacidad = utilización supuesta (${pct(e.utilizacion)} → ${fmt(uMark)} aves). Azul = capacidad que la demanda usa; gris = capacidad ociosa; naranja rayado = demanda no atendida.</p></div>`;
-    const conv = `<div class="nota-caja"><strong>Conversión (misma base temporal):</strong> ${fmt(dm.D)} kg ${PER.cal} ÷ ${fmt(s.res.comestible_por_ave_mix, 3)} kg comestibles por ave ${e.metodo === "M0" ? "(ave completa)" : "(mix, parte limitante: " + esc(s.res.limitante) + ")"} =
-      ${fmt(s.res.aves_dia_cal)} aves ${PER.cal} × 365 / ${fmt(e.dias_anio)} = <strong>${fmt(nOp)} aves ${PER.op}</strong>, frente a una escala de ${fmt(E)}.</div>`;
+    const fila = (titulo, sub, v, estilo, etiqueta, claro) => `<div class="cap-dem-fila"><span><strong>${titulo}</strong><br><span class="pequeno muted">${sub}</span></span>
+      <div class="cap-dem-pista"><span style="left:0;width:${w(v)};${estilo}" title="${esc(titulo)}: ${fmt(v)} aves"></span><em style="left:${w(v)}${v / max > 0.6 ? `;transform:translateX(-100%)${claro ? ";color:#fff" : ""}` : ""}">${etiqueta}</em>
+      ${nOp > 0 ? `<i style="left:${w(nOp)}" title="Capacidad requerida por la demanda"></i>` : ""}</div></div>`;
+    const grafico = `<div class="cap-dem" role="img" aria-label="Capacidad instalada ${fmt(E)}, producción simulada ${fmt(sim)} y capacidad requerida por la demanda ${fmt(nOp)} aves por día operativo">
+      ${fila("Capacidad instalada", `aves ${PER.op}`, E, "background:var(--superficie-2);outline:1px solid var(--borde-fuerte)", fmt(E))}
+      ${fila("Producción simulada", `instalada × ${pct(e.utilizacion)}`, sim, "background:var(--s1)", fmt(sim), true)}
+      ${fila("Capacidad requerida por la demanda", `${e.metodo}, aves ${PER.op}`, nOp, "background:var(--s3)", nOp > 0 ? fmt(nOp) : "sin demanda", true)}
+      <p class="pequeno muted">Misma escala para las tres barras. La línea vertical marca la capacidad requerida por la demanda: si la producción simulada no la alcanza, falta producción; si la capacidad instalada no la alcanza, falta planta.</p></div>`;
+    const conv = dm.D > 0 ? `<div class="nota-caja"><strong>Conversión (misma base temporal):</strong> ${fmt(dm.D)} kg ${PER.cal} ÷ ${fmt(s.res.comestible_por_ave_mix, 3)} kg comestibles por ave ${e.metodo === "M0" ? "(ave completa)" : "(mix, parte limitante: " + esc(s.res.limitante) + ")"} =
+      ${fmt(s.res.aves_dia_cal)} aves ${PER.cal} × 365 / ${fmt(e.dias_anio)} = <strong>${fmt(nOp)} aves ${PER.op}</strong> requeridas.</div>` : "";
     const filas = ["M0", "M1", "M2", "M3"].map((m) => {
       const x = dm.metodos[m];
       return `<tr${m === e.metodo ? ' class="sel"' : ""}><td><strong>${m}</strong> ${m === "M0" ? "ave completa" : "mix " + { M1: "entero dominante", M2: "trozado", M3: "valor agregado" }[m]}</td>
-        <td class="n">${fmt(x.aves_necesarias_dia_operativo)}</td><td class="n">${pct(x.factor_demanda_capacidad)}</td><td class="n">${pct(x.utilizacion_planta)}</td><td class="n">${pct(x.cobertura_demanda)}</td>
-        <td class="n">${fmt(x.kg_no_atendidos_dia_cal)}</td><td class="n">${fmt(x.capacidad_ociosa_aves_dia_operativo)}</td><td class="n">${fmt(x.res.excedente_total * x.cobertura_demanda)}</td><td>${esc(x.res.limitante)}</td></tr>`;
+        <td class="n">${fmt(x.aves_necesarias_dia_operativo)}</td><td class="n">${pct(x.factor_demanda_capacidad)}</td><td class="n">${pct(x.utilizacion_requerida_por_demanda)}</td>
+        <td class="n">${pct(x.cobertura_operativa)}</td><td class="n">${pct(x.cobertura_maxima_plena_capacidad)}</td>
+        <td class="n">${fmt(x.kg_no_atendidos_operativo_dia_cal)}</td><td class="n">${fmt(x.capacidad_disponible_respecto_demanda)}</td><td class="n">${fmt(x.res.excedente_total * x.cobertura_demanda)}</td><td>${esc(x.res.limitante)}</td></tr>`;
     }).join("");
-    const tabM = `<div class="tabla-envoltura"><table><thead><tr><th>Método</th><th class="n">Aves necesarias / día op.</th><th class="n">Factor dem./cap.</th><th class="n">Utilización</th><th class="n">Cobertura</th><th class="n">No atendido (kg/día cal)</th><th class="n">Ociosa (aves/día op.)</th><th class="n">Partes sin comprador (kg/día cal)</th><th>Parte limitante</th></tr></thead><tbody>${filas}</tbody></table></div>
-      <p class="pequeno muted">Fila resaltada = método elegido (Parámetros avanzados). Partes sin comprador = partes producidas que el mix no pide, aun sin capacidad ociosa. ${badge("supuesto", "mixes SUP-023, conversión SUP-054")} ${badge("pvdp", "rendimientos del balance")}</p>`;
+    const tabM = `<p class="pequeno">Utilización operativa asumida en todos los métodos: <strong>${pct(e.utilizacion)}</strong> (${fmt(sim)} aves/día operativo).</p>
+      <div class="tabla-envoltura"><table><thead><tr><th>Método</th><th class="n">Capacidad requerida (aves/día op.)</th><th class="n">Factor dem./cap. instalada</th><th class="n">Utilización requerida</th><th class="n">Cobertura con producción simulada</th><th class="n">Cobertura máxima a plena capacidad</th><th class="n">No atendido con producción simulada (kg/día cal)</th><th class="n">Capacidad disponible respecto de la demanda (aves/día op.)</th><th class="n">Partes sin comprador (kg/día cal)</th><th>Parte limitante</th></tr></thead><tbody>${filas}</tbody></table></div>
+      <p class="pequeno muted">Fila resaltada = método elegido (Parámetros avanzados). Partes sin comprador = partes producidas que el mix no pide, a plena capacidad. ${badge("supuesto", "mixes SUP-023, conversión SUP-054")} ${badge("pvdp", "rendimientos del balance")}</p>`;
     const vender = `<div class="kpis">
-      ${kpi("Para vender lo producido (M0)", fmt(dm.demanda_necesaria_a_u_kg_dia_cal), "kg por día calendario", `a ${pct(e.utilizacion)} de utilización · ${fmt(dm.demanda_necesaria_100pct_kg_dia_cal)} a 100 %`, "campo", "DPV-003")}
-      ${kpi("Producción sin destino (M0)", fmt(dm.kg_sin_destino_a_u_dia_cal), "kg por día calendario", "producción a la utilización supuesta − demanda", "campo", "AL2")}
-      ${kpi("Pollo por local si todo va a la red", fmt(dm.kg_por_local_dia_plena), "kg por local por día", `${dm.locales} locales · a plena escala · rango de la red 25–300`, "campo", "DPV-037")}
+      ${kpi("Para vender la producción simulada (M0)", fmt(dm.demanda_necesaria_a_u_kg_dia_cal), "kg por día calendario", `a ${pct(e.utilizacion)} · ${fmt(dm.demanda_necesaria_100pct_kg_dia_cal)} a plena capacidad`, "campo", "DPV-003")}
+      ${kpi("Producción simulada sin destino (M0)", fmt(dm.kg_sin_destino_a_u_dia_cal), "kg por día calendario", "producción simulada − demanda", "campo", "AL2")}
+      ${kpi("Pollo por local si todo va a la red", fmt(dm.kg_por_local_dia_plena), "kg por local por día", `${dm.locales} locales · a plena capacidad · rango de la red 25–300`, "campo", "DPV-037")}
     </div>`;
     return tarjeta("Escenario de demanda", desc + explica("demanda")) +
-      tarjeta("Capacidad disponible vs demanda hipotética", grafico + conv + `<div style="margin-top:12px">${metricasHTML(r)}</div>` + explica("metricas")) +
+      tarjeta("Capacidad instalada, producción simulada y demanda", grafico + conv + `<div style="margin-top:12px">${metricasHTML(r)}</div>` + explica("metricas")) +
       tarjeta("Los cuatro métodos de conversión, lado a lado", tabM) +
       tarjeta("¿Cuánta demanda haría falta?", vender + explica("dias"));
   }
 
   function vProduccion(r) {
     const p = r.produccion, q = r.produccion_plena, a = r.abastecimiento, e = r.entradas;
-    const aviso = `<div class="aviso-caja"><strong>Escenarios físicos, no diseño definitivo.</strong> No hay galpones, productores, incubadoras ni proveedores de alimento relevados. Cifras de orden de magnitud con el desempeño elegido.</div>`;
+    const aviso = (r.escenario_matematico ? `<div class="aviso-caja" style="margin-bottom:8px"><strong>Escenario matemático.</strong> La combinación peso–edad–FCR requiere validación zootécnica: estas cifras de granja y alimento no representan un escenario productivo del estudio.</div>` : "") + `<div class="aviso-caja"><strong>Escenarios físicos, no diseño definitivo.</strong> No hay galpones, productores, incubadoras ni proveedores de alimento relevados. Cifras de orden de magnitud con el desempeño elegido.</div>`;
     const cadena = `<div class="cadena" style="margin-top:12px">
       <div class="eslabon"><div class="pequeno muted">Pollitos BB alojados</div><div class="valor">${fmt(p.pollitos_alojados_por_dia_faena)}</div><div class="pequeno">por día de faena</div></div><span class="flecha">→</span>
       <div class="eslabon"><div class="pequeno muted">Mueren en granja (${pct(e.mortalidad, 1)})</div><div class="valor">−${fmt(p.pollitos_alojados_por_dia_faena - p.aves_cargadas_dia)}</div></div><span class="flecha">→</span>
       <div class="eslabon"><div class="pequeno muted">Aves cargadas</div><div class="valor">${fmt(p.aves_cargadas_dia)}</div></div><span class="flecha">→</span>
       <div class="eslabon"><div class="pequeno muted">Mueren en transporte (${pct(e.doa, 2)})</div><div class="valor">−${fmt(p.aves_cargadas_dia - r.capacidad.aves_procesadas_dia_op)}</div></div><span class="flecha">→</span>
       <div class="eslabon"><div class="pequeno muted">Aves faenadas</div><div class="valor">${fmt(r.capacidad.aves_procesadas_dia_op)}</div><div class="pequeno">por día operativo</div></div></div>`;
-    const fila = (etq, x, y, u, per, est, ref, d) => `<tr><td>${etq}</td><td class="n">${fmt(x, d || 0)}</td><td class="n">${fmt(y, d || 0)}</td><td>${u} ${per || ""}</td><td>${badge(est, ref)}</td></tr>`;
+    const fila = (etq, x, y, u, per, est, ref, d) => `<tr><td>${etq}</td><td class="n">${fmt(x, d || 0)}</td><td class="n">${fmt(y, d || 0)}</td><td>${u} ${per || ""}</td><td>${badge(est === "supuesto" ? "prod" : est, ref)}</td></tr>`;
     const tab = `<div class="tabla-envoltura"><table><thead><tr><th>Variable</th><th class="n">A la utilización supuesta (${pct(e.utilizacion)})</th><th class="n">A plena escala (100 %)</th><th>Unidad</th><th>Estado</th></tr></thead><tbody>
       ${fila("Pollitos BB alojados", p.pollitos_alojados_semana_plena, q.pollitos_alojados_semana_plena, "pollitos", PER.semp, "supuesto", "SUP-026")}
       ${fila("Pollitos BB alojados", p.pollitos_alojados_semana_promedio, q.pollitos_alojados_semana_promedio, "pollitos", PER.semprom, "supuesto", "SUP-026")}
@@ -658,12 +720,12 @@
       ${fila("Aves cargadas en granja", p.aves_cargadas_dia, q.aves_cargadas_dia, "aves", PER.op, "supuesto", "SUP-026")}
       ${fila("Plazas de granja (capacidad de alojamiento)", p.capacidad_alojamiento_pollitos, q.capacidad_alojamiento_pollitos, "plazas", PER.stock, "supuesto", "SUP-026")}
       ${fila("Aves vivas en crianza (ritmo pleno)", p.inventario_aves_ritmo_pleno, q.inventario_aves_ritmo_pleno, "aves", PER.stock, "supuesto", "")}
-      ${fila("Superficie de galpón", p.m2_galpon, q.m2_galpon, "m²", "", "supuesto", "densidad SUP-026")}
+      ${fila("Superficie de galpón", p.m2_galpon, q.m2_galpon, "m²", "", "prod", "densidad SUP-026")}
       ${fila("Galpones equivalentes de 1.200 m²", p.galpones_1200m2, q.galpones_1200m2, "galpones", "", "supuesto", "tamaño ilustrativo", 1)}
       ${fila("Galpones equivalentes de 2.400 m²", p.galpones_2400m2, q.galpones_2400m2, "galpones", "", "supuesto", "tamaño ilustrativo", 1)}
       ${fila("Ciclos de crianza por año", p.ciclos_anio, q.ciclos_anio, "ciclos", "", "supuesto", "edad + días entre lotes", 2)}
-      ${fila("Alimento", p.alimento_t_semana_plena, q.alimento_t_semana_plena, "t", PER.semp, "supuesto", "FCR SUP-028")}
-      ${fila("Alimento", p.alimento_t_anio, q.alimento_t_anio, "t", PER.anio, "supuesto", "FCR SUP-028")}
+      ${fila("Alimento", p.alimento_t_semana_plena, q.alimento_t_semana_plena, "t", PER.semp, "prod", "FCR SUP-028")}
+      ${fila("Alimento", p.alimento_t_anio, q.alimento_t_anio, "t", PER.anio, "prod", "FCR SUP-028")}
       ${fila("Alimento de un ciclo de crianza", p.alimento_ciclo_crianza_t, q.alimento_ciclo_crianza_t, "t", PER.stock, "supuesto", "capital de trabajo físico")}
       ${fila("Alimento por ave faenada", p.alimento_por_ave_faenada_kg, q.alimento_por_ave_faenada_kg, "kg", PER.ave, "supuesto", "SUP-028", 2)}
       ${fila("Agua de bebida (solo bebida)", p.agua_bebida_m3_anio, q.agua_bebida_m3_anio, "m³", PER.anio, "supuesto", "1,8 L por kg de alimento")}
@@ -683,9 +745,9 @@
     const c = r.capacidad, e = r.entradas, L = r.logistica, m = r.masa;
     const ritmos = [6, 8, 10, 16].concat([e.horas_netas]).filter((h, i, arr) => arr.indexOf(h) === i).sort((a, b) => a - b);
     const cap = `<div class="kpis">
-      ${kpi("Escala (capacidad operativa)", fmt(c.escala), "aves por día operativo", "utilización 100 %", "supuesto", "SUP-052")}
-      ${kpi("Aves procesadas", fmt(c.aves_procesadas_dia_op), "aves por día operativo", `utilización supuesta ${pct(c.utilizacion)}`, "supuesto")}
-      ${kpi("Capacidad ociosa supuesta", fmt(c.capacidad_ociosa_supuesta_dia_op), "aves por día operativo", "escala − aves procesadas", "modelo")}
+      ${kpi("Capacidad instalada", fmt(c.escala), "aves por día operativo", "capacidad operativa al 100 %", "supuesto", "SUP-052")}
+      ${kpi("Producción simulada", fmt(c.aves_procesadas_dia_op), "aves procesadas por día operativo", `utilización operativa asumida ${pct(c.utilizacion)}`, "supuesto")}
+      ${kpi("Capacidad ociosa operativa", fmt(c.capacidad_ociosa_operativa), "aves por día operativo", "capacidad instalada − producción simulada", "modelo")}
       ${kpi("Ritmo de línea necesario", fmt(c.ritmo_aves_h), "aves por hora neta", `${fmt(c.ritmo_kg_vivo_h / 1000, 1)} t vivas por hora`, "modelo", "SUP-053")}
     </div>
     <h3 style="margin-top:14px">Ritmo según horas netas de faena (a capacidad)</h3>
@@ -723,21 +785,21 @@
     const masa = `<div class="barra-apilada" role="img" aria-label="Peso comercial: ${fmtT(m.biologica.t_dia_op)} t de masa biológica y ${fmtT(m.agua.t_dia_op)} t de agua retenida">
         <span style="width:${m.biologica.t_dia_op / tot * 100}%;background:var(--s1)" title="Masa biológica"></span><span style="width:${m.agua.t_dia_op / tot * 100}%;background:var(--s1);opacity:.35" title="Agua retenida"></span></div>
       <p class="pequeno"><span class="muted">Barra completa = peso comercial.</span> Tramo sólido = masa biológica · tramo claro = agua retenida (${pct(m.agua.t_dia_op / tot, 1)} del peso vendido).</p>
-      ${tabla(["Comestible (A + B)", "Por día operativo", "Por día calendario", "Por año"].map((x, i) => x),
+      ${tabla(["Comestible (productos + coproductos)", "Por día operativo", "Por día calendario", "Por año"].map((x, i) => x),
         `<tr><td><strong>Masa biológica</strong> (carne y tejidos, sin agua)</td><td class="n">${fmtT(m.biologica.t_dia_op)} t</td><td class="n">${fmtT(m.biologica.t_dia_cal)} t</td><td class="n">${fmt(m.biologica.t_anio)} t</td></tr>
          <tr><td><strong>Agua retenida</strong> en producto (no es carne)</td><td class="n">${fmtT(m.agua.t_dia_op)} t</td><td class="n">${fmtT(m.agua.t_dia_cal)} t</td><td class="n">${fmt(m.agua.t_anio)} t</td></tr>
          <tr class="total"><td><strong>Peso comercial</strong> = biológica + agua</td><td class="n">${fmtT(m.comercial.t_dia_op)} t</td><td class="n">${fmtT(m.comercial.t_dia_cal)} t</td><td class="n">${fmt(m.comercial.t_anio)} t</td></tr>`)}
       <p class="pequeno">${badge("pvdp", "absorción 6 % y goteo 30 %: SUP-042; límite 8 % FTE-168")}</p>`;
     const comest = r.items.filter((i) => (i.clase === "A" || i.clase === "B") && i.t_dia_op > 1e-9);
-    const barras = barrasHTML(comest.map((i) => ({ n: i.etiqueta, v: i.t_dia_op, c: i.clase === "A" ? "var(--s1)" : "var(--s7)" })), "t por día operativo (peso comercial) · azul = producto principal (A), violeta = coproducto (B)");
+    const barras = barrasHTML(comest.map((i) => ({ n: i.etiqueta, v: i.t_dia_op, c: i.clase === "A" ? "var(--s1)" : "var(--s7)" })), "t por día operativo (peso comercial) · azul = producto principal, violeta = coproducto");
     const tab = tabla(["Producto", "kg por ave", "t por día operativo", "t por año"],
       comest.map((i) => `<tr><td>${esc(i.etiqueta)} <span class="muted pequeno">(${i.clase === "A" ? "principal" : "coproducto"})</span></td><td class="n">${fmt(i.kg_ave, 3)}</td><td class="n">${fmtT(i.t_dia_op)}</td><td class="n">${fmt(i.t_anio)}</td></tr>`).join("") +
       `<tr class="total"><td>Total comestible</td><td class="n">${fmt(r.agregados.comestible.kg_ave, 3)}</td><td class="n">${fmtT(r.agregados.comestible.t_dia_op)}</td><td class="n">${fmt(r.agregados.comestible.t_anio)}</td></tr>`);
     const cfg = r.configuraciones;
     const rowC = (etq, k, d) => `<tr><td>${etq}</td>${["A", "B", "C"].map((c) => `<td class="n${c === e.config ? " sel" : ""}">${k === "flujos_comestibles_distintos" ? fmt(cfg[c][k]) : fmt(cfg[c][k], d == null ? 2 : d)}</td>`).join("")}</tr>`;
-    const confs = `<div class="tabla-envoltura"><table class="comp"><thead><tr><th>t por día operativo a ${fmt(aves)} aves</th><th>A · entero</th><th>B · trozado</th><th>C · deshuesado</th></tr></thead><tbody>
-      ${rowC("Producto principal (A)", "producto_principal_t")}${rowC("Coproductos comestibles (B)", "coproductos_t")}${rowC("Total comestible", "comestible_t")}
-      ${rowC("Huesos (subproducto)", "huesos_t")}${rowC("CMS producida", "cms_t")}${rowC("Subproductos clase C", "subproductos_c_t")}
+    const confs = `<div class="tabla-envoltura"><table class="comp"><thead><tr><th>t por día operativo a ${fmt(aves)} aves</th><th>${NOMBRE_CONFIG.A}</th><th>${NOMBRE_CONFIG.B}</th><th>${NOMBRE_CONFIG.C}</th></tr></thead><tbody>
+      ${rowC("Producto principal", "producto_principal_t")}${rowC("Coproductos comestibles", "coproductos_t")}${rowC("Total comestible", "comestible_t")}
+      ${rowC("Huesos (subproducto)", "huesos_t")}${rowC("CMS producida", "cms_t")}${rowC("Subproductos no comestibles", "subproductos_c_t")}
       ${rowC("Masa que pasa por trozado (biológica)", "kg_trozado_t")}${rowC("Masa que pasa por deshuese (biológica)", "kg_deshuese_t")}
       ${rowC("Flujos comestibles distintos (con frío y canal propio)", "flujos_comestibles_distintos")}${rowC("Coproductos por t de producto principal", "coproductos_por_t_de_producto_principal")}
       </tbody></table></div><p class="pequeno muted">Comparación física, sin margen: más proceso = más productos distintos que colocar, más frío y más mano de obra. La configuración elegida está resaltada. ${badge("pvdp", "balance v1.1")}</p>`;
@@ -755,17 +817,17 @@
     const filas = [
       ["Plumas húmedas (con agua de escaldado)", s.plumas, "var(--s2)"], ["Vísceras no comestibles", s.visceras, "var(--s5)"],
       ["Cabezas", s.cabeza, "var(--s5)"], ["Sangre recuperada (85 %)", s.sangre, "var(--s8)"], ["Huesos y residuo óseo de CMS", s.huesos, "var(--s5)"],
-      ["Otros clase C (garras descarte, piel/grasa a rendering)", s.otros_c, "var(--s5)"]].filter((x) => x[1].t_dia_op > 1e-9);
+      ["Otros no comestibles (garras descarte, piel/grasa a rendering)", s.otros_c, "var(--s5)"]].filter((x) => x[1].t_dia_op > 1e-9);
     const barras = barrasHTML(filas.map(([n, v, c]) => ({ n, v: v.t_dia_op, c })), "t por día operativo (masa biológica + agua adherida)");
     const tab = tabla(["Material", "Valor", "Unidad", "Estado"],
       filas.map(([n, v]) => filaTabla(n, fmtT(v.t_dia_op), "t", PER.op, "pvdp")).join("") +
-      filaTabla("Materia prima potencial de rendering (toda la clase C)", fmtT(s.rendering_potencial.t_dia_op), "t", PER.op, "pvdp", "", "total") +
+      filaTabla("Materia prima potencial de rendering (todos los no comestibles)", fmtT(s.rendering_potencial.t_dia_op), "t", PER.op, "pvdp", "", "total") +
       filaTabla("Ídem por año", fmt(s.rendering_potencial.t_anio), "t", PER.anio, "pvdp") +
       filaTabla("Sólidos a retirar (C + decomisos + contenido intestinal)", fmtT(s.solidos_a_retirar.t_dia_op), "t", PER.op, "pvdp", "DPV-066") +
       filaTabla("<span class='muted'>Sangre drenada total (no sumar con la recuperada)</span>", fmtT(s.sangre_drenada.t_dia_op), "t", PER.op, "pvdp", "", "sub") +
       filaTabla("<span class='muted'>Pluma biológica (sin agua; no sumar)</span>", fmtT(s.plumas_bio.t_dia_op), "t", PER.op, "pvdp", "", "sub") +
-      filaTabla("Residuos y efluentes (clase D)", fmtT(ag.residuos_d.t_dia_op), "t", PER.op, "pvdp") +
-      filaTabla("Mermas y pérdidas (clase P)", fmtT(ag.perdidas_p.t_dia_op), "t", PER.op, "pvdp") +
+      filaTabla("Residuos y efluentes", fmtT(ag.residuos_d.t_dia_op), "t", PER.op, "pvdp") +
+      filaTabla("Mermas y pérdidas", fmtT(ag.perdidas_p.t_dia_op), "t", PER.op, "pvdp") +
       filaTabla("Receptor de subproductos identificado", "ninguno", "", "", "campo", "DPV-065 · DPV-080"));
     const coms = tabla(["Coproducto comestible sin comprador identificado", "Valor", "Unidad", "Estado"],
       filaTabla("Garras (grado A + segunda)", fmtT(s.garras.t_dia_op), "t", PER.op, "pvdp") +
@@ -813,11 +875,11 @@
     };
     const t = `<div class="tabla-envoltura"><table class="comp"><thead>${cab}</thead><tbody>
       ${sec("Entradas")}
-      ${ent("Escala (aves/día operativo)", (e) => fmt(e.escala))}
+      ${ent("Capacidad instalada (aves/día operativo)", (e, r) => fmt(e.escala) + (r.fuera_rango.escala ? "<br><span class='pequeno'>fuera del rango principal</span>" : ""))}
       ${ent("Días/semana · días/año", (e) => `${e.dias_semana} · ${fmt(e.dias_anio)}`)}
       ${ent("Horas netas", (e) => fmt(e.horas_netas, 1))}
-      ${ent("Peso · edad · mortalidad · FCR", (e) => `${fmt(e.peso, 1)} kg · ${e.edad} d · ${pct(e.mortalidad, 1)} · ${fmt(e.fcr, 2)}`)}
-      ${ent("Utilización supuesta", (e) => pct(e.utilizacion))}
+      ${ent("Peso · edad · mortalidad · FCR", (e, r) => `${fmt(e.peso, 1)} kg · ${e.edad} d · ${pct(e.mortalidad, 1)} · ${fmt(e.fcr, 2)}` + (r.escenario_matematico ? "<br><span class='pequeno'>escenario matemático</span>" : "") + (r.fuera_rango.peso ? "<br><span class='pequeno'>peso: extrapolación</span>" : ""))}
+      ${ent("Utilización operativa asumida", (e) => pct(e.utilizacion))}
       ${ent("Demanda · método", (e, r) => `${esc(r.demanda.escenario.nombre)} · ${e.metodo}`)}
       ${ent("Configuración comercial", (e) => NOMBRE_CONFIG[e.config])}
       ${ent("Inventario · perfil", (e) => `${e.dias_inventario} d ${e.base_inventario === "dias_produccion" ? "de producción" : "calendario"} · ${e.perfil_destino}`)}
@@ -840,11 +902,16 @@
       ${res("t/día que entran (aves vivas)", (r) => r.logistica.aves_vivas_recibidas_faenadas_t_dia, fmtT)}
       ${res("t/día que salen (comestible + sólidos)", (r) => r.logistica.producto_comestible_sale_t_dia + r.logistica.subproductos_solidos_salen_t_dia, fmtT)}
       ${sec("Demanda vs capacidad (método de cada escenario)")}
-      ${res("Factor demanda/capacidad", (r) => r.demanda.sel.factor_demanda_capacidad, (v) => pct(v), true)}
-      ${res("Utilización que justifica la demanda", (r) => r.demanda.sel.utilizacion_planta, (v) => pct(v), true)}
-      ${res("Cobertura de demanda", (r) => r.demanda.sel.cobertura_demanda, (v) => pct(v), true)}
-      ${res("Demanda no atendida (kg/día cal.)", (r) => r.demanda.sel.kg_no_atendidos_dia_cal, 0, true)}
-      ${res("Capacidad ociosa (aves/día op.)", (r) => r.demanda.sel.capacidad_ociosa_aves_dia_operativo, 0, true)}
+      ${res("Producción simulada (aves/día op.)", (r) => r.capacidad.aves_procesadas_dia_op)}
+      ${res("Capacidad requerida por la demanda (aves/día op.)", (r) => r.demanda.sel.aves_necesarias_dia_operativo, 0, true)}
+      ${res("Factor demanda/capacidad instalada", (r) => r.demanda.sel.factor_demanda_capacidad, (v) => pct(v), true)}
+      ${res("Utilización requerida por demanda", (r) => r.demanda.sel.utilizacion_requerida_por_demanda, (v) => pct(v), true)}
+      ${res("Cobertura con la producción simulada", (r) => r.demanda.sel.cobertura_operativa, (v) => pct(v, 1), true)}
+      ${res("Cobertura máxima a plena capacidad", (r) => r.demanda.sel.cobertura_maxima_plena_capacidad, (v) => pct(v, 1), true)}
+      ${res("Demanda no atendida con producción simulada (kg/día cal.)", (r) => r.demanda.sel.kg_no_atendidos_operativo_dia_cal, 0, true)}
+      ${res("Demanda no atendida a plena capacidad (kg/día cal.)", (r) => r.demanda.sel.kg_no_atendidos_dia_cal, 0, true)}
+      ${res("Capacidad ociosa operativa (aves/día op.)", (r) => r.capacidad.capacidad_ociosa_operativa, 0, true)}
+      ${res("Capacidad disponible respecto de la demanda (aves/día op.)", (r) => r.demanda.sel.capacidad_disponible_respecto_demanda, 0, true)}
       ${res("kg sin destino a plena escala (kg/día cal.)", (r) => r.demanda.sel.kg_sin_destino_plena_escala, 0, true)}
       ${sec("Inventario")}
       ${res("Inventario en días de producción (t)", (r) => r.inventario.por_base.dias_produccion.comestible_total_t, fmtT)}
@@ -892,13 +959,16 @@
       tarjeta("Datos de campo pendientes", tabla(["ID", "Dato", "", "Estado"], pend.map(([id, d]) => `<tr><td><strong>${id}</strong></td><td>${esc(d)}</td><td></td><td>${badge("campo")}</td></tr>`).join("")) +
         `<p class="pequeno muted">Registro completo: 00_gestion_proyecto/datos_por_validar.md.</p>`) +
       tarjeta("Pendiente de verificación documental primaria (PVDP)", `<ul><li>Rendimientos de faena, cortes, deshuese y subproductos del balance v1.1 (FTE-140, FTE-142, FTE-161 a FTE-184).</li><li>Perfiles productivos de manuales genéticos (FTE-140, FTE-142, FTE-143) y referencias de campo (FTE-050, FTE-154).</li><li>Carga de 25 t por contenedor reefer de 40' (FTE-135, débil).</li><li>Límite de 8 % de agua retenida (FTE-168, prensa).</li></ul>`) +
-      tarjeta("Umbrales de las alertas (de interfaz, no datos)", tabla(["Alerta", "Umbral", "Origen", ""],
-        `<tr><td>Utilización muy baja</td><td class="n">${pct(umb.utilizacion_baja)}</td><td>Convención de interfaz</td><td></td></tr>
+      tarjeta("Umbrales de las alertas (de interfaz, no datos)", `<p class="nota-caja">${esc(S.TXT_ILUSTRATIVO)} No son reglas industriales: CAPEX y OPEX determinarán qué utilización es realmente baja.</p>` + tabla(["Alerta", "Umbral", "Origen", ""],
+        `<tr><td>Utilización baja (asumida o requerida por demanda)</td><td class="n">${pct(umb.utilizacion_baja)}</td><td><strong>Umbral visual ilustrativo</strong>; pendiente de calibración económica y operativa</td><td></td></tr>
          <tr><td>Alto volumen de subproductos</td><td class="n">${fmt(umb.subproductos_flujo_industrial_t)} t/día</td><td>escenarios_escala.md §10 (flujo industrial ~5,3 t/día)</td><td></td></tr>
-         <tr><td>Inventario alto</td><td class="n">${umb.inventario_alto_dias} días</td><td>Convención de interfaz (una semana)</td><td></td></tr>
+         <tr><td>Inventario alto</td><td class="n">${umb.inventario_alto_dias} días</td><td><strong>Umbral visual ilustrativo</strong> (una semana); pendiente de calibración económica y operativa</td><td></td></tr>
          <tr><td>Ritmo por encima del rango estudiado</td><td class="n">${fmt(umb.ritmo_max_estudiado)} aves/h</td><td>20.000 aves/día a 8 h netas</td><td></td></tr>
          <tr><td>Pollo por local</td><td class="n">${umb.kg_local_max} kg/local/día</td><td>Extremo del rango de la red (AL10)</td><td></td></tr>
-         <tr><td>Peso y edad poco compatibles</td><td class="n">±15 % de ${umb.ganancia_diaria_ref_g.join("–")} g/día</td><td>Guía de producción, indicador 6; tolerancia de interfaz</td><td></td></tr>`)) +
+         <tr><td>Escenario matemático: peso y edad</td><td class="n">±15 % de ${umb.ganancia_diaria_ref_g.join("–")} g/día</td><td>Guía de producción, indicador 6; tolerancia de interfaz</td><td></td></tr>
+         <tr><td>Escenario matemático: FCR</td><td class="n">±${fmt(umb.fcr_desvio_max, 2)} del FCR interpolado</td><td>Diferencia medio–desfavorable (SUP-026); tolerancia de interfaz</td><td></td></tr>
+         <tr><td>Rango principal estudiado: escala</td><td class="n">2.500–20.000 aves/día</td><td>23_plan_expansion (motor: 500–30.000)</td><td></td></tr>
+         <tr><td>Rango principal estudiado: peso</td><td class="n">2,2–3,5 kg</td><td>04_balance_masa (motor: 2,0–3,8)</td><td></td></tr>`)) +
       tarjeta("Versión de los modelos y verificación", `<p>Datos generados el <strong>${esc(m.generado)}</strong> (commit ${esc(m.commit_repositorio)}) por <code>${esc(m.generador)}</code>. Pruebas de los modelos al generar: <strong>${esc(m.tests_modelos)}</strong>.</p>` +
         tabla(["Modelo", "Versión", "Último commit", "SHA-256 (inicio)"], Object.keys(m.archivos_fuente).map((k) => `<tr><td>${esc(m.archivos_fuente[k].ruta)}</td><td class="n">${esc(m.versiones_modelos[k] || "—")}</td><td>${esc(m.archivos_fuente[k].ultimo_commit)}</td><td><code>${esc(m.archivos_fuente[k].sha256.slice(0, 12))}</code></td></tr>`).join("")) +
         `<p style="margin-top:8px">Autoverificación en este navegador: <strong>${autover.ok}/${autover.total}</strong> valores coinciden con los modelos (tabla central del CSV y casos calculados en Python).${autover.ok === autover.total ? " " + badge("modelo") : ' <strong style="color:var(--critico-texto)">Hay diferencias: regenerar datos.</strong>'}</p>`);
@@ -921,7 +991,8 @@
       v.innerHTML = tarjeta("No se puede calcular este escenario", `<p>Corregí las entradas marcadas en el panel de alertas. El simulador no extrapola fuera de los rangos de los modelos.</p>`);
       return;
     }
-    v.innerHTML = VISTAS[ui.pestana](r);
+    ESC_MAT = !!(r.ok && r.escenario_matematico);
+    v.innerHTML = (global ? "" : banderas(r)) + VISTAS[ui.pestana](r);
   }
 
   function renderPie() {

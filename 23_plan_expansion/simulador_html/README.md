@@ -19,7 +19,7 @@ Cada vez que cambie un modelo aprobado (producción, balance, subproductos, esca
 
 ```
 python3 23_plan_expansion/simulador_html/generar_datos_simulador.py   # ejecuta los tests de los modelos y escribe data/
-node    23_plan_expansion/simulador_html/validar_simulador.js         # comprueba que el HTML reproduce los modelos (9 verificaciones)
+node    23_plan_expansion/simulador_html/validar_simulador.js         # comprueba que el HTML reproduce los modelos y la semántica (20 verificaciones)
 ```
 
 Opcional, prueba en un navegador real sin red (requiere Playwright, que **no** es dependencia del simulador):
@@ -80,15 +80,17 @@ modelos aprobados (Python, sin modificar)
        └─ app.js presenta los resultados; al cargar, autoverifica 784 valores contra los modelos.
 ```
 
-**El simulador no reimplementa el balance de masa**: lee los kg/ave del modelo. Todo cambio de fórmula en `calculo.js` debe mantener `validar_simulador.js` en 9/9.
+**El simulador no reimplementa el balance de masa**: lee los kg/ave del modelo. Todo cambio de fórmula en `calculo.js` debe mantener `validar_simulador.js` en 20/20.
 
 ## 6. Entradas y salidas
 
-**Modo simple (panel «Lo esencial»):** escala (2.500 / 5.000 / 10.000 / 20.000 o valor propio 500–30.000), utilización (10–100 %), peso vivo (2,0–3,8 kg), días de faena por año (250 / 300), escenario de demanda (conservador, base, expansivo, red de 90 locales × 25–300 kg, solo demanda documentada ≈ 0, manual), configuración comercial (A entero / B trozado / C deshuesado), días de inventario y su base temporal.
+**Modo simple (panel «Lo esencial»):** capacidad instalada (2.500 / 5.000 / 10.000 / 20.000 o valor propio **dentro del rango principal estudiado 2.500–20.000**), utilización operativa asumida (10–100 %), peso vivo (2,0–3,8 kg; rango principal estudiado 2,2–3,5 kg), días de faena por año (250 / 300), escenario de demanda (conservador, base, expansivo, red de 90 locales × 25–300 kg, solo demanda documentada actual ≈ 0, manual), configuración comercial (**Pollo entero / Trozado / Deshuesado / mayor procesamiento**), días de inventario y su base temporal.
 
-**Modo avanzado (desplegable):** días/semana, días/año, horas netas, perfil de mercado y nivel de desempeño (atajos de SUP-026/027/028), edad, mortalidad en granja, FCR, mortalidad en transporte, días entre lotes, densidad, método de conversión de la demanda (M0 ave completa / M1–M3 mix), perfil de destino, días de congelado/exportación, % de granjas propias, m² por productor, capacidades de vehículos.
+**Definiciones (auditoría semántica):** capacidad instalada = aves/día máximas del escenario · utilización operativa asumida = % elegido por el usuario · producción simulada = capacidad instalada × utilización asumida · factor demanda/capacidad instalada = capacidad requerida por la demanda ÷ capacidad instalada (puede superar 100 %) · utilización requerida por demanda = mín(factor; 100 %) · cobertura con la producción simulada = mín(producción simulada ÷ capacidad requerida; 100 %) · cobertura máxima a plena capacidad = mín(capacidad instalada ÷ capacidad requerida; 100 %) · capacidad ociosa operativa = instalada − producción simulada · capacidad disponible respecto de la demanda = instalada − requerida (mínimo 0). Las letras A/B/C se reservan para los escenarios del comparador.
 
-**Pestañas:** RESUMEN · DEMANDA · PRODUCCIÓN · PLANTA · PRODUCTOS · SUBPRODUCTOS · INVENTARIO · COMPARADOR · SUPUESTOS · ECONOMÍA DEL PROYECTO (deshabilitada: «Disponible en una versión posterior»). Cada módulo tiene un botón **«¿Qué significa esto?»** con contenido de las guías de Ramiro y cada cifra una etiqueta de estado: **Validado por modelo · Supuesto · PVDP · Dato de campo pendiente**.
+**Modo avanzado (desplegable):** capacidad instalada fuera del rango principal (500–30.000; muestra «ESCENARIO FUERA DEL RANGO PRINCIPAL ESTUDIADO»), días/semana, días/año, horas netas, perfil de mercado y nivel de desempeño (atajos de SUP-026/027/028), edad, mortalidad en granja, FCR, mortalidad en transporte, días entre lotes, densidad, método de conversión de la demanda (M0 ave completa / M1–M3 mix), perfil de destino, días de congelado/exportación, % de granjas propias, m² por productor, capacidades de vehículos.
+
+**Pestañas:** RESUMEN · DEMANDA · PRODUCCIÓN · PLANTA · PRODUCTOS · SUBPRODUCTOS · INVENTARIO · COMPARADOR · SUPUESTOS · ECONOMÍA DEL PROYECTO (deshabilitada: «Disponible en una versión posterior»). Cada módulo tiene un botón **«¿Qué significa esto?»** con contenido de las guías de Ramiro y cada cifra una etiqueta de estado: **Calculado por modelo · Supuesto · PVDP · Dato de campo pendiente**. *Calculado por modelo significa que la fórmula y su consistencia matemática fueron verificadas. No significa que el valor haya sido validado en una planta real.* Las salidas de granja y alimento llevan además «Escenario matemático» cuando la combinación peso–edad–FCR es incoherente.
 
 ## 7. Pruebas realizadas (2026-09-30)
 
@@ -103,7 +105,13 @@ modelos aprobados (Python, sin modificar)
 | V07 · `.js` = `.json`; referencia embebida = CSV | OK |
 | V08 · offline: sin URLs externas ni accesos de red | OK |
 | V09 · sin variables económicas | OK |
-| Navegador (Chromium, `file://`, red bloqueada): 10 pestañas sin NaN, cambio de escala, demanda > capacidad, A/B/C, bloqueo de entradas, sin scroll horizontal a 390 / 820 / 1.366 / 1.920 px, 0 pedidos de red, 0 errores de consola | 11 / 11 |
+| V10 · ejemplo 10.000 aves/día al 50 % con demanda de 8.000: factor 80 %, utilización requerida 80 %, cobertura operativa 62,5 %, máxima 100 %, ociosa operativa 5.000, disponible respecto de la demanda 2.000 | OK |
+| V11–V13 · utilización asumida ≠ requerida; cobertura operativa usa la producción simulada y la máxima la capacidad instalada; dos capacidades ociosas distintas (3.000 escenarios aleatorios) | OK |
+| V14–V15 · alertas de escala fuera de 2.500–20.000 y peso fuera de 2,2–3,5 kg, sin bloquear | OK |
+| V16 · peso–edad–FCR incoherente ⇒ «Escenario matemático», sin corregir entradas | OK |
+| V17–V18 · configuraciones sin A/B/C; «Calculado por modelo», nunca «validado» | OK |
+| V19–V20 · demanda documentada ≈ 0 + utilización alta ⇒ alerta; umbrales marcados como ilustrativos | OK |
+| Navegador (Chromium, `file://`, red bloqueada): 10 pestañas sin NaN, cambio de escala, demanda > capacidad, A/B/C, bloqueo de entradas, caja «Cómo leer», configuraciones sin letras, ejemplo 10.000 al 50 % (muestra 62,5 %), rango fuera del principal solo en modo avanzado, demanda documentada ≈ 0 al 100 %, «Calculado por modelo» en todas las pestañas, sin scroll horizontal a 390 / 820 / 1.366 / 1.920 px, 0 pedidos de red, 0 errores de consola | 16 / 16 |
 
 ## 8. Limitaciones actuales
 

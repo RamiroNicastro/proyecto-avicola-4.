@@ -49,3 +49,23 @@
 2. La demanda documentada es ≈ 0: toda utilización que la demanda «justifica» sale de hipótesis C/D.
 3. Masa disponible no es producto vendido; subproducto sin receptor es costo.
 4. Ninguna escala es «la recomendada»; el comparador no declara ganador.
+
+## 6. Auditoría semántica final (2026-09-30)
+
+Cambios de **presentación y definiciones**; ningún modelo científico cambia. `validar_simulador.js` V01 confirma que las 4.224 cifras de `escenarios_escala.csv` siguen reproduciéndose sin diferencias.
+
+| Tema | Antes | Ahora |
+|---|---|---|
+| Utilización | Una «utilización» de entrada y otra «que justifica la demanda» | **Utilización operativa asumida** (entrada) vs **utilización requerida por demanda** = mín(factor; 100 %) (modelo), en tarjetas distintas |
+| Cobertura | Solo la del modelo (a capacidad instalada): mostraba 100 % aunque se asumiera 50 % | **Cobertura con la producción simulada** = mín(capacidad instalada × utilización asumida ÷ capacidad requerida; 100 %) y **cobertura máxima a plena capacidad** (= `cobertura_demanda` del modelo), siempre por separado |
+| Capacidad ociosa | Una cifra | **Capacidad ociosa operativa** (instalada − producción simulada) y **capacidad disponible respecto de la demanda** (instalada − requerida; = `capacidad_ociosa_aves_dia_operativo` del modelo) |
+| Etiqueta de certeza | «Validado por modelo» | **«Calculado por modelo»**, con la aclaración de que no es validación en planta real |
+| Escala | 500–30.000 en el modo simple | Simple: 2.500–20.000 (rango principal estudiado). Avanzado: 500–30.000 con «ESCENARIO FUERA DEL RANGO PRINCIPAL ESTUDIADO» |
+| Peso | 2,0–3,8 kg sin distinción | Rango principal 2,2–3,5 kg (pesos del balance v1.1, exportados como `pesos_estudiados`); fuera de él, advertencia de extrapolación sin bloqueo |
+| Peso–edad–FCR | Avisos informativos | Si es incoherente: alerta «Escenario matemático. La combinación peso–edad–FCR requiere validación zootécnica.» y etiqueta en las salidas de granja y alimento. No se corrige ni se inventa una relación. Umbral de FCR ±0,15 (= diferencia medio–desfavorable de SUP-026), de interfaz |
+| Configuraciones | «A · entero / B · trozado / C · deshuesado» | **Pollo entero / Trozado / Deshuesado / mayor procesamiento**; A/B/C solo para los escenarios del comparador. También se quitaron las letras de clase (A/B/C/D/P) y de categoría de demanda (A+B, C/D) de los textos visibles |
+| Demanda documentada ≈ 0 | Opción «Solo demanda documentada (≈ 0)» | Recuadro «DEMANDA DOCUMENTADA ACTUAL: NO VALIDADA / PRÁCTICAMENTE NULA» y alerta «Este escenario simula producción al X %, pero actualmente no existe demanda documentada que respalde ese nivel de operación» |
+| Umbrales de interfaz | «Convención de interfaz» | **Umbral visual ilustrativo**, con el texto «Umbral de interfaz, pendiente de calibración económica y operativa» en las alertas y en la pestaña Supuestos |
+| Resumen | — | Caja «Cómo leer este simulador» |
+
+Nota de la sesión: un pedido previo referido a la sesión 09A (capacidad de línea, evisceración, 24 h, RFQ) se descartó a pedido del usuario antes de publicarse; ese trabajo ya está en `main` (PR #10) y este simulador no lo incorpora en v0.1.

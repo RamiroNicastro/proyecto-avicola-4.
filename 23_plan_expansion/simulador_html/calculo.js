@@ -42,6 +42,13 @@
     pct_propio: [0, 1, "Proporción de granjas propias"],
   };
 
+  // Rango PRINCIPAL ESTUDIADO (escalas de 23_plan_expansion y pesos del balance v1.1) vs rango
+  // MATEMÁTICAMENTE SOPORTADO (RANGOS). Fuera del principal se calcula, pero como extrapolación.
+  function rangoEstudiado(data) {
+    const esc = data.parametros.escalas, pes = data.parametros.pesos_estudiados;
+    return { escala: [Math.min(...esc), Math.max(...esc)], peso: [Math.min(...pes), Math.max(...pes)] };
+  }
+
   function entradasPorDefecto(data, nombre) {
     const d = data.parametros.produccion.defaults;
     return {
@@ -267,8 +274,8 @@
         categoria: "Ingresada por el usuario (hipótesis)", exportacion_kg_dia: 0, bloque: "manual" };
     }
     if (e.demanda_id === "CERO") {
-      return { id: "CERO", nombre: "Solo demanda documentada (A + B)", total_kg_dia: 0,
-        categoria: "A + B documentada ≈ 0 (DPV-004 sin cuantificar)", exportacion_kg_dia: 0, bloque: "documentada" };
+      return { id: "CERO", nombre: "Solo demanda documentada actual", total_kg_dia: 0,
+        categoria: "Demanda documentada actual: no validada / prácticamente nula (DPV-003, DPV-004)", exportacion_kg_dia: 0, bloque: "documentada" };
     }
     const d = data.demanda.escenarios.find((x) => x.id === e.demanda_id);
     if (!d) throw new Error(`Escenario de demanda ${e.demanda_id} inexistente`);
@@ -424,7 +431,7 @@
 
     // 7. exportación: días de faena para completar un contenedor (NO es demanda)
     const kB = kcfg.B;
-    const exportacion = [["pollo_entero", "Pollo entero (config. A)", kcfg.A.pollo_entero], ["pechuga", "Pechuga con hueso", kB.pechuga],
+    const exportacion = [["pollo_entero", "Pollo entero (ave entera)", kcfg.A.pollo_entero], ["pechuga", "Pechuga con hueso", kB.pechuga],
       ["pata_muslo", "Pata-muslo", kB.pata_muslo], ["alas", "Alas", kB.alas], ["garras_grado_a", "Garras grado A", kB.garras_grado_a],
       ["menudencias", "Menudencias", kB.menudencias], ["cuello", "Cuello", kB.cuello], ["carcasa_esqueleto", "Carcasa-esqueleto", kB.carcasa_esqueleto]]
       .map(([c, et, kg]) => ({ clave: c, etiqueta: et, kg_ave: kg,
@@ -441,6 +448,19 @@
     ["M1", "M2", "M3"].forEach((m) => {
       const r = avesPorMix(D, data.demanda.mixes[m], y, data.demanda.factor_milanesa, data.demanda.rol_mix);
       metodos[m] = Object.assign({ res: r }, compararDemanda(E, da, D, r));
+    });
+    // Métricas OPERATIVAS (con la producción simulada E × u). Las del modelo (factor, utilizacion_planta,
+    // cobertura_demanda, capacidad_ociosa_aves_dia_operativo) se refieren a la capacidad INSTALADA.
+    Object.keys(metodos).forEach((m) => {
+      const x = metodos[m], f = x.factor_demanda_capacidad;
+      x.utilizacion_requerida_por_demanda = x.utilizacion_planta;             // = mín(factor; 100 %)
+      x.cobertura_maxima_plena_capacidad = x.cobertura_demanda;               // = mín(1 / factor; 100 %)
+      x.cobertura_operativa = D > 0 ? Math.min(1, u / f) : 1;                 // = mín(producción simulada / requerida; 100 %)
+      x.kg_atendidos_operativo_dia_cal = D * x.cobertura_operativa;
+      x.kg_no_atendidos_operativo_dia_cal = D * (1 - x.cobertura_operativa);
+      x.aves_no_atendidas_operativo_dia_op = Math.max(0, x.aves_necesarias_dia_operativo - aves);
+      x.aves_producidas_sin_demanda_dia_op = Math.max(0, aves - x.aves_necesarias_dia_operativo);
+      x.capacidad_disponible_respecto_demanda = x.capacidad_ociosa_aves_dia_operativo;   // = máx(0; E − requerida)
     });
     const sel = metodos[e.metodo];
     const kgComCalPlena = k.comestible * E * da / DIAS_CAL;
@@ -485,7 +505,17 @@
       kg_por_local_dia_si_todo_por_la_red_100pct: kgComCalPlena * u / data.demanda.locales,
     };
 
-    const r = { ok: true, entradas: clonar(e), k, kcfg, capacidad, produccion: prod, produccion_plena: prodPlena,
+    capacidad.capacidad_ociosa_operativa = E - aves;                          // = instalada − producción simulada
+    const est = rangoEstudiado(data);
+    const fueraRango = { escala: E < est.escala[0] || E > est.escala[1], peso: e.peso < est.peso[0] - 1e-9 || e.peso > est.peso[1] + 1e-9,
+      rango_escala: est.escala, rango_peso: est.peso };
+    const g = e.peso / e.edad * 1000, [g0, g1] = UMBRALES.ganancia_diaria_ref_g;
+    const fcrRef = interpFcr(P.produccion.perfiles, e.peso);
+    const coherencia = { ganancia_g_dia: g, fuera_ganancia: g < g0 * 0.85 || g > g1 * 1.15, fcr_ref: fcrRef,
+      fuera_fcr: Math.abs(e.fcr - fcrRef) > UMBRALES.fcr_desvio_max + 1e-9 };
+    const escenario_matematico = coherencia.fuera_ganancia || coherencia.fuera_fcr;
+
+    const r = { ok: true, entradas: clonar(e), k, kcfg, capacidad, fuera_rango: fueraRango, coherencia, escenario_matematico, produccion: prod, produccion_plena: prodPlena,
       abastecimiento, items, agregados, masa, configuraciones, subproductos, inventario, logistica, exportacion,
       demanda, central };
     r.alertas = alertas(data, e, r);
@@ -502,8 +532,10 @@
     inventario_alto_dias: 7,          // interfaz: una semana de producción en cámara
     ritmo_max_estudiado: 2500,        // 20.000 aves/día a 8 h netas (máximo del rango del modelo)
     kg_local_max: 300,                // extremo superior del rango de la red (AL10)
-    ganancia_diaria_ref_g: [58, 62],  // guía de producción primaria (indicador 6)
+    ganancia_diaria_ref_g: [58, 62],  // guía de producción primaria (indicador 6); tolerancia de interfaz ±15 %
+    fcr_desvio_max: 0.15,             // interfaz: = diferencia entre desempeño medio y desfavorable (SUP-026)
   };
+  const TXT_ILUSTRATIVO = "Umbral visual ilustrativo: umbral de interfaz, pendiente de calibración económica y operativa.";
 
   function fmtN(x, d) {
     return Number(x).toLocaleString("es-AR", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
@@ -511,83 +543,103 @@
 
   function alertas(data, e, r) {
     const A = [];
-    const add = (id, nivel, titulo, texto, ref) => A.push({ id, nivel, titulo, texto, ref });
-    const dm = r.demanda, sel = dm.sel;
+    const add = (id, nivel, titulo, texto, ref, ilustrativo) => A.push({ id, nivel, titulo, texto, ref, ilustrativo: !!ilustrativo });
+    const dm = r.demanda, sel = dm.sel, u = e.utilizacion;
+    const hayDem = dm.D > 0;
     // AL1 — siempre visible
     add("AL1", "aviso", "Demanda documentada ≈ 0",
-      "La utilización que justifica la evidencia actual es 0 %: la demanda documentada (categorías A + B) es prácticamente nula. " +
-      "Todos los escenarios de demanda son hipótesis C/D, no ventas.", "AL1 · SUP-021 · DPV-003 · DPV-004");
-    if (dm.escenario.id === "CERO") {
-      add("AL1b", "aviso", "Sin demanda en el escenario",
-        "Con la demanda documentada actual, toda la producción quedaría sin comprador identificado.", "AL1");
-    }
-    // Utilización muy baja
-    if (e.utilizacion < UMBRALES.utilizacion_baja)
-      add("UB1", "aviso", "Utilización supuesta muy baja",
-        `Se supone ${fmtN(e.utilizacion * 100)} % de utilización: ${fmtN(r.capacidad.capacidad_ociosa_supuesta_dia_op)} aves/día operativo de capacidad sin uso.`,
-        `Umbral de interfaz ${UMBRALES.utilizacion_baja * 100} %`);
-    if (D0(dm) && sel.utilizacion_planta < UMBRALES.utilizacion_baja)
-      add("UB2", "aviso", "La demanda del escenario llena poco la planta",
-        `Con el escenario «${dm.escenario.nombre}» (${e.metodo}) la demanda justifica solo ${fmtN(sel.utilizacion_planta * 100)} % de utilización: ` +
-        `${fmtN(sel.capacidad_ociosa_aves_dia_operativo)} aves/día operativo de capacidad ociosa.`, "SUP-060");
-    // AL2 — utilización elegida > la que justifica la demanda
-    if (D0(dm) && e.utilizacion > sel.utilizacion_planta + 1e-9)
-      add("AL2", "aviso", "Más producción de la que la demanda justifica",
-        `Suponés ${fmtN(e.utilizacion * 100)} % de utilización; la demanda del escenario justifica ${fmtN(sel.utilizacion_planta * 100)} %. ` +
-        `Habría ~${fmtN(dm.kg_sin_destino_a_u_dia_cal)} kg/día calendario sin destino (método M0).`, "AL2");
-    else if (!D0(dm) && e.utilizacion > 0)
-      add("AL2", "aviso", "Producción sin demanda",
-        "Toda la producción supuesta quedaría sin destino con la demanda del escenario.", "AL2");
-    // AL3 — demanda > capacidad
+      "La demanda documentada actual (con evidencia comercial) es prácticamente nula: no respalda ningún nivel de utilización. " +
+      "Todos los escenarios de demanda son hipótesis sin evidencia comercial, no ventas.", "AL1 · SUP-021 · DPV-003 · DPV-004");
+    // Demanda documentada ≈ 0 elegida: la producción simulada no tiene respaldo
+    if (dm.escenario.id === "CERO")
+      add("DOC0", "aviso", "Producción sin demanda documentada",
+        `Este escenario simula producción al ${fmtN(u * 100)} %, pero actualmente no existe demanda documentada que respalde ese nivel de operación. ` +
+        "Es válido como escenario hipotético.", "DPV-003 · DPV-004");
+    // Rango principal estudiado
+    const fr = r.fuera_rango;
+    if (fr.escala)
+      add("RANGO_E", "aviso", "ESCENARIO FUERA DEL RANGO PRINCIPAL ESTUDIADO",
+        `${fmtN(e.escala)} aves/día está fuera del rango principal estudiado (${fmtN(fr.rango_escala[0])}–${fmtN(fr.rango_escala[1])} aves/día). ` +
+        "Constituye una extrapolación física del modelo y NO una escala analizada en profundidad.", "23_plan_expansion · SUP-052");
+    if (fr.peso)
+      add("RANGO_P", "aviso", "Peso fuera del rango principal estudiado",
+        `Peso fuera del rango principal utilizado en el estudio (${fmtN(fr.rango_peso[0], 1)}–${fmtN(fr.rango_peso[1], 1)} kg); resultados deben tratarse como extrapolación. ` +
+        `El motor admite ${fmtN(RANGOS.peso[0], 1)}–${fmtN(RANGOS.peso[1], 1)} kg.`, "04_balance_masa · SUP-036");
+    // Coherencia peso–edad–FCR: se calcula igual, pero es un escenario matemático
+    if (r.escenario_matematico) {
+      const c = r.coherencia, det = [];
+      if (c.fuera_ganancia) det.push(`${fmtN(e.peso, 1)} kg a ${fmtN(e.edad)} días = ${fmtN(c.ganancia_g_dia)} g/día de ganancia media (referencia ~58–62 g/día)`);
+      if (c.fuera_fcr) det.push(`FCR ${fmtN(e.fcr, 2)} frente a ~${fmtN(c.fcr_ref, 2)} interpolado entre los perfiles del estudio para ${fmtN(e.peso, 1)} kg`);
+      add("MAT", "aviso", "Escenario matemático",
+        `Escenario matemático. La combinación peso–edad–FCR requiere validación zootécnica. ${det.join("; ")}. ` +
+        "El cálculo se mantiene, pero granjas, alimento y masa no representan un escenario productivo del estudio.",
+        "SUP-026 · SUP-027 · SUP-028", true);
+    } else if (Math.abs(e.peso - data.parametros.peso_ref) > 1e-9 && Math.abs(e.fcr - data.parametros.produccion.defaults.fcr) < 1e-9)
+      add("INC2", "info", "El FCR no cambia solo con el peso",
+        `Cambiaste el peso pero el FCR sigue en ${fmtN(e.fcr, 2)}. Un ave más pesada convierte peor: ~${fmtN(r.coherencia.fcr_ref, 2)} a ${fmtN(e.peso, 1)} kg interpolando los perfiles del estudio (1,58 / 1,70 / 1,82).`,
+        "SUP-028");
+    // Utilización operativa asumida vs requerida por la demanda
+    if (hayDem && u < sel.utilizacion_requerida_por_demanda - 1e-9)
+      add("UOP", "aviso", "El escenario operativo no cubre toda la demanda",
+        `Con la utilización asumida (${fmtN(u * 100)} %) se procesan ${fmtN(r.capacidad.aves_procesadas_dia_op)} aves/día operativo de las ` +
+        `${fmtN(sel.aves_necesarias_dia_operativo)} que requiere la demanda (utilización requerida ${fmtN(sel.utilizacion_requerida_por_demanda * 100)} %). ` +
+        `Cobertura con la producción simulada: ${fmtN(sel.cobertura_operativa * 100)} %; quedan ${fmtN(sel.kg_no_atendidos_operativo_dia_cal)} kg/día calendario sin atender` +
+        (sel.factor_demanda_capacidad <= 1 + 1e-9 ? ", aunque la capacidad instalada alcanzaría técnicamente." : "."), "SUP-060");
+    if (hayDem && u > sel.utilizacion_requerida_por_demanda + 1e-9)
+      add("AL2", "aviso", "Más producción de la que la demanda requiere",
+        `La utilización asumida (${fmtN(u * 100)} %) supera la requerida por la demanda (${fmtN(sel.utilizacion_requerida_por_demanda * 100)} %): ` +
+        `${fmtN(sel.aves_producidas_sin_demanda_dia_op)} aves/día operativo producidas sin destino en el escenario (~${fmtN(dm.kg_sin_destino_a_u_dia_cal)} kg/día calendario con M0).`, "AL2");
+    // AL3 — demanda > capacidad instalada
     if (sel.factor_demanda_capacidad > 1 + 1e-9)
-      add("AL3", "aviso", "La demanda del escenario excede la escala",
-        `Factor demanda/capacidad ${fmtN(sel.factor_demanda_capacidad * 100)} %: utilización 100 %, cobertura ${fmtN(sel.cobertura_demanda * 100)} %, ` +
-        `${fmtN(sel.kg_no_atendidos_dia_cal)} kg/día calendario no atendidos (faltan ${fmtN(sel.aves_faltantes_dia_operativo)} aves/día operativo).`, "AL3 · SUP-060");
+      add("AL3", "aviso", "La demanda del escenario excede la capacidad instalada",
+        `Factor demanda/capacidad instalada ${fmtN(sel.factor_demanda_capacidad * 100)} %: aun a plena capacidad la cobertura máxima sería ${fmtN(sel.cobertura_maxima_plena_capacidad * 100)} % ` +
+        `y quedarían ${fmtN(sel.kg_no_atendidos_dia_cal)} kg/día calendario sin atender (faltan ${fmtN(sel.aves_faltantes_dia_operativo)} aves/día operativo de capacidad).`, "AL3 · SUP-060");
+    // Utilización muy baja (umbral ilustrativo)
+    if (u < UMBRALES.utilizacion_baja)
+      add("UB1", "aviso", "Utilización operativa asumida baja",
+        `Se asume ${fmtN(u * 100)} % de utilización: ${fmtN(r.capacidad.capacidad_ociosa_operativa)} aves/día operativo de capacidad ociosa operativa. ` +
+        "Qué utilización es «baja» lo definirán CAPEX y OPEX.", `Umbral visual ilustrativo < ${UMBRALES.utilizacion_baja * 100} %`, true);
+    if (hayDem && sel.utilizacion_requerida_por_demanda < UMBRALES.utilizacion_baja)
+      add("UB2", "aviso", "La demanda requiere poca utilización",
+        `Con el escenario «${dm.escenario.nombre}» (${e.metodo}) la demanda requiere solo ${fmtN(sel.utilizacion_requerida_por_demanda * 100)} % de la capacidad instalada: ` +
+        `${fmtN(sel.capacidad_disponible_respecto_demanda)} aves/día operativo de capacidad disponible respecto de la demanda.`,
+        `Umbral visual ilustrativo < ${UMBRALES.utilizacion_baja * 100} % · SUP-060`, true);
     // AL4 — excedente de partes con M1-M3
     if (e.metodo !== "M0" && sel.res.excedente_total > 0.5)
       add("AL4", "aviso", "Partes sin comprador dentro del escenario",
-        `Con el mix ${e.metodo}, aun con la demanda atendida quedan ~${fmtN(sel.res.excedente_total * sel.cobertura_demanda)} kg/día calendario ` +
+        `Con el mix ${e.metodo}, por la demanda atendida a plena capacidad quedan ~${fmtN(sel.res.excedente_total * sel.cobertura_demanda)} kg/día calendario ` +
         `de partes que necesitan otros compradores (parte limitante: ${sel.res.limitante}).`, "AL4 · SUP-023 · SUP-054");
     if (e.metodo !== "M0" && sel.res.fuera_balance > 0)
       add("AL4b", "info", "Otros elaborados fuera del balance",
         `${fmtN(sel.res.fuera_balance * sel.cobertura_demanda)} kg/día de «otros elaborados» del mix no se modelan (materia prima no definida).`, "SUP-023");
-    // AL7 — exportación en la demanda
     if ((dm.escenario.exportacion_kg_dia || 0) > 0)
-      add("AL7", "aviso", "Exportación en la demanda",
-        "Exportación sin negociación de nivel ≥ 5 no es demanda (SUP-022).", "AL7 · SUP-022");
-    // AL8 — variables pendientes
+      add("AL7", "aviso", "Exportación en la demanda", "Exportación sin negociación de nivel ≥ 5 no es demanda (SUP-022).", "AL7 · SUP-022");
     const pend = [];
     if (!e.m2_por_productor) pend.push("m² por productor (DPV-048)");
     if (!e.cap_camion_frio_t || !e.cap_camion_alimento_t || !e.cap_camion_sub_t) pend.push("capacidades de camiones (DPV-084)");
     if (pend.length)
-      add("AL8", "info", "Variables de campo pendientes",
-        `Sin dato: ${pend.join("; ")}. Se muestran toneladas y m², no productores ni camiones.`, "AL8");
-    // AL9
-    if (e.utilizacion >= 1 - 1e-9)
-      add("AL9", "info", "100 % es el punto de dimensionamiento",
-        "100 % de utilización es el punto de dimensionamiento, no un supuesto de operación.", "AL9");
-    // AL10
+      add("AL8", "info", "Variables de campo pendientes", `Sin dato: ${pend.join("; ")}. Se muestran toneladas y m², no productores ni camiones.`, "AL8");
+    if (u >= 1 - 1e-9)
+      add("AL9", "info", "100 % es el punto de dimensionamiento", "100 % de utilización es el punto de dimensionamiento, no un supuesto de operación.", "AL9");
     if (dm.kg_por_local_dia_plena > UMBRALES.kg_local_max)
       add("AL10", "aviso", "Más pollo por local que el rango de la red",
-        `A plena escala serían ${fmtN(dm.kg_por_local_dia_plena)} kg/local/día si todo pasara por los ${dm.locales} locales: ` +
+        `A plena capacidad serían ${fmtN(dm.kg_por_local_dia_plena)} kg/local/día si todo pasara por los ${dm.locales} locales: ` +
         "más que el extremo superior del rango de la red (25–300 kg/local/día).", "AL10");
-    // Subproductos: flujo industrial
     const rend = r.subproductos.rendering_potencial.t_dia_op;
     if (rend >= UMBRALES.subproductos_flujo_industrial_t)
       add("SUB1", "aviso", "Alto volumen de subproductos",
-        `${fmtN(rend, 1)} t/día operativo de materia prima potencial de rendering (clase C) y ${fmtN(r.subproductos.solidos_a_retirar.t_dia_op, 1)} t/día de sólidos a retirar: ` +
+        `${fmtN(rend, 1)} t/día operativo de materia prima potencial de rendering (subproductos no comestibles) y ${fmtN(r.subproductos.solidos_a_retirar.t_dia_op, 1)} t/día de sólidos a retirar: ` +
         "ya es un flujo industrial diario que necesita receptor todos los días de faena. Sin receptor, es costo y riesgo ambiental.",
         "escenarios_escala.md §10 · SUP-049 · DPV-065");
     else
       add("SUB0", "info", "Subproductos: retiro diario en cualquier escala",
-        `${fmtN(rend, 2)} t/día de clase C: sangre y vísceras se degradan en horas; aun volúmenes chicos exigen retiro cada día de faena.`,
+        `${fmtN(rend, 2)} t/día de subproductos no comestibles: sangre y vísceras se degradan en horas; aun volúmenes chicos exigen retiro cada día de faena.`,
         "escenarios_escala.md §10");
-    // Inventario alto
     if (e.dias_inventario >= UMBRALES.inventario_alto_dias)
       add("INV1", "aviso", "Inventario alto",
         `${fmtN(e.dias_inventario)} días de inventario = ${fmtN(r.inventario.elegido.comestible_total_t, 1)} t (${e.base_inventario === "dias_produccion" ? "días de producción" : "días calendario"}). ` +
-        "El producto refrigerado vive días (SUP-051); las cámaras y el frío no están dimensionados (12_energia_frio).", "SUP-051 · SUP-056");
-    // Ritmo exigente
+        "El producto refrigerado vive días (SUP-051); las cámaras y el frío no están dimensionados (12_energia_frio).",
+        `Umbral visual ilustrativo ≥ ${UMBRALES.inventario_alto_dias} días · SUP-051 · SUP-056`, true);
     if (r.capacidad.ritmo_aves_h > UMBRALES.ritmo_max_estudiado)
       add("RIT1", "aviso", "Ritmo horario por encima del rango estudiado",
         `${fmtN(r.capacidad.ritmo_aves_h)} aves/h netas: supera el máximo del rango de los modelos (${fmtN(UMBRALES.ritmo_max_estudiado)} aves/h = 20.000 aves/día a 8 h netas). ` +
@@ -599,25 +651,10 @@
       add("RIT3", "aviso", "Más de un turno",
         "Más de 10 h netas implica un segundo turno: es capacidad teórica de la LÍNEA, no de la planta (frío, efluentes, agua, energía, personal, limpieza y pollos deben acompañar).",
         "DEC-036 · SUP-053");
-    // Entradas incompatibles (no bloqueantes)
-    const P = data.parametros.produccion;
-    const g = e.peso / e.edad * 1000;
-    const [g0, g1] = UMBRALES.ganancia_diaria_ref_g;
-    if (g < g0 * 0.85 || g > g1 * 1.15)
-      add("INC1", "aviso", "Peso y edad poco compatibles",
-        `${fmtN(e.peso, 1)} kg a ${fmtN(e.edad)} días = ${fmtN(g)} g/día de ganancia media; la referencia es ~${g0}–${g1} g/día. ` +
-        "El modelo no vincula peso y edad: revisar la combinación.", "Guía de producción §2 · SUP-027");
-    const perfiles = P.perfiles;
-    const fcrRef = interpFcr(perfiles, e.peso);
-    if (Math.abs(e.peso - data.parametros.peso_ref) > 1e-9 && Math.abs(e.fcr - P.defaults.fcr) < 1e-9)
-      add("INC2", "info", "El FCR no cambia solo con el peso",
-        `Cambiaste el peso pero el FCR sigue en ${fmtN(e.fcr, 2)}. Un ave más pesada convierte peor: referencia ~${fmtN(fcrRef, 2)} a ${fmtN(e.peso, 1)} kg (perfiles 1,58 / 1,70 / 1,82).`,
-        "SUP-028");
     if (e.dias_anio !== data.parametros.calendarios[String(e.dias_semana)])
       add("INC3", "info", "Días/año distintos del calendario de referencia",
         `${fmtN(e.dias_anio)} días/año con ${e.dias_semana} días/semana (referencia ${data.parametros.calendarios[String(e.dias_semana)]}). ` +
         "Las variables anuales se escalan; las de semana plena no cambian.", "SUP-025");
-    // PVDP — siempre
     add("PVDP", "info", "Datos todavía PVDP",
       "Los rendimientos del balance (FTE-140/142/161–184), la carga de contenedor de 25 t (FTE-135, débil), el límite de 8 % de agua retenida (FTE-168) " +
       "y los perfiles productivos (manuales genéticos) están PENDIENTES DE VERIFICACIÓN DOCUMENTAL PRIMARIA. Aves por camión (SUP-033): sin fuente.",
@@ -625,7 +662,6 @@
     return A;
   }
 
-  function D0(dm) { return dm.D > 0; }
 
   function interpFcr(perfiles, peso) {
     const pts = Object.values(perfiles).map((p) => [p.peso, p.fcr_base]).sort((a, b) => a[0] - b[0]);
@@ -640,6 +676,6 @@
   return {
     RANGOS, UMBRALES, SLOTS, entradasPorDefecto, estadoInicial, conEntrada, copiarEscenario, clonar,
     mpCalcular, produccion, kgPorAve, avesPorMix, resultadoM0, compararDemanda, convertir, calcular, validar,
-    clavePeso, interpFcr,
+    clavePeso, interpFcr, rangoEstudiado, TXT_ILUSTRATIVO,
   };
 });
