@@ -17,16 +17,14 @@
   - [`actualizaciones_gestion_09A.md`](actualizaciones_gestion_09A.md): supuestos, datos por validar, decisiones, glosario y fuentes con **IDs provisionales** pendientes de reconciliación central.
   - Equipos, automatización, proveedores y RFQ: [`../08_maquinaria/`](../08_maquinaria/README.md).
 
-**Modelo [`modelo_capacidad_proceso.py`](modelo_capacidad_proceso.py) (v1.0)** — regla 15
+**Modelo [`modelo_capacidad_proceso.py`](modelo_capacidad_proceso.py) (v1.1, corrección conceptual final)** — regla 15
 
 | Aspecto | Contenido |
 |---|---|
-| Qué calcula | Ritmo operativo (E/h) y nominal (E/h/η); aves/día de una línea nominal (L·h·η); ventana total del establecimiento y holgura contra 24 h; flujos por hora y por día de cada corriente (config. A/B/C); carcasas simultáneas en el enfriamiento; puestos manuales equivalentes; t/día a congelar por perfil P1–P3 |
-| Entradas | Escalas, horas netas, perfiles de destino y kg/ave importados de `23_plan_expansion/modelo_escala.py` (v1.1), que a su vez importa el balance v1.1; parámetros de sensibilidad SUP-09A-01 a SUP-09A-04 |
-| Unidades | aves, aves/h, aves/min, s, kg, kg/h, t, h; columna `base` (vivo, biologica, comercial, biologica+agua, aves, h); punto decimal |
+| Qué calcula | Ritmo operativo (E/h netas); ritmo nominal a pedir con factores de **sensibilidad** (E/(h×R) y E/(h×D×R)); aves/día de una línea nominal (L × h programadas × D × R); **ecuación de 24 h** (faena neta + paradas + pausas + cambios de turno + arranque + cierre + limpieza intermedia + limpieza + sanitización + mantenimiento + holgura) con **alerta** si la holgura es negativa y horas netas máximas por escenario; flujos por hora y por día (config. A/B/C); carcasas en el enfriamiento; puestos manuales equivalentes; t/día a congelar (P1–P3); funciones de **jerarquía de capacidades** (teórica de equipo → cuello de botella → operativa de planta → producción real) |
+| Entradas | Escalas, horas netas, perfiles de destino y kg/ave importados de `23_plan_expansion/modelo_escala.py` (v1.1) y del balance v1.1; sensibilidades SUP-09A-01 a SUP-09A-04 (D, R, ventanas, `t_limpieza` provisional, productividades, residencia); referencias de proveedores (fuente primaria del fabricante) cargadas **solo como referencia** |
+| Unidades | aves, aves/h, aves/min, s, kg, kg/h, t, h, 0/1 (alerta); columna `base`; punto decimal |
 | Salida | [`capacidad_proceso.csv`](capacidad_proceso.csv) (columnas: bloque, escala_aves_dia, horas_netas, parametro, variable, valor, unidad, base, fuente_modelo, clasificacion, nota) |
-| Tests | 13 (T01 ritmos = `escenarios_escala.csv`; T04 flujos = balance; T08 modelos anteriores intactos; T11 línea de 2.500 aves/h × 8 h < 20.000 con η < 1; T13 ventana incluye sanitización y mantenimiento, etc.); `--mutaciones`: 5/5 detectadas |
+| Tests | 18: T01 ritmos = `escenarios_escala.csv`; T03 jerarquía de capacidades; T04 flujos = balance; T05/T13 ecuación de 24 h completa; T08 modelos anteriores intactos; T11 línea nominal ≠ escala; **T14** sensibilidades nunca `[VERIFICADO]`; **T15** capacidad efectiva ≤ nominal salvo justificación; **T16** alerta si > 24 h; **T17** Δ limpieza ⇒ −Δ holgura; **T18** capacidades de proveedores bloqueadas como diseño. `--mutaciones`: 9/9 detectadas |
 | Uso | `python3 05_proceso_industrial/modelo_capacidad_proceso.py` (`--solo-tests`, `--mutaciones`) |
-| Limitaciones | Sensibilidades, no datos argentinos; ventana independiente de la escala; puestos equivalentes ≠ dotación |
-
-**Relacionado:** `08_maquinaria`, `09_layout_obra_civil`, `16_normativa_senasa`, `23_plan_expansion`.
+| Limitaciones | D, R y ventanas son sensibilidades, no datos argentinos; `t_limpieza` no depende todavía de escala, configuración ni automatización; puestos equivalentes ≠ dotación |

@@ -1,6 +1,6 @@
 # Zonificación higiénica conceptual (zonas sucia y limpia)
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 (sesión 09A) · Fase 0
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (sesión 09A; §5 alineado con la ecuación de 24 h) · Fase 0
 
 > **Alcance:** principios de separación sanitaria entre zonas y cruces de flujo que el diseño debe evitar. **No** es un layout: no hay metros, superficies ni ubicación de salas (eso corresponde a `09_layout_obra_civil`, fase posterior). Los requisitos normativos concretos (Decreto 4238/68, Res. SENASA 592/2026, estándar UE) están **sin leer en su texto original** (DPV-007, DPV-09A-03).
 > **Base:** principio de "marcha hacia adelante" de zona sucia a zona limpia, sin retrocesos ni cruces (guía INTA de faena de aves, FTE-09A-029 `[PVDP]`); requisitos de flujos separados para habilitación SENASA y exportación ([`../17_exportacion/requisitos_planta_exportadora.md` §1 y §3](../17_exportacion/requisitos_planta_exportadora.md)). Flujo de etapas: [`flujo_proceso.md`](flujo_proceso.md).
@@ -69,7 +69,7 @@
 
 ## 5. Limpieza y sanitización: horas netas de faena vs tiempo total del establecimiento
 
-La **hora neta de faena** es la hora en que la línea recibe aves. El **tiempo total del establecimiento** agrega todo lo que la planta necesita para poder volver a faenar al día siguiente. La cuantificación de sensibilidad está en [`cuellos_botella.md` §4](cuellos_botella.md) (8 h netas → 13–20 h de establecimiento; 16 h netas → 22–29 h, es decir, **no entran en un día** salvo con tiempos bajos). No se dimensionan todavía consumos de agua, químicos ni personal de limpieza.
+La **hora neta de faena** es la hora en que la línea recibe aves. El **tiempo total del establecimiento** agrega todo lo que la planta necesita para poder volver a faenar al día siguiente. La cuantificación de sensibilidad está en [`cuellos_botella.md` §4](cuellos_botella.md) (ecuación de 24 h: 8 h netas → ~14–21 h de establecimiento; 16 h netas → ~23–32 h, es decir, **restricción severa de calendario** con los supuestos actuales, que debe validarse con proveedores y plantas antes de descartar dos turnos). El tiempo de limpieza es una relación **provisional** `t_limpieza(escala, configuración, automatización)`; datos de campo pendientes: duración, dotación, simultaneidad, CIP/manual, tiempos preoperacionales (DPV-09A-04). No se dimensionan todavía consumos de agua, químicos ni personal de limpieza.
 
 Secuencia conceptual del ciclo de limpieza y sanitización (POES; orden típico descrito en FTE-09A-028 `[PVDP · débil]`):
 
@@ -88,7 +88,7 @@ Secuencia conceptual del ciclo de limpieza y sanitización (POES; orden típico 
 
 **Reglas de zonificación durante la limpieza:** se limpia de la zona limpia hacia la sucia (y de arriba hacia abajo), con equipos y personal de limpieza asignados por zona; las mangueras y útiles de la zona sucia no entran a la zona limpia; el agua corre hacia los desagües de zona sucia.
 
-**Implicancias para la escala:** con un turno de faena la limpieza completa entra en la noche; con dos turnos queda comprimida entre turnos o se hace por sectores. En plantas de dos turnos el diseño higiénico (tiempo de limpieza por equipo) y la redundancia (limpiar un equipo mientras otro trabaja) pasan a ser **parte de la capacidad**.
+**Implicancias para la escala:** con un turno de faena la limpieza completa entra en la noche; con dos turnos queda comprimida entre turnos o se hace por sectores (así operan plantas de dos turnos en otros países; cómo, es dato a relevar). En plantas de dos turnos el diseño higiénico (tiempo de limpieza por equipo) y la redundancia (limpiar un equipo mientras otro trabaja) pasan a ser **parte de la capacidad**.
 
 ## 6. Pendientes
 

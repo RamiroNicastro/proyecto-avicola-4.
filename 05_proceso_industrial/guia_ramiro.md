@@ -1,6 +1,6 @@
 # Guía para Ramiro — cómo funciona una planta de faena y por qué la velocidad de la máquina no es la capacidad
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 (sesión 09A)
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (sesión 09A; corrección conceptual)
 
 > Explicación en lenguaje simple de los conceptos de esta etapa. Los detalles y números están en [`flujo_proceso.md`](flujo_proceso.md), [`cuellos_botella.md`](cuellos_botella.md) y [`arquitecturas_por_escala.md`](arquitecturas_por_escala.md). Ningún número de esta guía es un dato medido en una planta argentina: son cálculos y supuestos para entender órdenes de magnitud.
 
@@ -35,20 +35,20 @@ Posibles cuellos de botella: la gente que cuelga los pollos, la evisceración, c
 
 ## 4. Qué es la disponibilidad (y por qué la máquina nunca rinde lo que dice)
 
-La **velocidad nominal** es lo que dice el folleto: "esta máquina procesa 2.500 aves/h". Pero en un día real:
+La **velocidad nominal** es lo que dice el folleto: "esta máquina procesa 2.500 aves/h". Ojo: cada fabricante puede medir ese número distinto (con qué peso de pollo, qué producto, cuánta gente). Lo que importa es la **velocidad garantizada** en el contrato y bajo qué condiciones. Y aun así, en un día real:
 
 - la línea para 15 minutos porque se trabó un grillete (**parada**);
 - hay decenas de interrupciones de segundos que nadie anota (**microparadas**);
 - algunos ganchos pasan vacíos porque el colgador no llegó (**pérdida de velocidad**);
 - se para para cambiar el programa de corte o el tipo de bandeja (**cambio de producto**).
 
-La **disponibilidad** es el porcentaje del tiempo en que la línea efectivamente anda. Sumando todo, una planta produce entre el 70 % y el 90 % de lo que diría la cuenta "velocidad × horas" (es un rango que usamos para pensar; el dato real hay que medirlo en plantas argentinas).
+La **disponibilidad** es el porcentaje del tiempo programado en que la línea efectivamente anda. En el modelo probamos que la planta produzca entre el 70 % y el 90 % de lo que diría la cuenta "velocidad × horas". **Es un rango para probar sensibilidad, no un dato**: nadie nos demostró todavía cuánto rinde una línea en Argentina; hay que medirlo en plantas reales y pedirlo garantizado a los proveedores.
 
 ## 5. Horas de faena ≠ horas de la planta
 
-Para faenar 8 horas, la planta trabaja muchas más: preparar y revisar todo antes de arrancar, pausas del personal, limpieza intermedia, vaciar la línea al terminar, y sobre todo **limpiar y desinfectar** todo (prelavado, espuma, enjuague, desinfección, inspección) y hacer **mantenimiento**. Con nuestros supuestos, 8 horas de faena ocupan **13 a 20 horas** del establecimiento.
+Para faenar 8 horas, la planta trabaja muchas más: preparar y revisar todo antes de arrancar, pausas del personal, limpieza intermedia, vaciar la línea al terminar, y sobre todo **limpiar y desinfectar** todo (prelavado, espuma, enjuague, desinfección, inspección) y hacer **mantenimiento**. Con nuestros supuestos (a validar), 8 horas de faena ocupan **unas 14 a 21 horas** del establecimiento. La cuenta completa es: 24 h = faena + paradas + pausas + cambios de turno + arranque + cierre + limpieza + sanitización + mantenimiento + lo que sobra (la **holgura**).
 
-Por eso "hago dos turnos y duplico la producción" es engañoso: dos turnos de 8 horas netas más la limpieza y el mantenimiento necesitan **22 a 29 horas**… y el día tiene 24.
+Por eso "hago dos turnos y duplico la producción" no es automático: con nuestros supuestos, dos turnos de 8 horas netas más todo lo demás suman **23 a 32 horas**, y el día tiene 24. Solo el escenario más optimista entra, muy justo. **No quiere decir que dos turnos sean imposibles**: hay plantas en el mundo que trabajan dos turnos (limpiando por sectores, con más personal de limpieza o equipos repetidos). Hay que ver cómo lo hacen antes de descartarlo.
 
 ## 6. Automatización
 
@@ -63,9 +63,16 @@ Automatizar **no siempre es mejor**:
 | Menos dependencia de conseguir personal | Si se rompe y el técnico está en otro país, se para todo |
 | Más ritmo | Menos flexibilidad para cambiar de producto |
 
-Hay operaciones que son automáticas en cualquier escala (aturdido, escaldado, desplumado, chiller), otras que siguen siendo manuales en casi todas las plantas (**colgar los pollos**, el trimming, la inspección veterinaria) y otras donde el salto depende de la escala: la **evisceración** manual deja de ser práctica por encima de ~1.000 aves/h, es decir, entre 5.000 y 10.000 aves/día.
+Hay operaciones que en las plantas comerciales suelen hacerse con máquinas continuas aun en escalas chicas (aturdido, escaldado, desplumado, chiller: es lo que vamos a estudiar primero, no una obligación), otras que siguen siendo manuales en casi todas las plantas (**colgar los pollos**, el trimming, la inspección veterinaria) y otras donde la decisión depende de muchas cosas. La **evisceración** es el mejor ejemplo: un fabricante vende una planta compacta con **evisceración manual hasta ~1.600 pollos por hora** (BAADER). O sea, no hay un número mágico a partir del cual "hay que automatizar": depende del costo y la disponibilidad de gente, la ergonomía, la inspección, qué tan parejos vienen los pollos, la calidad, la higiene y la escala. El punto justo para Argentina se sabrá con cotizaciones y midiendo cuánto rinde la gente.
 
-## 7. Redundancia
+## 7. Capacidad: cuatro niveles
+
+1. **Capacidad teórica de un equipo:** velocidad del folleto × horas.
+2. **Capacidad del cuello de botella:** la del equipo o sala más lento, ya con sus paradas.
+3. **Capacidad operativa de la planta:** la menor entre el cuello de botella y todo lo de afuera (llegada de pollos, retiro de plumas, frío, efluentes, gente, horas del día).
+4. **Producción real:** esa capacidad × los días que se trabaja − los días de parada programada, y solo si hay quien compre.
+
+## 8. Redundancia
 
 Tener un **repuesto o una segunda unidad** para que una falla no pare la planta. Ejemplos: dos compresores de frío donde alcanzaría con uno; varias desplumadoras en fila (si una falla, las otras siguen, peor pero siguen); dos líneas de faena chicas en lugar de una grande (si una se rompe, la otra sigue al 50 %).
 
@@ -73,15 +80,15 @@ Clasificamos los equipos en tres grupos: **CRÍTICO** (si falla, se para la faen
 
 **Ojo:** automatizar convierte tareas manuales (que "no se rompen") en equipos críticos (que sí).
 
-## 8. Mantenimiento
+## 9. Mantenimiento
 
 Las máquinas de una planta de pollos trabajan mojadas, con grasa, sangre y lavados diarios con químicos. Se gastan cuchillas, dedos de goma, grilletes, rodamientos. El **mantenimiento preventivo** (cambiar piezas antes de que fallen) es más barato que la parada. Necesita: tiempo en el día (compite con la limpieza y con un eventual segundo turno), **repuestos en planta** (un repuesto importado que tarda semanas = semanas sin faena) y **técnicos** que conozcan el equipo.
 
-## 9. Por qué comprar una línea de 2.500 aves/h no significa poder producir 20.000 aves/día
+## 10. Por qué comprar una línea de 2.500 aves/h no significa poder producir 20.000 aves/día
 
 La cuenta ingenua es 2.500 aves/h × 8 h = 20.000 aves/día. Es falsa por cinco razones:
 
-1. **La línea no rinde el 100 %:** con 80 % de eficiencia, 2.500 × 8 × 0,8 = **16.000 aves/día**. Para llegar a 20.000 con 8 horas netas habría que comprar una línea de ~2.800–3.600 aves/h nominales, o trabajar más horas netas.
+1. **La línea no rinde el 100 %:** si rindiera, por ejemplo, un 80 % (número de prueba, no dato), 2.500 × 8 × 0,8 = **16.000 aves/día**. Cuánto rinde de verdad depende de cómo el fabricante define su "2.500", de lo que garantice por contrato y de lo que se mida en planta.
 2. **Las otras etapas tienen que acompañar:** evisceración, inspección, chiller, trozado, envasado, congelado, cámaras y despacho deben procesar lo mismo. Si una no llega, manda ella.
 3. **Los servicios tienen que alcanzar:** agua, efluentes, frío, energía, vapor, aire comprimido.
 4. **La gente tiene que alcanzar:** colgadores, evisceradores, operarios de sala, en cada turno.
@@ -89,8 +96,8 @@ La cuenta ingenua es 2.500 aves/h × 8 h = 20.000 aves/día. Es falsa por cinco 
 
 Y al revés: una línea de 2.500 aves/h puede servir para una planta de 10.000 aves/día con menos horas, o para crecer; pero eso depende de todo lo anterior, no de la línea.
 
-## 10. Tres preguntas para hacer en cualquier visita a una planta o a un proveedor
+## 11. Tres preguntas para hacer en cualquier visita a una planta o a un proveedor
 
-1. "¿Cuántos pollos **realmente** faenan por día, y en cuántas horas netas?" (no la velocidad de la máquina).
+1. "¿Cuántos pollos **realmente** faenan por día, y en cuántas horas netas?" (no la velocidad de la máquina). A un proveedor: "¿qué velocidad me **garantizan**, con qué peso de pollo, cuánta gente y cómo lo probamos?"
 2. "¿Qué es lo que más les frena la producción?" (su cuello de botella real).
 3. "Si se rompe [la evisceradora / el chiller / el compresor], ¿quién viene a arreglarlo y en cuánto tiempo?"

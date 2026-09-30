@@ -1,6 +1,6 @@
 # Requerimientos de información para cotización (RFQ futuro)
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 (sesión 09A) · Fase 0 — **plantilla; no se envía todavía**
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (sesión 09A; agrega la definición contractual de capacidad como dato crítico, §2.1) · Fase 0 — **plantilla; no se envía todavía**
 
 > **Alcance:** qué datos habrá que pedir a cada proveedor, para cada equipo o módulo, cuando la fase del proyecto habilite solicitar cotizaciones. Define una **base de diseño común** (para que las ofertas sean comparables), los **campos obligatorios** por equipo, los **lotes** (paquetes) de cotización y las **preguntas específicas** por grupo. **No** se envía ninguna solicitud, **no** se elige proveedor, **no** se fija escala.
 > Toda respuesta se registrará como `[COTIZACIÓN]` con proveedor, fecha, validez, moneda, IVA, flete, instalación y condiciones (regla 4); los valores en ARS con tipo de cambio, fecha y fuente (regla 2).
@@ -15,7 +15,7 @@ Para que las ofertas sean comparables, todos deben cotizar sobre la misma base. 
 | Parámetro | Valor para el RFQ | Origen |
 |---|---|---|
 | Escalas a cotizar | 2.500 / 5.000 / 10.000 / 20.000 aves faenadas por día operativo (pedir la oferta para **al menos dos**, y cómo se amplía de una a la siguiente) | [`../23_plan_expansion/conclusiones_escala.md`](../23_plan_expansion/conclusiones_escala.md) |
-| Horas netas de faena | 8 h (sensibilidad 6 y 10 h); preguntar qué cambia con 16 h (dos turnos) | SUP-053; DEC-036 |
+| Horas netas de faena | 8 h (sensibilidad 6 y 10 h); preguntar qué cambia con 16 h (dos turnos): horas continuas, lavado, sanitización y mantenimiento | SUP-053; DEC-036 |
 | Ritmo operativo requerido | 312 / 625 / 1.250 / 2.500 aves/h a 8 h | [`../05_proceso_industrial/cuellos_botella.md` §3](../05_proceso_industrial/cuellos_botella.md) |
 | Peso vivo | Referencia 2,9 kg (escenarios 2,4 / 2,9 / 3,4 kg, SUP-027); **rango modelado en el balance: 2,2–3,5 kg** (el equipo debe declarar qué rango tolera sin ajuste) | SUP-027; balance v1.1 |
 | Uniformidad de lotes | Desconocida: lotes de varios productores (pedir tolerancia a dispersión de peso) | DPV-044 |
@@ -32,8 +32,8 @@ Cada línea de la oferta debe completar:
 
 | # | Campo | Unidad / detalle | Por qué se necesita |
 |---|---|---|---|
-| 1 | **Capacidad nominal** | aves/h, kg/h, piezas/h, envases/min | Comparación básica |
-| 2 | **Capacidad real esperable** | Misma unidad, con la eficiencia o disponibilidad supuesta y **referencias de plantas** donde se midió | La nominal no es la real (SUP-09A-01) |
+| 1 | **Capacidad nominal** | aves/h, kg/h, piezas/h, envases/min, **con la definición que usa el proveedor** (§2.1) | Comparación básica; los fabricantes no definen "aves/h" igual |
+| 2 | **Capacidad real esperable** y **capacidad garantizada** | Misma unidad; la garantizada con sus condiciones contractuales (§2.1) y **referencias de plantas** donde se midió | La nominal no es la real; los factores del modelo son solo sensibilidad (SUP-09A-01) |
 | 3 | Rango de producto | Peso mínimo/máximo, calibres, tipos de corte | Pesos variables en lotes argentinos |
 | 4 | **Dimensiones** | Largo × ancho × alto (m), peso (kg), espacio de mantenimiento, cargas a piso/estructura | Layout futuro (no ahora) |
 | 5 | **Potencia** | kW instalados y kW de consumo medio; tensión | Energía (`12_energia_frio`) |
@@ -46,18 +46,44 @@ Cada línea de la oferta debe completar:
 | 12 | **Precio** | Por equipo y total; **moneda**; IVA; qué incluye | `19_capex` (no ahora) |
 | 13 | **Incoterm** | EXW, FOB, CIF, DAP, DDP; puerto/lugar | Costo de importación |
 | 14 | **Instalación** | Incluida o no; supervisión; obras civiles y servicios a cargo del comprador | Alcance real |
-| 15 | **Puesta en marcha** | Duración, personal del proveedor, pruebas de aceptación (FAT/SAT) y criterio de capacidad garantizada | Responsabilidad de desempeño |
+| 15 | **Puesta en marcha y prueba de aceptación** | Duración, personal del proveedor; pruebas FAT/SAT; **prueba de desempeño (*performance acceptance test*)**: duración, aves, pesos, dotación, criterios de aprobación y penalidades | Responsabilidad de desempeño |
 | 16 | **Capacitación** | Operadores y mantenimiento; duración; idioma | Operación |
 | 17 | **Repuestos** | Lista recomendada para 1 y 2 años; repuestos críticos; **stock en Argentina**; tiempos de reposición | Riesgo de parada (§2.2 de [`catalogo_equipos.md`](catalogo_equipos.md)) |
 | 18 | **Garantía** | Plazo, alcance, condiciones (uso de repuestos originales) | Riesgo |
 | 19 | **Mantenimiento** | Plan preventivo, horas/semana, consumibles, contrato de servicio, soporte remoto | OPEX y ventana horaria |
 | 20 | **Lead time** | Semanas de fabricación + transporte + montaje + puesta en marcha | Plan de etapas (DPV-086) |
-| 21 | Servicio técnico local | Técnicos residentes en Argentina (cuántos, dónde), tiempo de respuesta garantizado | DPV-09A-02 |
-| 22 | Tiempo de limpieza | Horas-persona y tiempo de desarme/limpieza por día; diseño higiénico | Ventana horaria (SUP-09A-02) |
-| 23 | Ampliabilidad | Cómo se amplía a la escala siguiente: qué se mantiene, qué se agrega, qué se reemplaza | Modularidad ([`../05_proceso_industrial/arquitecturas_por_escala.md` §8](../05_proceso_industrial/arquitecturas_por_escala.md)) |
+| 21 | **Servicio técnico local** | **Técnicos disponibles en Argentina** (cuántos, dónde, especialidad) y **tiempo de respuesta** garantizado (remoto y en planta) | DPV-09A-02 |
+| 22 | **Tiempo de lavado** y **tiempo de sanitización** | Por separado: horas y personas por día; desarme; CIP / espuma / manual; qué puede limpiarse mientras otro sector produce | Ecuación de 24 h (`t_limpieza` provisional, SUP-09A-02) |
+| 23 | **Posibilidad de expansión** y **componentes a reemplazar al ampliar** | Hasta qué capacidad; qué se mantiene, qué se agrega y **qué debe reemplazarse**; si requiere parar la planta y cuánto | Modularidad ([`../05_proceso_industrial/arquitecturas_por_escala.md` §8](../05_proceso_industrial/arquitecturas_por_escala.md)) |
 | 24 | Materiales y certificaciones | Acero inoxidable (tipo), plásticos aptos, seguridad eléctrica y de máquinas | Habilitación |
 | 25 | Referencias | Plantas en Argentina o la región con el mismo equipo, visitables | Validación |
 | 26 | Validez de la oferta | Fecha; ajuste de precio | Regla 4 |
+| 27 | **Disponibilidad garantizada** | % del tiempo programado; cómo se mide; exclusiones | Separar disponibilidad de velocidad (cuellos_botella §2) |
+| 28 | **Supuestos de peso y uniformidad** | Peso medio, rango y dispersión (desvío) de las aves con que se garantiza la capacidad | Lotes argentinos de varios productores (DPV-044) |
+| 29 | **Horas máximas de operación continua** | h antes de parar para limpieza o mantenimiento; aptitud para dos turnos | Ecuación de 24 h; DEC-036 |
+| 30 | **Ventanas recomendadas de mantenimiento** | Diario, semanal, anual; horas y personal; qué puede hacerse durante la sanitización | Ecuación de 24 h |
+| 31 | **Repuestos críticos** | Lista separada de la de desgaste; cuáles detienen la línea; stock en Argentina y plazo de reposición | Criticidad ([`catalogo_equipos.md` §2](catalogo_equipos.md)) |
+
+### 2.1 Dato crítico: definición contractual de capacidad y condiciones de garantía
+
+**No todos los fabricantes definen "aves/h" de la misma forma.** Para cada equipo, módulo o línea, el proveedor debe declarar **la definición contractual de capacidad y las condiciones bajo las cuales se garantiza**. Sin esto, dos ofertas de "1.500 aves/h" no son comparables.
+
+| Condición | Qué debe responder el proveedor |
+|---|---|
+| **Velocidad garantizada** | aves/h (o kg/h, piezas/h) que se compromete a alcanzar, y durante cuánto tiempo continuo |
+| Velocidad nominal y de diseño | Cómo se relacionan con la garantizada |
+| **Peso / rango de aves** | Peso medio, mínimo, máximo y dispersión admitida |
+| **Producto** | Para qué producto o corte se garantiza (entero, trozado, programa de corte, deshuese) |
+| **Dotación** | Cantidad y calificación de operarios supuesta (incluye repaso manual e inspección) |
+| **Disponibilidad** | Disponibilidad garantizada o supuesta y exclusiones (paradas por causas externas) |
+| **Condiciones de alimentación** | Ritmo y regularidad de llegada de aves o producto; grilletes ocupados; temperatura de entrada |
+| **Mantenimiento** | Plan de mantenimiento y repuestos que condicionan la garantía |
+| **Tolerancia a variabilidad** | Qué pasa con aves fuera de rango, lotes desparejos, defectos |
+| **Rechazos y paradas** | Porcentaje máximo de rechazos, reprocesos o paradas admitido dentro de la garantía |
+| Servicios | Calidad y caudal de agua, presión de aire, vapor, frío y energía supuestos |
+| **Prueba de aceptación** | Protocolo de la *performance acceptance test*: duración, aves, medición, criterios, penalidades |
+
+Las capacidades publicadas por fabricantes (p. ej., las tres referencias de fuente primaria de [`proveedores_preliminares.md` §1.1](proveedores_preliminares.md)) son **nominales declaradas** y no reemplazan esta respuesta.
 
 ## 3. Lotes de cotización (paquetes)
 
@@ -89,7 +115,7 @@ Cada línea de la oferta debe completar:
 | L8 | Tiempo de congelado hasta −18 °C en el centro por producto y envase; kg/h; kW frigoríficos; espacio; ampliación |
 | L9 | Capacidad de bombas y tanques; tamices; almacenamiento por 24 h |
 | L10 | Consumos simultáneos; redundancia N+1 |
-| L11 | **Capacidad garantizada** de la línea en aves/h reales con pesos de 2,2–3,5 kg, penalidades, pruebas de aceptación, responsable único de integración |
+| L11 | **Capacidad garantizada** de la línea completa con la definición del §2.1 (pesos de 2,2–3,5 kg, dotación, disponibilidad, rechazos), prueba de aceptación, penalidades y responsable único de integración |
 
 ## 5. Formato de comparación (neutral)
 

@@ -1,6 +1,6 @@
 # Manual vs semiautomático vs automático, por operación y por escala
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 (sesión 09A) · Fase 0
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (corrección conceptual: sin umbral fijo de evisceración manual; niveles como arquitectura de referencia, no obligación) · Fase 0
 
 > **Alcance:** para cada operación, qué puede hacerse a mano, con semiautomatización o con automatización completa, y qué nivel **conviene estudiar** en cada escala. **No** se decide el nivel de automatización (DEC-09A-01), **no** se elige equipo ni proveedor, **no** se calcula dotación (`18_recursos_humanos`) ni CAPEX/OPEX.
 > **Base:** niveles por equipo en [`matriz_equipos.csv`](matriz_equipos.csv) (columnas `nivel_*`); ritmos y puestos equivalentes de [`../05_proceso_industrial/modelo_capacidad_proceso.py`](../05_proceso_industrial/modelo_capacidad_proceso.py). Las valoraciones cualitativas son `[SUPUESTO]` (SUP-09A-05) a validar con proveedores y plantas en operación.
@@ -13,8 +13,11 @@
 | Nivel | Qué significa | Ejemplo |
 |---|---|---|
 | **Manual (M)** | La operación la hace una persona con herramientas simples | Eviscerar con cuchara y cuchillo; trozar en mesa con sierra |
+| **Mecanizado (Mc)** | Una máquina ejecuta la operación física, pero sin control automático del proceso ni sincronía con la línea; la persona la alimenta, regula y vigila | Escaldadora por lotes con termostato; desplumadora de tambor; sierra de cinta; transportador aéreo simple |
 | **Semiautomático (S)** | Una máquina hace el trabajo pesado o repetitivo; una persona carga, guía o controla cada pieza | Línea de conos para deshuese; peladora de mollejas cargada a mano; embolsadora asistida |
-| **Automático (A)** | La máquina procesa en línea sin intervención por pieza; las personas supervisan, reparan y hacen el repaso | Evisceradora rotativa; trozadora en línea; balanza de línea con distribución |
+| **Automático (A)** | La máquina procesa en línea sin intervención por pieza, con control de parámetros; las personas supervisan, reparan y hacen el repaso | Evisceradora rotativa; trozadora en línea; balanza de línea con distribución |
+
+Los niveles de las tablas siguientes son una **arquitectura de referencia a estudiar**, no una obligación técnica ni normativa: para una planta comercial habilitada probablemente se estudien soluciones mecanizadas o automatizadas en varias etapas, pero **no se afirma que otra configuración sea imposible** salvo respaldo normativo (norma no leída, DPV-09A-03).
 
 ## 2. Matriz por operación (criterios cualitativos)
 
@@ -31,7 +34,7 @@ Escala de valoración: ▲ favorable · ● neutro · ▼ desfavorable, **compar
 | Corte de patas / cabeza | Sí | Guías pasivas | Sí | Media | ▲ | ▲ | ● | ▼ | ● |
 | Transferencia a evisceración | Sí (recolgado) | — | Sí | Alta | ▲ | ▲ | ▲ (menos contacto) | ▼ | ▼ |
 | Corte de cloaca y apertura | Sí | Pistola de vacío | Sí | Media | ▲ | ▲ | ▲ si calibrada · ▼ si el lote es desparejo | ▼ | ▼ (tamaño de ave) |
-| **Evisceración** | **Sí, hasta ~1.000 aves/h** con herramientas (FTE-09A-025 `[PVDP]`) | Sí | Sí | **Muy alta** | ▲▲ | ▲ | ▲/▼ (rotura de intestino si mal calibrada) | ▼▼ (técnico especializado) | ▼ (pesos variables) |
+| **Evisceración** | **Sí**; un fabricante documenta evisceración manual en línea hasta ~1.600 broilers/h (BAADER Compact Plant 396, FTE-09A-007); sin umbral fijo | Sí | Sí | **Muy alta** | ▲▲ | ▲ | ▲/▼ (rotura de intestino si mal calibrada) | ▼▼ (técnico especializado) | ▼ (pesos variables) |
 | Presentación para inspección | Sí (vísceras colgando) | Bandejas | Línea sincronizada | Alta | ▲ | ▲ | ▲ | ▼ | ● |
 | Menudencias (cosecha, molleja) | Sí | Peladora | Sí | Media | ▲ | ▲ | ● | ▼ | ● |
 | Lavado de carcasas | Duchas | — | Lavadora en línea | Media | ▲ | ▲ | ▲ | ● | ● |
@@ -52,20 +55,20 @@ Escala de valoración: ▲ favorable · ● neutro · ▼ desfavorable, **compar
 
 ## 3. Matriz por escala (nivel razonable a estudiar)
 
-Ritmo operativo a 8 h netas: 312 / 625 / 1.250 / 2.500 aves/h (con 6 h: 417 / 833 / 1.667 / 3.333). Códigos como en [`catalogo_equipos.md`](catalogo_equipos.md): **M**, **S**, **A**, **O** (opcional según producto), **T** (tercerizar/postergar). "M/S" = comparar ambas.
+Ritmo operativo a 8 h netas: 312 / 625 / 1.250 / 2.500 aves/h (con 6 h: 417 / 833 / 1.667 / 3.333). Códigos como en [`catalogo_equipos.md`](catalogo_equipos.md): **M**, **Mc** (mecanizado), **S**, **A**, **O** (opcional según producto), **T** (tercerizar/postergar). "M/S" = comparar ambas.
 
 | Operación | 2.500 aves/día | 5.000 | 10.000 | 20.000 |
 |---|---|---|---|---|
 | Descarga | M | M/S | S/A | A |
 | Colgado | M | M | M | M (más puestos y rotación) |
-| Aturdido, escaldado, desplumado | A (línea continua) | A | A | A |
+| Aturdido, escaldado, desplumado (arquitectura de referencia) | Mc/A | A | A | A |
 | Degüello | M (o A + repaso) | M/S | A + repaso | A + repaso |
 | Patas y cabeza | M | M/S | A | A |
 | Transferencia | M | M | M/A | A |
-| **Evisceración** | **M** (3–6 puestos eq.) | **M/S** (6–11) | **A** (manual: 11–21 puestos eq.; > ~1.000 aves/h) | **A** (manual: 21–42 puestos eq.) |
+| **Evisceración** | **M** (3–6 puestos eq.) | **M/S** (6–11) | **M/S/A a comparar** (manual: 11–21 puestos eq.; 1.250 aves/h, dentro del rango con evisceración manual documentado por un fabricante) | **S/A**, manual a comparar (21–42 puestos eq.) |
 | Presentación para inspección | M | M/S | A | A |
 | Menudencias | M | M | S/A | A |
-| Enfriamiento | A | A | A | A |
+| Enfriamiento (arquitectura de referencia) | A | A | A | A |
 | Clasificación | M | M/S | A | A |
 | Trozado | M | M/S | S/A | A |
 | Deshuese | M | M | M/S (conos) | S + A por pieza (O) |
@@ -79,8 +82,8 @@ Puestos equivalentes de eviscerado manual: rango referencia–prudente de [`../0
 
 **Lecturas:**
 
-1. **Lo que es automático en todas las escalas:** el tramo aturdido → escaldado → desplumado → enfriamiento funciona con equipos continuos aun a 2.500 aves/día; la diferencia entre escalas está en el **tamaño** de esos equipos, no en su existencia.
-2. **El gran salto es la evisceración** entre 5.000 y 10.000 aves/día (con 8 h netas): por encima de ~1.000 aves/h la evisceración manual deja de ser práctica según la referencia. Con **6 h netas**, 5.000 aves/día ya exige 833 aves/h y queda cerca del umbral.
+1. **Arquitectura de referencia, no obligación:** para aturdido, escaldado, desplumado y enfriamiento se estudian equipos mecanizados o automáticos continuos en todas las escalas, porque es la configuración habitual de las plantas comerciales y la que ofrecen los fabricantes aun en rangos bajos (600–1.600 aves/h, FTE-09A-007; 150–1.500 aves/h, FTE-09A-015 `[PVDP]`). No se afirma que otra configuración sea técnicamente imposible: dependerá de la norma (no leída) y de la cotización.
+2. **Evisceración: sin umbral fijo.** La transición entre evisceración manual, semiautomática y automática depende de velocidad, costo y disponibilidad de mano de obra, ergonomía, inspección, uniformidad, calidad, higiene y economía de escala. Equipos comerciales demuestran que la evisceración manual puede utilizarse al menos en escalas del orden de **1.600 aves/h** (BAADER Compact Plant 396). El umbral económico para Argentina debe determinarse con cotizaciones y productividad real (DPV-09A-05, DEC-09A-01). La cantidad de puestos manuales equivalentes (11–21 a 10.000 aves/día; 21–42 a 20.000) muestra el **tamaño del problema de personal**, no un límite técnico.
 3. **El colgado sigue siendo manual** en todas las escalas: es el límite humano de la línea y crece en puestos con la escala.
 4. **Trozado y deshuese dependen del mix, no solo de la escala:** una planta de 20.000 aves/día que vende entero casi no necesita trozado automático; una de 5.000 que deshuesa todo necesita mucha más gente o equipos.
 5. **Opcionales (O):** garras, CMS, porcionado, deshuese automático y congelado continuo solo se justifican con mercado para el producto (DEC-031, DEC-029, DEC-030).
@@ -101,7 +104,7 @@ Puestos equivalentes de eviscerado manual: rango referencia–prudente de [`../0
 
 | Situación | Por qué |
 |---|---|
-| Ritmos altos (> ~1.000 aves/h en evisceración) | La cantidad de puestos manuales se vuelve inmanejable (espacio en línea, supervisión, higiene) |
+| Ritmos altos en evisceración (sin umbral fijo; hay evisceración manual documentada hasta ~1.600 aves/h) | La cantidad de puestos manuales crece (espacio en línea, ergonomía, supervisión, higiene, uniformidad); el punto en que conviene automatizar se define con cotizaciones y productividad real |
 | Escasez de mano de obra en la localización | El límite es la gente, no el capital (`10_localizacion`, `18_recursos_humanos`) |
 | Exigencia de uniformidad (exportación, calibres, porciones de peso fijo) | Consistencia del corte y del peso |
 | Dos turnos | Duplicar gente calificada en ambos turnos es más difícil que duplicar horas de máquina |

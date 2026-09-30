@@ -1,6 +1,6 @@
 # Catálogo conceptual de equipos por etapa
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 (sesión 09A) · Fase 0 — **solo relevamiento: no se selecciona equipo, marca, modelo ni proveedor**
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (sesión 09A; corrección: evisceración manual sin umbral fijo, niveles como arquitectura de referencia) · Fase 0 — **solo relevamiento: no se selecciona equipo, marca, modelo ni proveedor**
 
 > **Alcance:** qué equipos (conceptuales) necesita cada etapa del proceso ([`../05_proceso_industrial/flujo_proceso.md`](../05_proceso_industrial/flujo_proceso.md)), qué alternativas tecnológicas existen, qué servicios consumen, cuán críticos son y cómo se mantienen. **No** hay precios, CAPEX, capacidades de modelos específicos ni recomendación.
 > **Archivo maestro:** [`matriz_equipos.csv`](matriz_equipos.csv) (76 equipos, `EQ-01` a `EQ-76`). Este documento es su lectura analítica; los niveles de automatización por escala se discuten en [`automatizacion_por_escala.md`](automatizacion_por_escala.md). Fuentes: [`fuentes_09A.csv`](fuentes_09A.csv) (todas `[PVDP]`: extractos de buscador; acceso directo a sitios bloqueado en la sesión).
@@ -15,7 +15,7 @@
 | `equipo`, `funcion`, `alternativas` | Qué es, para qué sirve y variantes tecnológicas |
 | `manual_posible` | Si la operación puede hacerse a mano y hasta dónde |
 | `sensibilidad_escala` | Cuánto cambia el equipo al cambiar la escala |
-| `nivel_2500` … `nivel_20000` | Nivel **razonable a estudiar** (no decidido): **M** manual · **S** semiautomático · **A** automático · **O** opcional según producto/mercado · **T** tercerizar/postergar · **—** no aplica. "M/S" = ambas a comparar |
+| `nivel_2500` … `nivel_20000` | Nivel **razonable a estudiar** (arquitectura de referencia, no obligación ni decisión): **M** manual · **Mc** mecanizado · **S** semiautomático · **A** automático · **O** opcional según producto/mercado · **T** tercerizar/postergar · **—** no aplica. "M/S" = ambas a comparar |
 | `criticidad` | **CRÍTICO** detiene la faena · **IMPORTANTE** reduce capacidad o calidad · **SECUNDARIO** puede resolverse temporalmente |
 | `bypass_o_redundancia` | Qué hacer si falla |
 | `servicios` | elec, agua, agua_caliente, agua_helada, vapor, aire, vacío, frío, gas |
@@ -54,7 +54,7 @@ Transportador aéreo con grilletes (EQ-07, **crítico**: punto único de falla),
 
 ### 1.3 Evisceración (EQ-21 a EQ-33)
 
-Transportador de evisceración (EQ-21, crítico), cortadora de cloaca (EQ-22), abridora (EQ-23), **evisceradora** (EQ-24: el mayor salto de automatización entre escalas), presentación de vísceras para inspección (EQ-25), **puestos de inspección oficial** (EQ-26, crítico por norma), cosecha de menudencias (EQ-27), peladora de mollejas (EQ-28), extractor de buche/cuello (EQ-29), aspirador de pulmones (EQ-30), lavadora interior/exterior (EQ-31), transporte de vísceras por canal o vacío (EQ-32) y enfriador de menudencias (EQ-33).
+Transportador de evisceración (EQ-21, crítico), cortadora de cloaca (EQ-22), abridora (EQ-23), **evisceradora** (EQ-24: la decisión de automatización más sensible a la escala; un fabricante documenta evisceración manual en línea hasta ~1.600 broilers/h, FTE-09A-007, por lo que no hay umbral fijo), presentación de vísceras para inspección (EQ-25), **puestos de inspección oficial** (EQ-26, crítico por norma), cosecha de menudencias (EQ-27), peladora de mollejas (EQ-28), extractor de buche/cuello (EQ-29), aspirador de pulmones (EQ-30), lavadora interior/exterior (EQ-31), transporte de vísceras por canal o vacío (EQ-32) y enfriador de menudencias (EQ-33).
 
 ### 1.4 Enfriamiento (EQ-34 a EQ-38)
 
@@ -135,15 +135,15 @@ Aire comprimido (EQ-71), agua potable (EQ-72), grupo electrógeno (EQ-73), espum
 
 ### 2.1 Clasificación
 
-Criterio: **CRÍTICO** — su falla **detiene la faena** (no hay forma razonable de seguir); **IMPORTANTE** — su falla **reduce la capacidad** o la calidad (hay bypass manual o parcial); **SECUNDARIO** — puede **resolverse temporalmente** sin afectar la faena del día. Conteo en la matriz: 19 críticos (incluido aire comprimido en líneas automáticas y evisceradora a 10.000–20.000), 36 importantes, 21 secundarios.
+Criterio: **CRÍTICO** — su falla **detiene la faena** (no hay forma razonable de seguir); **IMPORTANTE** — su falla **reduce la capacidad** o la calidad (hay bypass manual o parcial); **SECUNDARIO** — puede **resolverse temporalmente** sin afectar la faena del día. Conteo en la matriz: 17 críticos + 2 condicionales (aire comprimido en líneas automáticas; evisceradora si la línea depende de evisceración automática), 36 importantes, 21 secundarios.
 
 | Clase | Equipos (EQ) | Qué implica |
 |---|---|---|
-| **CRÍTICO** | Transportadores aéreos de faena y evisceración (07, 21); aturdido (09 o 10); escaldadora (13) y su agua caliente (14); desplumadoras (15) y canal de plumas (16); puestos de inspección (26); enfriamiento (34/35/36) y agua helada (37); cámaras de refrigeración (62); sala de máquinas de frío (64); agua potable (72); esterilizadores y lavamanos (75); aire comprimido en líneas automáticas (71); evisceradora a 10.000–20.000 (24) | Repuestos en planta, mantenimiento preventivo estricto, técnico disponible en horas, redundancia N+1 donde sea posible (compresores de frío y aire, bombas, calderas) |
-| **IMPORTANTE** | Espera y descarga (02–04); degolladora (11); sangrado (12); patas, cabezas y transferencia (17–19); corte de cloaca, abridora, evisceradora a baja escala (22–24); presentación para inspección (25); lavadora de carcasas (31); vísceras y menudencias (32, 33); descargador del chiller (38); clasificación, trozado y deshuese (39–42, 44); empaque (49–52, 54, 55); congelado (57–59); cámaras de congelado (63); subproductos (66–68, 70); grupo electrógeno (73); trazabilidad (76) | Bypass manual definido y entrenado; repuestos de desgaste en planta |
+| **CRÍTICO** | Transportadores aéreos de faena y evisceración (07, 21); aturdido (09 o 10); escaldadora (13) y su agua caliente (14); desplumadoras (15) y canal de plumas (16); puestos de inspección (26); enfriamiento (34/35/36) y agua helada (37); cámaras de refrigeración (62); sala de máquinas de frío (64); agua potable (72); esterilizadores y lavamanos (75); aire comprimido en líneas automáticas (71); evisceradora cuando la línea depende de evisceración automática (24) | Repuestos en planta, mantenimiento preventivo estricto, técnico disponible en horas, redundancia N+1 donde sea posible (compresores de frío y aire, bombas, calderas) |
+| **IMPORTANTE** | Espera y descarga (02–04); degolladora (11); sangrado (12); patas, cabezas y transferencia (17–19); corte de cloaca, abridora, evisceradora cuando hay bypass manual (22–24); presentación para inspección (25); lavadora de carcasas (31); vísceras y menudencias (32, 33); descargador del chiller (38); clasificación, trozado y deshuese (39–42, 44); empaque (49–52, 54, 55); congelado (57–59); cámaras de congelado (63); subproductos (66–68, 70); grupo electrógeno (73); trazabilidad (76) | Bypass manual definido y entrenado; repuestos de desgaste en planta |
 | **SECUNDARIO** | Balanza de camiones (01); lavado de cajones y camiones (05, 06); puesto de colgado (08); lavadora de grilletes (20); menudencias, molleja, buche, pulmones (27–30); trimming y porcionado (45, 46); garras (47); CMS (48); vacío, cajas y paletizado (53, 56); placas y criogénico (60, 61); andenes (65); contenedores (69); espuma (74) | Se reparan en el día o se sustituyen con trabajo manual o terceros |
 
-**La criticidad cambia con la escala:** a 2.500 aves/día la evisceración es manual y una evisceradora rota "no existe"; a 20.000, sin evisceradora no se puede sostener el ritmo con personas (serían ~21–42 puestos equivalentes solo para eviscerar, [`../05_proceso_industrial/cuellos_botella.md` §5](../05_proceso_industrial/cuellos_botella.md)). **Automatizar convierte tareas manuales flexibles en equipos críticos.**
+**La criticidad cambia con la configuración:** con evisceración manual, una evisceradora rota "no existe"; si la línea se diseña con evisceración automática, su falla la detiene (a 20.000 aves/día, reemplazarla con personas exigiría ~21–42 puestos equivalentes, [`../05_proceso_industrial/cuellos_botella.md` §5](../05_proceso_industrial/cuellos_botella.md)). **Automatizar convierte tareas manuales flexibles en equipos críticos.**
 
 ### 2.2 Repuestos
 
