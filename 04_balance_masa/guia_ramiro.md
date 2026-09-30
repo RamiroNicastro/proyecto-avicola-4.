@@ -60,6 +60,15 @@ Son el **mismo kilo** expresado sobre bases distintas. **Nunca sumar un porcenta
 - Entre un método y otro, el mismo pollo se vende con **0,122 kg de diferencia (6 %)**. A 10.000 pollos por día son **1,2 toneladas diarias de agua**.
 - **El agua no es carne.** En Argentina y Brasil la absorción tiene un tope de **8 %** (según prensa y normas a verificar); la UE y EE.UU. son más estrictos y en EE.UU. se declara en la etiqueta. Para comparar plantas o proveedores, **comparar siempre sin agua.**
 
+- **Ojo:** esta agua (la que queda dentro del pollo) **no es** el agua que consume la planta para lavar, escaldar, enfriar y limpiar, que es mucho más y se calculará aparte.
+
+## 6 bis. Un kilo, un solo destino
+
+- Un decomiso se descuenta de la carcasa y se anota **una sola vez** como residuo; no se vuelve a contar como "pérdida".
+- La pata de 113 g termina como 85 g de garra A + 16 g de segunda + 5 g de descarte + 6 g de cutícula que se va al pelar + 1 g de patas decomisadas. **Nada desaparece.**
+- La carcasa-esqueleto **se vende o se muele para hacer CMS**, nunca las dos cosas: no se puede cobrar dos veces el mismo hueso.
+- Cuando se deshuesa, el hueso **no es una pérdida**: pasa de "producto" a "subproducto" (harina, caldo). Cambia su valor, no su existencia.
+
 ## 7. Mermas
 
 Kilos que se pierden en el proceso sin ir a ningún producto: humedad, aserrín de hueso al cortar, restos que se van con el agua de lavado. En el modelo: ~1,4 % del pollo vivo en la faena, más 0,5 % de la carcasa al trozar y 1 % de cada corte al deshuesar. **Una merma que no se mide no se puede bajar.**

@@ -1,11 +1,12 @@
 # Balance de masa por ave
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 · Fase 0 (prefactibilidad)
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual) · Fase 0 (prefactibilidad)
 
 > **Pregunta central:** si entran X kg de pollo vivo, ¿dónde termina cada kilogramo?
 > **Alcance.** Balance físico de la faena y del procesamiento de 1 pollo vivo, para 6 pesos vivos (2,2 / 2,5 / 2,8 / 3,0 / 3,2 / 3,5 kg; más 2,9 kg de referencia), 3 configuraciones comerciales y escenarios de rendimiento, condenas y enfriamiento. **No** calcula rentabilidad, **no** selecciona productos, **no** diseña maquinaria ni fija capacidad (reglas 7–9 de [`CLAUDE.md`](../CLAUDE.md)).
-> **Fuentes.** La lectura directa de documentos volvió a estar bloqueada por la red del entorno (WebFetch y curl: `EGRESS_BLOCKED` / 403 en cobbgenetics.com, aviagen.com, eur-lex, fsis, SENASA, FAO; 2026-09-30). Solo se usaron **extractos de buscador**: toda cifra externa es `[PVDP]` (regla 16). Los parámetros del modelo son `[ESTIMACIÓN]` o `[SUPUESTO]` (SUP-035 a SUP-044).
-> **Modelo:** [`modelo_balance_masa.py`](modelo_balance_masa.py) · **Resultados:** [`escenarios_balance.csv`](escenarios_balance.csv) (126 balances, 4.956 filas) · Documentación del modelo: [`README.md`](README.md).
+> **Fuentes.** La lectura directa de documentos volvió a estar bloqueada por la red del entorno (WebFetch y curl: `EGRESS_BLOCKED` / 403 en cobbgenetics.com, aviagen.com, eur-lex, fsis, SENASA, FAO; 2026-09-30). Solo se usaron **extractos de buscador**: toda cifra externa es `[PVDP]` (regla 16). Los parámetros del modelo son `[ESTIMACIÓN]` o `[SUPUESTO]` (SUP-035 a SUP-045).
+> **Modelo:** [`modelo_balance_masa.py`](modelo_balance_masa.py) · **Resultados:** [`escenarios_balance.csv`](escenarios_balance.csv) (144 balances, 6.474 filas) · Documentación del modelo: [`README.md`](README.md).
+> **ALCANCE:** este es un **balance de masa del ave y sus productos**. **No** es todavía un balance de agua industrial, ni de efluentes, ni energético, ni un modelo económico, ni un diseño de maquinaria. **ESTE BALANCE NO DIMENSIONA EL CONSUMO INDUSTRIAL DE AGUA NI EL CAUDAL TOTAL DE EFLUENTES DE LA PLANTA.** Auditoría conceptual: [`auditoria_balance.md`](auditoria_balance.md).
 > Documentos hermanos: cortes y deshuese en [`rendimientos_cortes.md`](rendimientos_cortes.md); subproductos en [`subproductos_masa.md`](subproductos_masa.md); agua, condenas y mermas en [`agua_y_mermas.md`](agua_y_mermas.md); guía en [`guia_ramiro.md`](guia_ramiro.md); síntesis en [`conclusiones_balance.md`](conclusiones_balance.md).
 
 ---
@@ -14,7 +15,7 @@
 
 - **Unidad:** 1 pollo vivo **recibido en planta** (después del ayuno y del transporte). El balance empieza en la balanza de recepción, no en la granja.
 - **Fuera del balance** (ya tratados en `03_produccion_primaria`): aves muertas en granja y en transporte (DOA) y la **merma de peso por ayuno y transporte** (≈0,2–0,6 % del peso vivo por hora de ayuno según extractos, FTE-177 `[PVDP]`). Un ave que pesó 2,9 kg en la granja puede llegar con ~2,85 kg. Por eso **peso vivo en granja ≠ peso vivo en planta** (SUP-035).
-- **Dos flujos que no se mezclan** (regla del modelo): la **masa biológica** del ave (entra solo con el peso vivo) y el **agua incorporada en el proceso** (chiller por inmersión, agua arrastrada por las plumas), que entra y sale por separado. Ver [`agua_y_mermas.md`](agua_y_mermas.md).
+- **Dos flujos que no se mezclan** (regla del modelo): la **masa biológica** del ave (entra solo con el peso vivo) y el **agua incorporada a productos y subproductos** (agua absorbida por la carcasa en el chiller por inmersión —que se reparte en agua retenida en producto y agua de goteo del producto— y agua adherida a las plumas), que entra y sale por separado. **No** es el agua de proceso total que usa la planta (lavado, escaldado, chiller, limpieza, sanitización), que no forma parte de este balance ([`auditoria_balance.md` §2](auditoria_balance.md)). Ver [`agua_y_mermas.md`](agua_y_mermas.md).
 - **Base de cálculo de cada porcentaje:** siempre declarada — `% PV` (sobre peso vivo en planta, masa biológica) o `% carcasa` (sobre la carcasa eviscerada caliente, definición D5).
 
 ## 2. Definiciones (no mezclar)
@@ -135,8 +136,8 @@ Escenario medio, **antes** del decomiso total (con decomiso medio de 1 % se vend
 | **A. Producto principal** | Lo que define el negocio; mayor valor por kg | Pollo entero; pechuga con hueso; pata-muslo; suprema; solomillo; muslo deshuesado; pata con hueso | Venta de carne |
 | **B. Coproducto comestible** | Parte comestible de menor valor, conjunta con A | Alas; hígado; corazón; molleja; cuello; garras grado A y de segunda; carcasa-esqueleto; piel; recortes; CMS | Venta de carne o insumo industrial |
 | **C. Subproducto valorizable** | No comestible (o no destinado a consumo) pero con valor si se procesa | Sangre recuperada; plumas; cabezas; tracto digestivo; pulmones; otros no comestibles; huesos; residuo óseo de CMS; garras de descarte; grasa retirada | Rendering (harinas, grasa) u otro uso permitido |
-| **D. Residuo / efluente** | Sin valor o con costo de tratamiento | Contenido gastrointestinal; sangre no recuperada; cutícula de patas; agua de goteo; decomisos* | Tratamiento de efluentes, residuos sólidos |
-| **P. Pérdida** | Masa que sale sin corriente identificable | Evaporación (aire); mermas de trozado, deshuese y CMS; pérdidas no asignadas | Vapor, efluente difuso (a medir) |
+| **D. Residuo / efluente** | Sin valor o con costo de tratamiento | Contenido gastrointestinal; sangre no recuperada; merma de acondicionamiento de patas (cutícula); agua de goteo del producto; decomisos* | Tratamiento de efluentes, residuos sólidos |
+| **P. Merma real / pérdida** | Masa que sale sin corriente identificable | Evaporación (aire); mermas de trozado, deshuese y CMS; pérdidas no asignadas | Vapor, efluente difuso (a medir) |
 
 \* Los decomisos se clasifican D por prudencia; si la normativa permite enviarlos a rendering serían C (DPV-066).
 
@@ -147,8 +148,9 @@ Escenario medio, **antes** del decomiso total (con decomiso medio de 1 % se vend
 ```
 ENTRADAS                                   SALIDAS
 Peso vivo (masa biológica)          =  A productos + B coproductos + C subproductos + D residuos + P pérdidas   (masa biológica)
-Agua incorporada (chiller + plumas) =  agua retenida en A/B/C + agua en plumas húmedas + agua de goteo           (agua)
-Error de cierre = (PV + agua incorporada) − Σ salidas      Tolerancia: 1 mg por ave (1e-6 kg); el modelo se detiene si se supera
+Agua incorporada a productos      =  agua retenida en producto (A/B/C) + agua de goteo del producto (D)          (agua)
+ y subproductos (chiller + plumas)    + agua adherida a plumas (C)
+Error de cierre = (PV + agua incorporada a productos y subproductos) − Σ salidas      Tolerancia: 1 mg por ave (1e-6 kg); el modelo se detiene si se supera
 ```
 
 **Ejemplo — pollo de 2,9 kg, configuración B (trozado), escenario medio, chiller por inmersión:**
@@ -156,7 +158,7 @@ Error de cierre = (PV + agua incorporada) − Σ salidas      Tolerancia: 1 mg p
 | | Masa biológica (kg/ave) | Agua (kg/ave) | Total (kg/ave) | % PV (bio) |
 |---|---|---|---|---|
 | **Entradas:** peso vivo | 2,900 | — | 2,900 | 100,0 % |
-| **Entradas:** agua incorporada (chiller 0,122 + plumas 0,090) | — | 0,213 | 0,213 | — |
+| **Entradas:** agua incorporada a productos y subproductos* (absorbida por la carcasa en el chiller 0,122 + adherida a plumas 0,090) | — | 0,213 | 0,213 | — |
 | A. Productos principales (pechuga con hueso, pata-muslo) | 1,415 | 0,060 | 1,475 | 48,8 % |
 | B. Coproductos comestibles | 0,896 | 0,026 | 0,921 | 30,9 % |
 | C. Subproductos valorizables | 0,443 | 0,090 | 0,533 | 15,3 % |
@@ -165,11 +167,13 @@ Error de cierre = (PV + agua incorporada) − Σ salidas      Tolerancia: 1 mg p
 | **Total salidas** | **2,900** | **0,213** | **3,113** | **100,0 %** |
 | **Error de cierre** | | | **1,8 × 10⁻¹⁵ kg** | |
 
-Detalle por componente y para las tres configuraciones: §8 y [`escenarios_balance.csv`](escenarios_balance.csv) (filas `CONTROL` de cada balance).
+\* **No es consumo de agua de la planta:** es solo el agua que sale dentro o adherida a productos y subproductos (agua retenida en producto 0,086 + agua de goteo del producto 0,037 + agua adherida a plumas 0,090).
+
+Los decomisos (0,040, clase D) y las pérdidas no asignadas (0,041, clase P) son masas distintas y no se superponen ([`auditoria_balance.md` §3](auditoria_balance.md)). Detalle por componente y para las tres configuraciones: §8 y [`escenarios_balance.csv`](escenarios_balance.csv) (filas `CONTROL` de cada balance).
 
 ## 8. Tres configuraciones comerciales (pollo de 2,9 kg, escenario medio, inmersión)
 
-Resumen; detalle de cortes y deshuese en [`rendimientos_cortes.md` §5](rendimientos_cortes.md). kg/ave de **masa biológica** (el agua retenida se muestra aparte). **No se decide cuál conviene.**
+Resumen; detalle de cortes y deshuese en [`rendimientos_cortes.md` §5](rendimientos_cortes.md). kg/ave de **masa biológica** (el agua retenida se muestra aparte). **No se decide cuál conviene.** Rutas por defecto: carcasa-esqueleto vendida en A y B, procesada a CMS en C (rutas alternativas y reconciliación desde la misma base en [`auditoria_balance.md` §6–§7](auditoria_balance.md)).
 
 | Concepto | A. Pollo entero | B. Trozado | C. Deshuesado / mayor valor |
 |---|---|---|---|
@@ -192,14 +196,16 @@ Pollo de **2,9 kg**, configuración **B**, escenario medio, inmersión. Totales 
 | Clase | 1 ave (kg) | 1.000 aves (kg) | 2.500 aves/día (t/día) | 5.000 (t/día) | **10.000 (t/día)** | 20.000 (t/día) | 10.000 aves/día (t/año) | 1.000.000 aves/año (t/año) |
 |---|---|---|---|---|---|---|---|---|
 | **Entrada: pollo vivo** | 2,900 | 2.900 | 7,25 | 14,50 | **29,00** | 58,00 | 7.250 | 2.900 |
-| Entrada: agua incorporada | 0,213 | 213 | 0,53 | 1,06 | **2,13** | 4,25 | 532 | 213 |
+| Entrada: agua incorporada a productos y subproductos* | 0,213 | 213 | 0,53 | 1,06 | **2,13** | 4,25 | 532 | 213 |
 | A. Productos principales | 1,475 | 1.475 | 3,69 | 7,37 | **14,75** | 29,50 | 3.687 | 1.475 |
 | B. Coproductos comestibles | 0,921 | 921 | 2,30 | 4,61 | **9,21** | 18,43 | 2.304 | 921 |
 | C. Subproductos | 0,533 | 533 | 1,33 | 2,67 | **5,33** | 10,67 | 1.334 | 533 |
 | D. Residuos y efluentes | 0,132 | 132 | 0,33 | 0,66 | **1,32** | 2,64 | 330 | 132 |
 | P. Pérdidas | 0,051 | 51 | 0,13 | 0,25 | **0,51** | 1,02 | 127 | 51 |
 
-Con 2,8 kg y 3,0 kg (misma configuración): A = 1,419 / 1,532 kg/ave; B = 0,892 / 0,951; C = 0,518 / 0,548; a 10.000 aves/día, A = 14,19 / 15,32 t/día. Todas las combinaciones de peso, configuración y escenario están en el CSV (columnas `kg_1000_aves`, `t_dia_*`, `t_anio_*`). El balance de 10.000 aves/día por componente está en [`conclusiones_balance.md` §5](conclusiones_balance.md).
+Con 2,8 kg y 3,0 kg (misma configuración): A = 1,419 / 1,532 kg/ave; B = 0,892 / 0,951; C = 0,518 / 0,548; a 10.000 aves/día, A = 14,19 / 15,32 t/día. \* Agua retenida en producto + agua de goteo del producto + agua adherida a plumas. **No es el consumo de agua de la planta ni el caudal de efluentes**, que se calcularán en `11_agua_efluentes`.
+
+Todas las combinaciones de peso, configuración, escenario y ruta están en el CSV (columnas `kg_1000_aves`, `t_dia_*`, `t_anio_*`). El balance de 10.000 aves/día por componente está en [`conclusiones_balance.md` §5](conclusiones_balance.md).
 
 **Escalar no es lineal en aves cuando cambia el peso**: para la misma tonelada de producto, aves más livianas exigen más aves (ver [`rendimientos_cortes.md` §6](rendimientos_cortes.md)). A peso fijo, el escalado es exactamente lineal (test T07).
 
@@ -208,8 +214,8 @@ Con 2,8 kg y 3,0 kg (misma configuración): A = 1,419 / 1,532 kg/ave; B = 0,892 
 | Uso posterior | Qué toma del balance |
 |---|---|
 | Ingreso potencial por ave (`17_exportacion/estrategia_valorizacion_ave.md`) | `k_i` = kg por parte por ave, por peso y configuración (columna `total_kg_ave`, clases A y B) |
-| Frío y almacenamiento (`12_energia_frio`) | t/día de producto refrigerado (A + B ≈ 24 t/día a 10.000 aves de 2,9 kg); carcasa a enfriar ≈ 20,4 t/día; agua absorbida en el chiller ≈ 1,2 t/día |
-| Efluentes (`11_agua_efluentes`) | Sangre no recuperada, contenido GI, goteo, cutícula, mermas (≈ 1,3 t/día de corrientes D a 10.000 aves/día) |
+| Frío y almacenamiento (`12_energia_frio`) | t/día de producto refrigerado (A + B ≈ 24 t/día a 10.000 aves de 2,9 kg); carcasa a enfriar ≈ 20,4 t/día; agua absorbida por la carcasa en el chiller ≈ 1,2 t/día (solo el agua que entra al producto, no el consumo del chiller) |
+| Efluentes (`11_agua_efluentes`) | Carga de masa del ave hacia el efluente: sangre no recuperada, contenido GI, agua de goteo del producto, cutícula, mermas (≈ 1,3 t/día de corrientes D a 10.000 aves/día). **No** es el caudal de efluentes |
 | Subproductos y rendering (`07_subproductos`) | ≈ 5,3 t/día de corrientes C (plumas húmedas 2,4; tracto 0,9; sangre 0,8; cabezas 0,7) |
 | Productos (`06_productos`) | Mezcla de partes por configuración y peso |
 
@@ -220,7 +226,7 @@ Con 2,8 kg y 3,0 kg (misma configuración): A = 1,419 / 1,532 kg/ave; B = 0,892 
 | Rendimiento de carcasa Cobb 500 a ~2,8 kg | Un extracto da **74,03 %** (FTE-140) y otro **75,55–75,85 %** (FTE-161, calculadora de terceros); definición de "carcass" (con o sin cuello y menudencias) no confirmada | El modelo usa 71,5 % sin cuello (≈ 74,1 % con cuello) como campo medio, por debajo del objetivo genético | DPV-059 |
 | Filet de pechuga Cobb a ~2,8 kg | **22,57 % PV** (FTE-140) vs **26,05–26,50 %** "boneless breast" (FTE-161) | Modelo: 20,5 % PV (campo medio); alto 21,1 % | DPV-059 |
 | Suma de subproductos de la literatura | Plumas 6 + sangre 3,5 + cabeza 3 + patas 5 + vísceras no comestibles 9 = 26,5 %, más menudencias y cuello (~7 %) y carcasa (~72 %) = **~105 %** | Las fuentes mezclan pluma húmeda con seca, molleja sucia con limpia y otras definiciones; el modelo usa un conjunto coherente que cierra con 1,4 % de pérdidas no asignadas | §3; DPV-060 |
-| Plumas: 5–7 % vs 8–9 % | Probablemente seca/biológica vs húmeda (con agua de escaldado) | Se separan masa biológica (5,2 %) y agua arrastrada (0,6 kg/kg) | SUP-040 |
+| Plumas: 5–7 % vs 8–9 % | Probablemente seca/biológica vs húmeda (con agua de escaldado) | Se separan masa biológica (5,2 %) y agua adherida a plumas (0,6 kg/kg) | SUP-040 |
 | Molleja: 3,0 % PV | Probablemente molleja entera (con cutícula y contenido) en aves de 7 semanas | Modelo: 1,4 % limpia; cutícula y contenido en "otros no comestibles" | DPV-060 |
 | Datos argentinos | Ningún rendimiento de faena argentino leído; hay estudios de la UNNE y de Formosa identificados pero no leídos (FTE-184) | Todo el modelo depende de literatura extranjera y supuestos | DPV-060 |
 | Tablas genéticas vs campo | Las tablas son objetivos genéticos "dry yield" en condiciones ideales, no rendimientos de planta | Escenario "alto" ≈ tabla genética; "medio" 1–3 pp por debajo | SUP-037 |

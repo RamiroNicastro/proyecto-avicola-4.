@@ -1,6 +1,6 @@
-# Agua incorporada, condenas y mermas
+# Agua retenida/incorporada en producto, condenas y mermas
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 · Fase 0 (prefactibilidad)
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual) · Fase 0 (prefactibilidad)
 
 > **Alcance.** Cómo el enfriamiento de la carcasa (chiller por inmersión o por aire) cambia el peso vendido sin cambiar la carne, y cómo las condenas veterinarias, decomisos, degradaciones y mermas de proceso reducen la masa aprovechable. **No** se elige el sistema de enfriamiento ni se diseña equipamiento.
 > **Fuentes.** Extractos de buscador `[PVDP]` (normas y estudios no leídos en su original, 2026-09-30). Valores del modelo `[ESTIMACIÓN]`/`[SUPUESTO]` (SUP-041, SUP-042).
@@ -11,9 +11,12 @@
 
 ```
 MASA BIOLÓGICA  = tejidos del ave (músculo, piel, grasa, hueso). Solo entra con el peso vivo.
-AGUA INCORPORADA = agua que el producto absorbe en el proceso (chiller por inmersión, lavados).
+AGUA RETENIDA/INCORPORADA EN PRODUCTO = agua que la carcasa absorbe en el chiller por inmersión y queda en el producto vendido
+                   (agua absorbida − agua de goteo del producto). El agua adherida a plumas se registra aparte (subproducto).
 PESO COMERCIAL  = masa biológica + agua retenida (la que queda después del goteo) = lo que se pesa y se vende.
 ```
+
+**No confundir con el agua de proceso total de la planta** (lavado, escaldado, llenado y renovación del chiller, limpieza, sanitización, otros usos): **ESTE BALANCE NO DIMENSIONA EL CONSUMO INDUSTRIAL DE AGUA NI EL CAUDAL TOTAL DE EFLUENTES DE LA PLANTA**; eso se calculará en `11_agua_efluentes`. Desagregación en [`auditoria_balance.md` §2](auditoria_balance.md).
 
 **Regla del modelo:** el agua **nunca** se cuenta como carne producida. Cada salida del CSV tiene tres columnas: `masa_biologica_kg_ave`, `agua_kg_ave`, `total_kg_ave`; la suma de la masa biológica de todas las salidas es exactamente el peso vivo (test T08) y el agua entra y sale por una cuenta separada.
 
@@ -51,20 +54,20 @@ Otros efectos (extractos): el enfriamiento por aire evita la absorción de agua 
 | Evaporación (fracción de la masa biológica) | 0 | 0 | **1,8 %** | `[ESTIMACIÓN]` (rango de fuentes 1–3 %) |
 | Reparto del agua retenida | Proporcional a la masa de cada producto derivado de la carcasa | igual | — | `[SUPUESTO]` |
 | Menudencias y patas | Sin agua modelada (también se enfrían y pueden absorber) | igual | — | Simplificación (DPV-062) |
-| Agua de escaldado que se va con las plumas | 0,6 kg por kg de pluma | igual | igual | `[SUPUESTO]` SUP-040 |
+| Agua adherida a plumas (sale con la pluma húmeda) | 0,6 kg por kg de pluma | igual | igual | `[SUPUESTO]` SUP-040 |
 
 ### 3.1 Resultado por ave (configuración A, pollo de 2,9 kg, condenas medias)
 
 | Concepto | Inmersión 6 % | Inmersión 8 % (límite) | Aire |
 |---|---|---|---|
 | Carcasa apta antes del chiller (masa biológica) | 2,036 kg | 2,036 kg | 2,036 kg |
-| Agua absorbida en el chiller | +0,122 kg | +0,163 kg | 0 |
+| Agua absorbida por la carcasa en el chiller | +0,122 kg | +0,163 kg | 0 |
 | Peso a la salida del chiller | 2,158 kg | 2,199 kg | 2,000 kg |
-| Agua perdida por goteo antes de la venta (efluente) | −0,037 kg | −0,049 kg | 0 |
+| Agua de goteo del producto antes de la venta (efluente) | −0,037 kg | −0,049 kg | 0 |
 | Evaporación | 0 | 0 | −0,037 kg |
 | **Peso comercial** (carcasa, antes de separar canales degradadas) | **2,122 kg** | **2,150 kg** | **2,000 kg** |
 | de los cuales **masa biológica** | 2,036 kg | 2,036 kg | 2,000 kg |
-| de los cuales **agua** | 0,086 kg (**4,0 %** del peso vendido) | 0,114 kg (5,3 %) | 0 |
+| de los cuales **agua retenida en producto** | 0,086 kg (**4,0 %** del peso vendido) | 0,114 kg (5,3 %) | 0 |
 | Rendimiento **aparente** a la salida del chiller | 74,4 % | 75,8 % | 69,0 % |
 | Rendimiento **comercial** (peso comercial / PV) | 73,2 % | 74,1 % | 69,0 % |
 | Rendimiento **biológico** (masa biológica vendible / PV) | 70,2 % | 70,2 % | 69,0 % |
@@ -84,6 +87,8 @@ Por peso vivo (inmersión 6 %, rendimiento comercial de la carcasa): 71,8 % (2,2
 
 - Mato Grosso: **9,5 %** de las carcasas con algún decomiso: **2,69 % total** y **6,8 % parcial**; causas principales: contaminación gastrointestinal (57 % de los totales, 38 % de los parciales) y celulitis (~18 %) (FTE-173 `[PVDP]`).
 - Planta exportadora del sudeste: ~7 % de carcasas con decomiso total o parcial; como causas de decomiso total, celulitis 0,3–1,0 %, ascitis 0,3–0,4 % (FTE-173 `[PVDP]`).
+
+**Relación con las pérdidas no asignadas:** los decomisos se **descuentan** de la carcasa, el cuello, las menudencias y las patas y se registran **una sola vez** como residuo (clase D). Las pérdidas no asignadas (1,4 % PV) son otra masa: la diferencia de la composición primaria del ave, calculada antes de los decomisos. No se superponen (test T14; [`auditoria_balance.md` §3](auditoria_balance.md)).
 
 ### 4.1 Parámetros del modelo (SUP-041)
 
@@ -115,7 +120,7 @@ Entre el escenario bajo y el alto se pierden **~0,09 kg comestibles por ave (−
 | Merma de deshuese | 1 % del corte deshuesado | P | `[SUPUESTO]` |
 | Merma de CMS | 1 % de la materia prima | P | `[SUPUESTO]` |
 | Evaporación en enfriamiento por aire | 1,8 % de la carcasa | P | `[ESTIMACIÓN]` |
-| Goteo del agua absorbida | 30 % del agua absorbida | D (agua) | `[SUPUESTO]` |
+| Agua de goteo del producto | 30 % del agua absorbida por la carcasa | D (agua) | `[SUPUESTO]` |
 | Merma de peso vivo por ayuno y transporte | 0,2–0,6 %/h de ayuno (FTE-177) | Fuera del balance | Ver `03_produccion_primaria` |
 
 **Ninguna pérdida se oculta:** todas aparecen como filas propias (clase P o D) en el CSV.

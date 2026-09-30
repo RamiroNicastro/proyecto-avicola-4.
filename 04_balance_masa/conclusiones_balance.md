@@ -1,9 +1,10 @@
 # Conclusiones del balance de masa
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 · Base: [`balance_por_ave.md`](balance_por_ave.md), [`rendimientos_cortes.md`](rendimientos_cortes.md), [`subproductos_masa.md`](subproductos_masa.md), [`agua_y_mermas.md`](agua_y_mermas.md), [`guia_ramiro.md`](guia_ramiro.md), [`modelo_balance_masa.py`](modelo_balance_masa.py), [`escenarios_balance.csv`](escenarios_balance.csv)
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual) · Base: [`auditoria_balance.md`](auditoria_balance.md), [`balance_por_ave.md`](balance_por_ave.md), [`rendimientos_cortes.md`](rendimientos_cortes.md), [`subproductos_masa.md`](subproductos_masa.md), [`agua_y_mermas.md`](agua_y_mermas.md), [`guia_ramiro.md`](guia_ramiro.md), [`modelo_balance_masa.py`](modelo_balance_masa.py), [`escenarios_balance.csv`](escenarios_balance.csv)
 
+> **ALCANCE:** este es un **balance de masa del ave y sus productos**. **No** es todavía un balance de agua industrial, ni de efluentes, ni energético, ni un modelo económico, ni un diseño de maquinaria. **ESTE BALANCE NO DIMENSIONA EL CONSUMO INDUSTRIAL DE AGUA NI EL CAUDAL TOTAL DE EFLUENTES DE LA PLANTA.**
 > **No** se calcula rentabilidad, **no** se seleccionan productos comerciales, **no** se diseña maquinaria ni layout y **no** se fija capacidad. Las escalas de 2.500–20.000 aves/día y 1.000.000 aves/año son **escenarios** para ordenar magnitudes.
-> **Fuentes:** acceso directo bloqueado (quinta sesión consecutiva; WebFetch y curl con `EGRESS_BLOCKED`/403, DPV-009). Toda cifra externa es `[PVDP]`; los parámetros del modelo son `[ESTIMACIÓN]`/`[SUPUESTO]` (SUP-035 a SUP-044). **Ningún rendimiento proviene de una planta argentina.**
+> **Fuentes:** acceso directo bloqueado (quinta sesión consecutiva; WebFetch y curl con `EGRESS_BLOCKED`/403, DPV-009). Toda cifra externa es `[PVDP]`; los parámetros del modelo son `[ESTIMACIÓN]`/`[SUPUESTO]` (SUP-035 a SUP-045). **Ningún rendimiento proviene de una planta argentina.**
 
 ---
 
@@ -64,15 +65,15 @@ Detalle por peso: [`rendimientos_cortes.md`](rendimientos_cortes.md).
 | Tracto digestivo / pulmones / otros no comestibles | 0,087 / 0,017 / 0,026 | C |
 | Contenido gastrointestinal | 0,035 | D |
 | Garras grado A / segunda / descarte | 0,085 / 0,016 / 0,005 | B / B / C |
-| Cutícula de patas | 0,006 | D |
+| Merma de acondicionamiento de patas (cutícula) | 0,006 | D |
 | Decomisos (total + parcial) | 0,040 | D |
-| Agua de goteo | 0,037 (agua) | D |
+| Agua de goteo del producto | 0,037 (agua) | D |
 | Hueso / residuo óseo de CMS (solo config. C) | 0,164 / 0,153 | C |
 | Piel (solo config. C) | 0,110 | B (o C) |
 
 ## 5. Balance para 10.000 aves/día (2,9 kg, configuración B, medio, inmersión)
 
-Entrada: **29,0 t/día de pollo vivo** + 2,13 t/día de agua incorporada (chiller 1,22; plumas 0,90). t/año con 250 días de faena.
+Entrada: **29,0 t/día de pollo vivo** (masa biológica) + 2,13 t/día de **agua incorporada a productos y subproductos** (agua absorbida por la carcasa en el chiller 1,22, de la cual 0,86 queda retenida en producto y 0,37 gotea; agua adherida a plumas 0,90). **Esto no es el consumo de agua de la planta ni el caudal de efluentes**, que se calcularán en `11_agua_efluentes`. t/año con 250 días de faena.
 
 | Clase | Salida | t/día | t/año |
 |---|---|---|---|
@@ -90,9 +91,9 @@ Entrada: **29,0 t/día de pollo vivo** + 2,13 t/día de agua incorporada (chille
 | C | Cabezas | 0,72 | 181 |
 | C | Otros no comestibles + pulmones + garras de descarte | 0,49 | 122 |
 | D | Decomisos | 0,40 | 100 |
-| D | Agua de goteo | 0,37 | 92 |
+| D | Agua de goteo del producto | 0,37 | 92 |
 | D | Contenido GI | 0,35 | 87 |
-| D | Sangre no recuperada + cutícula | 0,20 | 51 |
+| D | Sangre no recuperada + merma de acondicionamiento de patas | 0,20 | 51 |
 | P | Pérdidas no asignadas + merma de trozado | 0,51 | 127 |
 | | **Total salidas** | **31,13** | **7.782** |
 
@@ -117,7 +118,7 @@ Productos A = 14,75 t/día; comestible A + B = 23,96 t/día (de los cuales ~0,86
 | Subproductos (C) | 0,443 | 0,443 | 0,760 |
 | **Comestible total** | **2,320** | **2,311** | **1,978** |
 
-Trozar reordena la masa (≈ 0,58 kg/ave pasan de producto principal a coproducto) sin perderla; deshuesar saca ~0,33 kg/ave de hueso y residuo (−14 % comestible) y crea piel, recortes y CMS que necesitan compradores. Aun en A, un 3–12 % de las canales no es apto para venta entera. **No se decide cuál conviene** (DEC-005): depende de precios netos por parte (SUP-013, SUP-017).
+Desde la misma masa comestible disponible (2,321 kg/ave en las tres): A pierde 0,001 kg de merma real, B 0,010 y C 0,026; C además **reclasifica** 0,317 kg de hueso y residuo óseo a subproducto (C), que **no es pérdida** ([`auditoria_balance.md` §7](auditoria_balance.md)). Trozar reordena la masa (≈ 0,58 kg/ave pasan de producto principal a coproducto) sin perderla; deshuesar saca ~0,33 kg/ave de hueso y residuo (−14 % comestible) y crea piel, recortes y CMS que necesitan compradores. Aun en A, un 3–12 % de las canales no es apto para venta entera. **No se decide cuál conviene** (DEC-005): depende de precios netos por parte (SUP-013, SUP-017).
 
 ## 8. Datos débiles o contradictorios
 
@@ -177,7 +178,7 @@ Resumen en [`guia_ramiro.md`](guia_ramiro.md): (1) rendimiento de faena = carcas
 
 ## 11. Resultado de los tests
 
-`python3 04_balance_masa/modelo_balance_masa.py` — **13/13 correctos** sobre 126 balances (6 pesos × 3 configuraciones × 7 variantes de rendimiento, condenas y enfriamiento):
+`python3 04_balance_masa/modelo_balance_masa.py` (versión 1.1) — **21/21 correctos** sobre **1.008 balances**: los 144 del CSV (6 pesos × [3 configuraciones × 7 variantes de rendimiento, condenas y enfriamiento + 3 variantes de ruta]) y 864 combinaciones de todas las rutas alternativas:
 
 | Test | Resultado |
 |---|---|
@@ -194,22 +195,31 @@ Resumen en [`guia_ramiro.md`](guia_ramiro.md): (1) rendimiento de faena = carcas
 | T11 No linealidad con el peso (pechuga crece más que el PV; cabeza y patas menos) | OK |
 | T12 Rechazo de pesos fuera de 2,0–3,8 kg (el script se detiene) | OK |
 | T13 Toda salida clasificada A/B/C/D/P | OK |
+| T14 Decomisos no duplicados (una vez, en D, fuera de pérdidas no asignadas y ya descontados de la carcasa) | OK |
+| T15 Pata bruta = garras A + segunda + descarte + merma de acondicionamiento + decomiso | OK |
+| T16 Rutas exclusivas: carcasa-esqueleto vendida XOR CMS; cuello XOR CMS; piel venta XOR rendering | OK |
+| T17 Hueso original y residuo óseo post-CMS no se duplican (CMS + residuo + merma = materia prima) | OK |
+| T18 Cada salida en una sola categoría final (Σ clases = PV) | OK |
+| T19 Masa biológica idéntica con 6 % y 8 % de absorción (cierra sin depender del agua) | OK |
+| T20 El agua retenida no aumenta el rendimiento biológico | OK |
+| T21 Misma masa comestible disponible en A/B/C y reconciliación disponible − merma − reclasificado = comestible | OK |
 
-**Prueba de los tests (mutaciones):** se alteró deliberadamente el modelo (cortes que suman más que la carcasa; agua sumada a la masa biológica del pollo entero; deshuese con más carne que el corte; absorción de 15 %): en todos los casos fallaron los tests correspondientes y el script se detiene con código de salida 1.
+**Prueba de los tests (mutaciones):** se alteró deliberadamente el modelo (cortes que suman más que la carcasa; agua sumada a la masa biológica del pollo entero; deshuese con más carne que el corte; absorción de 15 %): en todos los casos fallaron los tests correspondientes y el script se detiene con código de salida 1. En la auditoría v1.1 se agregaron seis mutaciones más (decomiso sumado a pérdidas, carcasa-esqueleto vendida junto con su CMS, merma de patas omitida, hueso de pechuga duplicado, agua como carne, piel en dos clases): todas detectadas ([`auditoria_balance.md` §9](auditoria_balance.md)).
 
 ## 12. Archivos creados y modificados
 
-**Creados:** `04_balance_masa/balance_por_ave.md`, `rendimientos_cortes.md`, `subproductos_masa.md`, `agua_y_mermas.md`, `escenarios_balance.csv`, `modelo_balance_masa.py`, `guia_ramiro.md`, `conclusiones_balance.md`.
-**Modificados:** `04_balance_masa/README.md` (documentación del modelo); `00_gestion_proyecto/supuestos.md` (SUP-035 a SUP-044; SUP-019 y SUP-023 anotados), `datos_por_validar.md` (DPV-059 a DPV-069; DPV-008 actualizado), `decisiones_pendientes.md` (DEC-026 a DEC-028; notas en DEC-001, DEC-005, DEC-014, DEC-021), `estado_proyecto.md`, `glosario.md`; `25_fuentes/registro_fuentes.csv` (FTE-161 a FTE-184; FTE-140 y FTE-142 anotados), `25_fuentes/bibliografia.md`.
+**Creados:** `04_balance_masa/auditoria_balance.md` (v1.1), `balance_por_ave.md`, `rendimientos_cortes.md`, `subproductos_masa.md`, `agua_y_mermas.md`, `escenarios_balance.csv`, `modelo_balance_masa.py`, `guia_ramiro.md`, `conclusiones_balance.md`.
+**Modificados:** `04_balance_masa/README.md` (documentación del modelo); `00_gestion_proyecto/supuestos.md` (SUP-035 a SUP-045; SUP-019 y SUP-023 anotados), `datos_por_validar.md` (DPV-059 a DPV-069; DPV-008 actualizado), `decisiones_pendientes.md` (DEC-026 a DEC-028; notas en DEC-001, DEC-005, DEC-014, DEC-021), `estado_proyecto.md`, `glosario.md`; `25_fuentes/registro_fuentes.csv` (FTE-161 a FTE-184; FTE-140 y FTE-142 anotados), `25_fuentes/bibliografia.md`.
 
 ## 13. Control de calidad y evaluación
 
 - [x] Base vivo y base carcasa separadas en todas las tablas y en dos columnas del CSV.
-- [x] Agua no contada como carne: columnas separadas y test T08.
+- [x] Agua no contada como carne: columnas separadas y tests T08, T19, T20; nomenclatura inequívoca (agua incorporada a productos y subproductos ≠ agua de proceso de la planta).
+- [x] Auditoría conceptual v1.1: sin doble contabilización; decomisos, patas, cortes, rutas CMS y comparación de configuraciones reconciliados ([`auditoria_balance.md`](auditoria_balance.md)).
 - [x] Patas y menudencias fuera de la carcasa y de los cortes; ningún kg en dos productos (test T10).
 - [x] Rendimientos de fuente débil señalados (§8) y pérdidas visibles como filas propias (clase P).
 - [x] Contradicciones identificadas (Cobb, suma de la literatura, definiciones de cortes, DQO de la sangre).
-- [x] Balances verificados numéricamente (126 balances; error ≤ 1,8 × 10⁻¹⁵ kg/ave).
+- [x] Balances verificados numéricamente (1.008 balances; error ≤ 1,8 × 10⁻¹⁵ kg/ave).
 - [x] Sin precios, sin selección de productos, maquinaria ni layout.
 - [ ] Verificación documental primaria (bloqueada; DPV-009, DPV-059, DPV-061).
 - [ ] Mediciones en planta argentina (DPV-060).

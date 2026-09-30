@@ -1,6 +1,6 @@
 # Subproductos, coproductos de faena y residuos — masa
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 · Fase 0 (prefactibilidad)
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual) · Fase 0 (prefactibilidad)
 
 > **Alcance.** Cuántos kg de patas/garras, plumas, sangre, cabezas, vísceras no comestibles, grasa, huesos y decomisos salen por ave y por escala, y qué destino conceptual pueden tener. **No** se asignan precios, **no** se asume un rendimiento de rendering sin fuente y **no** se diseña ningún equipo. Destino industrial detallado: [`07_subproductos`](../07_subproductos/README.md) y efluentes: [`11_agua_efluentes`](../11_agua_efluentes/README.md) (sesiones futuras).
 > **Fuentes.** Extractos de buscador `[PVDP]`. Valores del modelo `[ESTIMACIÓN]`/`[SUPUESTO]` (SUP-036, SUP-040, SUP-041). Menudencias y cuello: [`balance_por_ave.md` §5](balance_por_ave.md).
@@ -9,7 +9,7 @@
 
 ## 1. Resumen por ave y por peso (escenario medio, condenas medias)
 
-kg/ave. "Plumas crudas" incluye el agua de escaldado arrastrada (0,6 kg por kg de pluma biológica, SUP-040); todas las demás líneas son masa biológica.
+kg/ave. "Plumas crudas" incluye el agua adherida a las plumas en el escaldado (0,6 kg por kg de pluma biológica, SUP-040); todas las demás líneas son masa biológica.
 
 | Salida | Clase | 2,2 kg | 2,5 kg | 2,8 kg | **2,9 kg** | 3,0 kg | 3,2 kg | 3,5 kg | % PV (2,9) |
 |---|---|---|---|---|---|---|---|---|---|
@@ -21,7 +21,7 @@ kg/ave. "Plumas crudas" incluye el agua de escaldado arrastrada (0,6 kg por kg d
 | Garras grado A | B | 0,068 | 0,076 | 0,083 | **0,085** | 0,087 | 0,092 | 0,098 | 2,9 % |
 | Garras de segunda | B | 0,013 | 0,014 | 0,016 | **0,016** | 0,016 | 0,017 | 0,018 | 0,6 % |
 | Garras de descarte | C | 0,004 | 0,005 | 0,005 | **0,005** | 0,005 | 0,006 | 0,006 | 0,2 % |
-| Cutícula de patas | D | 0,004 | 0,005 | 0,005 | **0,006** | 0,006 | 0,006 | 0,006 | 0,2 % |
+| Merma de acondicionamiento de patas (cutícula) | D | 0,004 | 0,005 | 0,005 | **0,006** | 0,006 | 0,006 | 0,006 | 0,2 % |
 | Tracto digestivo vacío | C | 0,070 | 0,077 | 0,085 | **0,087** | 0,089 | 0,094 | 0,100 | 3,0 % |
 | Contenido gastrointestinal | D | 0,028 | 0,031 | 0,034 | **0,035** | 0,036 | 0,037 | 0,040 | 1,2 % |
 | Pulmones | C | 0,014 | 0,015 | 0,017 | **0,017** | 0,018 | 0,019 | 0,020 | 0,6 % |
@@ -42,6 +42,15 @@ Configuración C agrega, a 2,9 kg: **hueso 0,164**, **residuo óseo de CMS 0,153
 | Grado A | Piel blanca, sin huesos rotos, sin hematomas, sin almohadilla negra ni quemaduras de amoníaco, 35–50 g por pieza, 12–15 cm (especificaciones de ofertas comerciales, FTE-176, débil) | 80 % de las garras (escenario medio) |
 | Segunda / grado B | Con lesiones leves; mercados menos exigentes | 15 % |
 | Descarte | Lesiones graves, fracturas, contaminación: rendering | 5 % |
+
+**Identidad de la pata (test T15), 2,9 kg:**
+
+```
+PATA BRUTA 0,1131 = GARRA A 0,0851 + SEGUNDA 0,0160 + DESCARTE 0,0053
+                   + MERMA DE ACONDICIONAMIENTO (cutícula) 0,0056 + DECOMISO (patas de aves decomisadas) 0,0011
+```
+
+Los ~0,007 kg entre la pata bruta (0,113) y garras + descarte (0,106) son la merma de acondicionamiento y el decomiso ([`auditoria_balance.md` §4](auditoria_balance.md)).
 
 **Coherencia del modelo:** a 2,9 kg, 0,085 kg de garra grado A por ave = **~43 g por pieza**, dentro del rango comercial de 35–50 g. A 2,2 kg, ~34 g (límite inferior): **las aves livianas podrían no cumplir el calibre de algunos compradores** (a validar, DPV-064).
 
@@ -74,7 +83,7 @@ A 2.500 aves/día se tardaría **~5–7 meses** de faena en llenar un contenedor
 | Concepto | Valor | Clasificación |
 |---|---|---|
 | Plumas, masa biológica | **5,2 % PV** a 2,9 kg (0,151 kg/ave); rango del modelo 5,1–5,4 % | `[ESTIMACIÓN]`; fuentes 5–7 % y 3–7 % (FTE-164, FTE-163) |
-| Agua arrastrada del escaldado | 0,6 kg/kg de pluma → **pluma cruda húmeda ≈ 8,3 % PV** (0,241 kg/ave) | `[SUPUESTO]` SUP-040; coherente con "8 %" de un ejemplo de fabricante (FTE-182) y "9 %" de otra fuente |
+| Agua adherida a plumas (del escaldado) | 0,6 kg/kg de pluma → **pluma cruda húmeda ≈ 8,3 % PV** (0,241 kg/ave) | `[SUPUESTO]` SUP-040; coherente con "8 %" de un ejemplo de fabricante (FTE-182) y "9 %" de otra fuente |
 | Humedad de la pluma hidrolizada | 45–65 % antes del secado | FTE-182 `[PVDP]` |
 | Humedad de la harina de plumas | ~8–10 % | FTE-164, FTE-182 `[PVDP]` |
 | Proteína | ~90 % de proteína bruta (queratina) en base seca | FTE-164 `[PVDP]` |
@@ -144,12 +153,14 @@ La materia seca de la pluma cruda se medirá en planta o se pedirá a plantas de
 | Contenido gastrointestinal | D | 0,035 | 0,35 | 87 | 35 |
 | Sangre no recuperada | D | 0,015 | 0,15 | 37 | 15 |
 | Decomisos (total + parcial) | D | 0,040 | 0,40 | 100 | 40 |
-| Cutícula de patas | D | 0,006 | 0,06 | 14 | 6 |
-| Agua de goteo | D | 0,037 | 0,37 | 92 | 37 |
+| Merma de acondicionamiento de patas (cutícula) | D | 0,006 | 0,06 | 14 | 6 |
+| Agua de goteo del producto* | D | 0,037 | 0,37 | 92 | 37 |
 | **Total residuos D** | | **0,132** | **1,32** | **330** | **132** |
 | Garras grado A + segunda (coproducto) | B | 0,101 | 1,01 | 253 | 101 |
 
-Con configuración C se agregan **~3,3 t/día** de hueso y residuo de CMS a 10.000 aves/día (≈ 830 t/año). Materia prima potencial de rendering (C + decomisos + contenido): **~0,6 kg/ave en B y ~0,9 kg/ave en C**, ≈ 20–30 % del peso vivo. **Esa masa tiene valor solo si existe una salida** (rendering propio, tercerizado u otra vía permitida); si no, es un costo de disposición (DEC-027).
+\* Solo el agua absorbida por la carcasa en el chiller que gotea antes de la venta. **Este balance no dimensiona el consumo industrial de agua ni el caudal total de efluentes** (`11_agua_efluentes`).
+
+Con configuración C (ruta de esqueleto a CMS) se agregan **~3,3 t/día** de hueso y residuo de CMS a 10.000 aves/día (≈ 830 t/año). Materia prima potencial de rendering (C + decomisos + contenido): **~0,6 kg/ave en B y ~0,9 kg/ave en C**, ≈ 20–30 % del peso vivo. **Esa masa tiene valor solo si existe una salida** (rendering propio, tercerizado u otra vía permitida); si no, es un costo de disposición (DEC-027).
 
 ## 8. Qué no se asume
 

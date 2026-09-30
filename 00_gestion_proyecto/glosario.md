@@ -124,7 +124,11 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Carcasa eviscerada (peso eviscerado) | Ave faenada sin sangre, plumas, cabeza, patas, vísceras, cuello ni menudencias, con piel y grasa abdominal, antes del enfriamiento. "Carcasa" en el modelo de balance. |
 | Ready-to-cook (RTC) | "Listo para cocinar": carcasa enfriada y limpia. Según la fuente puede incluir cuello y menudencias; en este proyecto no los incluye salvo indicación. |
 | Chiller (enfriador) | Equipo que baja la temperatura de la carcasa después de la evisceración. **Por inmersión** (en agua; la carcasa absorbe agua) o **por aire** (*air chilling*; la carcasa pierde humedad por evaporación). |
-| Agua retenida / absorbida | Agua que la carcasa incorpora en el proceso (sobre todo en el chiller por inmersión). No es carne: el modelo la contabiliza aparte de la masa biológica. |
+| Agua retenida en producto / agua absorbida | Agua absorbida por la carcasa en el chiller por inmersión; la parte que no gotea antes de la venta queda **retenida en el producto** y se vende. No es carne: el modelo la contabiliza aparte de la masa biológica. |
+| Agua incorporada a productos y subproductos | En el balance de masa: agua absorbida por la carcasa en el chiller (retenida en producto + goteo del producto) más agua adherida a las plumas. **No** es el agua de proceso total de la planta. |
+| Agua de proceso (de la planta) | Todo el caudal que usa la planta: lavado, escaldado, llenado y renovación del chiller, limpieza, sanitización y otros usos. Se calculará en `11_agua_efluentes`; no forma parte del balance de masa. |
+| Ruta alternativa (balance de masa) | Destino exclusivo de un material que puede venderse o reprocesarse (p. ej. carcasa-esqueleto vendida **o** procesada a CMS); nunca ambos a la vez. |
+| Merma de acondicionamiento de patas | Cutícula y suciedad removidas al escaldar y pelar las patas para obtener garras. |
 | Goteo (purga, *drip loss*) | Líquido que pierde el producto después del enfriamiento (escurrido, bandeja). |
 | Masa biológica | Masa de tejidos del ave (sin agua de proceso). La suma de la masa biológica de todas las salidas del balance es igual al peso vivo. |
 | Suprema / solomillo | Suprema: filet de pechuga (pectoral mayor) sin hueso ni piel. Solomillo (*tender*, sassami): pectoral menor. |

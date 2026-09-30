@@ -1,6 +1,6 @@
 # Rendimientos de trozado y deshuese
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 · Fase 0 (prefactibilidad)
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual) · Fase 0 (prefactibilidad)
 
 > **Alcance.** Cómo se reparte la carcasa en cortes (trozado) y cada corte en carne, piel, hueso y recortes (deshuese), para 6 pesos vivos, y cómo cambia el balance entre pollo entero, trozado y deshuesado. **No** se eligen productos ni se asignan precios.
 > **Fuentes.** Extractos de buscador `[PVDP]` (acceso directo bloqueado, 2026-09-30). Los valores del modelo son `[ESTIMACIÓN]`/`[SUPUESTO]` (SUP-038, SUP-039). Definiciones de carcasa y peso vivo en [`balance_por_ave.md` §2](balance_por_ave.md).
@@ -65,11 +65,12 @@ Cuello, menudencias y garras **no** forman parte de la carcasa ni de los cortes 
 | **Pechuga con hueso** | **76,0 %** (suprema 61,0 % + solomillo 15,0 %) | 8,0 % | 13,0 % | 2,0 % | 1,0 % | `[SUPUESTO]` calibrado para que el filet total (suprema + solomillo) dé ~20,5 % PV a 2,9 kg, por debajo del objetivo Cobb (22,6 % a 2,8 kg, FTE-140) |
 | **Muslo** | **66,0 %** | 13,0 % | 17,0 % | 3,0 % | 1,0 % | `[SUPUESTO]`; piel y grasa 8–20 % de la carcasa según peso (FTE-179) |
 | **Pata** (*drumstick*) — solo si se deshuesa | **56,0 %** | 11,0 % | 30,0 % | 2,0 % | 1,0 % | Carne de pata 53,5–53,8 % (FTE-179); en el modelo base la pata se vende **con hueso** (SUP-043) |
-| **Carcasa-esqueleto → CMS** | **CMS 60 %** (bajo 55 / alto 65) | — | Residuo óseo 39 % | — | 1,0 % | 60–75 % en cuellos y espinazos con separadoras tipo tornillo (FTE-180, débil) |
+| **Carcasa-esqueleto → CMS** (solo con ruta `cms`) | **CMS 60 %** (bajo 55 / alto 65) | — | Residuo óseo 39 % | — | 1,0 % | 60–75 % en cuellos y espinazos con separadoras tipo tornillo (FTE-180, débil) |
 | Alas | No se deshuesan (venta entera) | | | | | |
 
 - **Suprema** = filet de pechuga sin solomillo; **solomillo** (*tender*, "sassami") = músculo pectoral menor. Si el mercado vende "suprema" con solomillo, sumar ambas líneas (no contar dos veces).
 - **Muslo deshuesado** = sin piel en el modelo; si se vende con piel (especificación japonesa habitual), sumar la línea "piel (muslo)" (DPV-068).
+- **Rutas exclusivas:** la carcasa-esqueleto se **vende** (ruta `venta`, por defecto en A y B) **o** se procesa a CMS (ruta `cms`, por defecto en C), nunca ambas; lo mismo el cuello (venta o CMS), el hueso de pechuga (rendering o CMS) y la piel (venta o rendering). Detalle y efecto en [`auditoria_balance.md` §6](auditoria_balance.md).
 - Después del deshuese manual puede quedar 10–15 % de tejido comestible en los huesos (FTE-180): es lo que recupera la CMS; si no hay separadora, ese tejido va con el hueso a rendering.
 - La **eficiencia de deshuese** (manual vs automático, habilidad del operario) no está modelada como escenario: se mantiene fija (DPV-069).
 
@@ -107,8 +108,8 @@ kg/ave de masa biológica (entre paréntesis, agua retenida por inmersión). Fae
 | Muslo deshuesado | A | — | — | 0,242 (+0,010) |
 | Pata con hueso | A | — | — | 0,265 (+0,011) |
 | Alas | B | 0,012* | 0,208 (+0,009) | 0,208 (+0,009) |
-| Carcasa-esqueleto | B | 0,024* | 0,393 (+0,017) | — (va a CMS) |
-| CMS | B | — | — | 0,236 (+0,010) |
+| Carcasa-esqueleto (ruta venta) | B | 0,024* | 0,393 (+0,017) | — (ruta cms: se transforma en CMS + residuo; no se vende) |
+| CMS (ruta cms) | B | — | — | 0,236 (+0,010) |
 | Piel | B | — | — | 0,110 (+0,005) |
 | Recortes | B | 0,001 | 0,010 | 0,037 (+0,002) |
 | Menudencias + cuello | B | 0,184 | 0,184 | 0,184 |
@@ -117,11 +118,13 @@ kg/ave de masa biológica (entre paréntesis, agua retenida por inmersión). Fae
 | Subproductos de faena | C | 0,443 (+0,090) | 0,443 (+0,090) | 0,443 (+0,090) |
 | Residuos D | D | 0,095 (+0,037) | 0,095 (+0,037) | 0,095 (+0,037) |
 | Mermas y pérdidas | P | 0,041 | 0,051 | 0,066 |
-| **Total** | | **2,900 (+0,213)** | **2,900 (+0,213)** | **2,900 (+0,213)** |
+| **Total** (masa biológica + agua incorporada a productos y subproductos) | | **2,900 (+0,213)** | **2,900 (+0,213)** | **2,900 (+0,213)** |
 | Productos principales (A) | | 1,999 | 1,415 | 1,103 |
 | Comestible total (A + B) | | 2,320 | 2,311 | 1,978 |
 
 \* En A, el 6 % de las canales no apto para venta entera (hematomas, alas rotas; escenario medio) se trocea: el "pollo entero" no puede ser el 100 % de la producción ([`agua_y_mermas.md` §6](agua_y_mermas.md)).
+
+**Reconciliación desde la misma base** (masa comestible disponible 2,321 kg/ave en las tres): A pierde 0,001 kg de merma real; B, 0,010; C, 0,026 de merma real y reclasifica **0,317 kg de hueso y residuo óseo a subproducto (C) — no es pérdida**. Tabla completa en [`auditoria_balance.md` §7](auditoria_balance.md).
 
 **Qué cambia al pasar de A → B → C:**
 
