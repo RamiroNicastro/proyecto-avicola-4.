@@ -21,9 +21,9 @@
 | R9 | Contratar el proyecto ejecutivo | Tener la lista vigente de documentación y formato de planos que exige SENASA | Evita rehacer planos | P-07 de [`preguntas_senasa.md`](preguntas_senasa.md) |
 | R10 | Iniciar obra | Tener aprobaciones locales (radicación, ambiental, construcción) **y** conformidad de SENASA al proyecto (si existe esa instancia) | Obra sin aprobación = riesgo de clausura o reforma. La Res. 233/2026 no elimina las aprobaciones locales | P-45, P-41 |
 | R11 | Comprar equipos de faena | Validar requisitos sanitarios del equipo (materiales, higiene) y de bienestar (aturdimiento) | Equipos no conformes no se habilitan | Fase de maquinaria (no habilitada) |
-| R12 | Lanzar productos con marca | Registrar productos y rótulos en CAPA | Sin registro no se comercializa con rótulo | FTE-09B-14 |
+| R12 | Lanzar productos con marca | Registrar productos y rótulos en CAPA | Sin registro no se comercializa con rótulo | FTE-241 |
 | R13 | Integrar granjas | Verificar RENSPA, habilitación (Res. 1699/2019) y trazabilidad por lote | La planta no puede recibir aves sin DT-e | FTE-146 |
-| R14 | Contratar transporte | Verificar habilitación SENASA de los vehículos (Res. 723/2025) | Aplica a propios y terceros | FTE-09B-07 |
+| R14 | Contratar transporte | Verificar habilitación SENASA de los vehículos (Res. 723/2025) | Aplica a propios y terceros | FTE-234 |
 
 ## 2. Cadena crítica (simplificada)
 

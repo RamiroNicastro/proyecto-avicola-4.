@@ -4,7 +4,7 @@
 
 > **Alcance:** modelo **conceptual** del proceso, desde la llegada de aves vivas hasta la expedición, con los flujos laterales de sangre, plumas, vísceras, decomisos, patas/garras, menudencias y subproductos. **No** selecciona equipos, proveedores, escala, método de enfriamiento (DEC-026), aturdimiento ni layout; **no** calcula CAPEX/OPEX. Las masas por ave vienen del balance v1.1 sin cambios ([`../04_balance_masa/conclusiones_balance.md`](../04_balance_masa/conclusiones_balance.md)); los flujos por hora, de [`modelo_capacidad_proceso.py`](modelo_capacidad_proceso.py).
 > **Base:** pollo de 2,9 kg vivo, rendimiento medio, inmersión, configuración B (trozado) salvo indicación. kg/ave en **masa biológica** salvo que se indique "húmeda" o "comercial" (regla 14).
-> **Fuentes:** acceso directo a sitios bloqueado (`EGRESS_BLOCKED`); la descripción de etapas es conocimiento técnico general del proceso avícola y se contrasta con extractos `[PVDP]` (FTE-09A-007, FTE-09A-023, FTE-09A-024, FTE-09A-029, FTE-09A-030 en [`../08_maquinaria/fuentes_09A.csv`](../08_maquinaria/fuentes_09A.csv)). Los parámetros de proceso (temperaturas, tiempos, voltajes) **no** se fijan: quedan para la lectura del Decreto 4238/68 original y las especificaciones de proveedores (DPV-007, DPV-09A-03).
+> **Fuentes:** acceso directo a sitios bloqueado (`EGRESS_BLOCKED`); la descripción de etapas es conocimiento técnico general del proceso avícola y se contrasta con extractos `[PVDP]` (FTE-200, FTE-216, FTE-217, FTE-222, FTE-192 en [`registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv)). Los parámetros de proceso (temperaturas, tiempos, voltajes) **no** se fijan: quedan para la lectura del Decreto 4238/68 original y las especificaciones de proveedores (DPV-007, DPV-090).
 
 Documentos hermanos: [`zonificacion_higienica.md`](zonificacion_higienica.md) (zonas y cruces), [`cuellos_botella.md`](cuellos_botella.md), [`arquitecturas_por_escala.md`](arquitecturas_por_escala.md), [`../08_maquinaria/catalogo_equipos.md`](../08_maquinaria/catalogo_equipos.md) (equipos por etapa).
 
@@ -157,8 +157,8 @@ Con 6 h netas, multiplicar por 1,33; con 10 h, por 0,8; con 16 h, por 0,5. **Só
 |---|---|---|---|
 | Recepción (E01–E02) | Inspección ante mortem oficial; documentos sanitarios | Espacio y luz para observar lotes; registro de tiempos | `[PVDP]` FTE-016 |
 | Aturdido (E05) | Bienestar animal (verificación de eficacia) | Punto de observación antes del degüello | `[PVDP]` |
-| Post mortem (E14) | Inspección oficial ave por ave | Presentación sincronizada carcasa–vísceras; iluminación; puestos cuyo número depende del ritmo (dato normativo pendiente, DPV-09A-03) | `[PENDIENTE DE VALIDACIÓN]` |
-| Enfriamiento (E18) | Punto crítico candidato (HACCP): temperatura final; agua absorbida | Con aire: ≤ 7 °C en lo profundo de la pechuga antes de envasar (extracto FTE-09A-030 `[PVDP]`); parámetros de inmersión no obtenidos | `[PVDP]` |
+| Post mortem (E14) | Inspección oficial ave por ave | Presentación sincronizada carcasa–vísceras; iluminación; puestos cuyo número depende del ritmo (dato normativo pendiente, DPV-090) | `[PENDIENTE DE VALIDACIÓN]` |
+| Enfriamiento (E18) | Punto crítico candidato (HACCP): temperatura final; agua absorbida | Con aire: ≤ 7 °C en lo profundo de la pechuga antes de envasar (extracto FTE-192 `[PVDP]`); parámetros de inmersión no obtenidos | `[PVDP]` |
 | Salas de corte (E21–E23) | Temperatura de sala y de producto; tiempo fuera del frío | Sala refrigerada | `[PENDIENTE DE VALIDACIÓN]` |
 | Envasado (E24–E25) | Detección de cuerpos extraños; rotulado | Equipos de control por línea de envasado | Exigencia de cliente |
 | Congelado y cámaras (E27–E29) | Temperatura de producto y cámara | Registro continuo | `[PVDP]` |

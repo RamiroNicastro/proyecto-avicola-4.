@@ -3,7 +3,7 @@
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C) · Fase 0
 
 > **Alcance:** mapa de cargas frigoríficas, diferencia entre **kW frigoríficos** y **kW eléctricos** (con COP declarado), **carga sensible preliminar del producto** por escala y comparación conceptual de refrigerantes. **No se calcula la capacidad frigorífica de la planta** (queda PENDIENTE del balance frigorífico), no se elige sistema, refrigerante ni proveedor, no se dimensiona sala de máquinas, no se calcula CAPEX. Congelado y cámaras: [`congelado_almacenamiento.md`](congelado_almacenamiento.md).
-> **Modelo:** [`../11_agua_efluentes/modelo_utilities.py`](../11_agua_efluentes/modelo_utilities.py) v1.1 (bloque `frio`). Propiedades térmicas `[PVDP]` (FTE-09C-14); temperaturas, COP y factores `[SUPUESTO]`.
+> **Modelo:** [`../11_agua_efluentes/modelo_utilities.py`](../11_agua_efluentes/modelo_utilities.py) v1.1 (bloque `frio`). Propiedades térmicas `[PVDP]` (FTE-265); temperaturas, COP y factores `[SUPUESTO]`.
 
 ---
 
@@ -71,17 +71,17 @@ La v1.0 llamaba "~235 kWf" a la suma de producto + agua del chiller + 40 % de ca
 | 35 % del indicador global de proceso asignado a "frío" (reparto `[SUPUESTO]` didáctico) | ~2.540 |
 | **Relación** | **~5,7×** (5,2–6,2 según nivel) |
 
-La brecha puede deberse a salas, docks, infiltración, hielo, bombas y ventiladores, pérdidas de distribución, a que el indicador de la UE incluya almacenamiento o congelado, o a que el reparto del 35 % no aplique. **No se cierra arbitrariamente** (ni ajustando el COP ni el reparto): se resolverá con un balance frigorífico de proveedor y con la suma bottom-up de equipos (DPV-09C-02 propuesta; [`demanda_energia.md` §6](demanda_energia.md)).
+La brecha puede deberse a salas, docks, infiltración, hielo, bombas y ventiladores, pérdidas de distribución, a que el indicador de la UE incluya almacenamiento o congelado, o a que el reparto del 35 % no aplique. **No se cierra arbitrariamente** (ni ajustando el COP ni el reparto): se resolverá con un balance frigorífico de proveedor y con la suma bottom-up de equipos (DPV-109 propuesta; [`demanda_energia.md` §6](demanda_energia.md)).
 
 ## 5. Refrigerantes — comparación conceptual (no se elige)
 
 | Alternativa | Uso industrial típico | Escala | Eficiencia | Seguridad | Personal | Regulación |
 |---|---|---|---|---|---|---|
-| **Amoníaco (R717)** directo | Estándar histórico de frigoríficos y plantas de faena grandes | Medianas y grandes; sistemas "de baja carga" y paquetizados para menores | **Alta**, sobre todo en baja temperatura | **Tóxico** (clase B2L: tóxico, baja inflamabilidad; FTE-09C-19 `[PVDP]`): sala de máquinas, detección, ventilación, plan de emergencia; riesgo para personas y vecinos | **Operadores capacitados** en amoníaco; mantenimiento especializado | Normas de seguridad argentinas de instalaciones con amoníaco **no relevadas** (DPV propuesta); no afectado por Kigali (no es HFC) |
+| **Amoníaco (R717)** directo | Estándar histórico de frigoríficos y plantas de faena grandes | Medianas y grandes; sistemas "de baja carga" y paquetizados para menores | **Alta**, sobre todo en baja temperatura | **Tóxico** (clase B2L: tóxico, baja inflamabilidad; FTE-268 `[PVDP]`): sala de máquinas, detección, ventilación, plan de emergencia; riesgo para personas y vecinos | **Operadores capacitados** en amoníaco; mantenimiento especializado | Normas de seguridad argentinas de instalaciones con amoníaco **no relevadas** (DPV propuesta); no afectado por Kigali (no es HFC) |
 | **CO₂ (R744)** transcrítico | Supermercados y plataformas logísticas; en expansión a industria | Pequeñas a medianas-grandes | Buena en clima templado; **menor en clima caluroso** (verano argentino) salvo con eyectores/enfriamiento adiabático | No tóxico ni inflamable (A1), pero **presiones muy altas**; asfixiante en recintos cerrados | Técnicos formados en alta presión (oferta local a verificar) | No afectado por Kigali |
 | **Cascada NH₃/CO₂** | Amoníaco confinado en sala de máquinas; CO₂ en planta (congelado, cámaras) | Medianas y grandes | Alta en baja temperatura | Reduce la carga y la exposición al amoníaco | Ambas competencias | — |
 | **Sistemas indirectos** (glicol/salmuera como fluido secundario) | Enfriado de salas, agua helada, cámaras con refrigerante primario confinado | Todas | Menor (doble intercambio + bombeo) | El refrigerante primario queda en la sala de máquinas | Estándar | — |
-| **HFC / mezclas** (R404A, R507, R448A, etc.) | Equipos comerciales y paquetizados | Pequeñas | Media | No tóxicos; algunos A1 | Amplia oferta de técnicos | **Kigali**: Argentina vigente desde 2020-02-20, congelamiento del consumo de HFC desde 2024 y licencias de importación (FTE-09C-15 `[PVDP]`); riesgo de costo y disponibilidad futura |
+| **HFC / mezclas** (R404A, R507, R448A, etc.) | Equipos comerciales y paquetizados | Pequeñas | Media | No tóxicos; algunos A1 | Amplia oferta de técnicos | **Kigali**: Argentina vigente desde 2020-02-20, congelamiento del consumo de HFC desde 2024 y licencias de importación (FTE-266 `[PVDP]`); riesgo de costo y disponibilidad futura |
 | **HFO y mezclas de bajo PCG** (R1234ze, R513A, etc.) | Chillers y equipos nuevos | Pequeñas a medianas | Media | Algunos levemente inflamables (A2L) | Técnicos actualizados | Alternativa post-Kigali; costo y disponibilidad local a verificar |
 | Hidrocarburos (R290, propano) | Equipos compactos, enfriadores de agua con carga limitada | Pequeñas | Alta | **Inflamable** (A3): cargas limitadas | Específico | Normas de carga máxima |
 

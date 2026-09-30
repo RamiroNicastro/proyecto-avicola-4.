@@ -2,8 +2,8 @@
 
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (corrección conceptual: sin umbral fijo de evisceración manual; niveles como arquitectura de referencia, no obligación) · Fase 0
 
-> **Alcance:** para cada operación, qué puede hacerse a mano, con semiautomatización o con automatización completa, y qué nivel **conviene estudiar** en cada escala. **No** se decide el nivel de automatización (DEC-09A-01), **no** se elige equipo ni proveedor, **no** se calcula dotación (`18_recursos_humanos`) ni CAPEX/OPEX.
-> **Base:** niveles por equipo en [`matriz_equipos.csv`](matriz_equipos.csv) (columnas `nivel_*`); ritmos y puestos equivalentes de [`../05_proceso_industrial/modelo_capacidad_proceso.py`](../05_proceso_industrial/modelo_capacidad_proceso.py). Las valoraciones cualitativas son `[SUPUESTO]` (SUP-09A-05) a validar con proveedores y plantas en operación.
+> **Alcance:** para cada operación, qué puede hacerse a mano, con semiautomatización o con automatización completa, y qué nivel **conviene estudiar** en cada escala. **No** se decide el nivel de automatización (DEC-037), **no** se elige equipo ni proveedor, **no** se calcula dotación (`18_recursos_humanos`) ni CAPEX/OPEX.
+> **Base:** niveles por equipo en [`matriz_equipos.csv`](matriz_equipos.csv) (columnas `nivel_*`); ritmos y puestos equivalentes de [`../05_proceso_industrial/modelo_capacidad_proceso.py`](../05_proceso_industrial/modelo_capacidad_proceso.py). Las valoraciones cualitativas son `[SUPUESTO]` (SUP-065) a validar con proveedores y plantas en operación.
 > **Regla:** **no** se concluye que más automatización sea siempre mejor. Automatizar cambia mano de obra por capital, repuestos, técnicos, energía, dependencia de proveedor y rigidez.
 
 ---
@@ -17,7 +17,7 @@
 | **Semiautomático (S)** | Una máquina hace el trabajo pesado o repetitivo; una persona carga, guía o controla cada pieza | Línea de conos para deshuese; peladora de mollejas cargada a mano; embolsadora asistida |
 | **Automático (A)** | La máquina procesa en línea sin intervención por pieza, con control de parámetros; las personas supervisan, reparan y hacen el repaso | Evisceradora rotativa; trozadora en línea; balanza de línea con distribución |
 
-Los niveles de las tablas siguientes son una **arquitectura de referencia a estudiar**, no una obligación técnica ni normativa: para una planta comercial habilitada probablemente se estudien soluciones mecanizadas o automatizadas en varias etapas, pero **no se afirma que otra configuración sea imposible** salvo respaldo normativo (norma no leída, DPV-09A-03).
+Los niveles de las tablas siguientes son una **arquitectura de referencia a estudiar**, no una obligación técnica ni normativa: para una planta comercial habilitada probablemente se estudien soluciones mecanizadas o automatizadas en varias etapas, pero **no se afirma que otra configuración sea imposible** salvo respaldo normativo (norma no leída, DPV-090).
 
 ## 2. Matriz por operación (criterios cualitativos)
 
@@ -34,7 +34,7 @@ Escala de valoración: ▲ favorable · ● neutro · ▼ desfavorable, **compar
 | Corte de patas / cabeza | Sí | Guías pasivas | Sí | Media | ▲ | ▲ | ● | ▼ | ● |
 | Transferencia a evisceración | Sí (recolgado) | — | Sí | Alta | ▲ | ▲ | ▲ (menos contacto) | ▼ | ▼ |
 | Corte de cloaca y apertura | Sí | Pistola de vacío | Sí | Media | ▲ | ▲ | ▲ si calibrada · ▼ si el lote es desparejo | ▼ | ▼ (tamaño de ave) |
-| **Evisceración** | **Sí**; un fabricante documenta evisceración manual en línea hasta ~1.600 broilers/h (BAADER Compact Plant 396, FTE-09A-007); sin umbral fijo | Sí | Sí | **Muy alta** | ▲▲ | ▲ | ▲/▼ (rotura de intestino si mal calibrada) | ▼▼ (técnico especializado) | ▼ (pesos variables) |
+| **Evisceración** | **Sí**; un fabricante documenta evisceración manual en línea hasta ~1.600 broilers/h (BAADER Compact Plant 396, FTE-200); sin umbral fijo | Sí | Sí | **Muy alta** | ▲▲ | ▲ | ▲/▼ (rotura de intestino si mal calibrada) | ▼▼ (técnico especializado) | ▼ (pesos variables) |
 | Presentación para inspección | Sí (vísceras colgando) | Bandejas | Línea sincronizada | Alta | ▲ | ▲ | ▲ | ▼ | ● |
 | Menudencias (cosecha, molleja) | Sí | Peladora | Sí | Media | ▲ | ▲ | ● | ▼ | ● |
 | Lavado de carcasas | Duchas | — | Lavadora en línea | Media | ▲ | ▲ | ▲ | ● | ● |
@@ -78,12 +78,12 @@ Ritmo operativo a 8 h netas: 312 / 625 / 1.250 / 2.500 aves/h (con 6 h: 417 / 83
 | Congelado | T o S (túnel estático) | S | S/A | A |
 | Subproductos (transporte) | M/S | S | A | A |
 
-Puestos equivalentes de eviscerado manual: rango referencia–prudente de [`../05_proceso_industrial/cuellos_botella.md` §5](../05_proceso_industrial/cuellos_botella.md) (2 aves/min por operario, FTE-09A-025 `[PVDP]`; 50 % como variante prudente, SUP-09A-03). **No son dotación**: no incluyen rotación, pausas, ausentismo, repaso ni supervisión.
+Puestos equivalentes de eviscerado manual: rango referencia–prudente de [`../05_proceso_industrial/cuellos_botella.md` §5](../05_proceso_industrial/cuellos_botella.md) (2 aves/min por operario, FTE-218 `[PVDP]`; 50 % como variante prudente, SUP-063). **No son dotación**: no incluyen rotación, pausas, ausentismo, repaso ni supervisión.
 
 **Lecturas:**
 
-1. **Arquitectura de referencia, no obligación:** para aturdido, escaldado, desplumado y enfriamiento se estudian equipos mecanizados o automáticos continuos en todas las escalas, porque es la configuración habitual de las plantas comerciales y la que ofrecen los fabricantes aun en rangos bajos (600–1.600 aves/h, FTE-09A-007; 150–1.500 aves/h, FTE-09A-015 `[PVDP]`). No se afirma que otra configuración sea técnicamente imposible: dependerá de la norma (no leída) y de la cotización.
-2. **Evisceración: sin umbral fijo.** La transición entre evisceración manual, semiautomática y automática depende de velocidad, costo y disponibilidad de mano de obra, ergonomía, inspección, uniformidad, calidad, higiene y economía de escala. Equipos comerciales demuestran que la evisceración manual puede utilizarse al menos en escalas del orden de **1.600 aves/h** (BAADER Compact Plant 396). El umbral económico para Argentina debe determinarse con cotizaciones y productividad real (DPV-09A-05, DEC-09A-01). La cantidad de puestos manuales equivalentes (11–21 a 10.000 aves/día; 21–42 a 20.000) muestra el **tamaño del problema de personal**, no un límite técnico.
+1. **Arquitectura de referencia, no obligación:** para aturdido, escaldado, desplumado y enfriamiento se estudian equipos mecanizados o automáticos continuos en todas las escalas, porque es la configuración habitual de las plantas comerciales y la que ofrecen los fabricantes aun en rangos bajos (600–1.600 aves/h, FTE-200; 150–1.500 aves/h, FTE-208 `[PVDP]`). No se afirma que otra configuración sea técnicamente imposible: dependerá de la norma (no leída) y de la cotización.
+2. **Evisceración: sin umbral fijo.** La transición entre evisceración manual, semiautomática y automática depende de velocidad, costo y disponibilidad de mano de obra, ergonomía, inspección, uniformidad, calidad, higiene y economía de escala. Equipos comerciales demuestran que la evisceración manual puede utilizarse al menos en escalas del orden de **1.600 aves/h** (BAADER Compact Plant 396). El umbral económico para Argentina debe determinarse con cotizaciones y productividad real (DPV-092, DEC-037). La cantidad de puestos manuales equivalentes (11–21 a 10.000 aves/día; 21–42 a 20.000) muestra el **tamaño del problema de personal**, no un límite técnico.
 3. **El colgado sigue siendo manual** en todas las escalas: es el límite humano de la línea y crece en puestos con la escala.
 4. **Trozado y deshuese dependen del mix, no solo de la escala:** una planta de 20.000 aves/día que vende entero casi no necesita trozado automático; una de 5.000 que deshuesa todo necesita mucha más gente o equipos.
 5. **Opcionales (O):** garras, CMS, porcionado, deshuese automático y congelado continuo solo se justifican con mercado para el producto (DEC-031, DEC-029, DEC-030).
@@ -110,6 +110,6 @@ Puestos equivalentes de eviscerado manual: rango referencia–prudente de [`../0
 | Dos turnos | Duplicar gente calificada en ambos turnos es más difícil que duplicar horas de máquina |
 | Bienestar animal y exigencias de la UE | Aturdido y control de parámetros registrados |
 
-## 6. Qué falta para decidir (DEC-09A-01)
+## 6. Qué falta para decidir (DEC-037)
 
-Productividad real de operarios argentinos (DPV-09A-05), costo laboral y disponibilidad de personal por localización (`18_recursos_humanos`), capacidad real y requisitos de cada equipo (RFQ, [`requerimientos_cotizacion.md`](requerimientos_cotizacion.md)), servicio técnico local (DPV-09A-02), mix de productos (DEC-005) y CAPEX/OPEX comparados (`19_capex`, `20_opex`).
+Productividad real de operarios argentinos (DPV-092), costo laboral y disponibilidad de personal por localización (`18_recursos_humanos`), capacidad real y requisitos de cada equipo (RFQ, [`requerimientos_cotizacion.md`](requerimientos_cotizacion.md)), servicio técnico local (DPV-089), mix de productos (DEC-005) y CAPEX/OPEX comparados (`19_capex`, `20_opex`).

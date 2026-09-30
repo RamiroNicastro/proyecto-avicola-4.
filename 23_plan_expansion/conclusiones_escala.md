@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual final: ver §0) · Base: [`escenarios_escala.md`](escenarios_escala.md), [`arquitectura_escalable.md`](arquitectura_escalable.md), [`gates_expansion.md`](gates_expansion.md), [`especificacion_simulador_html.md`](especificacion_simulador_html.md), [`guia_ramiro.md`](guia_ramiro.md), [`modelo_escala.py`](modelo_escala.py), [`escenarios_escala.csv`](escenarios_escala.csv), [`../05_proceso_industrial/capacidad_preliminar.md`](../05_proceso_industrial/capacidad_preliminar.md)
 
-> **No se elige la escala.** No se calcula CAPEX, OPEX, precios ni indicadores financieros; no se selecciona maquinaria, proveedores, layout ni localización; no se construye el HTML. USD 2 M no se trata como suficiente ni como tope (regla 7).
+> **No se elige la escala.** No se calcula CAPEX, OPEX, precios ni indicadores financieros; no se selecciona maquinaria, proveedores, layout ni localización; no se construye el HTML (se construyó después como v0.1 en `simulador_html/`, sesión 09D). USD 2 M no se trata como suficiente ni como tope (regla 7).
 > **Fuentes:** no se incorporaron fuentes externas nuevas. Todas las cifras derivan de los modelos existentes (producción v1.1, balance v1.1, subproductos v1.0) y de supuestos registrados; **ninguna es un dato de campo argentino**.
 
 ---

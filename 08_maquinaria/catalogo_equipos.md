@@ -3,8 +3,8 @@
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (sesión 09A; corrección: evisceración manual sin umbral fijo, niveles como arquitectura de referencia) · Fase 0 — **solo relevamiento: no se selecciona equipo, marca, modelo ni proveedor**
 
 > **Alcance:** qué equipos (conceptuales) necesita cada etapa del proceso ([`../05_proceso_industrial/flujo_proceso.md`](../05_proceso_industrial/flujo_proceso.md)), qué alternativas tecnológicas existen, qué servicios consumen, cuán críticos son y cómo se mantienen. **No** hay precios, CAPEX, capacidades de modelos específicos ni recomendación.
-> **Archivo maestro:** [`matriz_equipos.csv`](matriz_equipos.csv) (76 equipos, `EQ-01` a `EQ-76`). Este documento es su lectura analítica; los niveles de automatización por escala se discuten en [`automatizacion_por_escala.md`](automatizacion_por_escala.md). Fuentes: [`fuentes_09A.csv`](fuentes_09A.csv) (todas `[PVDP]`: extractos de buscador; acceso directo a sitios bloqueado en la sesión).
-> **Clasificación:** la lista de equipos, sus alternativas y su criticidad son `[SUPUESTO]` de trabajo basados en conocimiento técnico general del proceso (SUP-09A-05), a validar con proveedores (RFQ, [`requerimientos_cotizacion.md`](requerimientos_cotizacion.md)) y con plantas en operación.
+> **Archivo maestro:** [`matriz_equipos.csv`](matriz_equipos.csv) (76 equipos, `EQ-01` a `EQ-76`). Este documento es su lectura analítica; los niveles de automatización por escala se discuten en [`automatizacion_por_escala.md`](automatizacion_por_escala.md). Fuentes: [`registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) (todas `[PVDP]`: extractos de buscador; acceso directo a sitios bloqueado en la sesión).
+> **Clasificación:** la lista de equipos, sus alternativas y su criticidad son `[SUPUESTO]` de trabajo basados en conocimiento técnico general del proceso (SUP-065), a validar con proveedores (RFQ, [`requerimientos_cotizacion.md`](requerimientos_cotizacion.md)) y con plantas en operación.
 
 ### Diccionario de columnas de `matriz_equipos.csv`
 
@@ -39,9 +39,9 @@
 
 ### 1.2 Faena (EQ-07 a EQ-20)
 
-Transportador aéreo con grilletes (EQ-07, **crítico**: punto único de falla), puesto de colgado (EQ-08), **aturdido** eléctrico en baño de agua (EQ-09) o por atmósfera controlada (EQ-10; método no decidido, DEC-09A-05), degolladora con repaso manual (EQ-11), canal de sangrado con bomba y tanque (EQ-12), **escaldadora** (EQ-13) con su generación de agua caliente (EQ-14), **desplumadoras** en serie (EQ-15) con canal de plumas (EQ-16), cortadora de patas (EQ-17), arrancador de cabezas (EQ-18), **transferencia** a evisceración (EQ-19) y lavadora de grilletes (EQ-20).
+Transportador aéreo con grilletes (EQ-07, **crítico**: punto único de falla), puesto de colgado (EQ-08), **aturdido** eléctrico en baño de agua (EQ-09) o por atmósfera controlada (EQ-10; método no decidido, DEC-041), degolladora con repaso manual (EQ-11), canal de sangrado con bomba y tanque (EQ-12), **escaldadora** (EQ-13) con su generación de agua caliente (EQ-14), **desplumadoras** en serie (EQ-15) con canal de plumas (EQ-16), cortadora de patas (EQ-17), arrancador de cabezas (EQ-18), **transferencia** a evisceración (EQ-19) y lavadora de grilletes (EQ-20).
 
-**Aturdido — comparación conceptual** (FTE-09A-023 `[PVDP]`):
+**Aturdido — comparación conceptual** (FTE-216 `[PVDP]`):
 
 | | Eléctrico en baño de agua | Atmósfera controlada (CAS) |
 |---|---|---|
@@ -50,15 +50,15 @@ Transportador aéreo con grilletes (EQ-07, **crítico**: punto único de falla),
 | Colgado | Aleteo, más difícil | Aves inmóviles, más fácil y rápido |
 | Escala | Cualquiera | Sistema grande; más natural con módulos |
 | Halal | Requisitos por destino no verificados (DPV-034) | Idem |
-| Decisión | **Abierta** (DEC-09A-05) | **Abierta** |
+| Decisión | **Abierta** (DEC-041) | **Abierta** |
 
 ### 1.3 Evisceración (EQ-21 a EQ-33)
 
-Transportador de evisceración (EQ-21, crítico), cortadora de cloaca (EQ-22), abridora (EQ-23), **evisceradora** (EQ-24: la decisión de automatización más sensible a la escala; un fabricante documenta evisceración manual en línea hasta ~1.600 broilers/h, FTE-09A-007, por lo que no hay umbral fijo), presentación de vísceras para inspección (EQ-25), **puestos de inspección oficial** (EQ-26, crítico por norma), cosecha de menudencias (EQ-27), peladora de mollejas (EQ-28), extractor de buche/cuello (EQ-29), aspirador de pulmones (EQ-30), lavadora interior/exterior (EQ-31), transporte de vísceras por canal o vacío (EQ-32) y enfriador de menudencias (EQ-33).
+Transportador de evisceración (EQ-21, crítico), cortadora de cloaca (EQ-22), abridora (EQ-23), **evisceradora** (EQ-24: la decisión de automatización más sensible a la escala; un fabricante documenta evisceración manual en línea hasta ~1.600 broilers/h, FTE-200, por lo que no hay umbral fijo), presentación de vísceras para inspección (EQ-25), **puestos de inspección oficial** (EQ-26, crítico por norma), cosecha de menudencias (EQ-27), peladora de mollejas (EQ-28), extractor de buche/cuello (EQ-29), aspirador de pulmones (EQ-30), lavadora interior/exterior (EQ-31), transporte de vísceras por canal o vacío (EQ-32) y enfriador de menudencias (EQ-33).
 
 ### 1.4 Enfriamiento (EQ-34 a EQ-38)
 
-**Comparación** (sin decisión, DEC-026; tiempos y masas de FTE-09A-024 `[PVDP]` y del balance v1.1):
+**Comparación** (sin decisión, DEC-026; tiempos y masas de FTE-217 `[PVDP]` y del balance v1.1):
 
 | Criterio | Inmersión (prechiller + chiller) | Aire (air chilling) | Combinaciones (inmersión + aire; aire con aspersión) |
 |---|---|---|---|
@@ -68,10 +68,10 @@ Transportador de evisceración (EQ-21, crítico), cortadora de cloaca (EQ-22), a
 | Superficie y frío | Compacto; requiere agua helada/hielo | Mayor superficie (cámara con recorrido de riel) y más frío por aire | Intermedio |
 | Agua y efluente | Alto consumo de agua (renovación) | Bajo consumo de agua | Intermedio |
 | Contaminación cruzada | Riesgo en el agua compartida (control por renovación y temperatura) | Menor contacto entre carcasas | — |
-| Mercados | Difundido en América (FTE-09A-024) | Preferido/requerido en la UE (restricciones a la inmersión, extracto) | — |
+| Mercados | Difundido en América (FTE-217) | Preferido/requerido en la UE (restricciones a la inmersión, extracto) | — |
 | Rotulado y precio | El agua retenida se vende como peso; tema de rotulado | Sin agua agregada: argumento comercial "enfriado por aire" | — |
 | Escalabilidad | Agregar tanque | Requiere espacio de cámara previsto | — |
-| Norma argentina | Parámetros no leídos (DPV-09A-06) | ≤ 7 °C en lo profundo de la pechuga antes de envasar (extracto FTE-09A-030) | — |
+| Norma argentina | Parámetros no leídos (DPV-062) | ≤ 7 °C en lo profundo de la pechuga antes de envasar (extracto FTE-192) | — |
 
 Complementos: generación de agua helada o hielo (EQ-37, crítico con inmersión) y descargador/escurridor (EQ-38).
 
@@ -81,7 +81,7 @@ Complementos: generación de agua helada o hielo (EQ-37, crítico con inmersión
 |---|---|---|---|
 | Clasificación | Balanza de línea con distribución (EQ-39) | Sí (mesa + balanza) | Define calibres para entero y exportación |
 | Trozado | Mesas con sierra (EQ-40); trozadora automática modular (EQ-41) | Sí | Sala de trozado mínima siempre necesaria (canales no aptas para entero) |
-| Deshuese | Línea de conos manual (EQ-42); deshuesadora de pata-muslo (EQ-43); fileteadora de pechuga (EQ-44) | Sí (muy intensivo en mano de obra) | Referencia de equipo automático de pata-muslo: 1.000 piezas/h (FTE-09A-018 `[PVDP]`) |
+| Deshuese | Línea de conos manual (EQ-42); deshuesadora de pata-muslo (EQ-43); fileteadora de pechuga (EQ-44) | Sí (muy intensivo en mano de obra) | Referencia de equipo automático de pata-muslo: 1.000 piezas/h (FTE-211 `[PVDP]`) |
 | Fileteado y porcionado | Porcionadora (EQ-46) | Sí | Solo con mercado (gastronomía, exportación) |
 | Trimming | Mesas; rayos X para hueso opcional (EQ-45) | Sí | Exigencia de cliente |
 | Garras | Escaldador de patas, peladora, clasificadora (EQ-47) | Sí (lento) | Sin comprador, no pelar (DEC-031) |
@@ -107,13 +107,13 @@ La **atmósfera modificada** solo tiene sentido si el cliente paga la vida útil
 | Tecnología | Mejor para | Ventaja | Limitación | Fuente |
 |---|---|---|---|---|
 | **Túnel estático** (carros/pallets) | Producto en caja; baja escala | Simple, flexible | Congelado lento en caja; manipuleo | Conocimiento general |
-| **Túnel continuo lineal / IQF** | Piezas individuales; producto plano | Menor inversión inicial que espiral para producto uniforme | Mucha superficie | FTE-09A-022 `[PVDP · débil]` |
-| **Espiral** | Producto individual o envasado, alto volumen | 60–70 % menos superficie que un túnel lineal de igual capacidad | Inversión; escala | FTE-09A-022 `[PVDP · débil]` |
+| **Túnel continuo lineal / IQF** | Piezas individuales; producto plano | Menor inversión inicial que espiral para producto uniforme | Mucha superficie | FTE-215 `[PVDP · débil]` |
+| **Espiral** | Producto individual o envasado, alto volumen | 60–70 % menos superficie que un túnel lineal de igual capacidad | Inversión; escala | FTE-215 `[PVDP · débil]` |
 | **Placas** | Bloques (menudencias, CMS, recortes) | Congelado rápido de bloques | Solo bloques | Conocimiento general |
 | **Criogénico** (N2/CO2) | Picos, productos especiales | Muy rápido, poca inversión | Costo por kg (insumo) | Conocimiento general |
 | **Congelado de terceros** | Etapas iniciales o picos | Sin inversión | Logística y dependencia | [`../23_plan_expansion/arquitectura_escalable.md`](../23_plan_expansion/arquitectura_escalable.md) |
 
-Carga de congelado por día (config. B): P1 0,6 → 4,8 t; P2 2,4 → 19,2 t; P3 3,0 → 24,0 t de 2.500 a 20.000 aves/día ([`../05_proceso_industrial/cuellos_botella.md` §5](../05_proceso_industrial/cuellos_botella.md)). El dimensionamiento en kW y tiempos de congelado es de `12_energia_frio` (DPV-09A-10).
+Carga de congelado por día (config. B): P1 0,6 → 4,8 t; P2 2,4 → 19,2 t; P3 3,0 → 24,0 t de 2.500 a 20.000 aves/día ([`../05_proceso_industrial/cuellos_botella.md` §5](../05_proceso_industrial/cuellos_botella.md)). El dimensionamiento en kW y tiempos de congelado es de `12_energia_frio` (DPV-096).
 
 ### 1.8 Subproductos (EQ-66 a EQ-70)
 
@@ -149,7 +149,7 @@ Criterio: **CRÍTICO** — su falla **detiene la faena** (no hay forma razonable
 
 - **Críticos en planta:** cadena y grilletes, motorreductores del transportador, dedos y rodamientos de desplumadoras, resistencias/bombas de escaldado, electrodos y transformador del aturdidor, cuchillas de todas las máquinas automáticas, bombas de sangre, plumas y vísceras, componentes del chiller (motor, rodamientos), repuestos de compresores de frío y aire.
 - **Criterio:** stock de repuestos de desgaste para N semanas + repuestos de falla catastrófica para equipos sin bypass. El listado lo debe entregar cada proveedor con tiempos de reposición en Argentina (RFQ).
-- **Riesgo argentino:** plazos de importación y restricciones cambiarias pueden alargar la reposición; un repuesto importado con semanas de demora sobre un equipo crítico **equivale a semanas sin faena** (DPV-09A-02).
+- **Riesgo argentino:** plazos de importación y restricciones cambiarias pueden alargar la reposición; un repuesto importado con semanas de demora sobre un equipo crítico **equivale a semanas sin faena** (DPV-089).
 
 ### 2.3 Redundancia y bypass
 
@@ -177,7 +177,7 @@ El tiempo de mantenimiento compite con la limpieza y la faena ([`../05_proceso_i
 | Riesgo | Descripción | Mitigación conceptual |
 |---|---|---|
 | **Repuestos propietarios** | Equipos automáticos usan piezas específicas del fabricante | Contrato de repuestos; stock en planta |
-| **Técnico especializado** | Calibración de evisceradoras y trozadoras exige técnicos del fabricante | Verificar técnicos residentes en Argentina (no verificado para ningún proveedor, DPV-09A-02); capacitar personal propio |
+| **Técnico especializado** | Calibración de evisceradoras y trozadoras exige técnicos del fabricante | Verificar técnicos residentes en Argentina (no verificado para ningún proveedor, DPV-089); capacitar personal propio |
 | **Software y electrónica** | Controles, balanzas de línea, SCADA | Soporte remoto; versiones estandarizadas |
 | **Mezcla de marcas** | Integrar equipos de distintos fabricantes (o nuevos con usados) complica sincronía y responsabilidad | Un integrador responsable de la línea o un proveedor principal |
 | **Salida del proveedor del país** | Discontinuidad de soporte | Preferir tecnologías con repuestos genéricos donde se pueda |

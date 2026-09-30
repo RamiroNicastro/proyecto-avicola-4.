@@ -1,6 +1,8 @@
-# Especificación del simulador HTML — versión 0.1 (no construido)
+# Especificación del simulador HTML — versión 0.1
 
-**Fecha:** 2026-09-30 · **Estado:** especificación; **el HTML no se construye en esta sesión**.
+**Fecha:** 2026-09-30 · **Estado original:** especificación; el HTML no se construyó en la sesión de escala.
+
+> **Estado actualizado (reconciliación 2026-09-30):** la v0.1 **fue construida** en [`simulador_html/`](simulador_html/README.md) (sesión 09D). Diferencias entre esta especificación y lo construido: [`simulador_html/observaciones_html_v01.md`](simulador_html/observaciones_html_v01.md) §3–4. Este documento se conserva como especificación de origen.
 
 > **Propósito:** que Ramiro y el grupo inversor puedan mover las variables físicas de escala y ver, en una sola pantalla, qué tiene que ser verdad (aves, granjas, alimento, productos, subproductos, inventario, logística, demanda). **Solo física**: la v0.1 **no** muestra CAPEX, OPEX, EBITDA, VAN, TIR ni payback (no están construidos); esos campos quedan **previstos y deshabilitados**.
 > **Fuente de verdad:** [`modelo_escala.py`](modelo_escala.py) y [`escenarios_escala.csv`](escenarios_escala.csv) (bloque `tabla_central` como núcleo). El simulador **no debe reimplementar fórmulas distintas** de las del modelo (§5).
@@ -131,4 +133,4 @@ Ejemplo precargado sugerido (solo para demostrar la vista): A = 2.500 · 5 d · 
 
 ## 7. Fuera de alcance de la v0.1
 
-CAPEX, OPEX, precios, ingresos, EBITDA, VAN, TIR, payback, capital de trabajo monetario, maquinaria, layout, localización, efluentes y energía (módulos no construidos). Los campos existen en la interfaz como **"versión futura"**, deshabilitados, para que la estructura no cambie cuando se incorporen.
+CAPEX, OPEX, precios, ingresos, EBITDA, VAN, TIR, payback, capital de trabajo monetario, maquinaria, layout, localización, efluentes y energía (módulos no construidos al especificar; agua, efluentes, energía y frío existen desde la sesión 09C como modelo preliminar en `11_agua_efluentes/`, pero **no** están integrados al HTML v0.1). Los campos existen en la interfaz como **"versión futura"**, deshabilitados, para que la estructura no cambie cuando se incorporen.

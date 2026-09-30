@@ -2,8 +2,9 @@
 
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C, en paralelo) · Base: [`balance_agua.md`](balance_agua.md), [`caracterizacion_efluentes.md`](caracterizacion_efluentes.md), [`alternativas_tratamiento.md`](alternativas_tratamiento.md), [`guia_ramiro.md`](guia_ramiro.md), [`modelo_utilities.py`](modelo_utilities.py), [`escenarios_utilities.csv`](escenarios_utilities.csv); energía y frío en [`../12_energia_frio/conclusiones_energia_frio.md`](../12_energia_frio/conclusiones_energia_frio.md)
 
+> **Reconciliación 2026-09-30:** los IDs provisionales de esta sesión fueron reemplazados por definitivos y sus supuestos, datos por validar, decisiones y fuentes se integraron en los registros centrales ([`../00_gestion_proyecto/reconciliacion_sesiones_09.md`](../00_gestion_proyecto/reconciliacion_sesiones_09.md)). Donde este documento dice que los registros centrales no se modificaron, describe el estado de la sesión original.
 > **Modelo TOP-DOWN de sensibilidad.** Los rangos bajo/medio/alto son órdenes de magnitud preliminares: **no son consumos esperados de nuestra planta ni especificaciones de diseño**. No se seleccionan equipos, tecnología de tratamiento, refrigerante, fuente térmica ni generador; no se calcula CAPEX ni OPEX; no se elige ubicación.
-> **Fuentes:** acceso directo bloqueado (`EGRESS_BLOCKED`; DPV-009). **Toda cifra externa es `[PVDP]`** (19 fuentes `FTE-09C-01` a `19` en [`fuentes_09C.csv`](fuentes_09C.csv), más FTE-181, FTE-135, FTE-157, FTE-016). **Ninguna cifra es una medición argentina.**
+> **Fuentes:** acceso directo bloqueado (`EGRESS_BLOCKED`; DPV-009). **Toda cifra externa es `[PVDP]`** (19 fuentes de la sesión, integradas en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) como FTE-252 a FTE-268 y FTE-236, más FTE-181, FTE-135, FTE-157, FTE-016). **Ninguna cifra es una medición argentina.**
 > **Sesión en paralelo:** no se modificaron `00_gestion_proyecto/`, `25_fuentes/` ni el catálogo de equipos de la sesión 09A; las propuestas están en [`actualizaciones_gestion_09C.md`](actualizaciones_gestion_09C.md).
 
 ---
@@ -89,11 +90,11 @@ Prevención en origen (sangre, transporte en seco) → pretratamiento (rejas/tam
 | 3 | Límite de vuelco real (provincia, autoridad, cuerpo receptor, permiso) | Grado de tratamiento | DPV-067 |
 | 4 | Sólidos que llegan efectivamente al efluente; lodos | Pretratamiento y logística de lodos | Nuevas DPV propuestas |
 | 5 | Disponibilidad y calidad del agua; potencia eléctrica | Pueden limitar la escala o el sitio | DPV-053, DPV-052 |
-| 6 | **Lista de cargas** (demanda máxima, cos φ, arranques) | Potencia contratada, transformador, generador | DPV-09C-07 propuesta |
-| 7 | Perfil horario térmico | Caldera | DPV-09C-06 propuesta |
-| 8 | Balance frigorífico; brecha ×5,7 con el benchmark | Sala de máquinas | DPV-09C-02 propuesta |
+| 6 | **Lista de cargas** (demanda máxima, cos φ, arranques) | Potencia contratada, transformador, generador | DPV-095 propuesta |
+| 7 | Perfil horario térmico | Caldera | DPV-113 propuesta |
+| 8 | Balance frigorífico; brecha ×5,7 con el benchmark | Sala de máquinas | DPV-109 propuesta |
 | 9 | Perfil refrigerado/congelado y días de stock | ×5 en congelado y cámaras | DPV-085, DPV-078 |
-| 10 | Indicadores kWh/t (base y alcance) | ×3 en energía | DPV-09C-01 propuesta |
+| 10 | Indicadores kWh/t (base y alcance) | ×3 en energía | DPV-108 propuesta |
 
 ## 5. Integración futura con la sesión 09A: de top-down a bottom-up
 
@@ -115,7 +116,7 @@ Con esa tabla (valores `[COTIZACIÓN]` de proveedores) el diseño futuro compara
 |---|---|
 | kWh/ave, L/ave, MJ/ave, carga sensible del producto | Σ consumos reales de equipos; demanda máxima desde la lista de cargas |
 
-El modelo ya incluye `demanda_maxima(lista_de_cargas)` (potencia pico y kVA) y `contraste_bottom_up(r, equipos)`, que **no ajusta** ningún valor: si la relación bottom-up/top-down sale de [1/1,5; 1,5] (`[SUPUESTO]` editable) emite una alerta por variable (test **U29**). Propuesta: DEC-09C-07 y DPV-09C-07 en [`actualizaciones_gestion_09C.md`](actualizaciones_gestion_09C.md).
+El modelo ya incluye `demanda_maxima(lista_de_cargas)` (potencia pico y kVA) y `contraste_bottom_up(r, equipos)`, que **no ajusta** ningún valor: si la relación bottom-up/top-down sale de [1/1,5; 1,5] (`[SUPUESTO]` editable) emite una alerta por variable (test **U29**). Propuesta: DEC-048 y DPV-095 en [`actualizaciones_gestion_09C.md`](actualizaciones_gestion_09C.md).
 
 ## 6. Qué no se hizo
 
@@ -215,8 +216,8 @@ L/ave y m³/t medidos; fracción del agua que va a efluente; **caudal y concentr
 
 ## 9. Archivos
 
-**v1.0 (creados):** `11_agua_efluentes/balance_agua.md`, `caracterizacion_efluentes.md`, `alternativas_tratamiento.md`, `modelo_utilities.py`, `escenarios_utilities.csv`, `guia_ramiro.md`, `conclusiones_agua_efluentes.md`, `actualizaciones_gestion_09C.md`, `fuentes_09C.csv`; `12_energia_frio/demanda_energia.md`, `sistema_frio.md`, `congelado_almacenamiento.md`, `respaldo_energia.md`, `conclusiones_energia_frio.md`; READMEs de ambas carpetas.
-**v1.1 (modificados en la auditoría):** `modelo_utilities.py` (v1.1), `escenarios_utilities.csv` (regenerado, 4.995 filas), `balance_agua.md`, `caracterizacion_efluentes.md`, `alternativas_tratamiento.md`, `guia_ramiro.md`, `conclusiones_agua_efluentes.md`, `actualizaciones_gestion_09C.md`, `README.md`; `12_energia_frio/demanda_energia.md`, `sistema_frio.md`, `congelado_almacenamiento.md`, `respaldo_energia.md`, `conclusiones_energia_frio.md`, `README.md`. `fuentes_09C.csv` sin cambios.
+**v1.0 (creados):** `11_agua_efluentes/balance_agua.md`, `caracterizacion_efluentes.md`, `alternativas_tratamiento.md`, `modelo_utilities.py`, `escenarios_utilities.csv`, `guia_ramiro.md`, `conclusiones_agua_efluentes.md`, `actualizaciones_gestion_09C.md`, `fuentes_09C.csv` (integrado y retirado en la reconciliación 09); `12_energia_frio/demanda_energia.md`, `sistema_frio.md`, `congelado_almacenamiento.md`, `respaldo_energia.md`, `conclusiones_energia_frio.md`; READMEs de ambas carpetas.
+**v1.1 (modificados en la auditoría):** `modelo_utilities.py` (v1.1), `escenarios_utilities.csv` (regenerado, 4.995 filas), `balance_agua.md`, `caracterizacion_efluentes.md`, `alternativas_tratamiento.md`, `guia_ramiro.md`, `conclusiones_agua_efluentes.md`, `actualizaciones_gestion_09C.md`, `README.md`; `12_energia_frio/demanda_energia.md`, `sistema_frio.md`, `congelado_almacenamiento.md`, `respaldo_energia.md`, `conclusiones_energia_frio.md`, `README.md`. `fuentes_09C.csv` sin cambios (integrado a `25_fuentes/` y retirado en la reconciliación 09).
 **No modificados:** `00_gestion_proyecto/`, `25_fuentes/`, modelos y CSV de 03, 04, 07 y 23, catálogo de 09A.
 
 ## 10. Control de calidad y evaluación

@@ -1,6 +1,6 @@
 # Requisitos de una planta de faena avícola con orientación exportadora
 
-**Fecha de referencia:** 2026-09-29 · **Versión:** 1 · Relacionado: [`../16_normativa_senasa/README.md`](../16_normativa_senasa/README.md) (análisis normativo detallado, pendiente), [`mercados_por_pais.md`](mercados_por_pais.md), [`logistica_exportacion.md`](logistica_exportacion.md)
+**Fecha de referencia:** 2026-09-29 · **Versión:** 1 · Relacionado: [`../16_normativa_senasa/README.md`](../16_normativa_senasa/README.md) (análisis normativo detallado realizado el 2026-09-30 en la sesión 09B; todo `[PVDP]`), [`mercados_por_pais.md`](mercados_por_pais.md), [`logistica_exportacion.md`](logistica_exportacion.md)
 
 > **Alcance:** lista de requisitos que **pueden afectar el diseño desde el día 1**. No se selecciona maquinaria, proveedor, capacidad ni ubicación (fase 0). No se estima CAPEX.
 > **Verificación:** las normas se identificaron por extractos de buscador; **ninguna fue leída en su texto original** en esta sesión. Donde se cita una norma "conocida pero no leída", se indica. El análisis normativo completo corresponde a `16_normativa_senasa` (DPV-007).
@@ -12,11 +12,11 @@
 
 | Requisito | Contenido | Cómo afecta el diseño | Base | Estado |
 |---|---|---|---|---|
-| Habilitación SENASA del establecimiento | Reglamento de inspección de productos de origen animal; actualización por Res. SENASA 592/2026 | Layout con flujos separados (zona sucia / limpia), materiales sanitarios, agua potable, vestuarios y barreras sanitarias, desagües, iluminación en puestos de inspección | Decreto 4238/68 (FTE-016) | [PVDP] |
+| Habilitación SENASA del establecimiento | Reglamento de inspección de productos de origen animal; actualización por Res. SENASA 592/2026 (según 09B, deroga la **obligatoriedad reglamentaria del Director Técnico** —numerales 1.7 y 9.2—, sin perjuicio de profesionales responsables exigidos por otras normas, la operación o los clientes; `[PVDP]`, DPV-105) | Layout con flujos separados (zona sucia / limpia), materiales sanitarios, agua potable, vestuarios y barreras sanitarias, desagües, iluminación en puestos de inspección | Decreto 4238/68 (FTE-016) | [PVDP] |
 | Tránsito federal | Permite vender entre provincias (probable necesidad si la planta abastece al AMBA desde otra provincia) | Mismo estándar que la habilitación SENASA | Glosario; DEC-009 | [PVDP] |
 | Inspección veterinaria oficial | Inspección ante y post mortem por SENASA | Oficina y espacios para el servicio oficial; puestos de inspección en línea con iluminación y espacio; sala de decomisos | FTE-016 | [PVDP] |
-| BPM y POES | Buenas prácticas y procedimientos operativos estandarizados de saneamiento | Superficies lavables, lavamanos, esterilizadores, circuitos de limpieza | Norma específica a verificar (DPV-007) | [PENDIENTE DE VALIDACIÓN] |
-| HACCP | Plan de análisis de peligros y puntos críticos de control | Puntos de control de temperatura (enfriado, cámaras), registros | Exigido por mercados de exportación; obligatoriedad nacional a verificar (DPV-007) | [PENDIENTE DE VALIDACIÓN] |
+| BPM y POES | Buenas prácticas y procedimientos operativos estandarizados de saneamiento | Superficies lavables, lavamanos, esterilizadores, circuitos de limpieza | Norma específica a verificar (DPV-007). **Actualización 2026-09-30 (09B):** BPM y POES obligatorios por Res. SENASA 233/1998 (FTE-231, `[PVDP]`) | [PVDP] |
+| HACCP | Plan de análisis de peligros y puntos críticos de control | Puntos de control de temperatura (enfriado, cámaras), registros | Exigido por mercados de exportación; obligatoriedad nacional a verificar (DPV-007). **Actualización 2026-09-30 (09B):** el Plan APPCC es **obligatorio regulatorio** para establecimientos SENASA según la Res. SENASA 205/2014 (FTE-243, `[PVDP]`); los destinos agregan exigencias; excepciones en DPV-102 | [PVDP] |
 | Bienestar animal en faena | Recepción, espera, descarga, colgado, aturdimiento y degüello | Andén de recepción cubierto y ventilado, zona de espera, diseño del colgado y del aturdimiento | Capítulo de bienestar animal del Decreto 4238/68 (FTE-016) | [PVDP] |
 | Prohibición de antimicrobianos promotores de crecimiento | Aplica a toda la producción nacional | Afecta la granja y el alimento, no la planta; exige trazabilidad de medicamentos (Sigtrazavet) | Res. SENASA 445/2024 (FTE-109) | [PVDP] |
 | Control de residuos (Plan CREHA) | Muestreo oficial de residuos y contaminantes | Toma de muestras en planta; registros de proveedores (granjas) | FTE-110 | [PVDP] |

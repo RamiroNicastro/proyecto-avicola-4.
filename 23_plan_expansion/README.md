@@ -11,7 +11,8 @@
 | [`escenarios_escala.md`](escenarios_escala.md) | Definición de capacidad, calendarios, demanda vs capacidad, utilización, producción primaria, abastecimiento, balance de productos, configuraciones, subproductos, inventario, logística, exportación, tabla central "qué debe ser verdad", sensibilidad y documentación del modelo y del CSV |
 | [`arquitectura_escalable.md`](arquitectura_escalable.md) | Modularidad (dimensionar / preparar / sobredimensionar), arquitecturas de crecimiento A–E y matriz de decisión sin ganador |
 | [`gates_expansion.md`](gates_expansion.md) | Puertas G0–G3 y 18 variables medibles para ampliar (sin umbrales definitivos) |
-| [`especificacion_simulador_html.md`](especificacion_simulador_html.md) | Especificación del futuro simulador HTML v0.1 (no construido) |
+| [`especificacion_simulador_html.md`](especificacion_simulador_html.md) | Especificación de origen del simulador HTML v0.1 |
+| [`simulador_html/`](simulador_html/README.md) | **Simulador HTML v0.1 construido** (2026-09-30, sesión 09D): interfaz offline que reproduce los modelos físicos aprobados; comparador A/B/C; **sin economía** (CAPEX, OPEX, EBITDA, VAN, TIR y payback pendientes). Observaciones y umbrales de interfaz: [`simulador_html/observaciones_html_v01.md`](simulador_html/observaciones_html_v01.md) |
 | [`guia_ramiro.md`](guia_ramiro.md) | Conceptos de capacidad y escala; "¿por qué no construir directamente 20.000 aves/día?" |
 | [`conclusiones_escala.md`](conclusiones_escala.md) | Auditoría conceptual v1.1, hallazgos, información faltante priorizada, tests, calidad |
 | [`modelo_escala.py`](modelo_escala.py) | Modelo reproducible: importa producción primaria v1.1, balance de masa v1.1 y subproductos v1.0 sin modificarlos; lee la demanda |

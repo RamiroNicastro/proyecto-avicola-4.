@@ -60,7 +60,7 @@ AGUA — CINCO CONCEPTOS QUE NO SE MEZCLAN
   DESCARGADA (efluente) = utilizada × fracción a efluente       [SUPUESTO editable; la relación no es fija]
   EVAPORADA o ARRASTRADA = utilizada − descargada − incorporada  (por diferencia; si es < 0, alerta)
   Segunda unidad: m³ de agua utilizada / t de producto comestible (peso comercial), contrastada con el
-  rango de fuentes (3,8–17,9 m³/t de carcasa, FTE-09C-04 [PVDP]; base distinta: solo contraste).
+  rango de fuentes (3,8–17,9 m³/t de carcasa, FTE-255 [PVDP]; base distinta: solo contraste).
 
 ------------------------------------------------------------------------------
 EFLUENTES — DOS MÉTODOS INDEPENDIENTES
@@ -132,33 +132,33 @@ class ErrorUtilities(Exception):
 # 1. PARÁMETROS  (valor bajo / medio / alto; origen; referencia)
 #    "bajo/medio/alto" = nivel de DEMANDA del servicio (bajo = planta más eficiente).
 #    Son RANGOS DE SENSIBILIDAD PRELIMINAR, no consumos esperados ni especificaciones.
-#    Referencias FTE-09C-xx: 11_agua_efluentes/fuentes_09C.csv (todas [PVDP])
+#    Referencias FTE-###: 25_fuentes/registro_fuentes.csv (todas [PVDP]; IDs reconciliados 2026-09-30)
 # ---------------------------------------------------------------------------
 # 1.1 Agua utilizada en proceso por etapa [L/ave faenada]. Totales 15/25/38 calibrados a rangos de fuentes
-#     (13,2–37,8 L/ave; 22–30 L/ave; 26 L/ave; FTE-09C-01 a 04); reparto por etapa: SUPUESTO.
+#     (13,2–37,8 L/ave; 22–30 L/ave; 26 L/ave; FTE-252 a FTE-255); reparto por etapa: SUPUESTO.
 AGUA_ETAPAS = [
     # clave, etiqueta, (bajo, medio, alto), origen, referencia
     ("recepcion", "Recepción: lavado de jaulas/módulos, camiones y andén", (0.5, 1.0, 2.0), "SUPUESTO",
      "sin fuente por ave"),
     ("escaldado", "Escaldado: llenado, reposición y desborde", (0.9, 1.2, 2.0), "FUENTE",
-     "mín. ~1 cuarto de galón (0,95 L)/ave (FTE-09C-11, FTE-09C-18)"),
+     "mín. ~1 cuarto de galón (0,95 L)/ave (FTE-262, FTE-252)"),
     ("desplumado", "Desplumado: duchas y transporte de plumas", (1.0, 2.0, 3.5), "SUPUESTO",
-     "incluido en totales de FTE-09C-01/02"),
+     "incluido en totales de FTE-252/FTE-253"),
     ("evisceracion", "Evisceración: lavados interior/exterior y transporte hidráulico de vísceras",
-     (4.0, 6.0, 8.0), "FUENTE", "7,57 L/ave (FTE-09C-01)"),
-    ("lavado", "Lavado final de carcasas", (1.5, 3.0, 4.5), "FUENTE", "4,25–4,35 L/ave (FTE-09C-01)"),
+     (4.0, 6.0, 8.0), "FUENTE", "7,57 L/ave (FTE-252)"),
+    ("lavado", "Lavado final de carcasas", (1.5, 3.0, 4.5), "FUENTE", "4,25–4,35 L/ave (FTE-252)"),
     ("chiller", "Chiller: reposición de agua (contracorriente)", (1.9, 2.8, 4.5), "FUENTE",
-     "mín. 0,5 gal = 1,9 L/ave; típico 2,8–5,7 L/ave (FTE-09C-18); 2,12 L/ave (FTE-09C-01)"),
-    ("despiece", "Sala de despiece y deshuese", (0.5, 1.0, 2.0), "FUENTE", "3,03 L/ave (FTE-09C-01)"),
+     "mín. 0,5 gal = 1,9 L/ave; típico 2,8–5,7 L/ave (FTE-252); 2,12 L/ave (FTE-252)"),
+    ("despiece", "Sala de despiece y deshuese", (0.5, 1.0, 2.0), "FUENTE", "3,03 L/ave (FTE-252)"),
     ("limpieza", "Limpieza de equipos y salas (fin de turno)", (3.0, 5.0, 7.5), "FUENTE",
-     "1,5–3 gal = 5,7–11,4 L/ave saneamiento + 0,9–3,8 L equipos (FTE-09C-01)"),
+     "1,5–3 gal = 5,7–11,4 L/ave saneamiento + 0,9–3,8 L equipos (FTE-252)"),
     ("sanitizacion", "Sanitización: esterilizadores, lavamanos, pediluvios, enjuagues", (0.7, 1.0, 1.5),
      "SUPUESTO", "sin fuente separada"),
     ("auxiliares", "Servicios auxiliares: caldera, condensadores evaporativos, vestuarios, comedor",
      (1.0, 2.0, 2.5), "SUPUESTO", "sin fuente separada"),
 ]
-RANGO_L_AVE_FUENTES = (13.2, 37.8)                  # FTE-09C-02 [PVDP]
-RANGO_M3_T_FUENTES = (3.8, 17.9)                    # m³/t de CARCASA, FTE-09C-04 [PVDP] (base distinta)
+RANGO_L_AVE_FUENTES = (13.2, 37.8)                  # FTE-253 [PVDP]
+RANGO_M3_T_FUENTES = (3.8, 17.9)                    # m³/t de CARCASA, FTE-255 [PVDP] (base distinta)
 FRAC_EFLUENTE = ((0.80, 0.88, 0.95), "SUPUESTO",
                  "fracción del agua utilizada que se descarga; SUPUESTO editable: la relación NO es fija "
                  "(depende de evaporación, arrastre con subproductos y lodos, reúso y fugas)")
@@ -172,27 +172,27 @@ HORAS_ARRANQUE_CIERRE = 2                           # SUPUESTO
 #     SUP-040). MÉTODO B: concentración [mg/L] (valores citados en fuentes [PVDP]). Independientes:
 #     ninguno se calibra con el otro.
 CARGA_G_AVE = {
-    "DQO": ((50.0, 100.0, 180.0), "escenario [PVDP] (FTE-181; FTE-09C-05)"),
-    "DBO5": ((25.0, 50.0, 90.0), "escenario [PVDP] (FTE-181; FTE-09C-05)"),
-    "SST": ((15.0, 35.0, 80.0), "escenario [PVDP] (FTE-181; FTE-09C-05)"),
-    "GyA": ((5.0, 11.0, 25.0), "escenario [PVDP] (FTE-09C-06)"),
-    "NTK": ((3.0, 5.0, 8.0), "escenario [PVDP] (FTE-09C-06)"),
-    "PT": ((0.3, 0.5, 1.0), "escenario [PVDP] (FTE-09C-06)"),
+    "DQO": ((50.0, 100.0, 180.0), "escenario [PVDP] (FTE-181; FTE-256)"),
+    "DBO5": ((25.0, 50.0, 90.0), "escenario [PVDP] (FTE-181; FTE-256)"),
+    "SST": ((15.0, 35.0, 80.0), "escenario [PVDP] (FTE-181; FTE-256)"),
+    "GyA": ((5.0, 11.0, 25.0), "escenario [PVDP] (FTE-257)"),
+    "NTK": ((3.0, 5.0, 8.0), "escenario [PVDP] (FTE-257)"),
+    "PT": ((0.3, 0.5, 1.0), "escenario [PVDP] (FTE-257)"),
 }
 CONC_MG_L = {  # MÉTODO B: solo parámetros con rangos de concentración citados
-    "DQO": ((2000.0, 5400.0, 9695.0), "promedio ~2.000; centro de 3.154–7.719; máx. 9.695 mg/L (FTE-09C-05)"),
-    "DBO5": ((970.0, 1600.0, 2900.0), "~970–2.900; centro de 1.341–1.821 mg/L (FTE-181; FTE-09C-05)"),
-    "SST": ((378.0, 1410.0, 5462.0), "378–5.462 mg/L; caso 1.410 mg/L (FTE-09C-05; FTE-09C-07)"),
+    "DQO": ((2000.0, 5400.0, 9695.0), "promedio ~2.000; centro de 3.154–7.719; máx. 9.695 mg/L (FTE-256)"),
+    "DBO5": ((970.0, 1600.0, 2900.0), "~970–2.900; centro de 1.341–1.821 mg/L (FTE-181; FTE-256)"),
+    "SST": ((378.0, 1410.0, 5462.0), "378–5.462 mg/L; caso 1.410 mg/L (FTE-256; FTE-258)"),
 }
-RANGO_DQO_FUENTES_MG_L = (1223.0, 9695.0)           # FTE-09C-05 [PVDP]
+RANGO_DQO_FUENTES_MG_L = (1223.0, 9695.0)           # FTE-256 [PVDP]
 TOLERANCIA_METODOS = 2.0                            # SUPUESTO editable: B/A fuera de [1/2, 2] -> alerta
 DQO_SANGRE_KG_KG = 375.0 / 1.05 / 1000             # 375.000 mg/L = 375 g/L ÷ 1,05 kg/L = 0,357 kg/kg (FTE-181)
 # Ejemplos regulatorios de referencia (NO requisitos del proyecto): la localización los reemplazará.
 LIMITES_EJEMPLO = [
     {"parametro": "DQO", "mg_l": 250.0, "jurisdiccion": "Provincia de Buenos Aires", "autoridad": "ADA",
-     "norma": "Res. ADA 336/2003", "tipo_descarga": "conducto pluvial", "ref": "FTE-09C-08 [PVDP]"},
+     "norma": "Res. ADA 336/2003", "tipo_descarga": "conducto pluvial", "ref": "FTE-259 [PVDP]"},
     {"parametro": "DBO5", "mg_l": 50.0, "jurisdiccion": "Provincia de Buenos Aires", "autoridad": "ADA",
-     "norma": "Res. ADA 336/2003", "tipo_descarga": "conducto pluvial", "ref": "FTE-09C-08 [PVDP]"},
+     "norma": "Res. ADA 336/2003", "tipo_descarga": "conducto pluvial", "ref": "FTE-259 [PVDP]"},
 ]
 CAMPOS_LIMITE = ("parametro", "mg_l", "jurisdiccion", "autoridad", "norma", "tipo_descarga")
 
@@ -200,22 +200,22 @@ CAMPOS_LIMITE = ("parametro", "mg_l", "jurisdiccion", "autoridad", "norma", "tip
 #     lodos (PENDIENTE DE DIMENSIONAMIENTO).
 LODOS_ILUSTRATIVO = {  # clave: ((bajo, medio, alto), unidad, origen, referencia)
     "rem_sst_separacion_mecanica_y_daf": ((0.70, 0.54, 0.38), "fracción", "FUENTE",
-                                          "DAF 38–70 % SST (FTE-09C-05 [PVDP])"),
-    "rem_grasas_daf": ((0.95, 0.80, 0.63), "fracción", "FUENTE", "DAF 63–95 % grasas (FTE-09C-05 [PVDP])"),
+                                          "DAF 38–70 % SST (FTE-256 [PVDP])"),
+    "rem_grasas_daf": ((0.95, 0.80, 0.63), "fracción", "FUENTE", "DAF 63–95 % grasas (FTE-256 [PVDP])"),
     "dosis_quimicos_g_m3": ((50.0, 100.0, 200.0), "g/m³", "SUPUESTO", "coagulante + floculante; sin fuente"),
-    "rem_dbo_daf": ((0.60, 0.45, 0.30), "fracción", "FUENTE", "DAF 30–90 % DBO (FTE-09C-05 [PVDP])"),
+    "rem_dbo_daf": ((0.60, 0.45, 0.30), "fracción", "FUENTE", "DAF 30–90 % DBO (FTE-256 [PVDP])"),
     "remocion_dbo_biologico": ((0.95, 0.95, 0.95), "fracción", "SUPUESTO", ""),
     "rendimiento_biomasa_kg_ms_kg_dbo": ((0.30, 0.40, 0.50), "kg MS/kg DBO", "SUPUESTO",
                                          "tecnología aerobia; anaerobia genera mucho menos"),
     "fraccion_solidos_torta": ((0.20, 0.18, 0.15), "fracción", "SUPUESTO", "tras deshidratación"),
 }
 KWH_KG_DBO = ((0.7, 1.2, 2.0), "SUPUESTO", "kWh eléctricos por kg de DBO removida (tratamiento aerobio)")
-REM_DBO_PRETRAT_ENERGIA = ((0.60, 0.45, 0.30), "FUENTE", "DAF 30–90 % DBO (FTE-09C-05 [PVDP])")
+REM_DBO_PRETRAT_ENERGIA = ((0.60, 0.45, 0.30), "FUENTE", "DAF 30–90 % DBO (FTE-256 [PVDP])")
 
 # 1.4 Electricidad (indicadores TOP-DOWN)
 KWH_T_PV = ((150.0, 250.0, 450.0), "FUENTE",
-            "UE 152–860 kWh/t faenada; Brasil 165 kWh/t; 1,19 MJ/kg = 330 kWh/t (FTE-09C-09, FTE-09C-03)")
-KWH_T_CONGELADA = ((120.0, 190.0, 260.0), "FUENTE", "120–260 kWh/t de ave congelada; 133 kWh/t (FTE-09C-10)")
+            "UE 152–860 kWh/t faenada; Brasil 165 kWh/t; 1,19 MJ/kg = 330 kWh/t (FTE-260, FTE-254)")
+KWH_T_CONGELADA = ((120.0, 190.0, 260.0), "FUENTE", "120–260 kWh/t de ave congelada; 133 kWh/t (FTE-261)")
 KWH_T_DIA_REFRIGERADO = ((0.5, 1.0, 2.0), "SUPUESTO", "cámara 0–4 °C, por t almacenada y día; sin fuente")
 KWH_T_DIA_CONGELADO = ((1.5, 3.0, 5.0), "SUPUESTO", "cámara −18/−25 °C, por t almacenada y día; sin fuente")
 REPARTO_ELECTRICO = {"frio_de_proceso_agua_helada_hielo": 0.35, "motores_de_linea_y_transportadores": 0.20,
@@ -224,11 +224,11 @@ REPARTO_ELECTRICO = {"frio_de_proceso_agua_helada_hielo": 0.35, "motores_de_line
 
 # 1.5 Agua caliente / vapor
 T_RED = 18.0                                        # SUPUESTO
-T_ESCALDADO = ((54.0, 58.0, 62.0), "FUENTE", "suave 51–54 °C; fuerte 60–66 °C (FTE-09C-11)")
+T_ESCALDADO = ((54.0, 58.0, 62.0), "FUENTE", "suave 51–54 °C; fuerte 60–66 °C (FTE-262)")
 FACTOR_PERDIDAS_ESCALDADO = ((1.5, 2.0, 3.0), "SUPUESTO", "calor a las aves, evaporación y pérdidas")
-T_LIMPIEZA = ((50.0, 55.0, 60.0), "FUENTE", "lavado 49–71 °C (FTE-09C-11)")
+T_LIMPIEZA = ((50.0, 55.0, 60.0), "FUENTE", "lavado 49–71 °C (FTE-262)")
 FRAC_LIMPIEZA_CALIENTE = ((0.5, 0.6, 0.7), "SUPUESTO", "")
-T_ESTERILIZACION = 82.0                             # FUENTE: 82–93 °C (FTE-09C-11) [PVDP]
+T_ESTERILIZACION = 82.0                             # FUENTE: 82–93 °C (FTE-262) [PVDP]
 FRAC_SANITIZACION_CALIENTE = ((0.3, 0.5, 0.7), "SUPUESTO", "")
 RENDIMIENTO_TERMICO = ((0.85, 0.75, 0.65), "SUPUESTO", "generación + distribución de calor")
 PCI_MJ = {"gas_natural_m3": (38.9, "SUPUESTO", "~9.300 kcal/m³ (a verificar con distribuidora)"),
@@ -237,9 +237,9 @@ PCI_MJ = {"gas_natural_m3": (38.9, "SUPUESTO", "~9.300 kcal/m³ (a verificar con
 
 # 1.6 Frío (propiedades y temperaturas: SUPUESTOS salvo lo indicado)
 T_ENTRADA_CARCASA, T_SALIDA_CARCASA, T_AGUA_CHILLER = 38.0, 4.0, 1.0
-CP_FRESCO, CP_CONGELADO = 3.5, 1.8                  # kJ/(kg·K) típicos (ASHRAE, FTE-09C-14 [PVDP])
+CP_FRESCO, CP_CONGELADO = 3.5, 1.8                  # kJ/(kg·K) típicos (ASHRAE, FTE-265 [PVDP])
 T_CONGELACION_INICIAL, T_FINAL_CONGELADO = -1.5, -18.0
-FRAC_AGUA_PRODUCTO, CALOR_LATENTE_AGUA = 0.74, 334.0  # latente = x_agua × 334 kJ/kg (FTE-09C-14)
+FRAC_AGUA_PRODUCTO, CALOR_LATENTE_AGUA = 0.74, 334.0  # latente = x_agua × 334 kJ/kg (FTE-265)
 FRAC_CARGAS_ADICIONALES = ((0.25, 0.40, 0.60), "SUPUESTO",
                            "ilustrativo: salas, docks, infiltración, motores e iluminación; NO es balance")
 HORAS_TUNEL = 20                                    # SUPUESTO: horas/día de congelación (media)
@@ -538,7 +538,7 @@ def calcular(aves, dias_anio=250, nivel="medio", masas=None, p=None):
     m3_uso = l_ave * A / conv
     m3_capt = m3_uso / (1 - p["frac_rechazo_potabilizacion"])
     r.add("agua", "agua_utilizada_l_ave", l_ave, "L/ave", "por_ave", "agua_utilizada", "ESTIMACIÓN",
-          "[ESTIMACIÓN] con rangos [PVDP]", "FTE-09C-01 a 04", sens, parametro=pn)
+          "[ESTIMACIÓN] con rangos [PVDP]", "FTE-252 a FTE-255", sens, parametro=pn)
     r.add("agua", "agua_utilizada_m3_dia", m3_uso, "m³", "dia_operativo", "agua_utilizada", "ESTIMACIÓN",
           "[ESTIMACIÓN]", "", sens, parametro=pn)
     r.add("agua", "agua_utilizada_m3_anio", m3_uso * dias_anio, "m³", "anio", "agua_utilizada", "ESTIMACIÓN",
@@ -684,7 +684,7 @@ def calcular(aves, dias_anio=250, nivel="medio", masas=None, p=None):
           "[PVDP] sensibilidad", KWH_T_PV[2], "kWh/día = aves/día × kWh/ave", parametro=pn)
     for c, f in REPARTO_ELECTRICO.items():
         r.add("electricidad", f"kwh_proceso_{c}_dia", kwh_proc * f, "kWh", "dia_operativo", "energia_electrica",
-              "SUPUESTO", "[SUPUESTO] reparto ilustrativo", "FTE-09C-09 (cualitativo)", "didáctico; no sumar",
+              "SUPUESTO", "[SUPUESTO] reparto ilustrativo", "FTE-260 (cualitativo)", "didáctico; no sumar",
               parametro=pn)
 
     # --- 6. INVENTARIO (reproduce el modelo de escala) ---------------------------------------
@@ -719,7 +719,7 @@ def calcular(aves, dias_anio=250, nivel="medio", masas=None, p=None):
                    ("calor_congelacion_sensible_bajo_cero_kj_kg", kj_sens2),
                    ("calor_congelacion_producto_total_kj_kg", kj_kg_cong)):
         r.add("congelado", var, v, "kJ/kg", "adimensional", "producto", "ESTIMACIÓN",
-              "[ESTIMACIÓN] con propiedades [PVDP]/[SUPUESTO]", "FTE-09C-14", "solo producto; sin envases, "
+              "[ESTIMACIÓN] con propiedades [PVDP]/[SUPUESTO]", "FTE-265", "solo producto; sin envases, "
               "ventiladores, desescarche ni pérdidas del túnel")
     kwf_cong = t_cong_dia * 1000 * kj_kg_cong / (HORAS_TUNEL * 3600)
 
@@ -732,7 +732,7 @@ def calcular(aves, dias_anio=250, nivel="medio", masas=None, p=None):
     kwf_adic = (kwf_prod + kwf_agua) * nv(FRAC_CARGAS_ADICIONALES, n)
     var_sens = "capacidad_frigorifica_total_kwf" if "M15" in _MUT else "carga_sensible_preliminar_producto_kwf_bajo_8h"
     r.add("frio", var_sens, kwf_prod, "kW frigoríficos", "potencia", "frio", "ESTIMACIÓN",
-          "[ESTIMACIÓN] con [SUPUESTO]", "FTE-09C-14", "carga sensible preliminar asociada al enfriamiento del "
+          "[ESTIMACIÓN] con [SUPUESTO]", "FTE-265", "carga sensible preliminar asociada al enfriamiento del "
           f"producto (38 → 4 °C) durante {hn:g} h; NO es la capacidad frigorífica de planta", parametro=pn)
     r.add("frio", "carga_sensible_preliminar_producto_tr", kwf_prod / KW_POR_TR, "TR", "potencia", "frio",
           "ESTIMACIÓN", "[ESTIMACIÓN]", "", "1 TR = 3,517 kW frigoríficos", parametro=pn)
@@ -813,7 +813,7 @@ def calcular(aves, dias_anio=250, nivel="medio", masas=None, p=None):
     for var, kj, h in (("escaldado", kj_esc, p["horas_netas"]), ("limpieza", kj_lim, p["horas_limpieza"]),
                        ("sanitizacion", kj_san, h_op)):
         r.add("termico", f"calor_util_{var}_mj_dia", kj * A / 1000, "MJ", "dia_operativo", "energia_termica",
-              "ESTIMACIÓN", "[ESTIMACIÓN] con temperaturas [PVDP]/[SUPUESTO]", "FTE-09C-11", parametro=pn)
+              "ESTIMACIÓN", "[ESTIMACIÓN] con temperaturas [PVDP]/[SUPUESTO]", "FTE-262", parametro=pn)
         r.add("termico", f"potencia_termica_media_equivalente_{var}_kw_bajo_{h:g}h",
               kj * A / (h * 3600) if h else 0.0, "kW térmicos", "potencia", "energia_termica", "ESTIMACIÓN",
               "[ESTIMACIÓN]", "", f"= MJ/día / {h:g} h; no es pico", parametro=pn)

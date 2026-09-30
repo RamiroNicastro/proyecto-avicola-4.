@@ -3,7 +3,7 @@
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C) · Fase 0
 
 > **Alcance:** principales consumidores eléctricos, **energía diaria (kWh)** por escala y **potencia media equivalente**; usos de agua caliente/vapor con **energía térmica diaria (MJ)** y equivalentes de combustible. **La potencia pico, la potencia contratada, el transformador, la caldera y el grupo electrógeno NO se calculan aquí**: quedan pendientes de una lista de cargas y de un perfil horario. No se elige fuente térmica ni se seleccionan equipos; no se calcula costo ni CAPEX. Energía de granjas: [`../03_produccion_primaria`](../03_produccion_primaria/README.md), fuera de este modelo.
-> **Modelo:** [`../11_agua_efluentes/modelo_utilities.py`](../11_agua_efluentes/modelo_utilities.py) v1.1 (bloques `electricidad`, `termico`). **Fuentes:** todas `[PVDP]` ([`../11_agua_efluentes/fuentes_09C.csv`](../11_agua_efluentes/fuentes_09C.csv)); ningún dato argentino. Los indicadores kWh/ave y MJ/ave son de **sensibilidad preliminar**.
+> **Modelo:** [`../11_agua_efluentes/modelo_utilities.py`](../11_agua_efluentes/modelo_utilities.py) v1.1 (bloques `electricidad`, `termico`). **Fuentes:** todas `[PVDP]` ([`registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv)); ningún dato argentino. Los indicadores kWh/ave y MJ/ave son de **sensibilidad preliminar**.
 
 ---
 
@@ -34,14 +34,14 @@
 | **Cámaras de almacenamiento** | Refrigerado y congelado | **24 h, 365 días** | Aparte (§3) |
 | **Tratamiento de efluentes** | Aireación (si es aerobio), bombas, DAF, deshidratación | 24 h | Aparte (§3) |
 
-¹ `[SUPUESTO]` didáctico guiado por una fuente que ubica "agua helada y aire comprimido" como el mayor uso eléctrico (FTE-09C-09 `[PVDP]`). **No usar para dimensionar.**
+¹ `[SUPUESTO]` didáctico guiado por una fuente que ubica "agua helada y aire comprimido" como el mayor uso eléctrico (FTE-260 `[PVDP]`). **No usar para dimensionar.**
 
 ## 3. Indicadores de energía (top-down, sensibilidad)
 
 | Componente | Bajo | **Medio** | Alto | Base | Origen |
 |---|---|---|---|---|---|
-| Proceso (faena, enfriado fresco, aire, agua, servicios) | 150 | **250** | 450 kWh/t PV (0,44 · **0,73** · 1,31 kWh/ave) | t vivas/día op. | `[PVDP]`: UE 152–860 kWh/t; Brasil 165 kWh/t; ~330 kWh/t (FTE-09C-09, 09C-03) |
-| Congelado | 120 | **190** | 260 kWh/t congelada | t congeladas/día | `[PVDP]` FTE-09C-10 |
+| Proceso (faena, enfriado fresco, aire, agua, servicios) | 150 | **250** | 450 kWh/t PV (0,44 · **0,73** · 1,31 kWh/ave) | t vivas/día op. | `[PVDP]`: UE 152–860 kWh/t; Brasil 165 kWh/t; ~330 kWh/t (FTE-260, FTE-254) |
+| Congelado | 120 | **190** | 260 kWh/t congelada | t congeladas/día | `[PVDP]` FTE-261 |
 | Cámaras refrigeradas / de congelado | 0,5 / 1,5 | **1,0 / 3,0** | 2,0 / 5,0 kWh/(t·día) | t en stock × días calendario | `[SUPUESTO]` sin fuente |
 | Aireación (si todo el biológico fuera aerobio) | 0,7 | **1,2** | 2,0 kWh/kg DBO removida | DBO post-DAF (método A) | `[SUPUESTO]` |
 
@@ -71,9 +71,9 @@ Cautelas: base de los indicadores (kg vivo, carcasa, producto) no confirmada; po
 
 | Uso | Temperatura | Cantidad (medio) | Perfil | Origen |
 |---|---|---|---|---|
-| **Escaldado** | 51–54 °C suave o 60–66 °C fuerte; modelo 54 / **58** / 62 °C | Reposición 1,2 L/ave × factor de pérdidas 1,5 / **2** / 3 `[SUPUESTO]` | Horas de faena | FTE-09C-11 `[PVDP]` |
-| **Limpieza** | 49–71 °C; modelo 50 / **55** / 60 °C | 60 % de 5 L/ave `[SUPUESTO]` | Ventana de limpieza | FTE-09C-11 `[PVDP]` |
-| **Sanitización / esterilizadores** | 82 °C (82–93 °C) | 50 % de 1 L/ave `[SUPUESTO]` | Turno | FTE-09C-11 `[PVDP]` |
+| **Escaldado** | 51–54 °C suave o 60–66 °C fuerte; modelo 54 / **58** / 62 °C | Reposición 1,2 L/ave × factor de pérdidas 1,5 / **2** / 3 `[SUPUESTO]` | Horas de faena | FTE-262 `[PVDP]` |
+| **Limpieza** | 49–71 °C; modelo 50 / **55** / 60 °C | 60 % de 5 L/ave `[SUPUESTO]` | Ventana de limpieza | FTE-262 `[PVDP]` |
+| **Sanitización / esterilizadores** | 82 °C (82–93 °C) | 50 % de 1 L/ave `[SUPUESTO]` | Turno | FTE-262 `[PVDP]` |
 | **Procesos** (escaldado de patas, lavado de cajones, cocción futura) | Variable | No modelado | | — |
 | Vapor para **rendering propio** | Vapor saturado | **No incluido** (SUP-049) | | [`../07_subproductos/rendering.md`](../07_subproductos/rendering.md) |
 
@@ -90,7 +90,7 @@ Cautelas: base de los indicadores (kg vivo, carcasa, producto) no confirmada; po
 
 - **MJ/día no define la caldera.** El consumo diario de gas no permite determinar la capacidad de generación sin conocer la **simultaneidad** y el **perfil horario** de escaldado, limpieza, sanitización y otros usos.
 - La limpieza **podría** generar una demanda térmica concentrada (en el modelo, 4 h con 60 % de agua caliente); debe compararse con el escaldado y otros usos mediante un **perfil horario**. Un tanque de acumulación puede cambiar por completo esa relación. No se afirma cuál uso fija el pico.
-- El valor diario es probablemente una **cota inferior**: una fuente indica que en plantas de EE.UU. el gas para vapor supera en energía al consumo eléctrico (FTE-09C-09 `[PVDP]`); aquí es ~0,45 MJ de combustible por MJ eléctrico (no incluye vapor de rendering, cocción ni lavado de cajones).
+- El valor diario es probablemente una **cota inferior**: una fuente indica que en plantas de EE.UU. el gas para vapor supera en energía al consumo eléctrico (FTE-260 `[PVDP]`); aquí es ~0,45 MJ de combustible por MJ eléctrico (no incluye vapor de rendering, cocción ni lavado de cajones).
 
 ### 5.3 Comparación conceptual de fuentes térmicas (no se elige)
 

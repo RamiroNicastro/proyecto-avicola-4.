@@ -43,4 +43,4 @@ Un mismo material cambia de destino según **dictamen sanitario, separación, fr
 
 ## 4. Documentos primarios pendientes
 
-Texto actualizado de la Res. 368/2003 (CMS); capítulo del Decreto 4238/68 sobre graserías, digestores y destino de decomisos; Res. 1415 y 1416/2024 completas (requisitos para proveedores de materia prima de origen animal); Res. SAGPyA 1389/2004 (excepciones); normativa provincial de residuos por candidata. Registro: DPV-066, DPV-074, DPV-09B-06.
+Texto actualizado de la Res. 368/2003 (CMS); capítulo del Decreto 4238/68 sobre graserías, digestores y destino de decomisos; Res. 1415 y 1416/2024 completas (requisitos para proveedores de materia prima de origen animal); Res. SAGPyA 1389/2004 (excepciones); normativa provincial de residuos por candidata. Registro: DPV-066, DPV-074, DPV-066.

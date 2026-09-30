@@ -21,7 +21,7 @@ Para que las ofertas sean comparables, todos deben cotizar sobre la misma base. 
 | Uniformidad de lotes | Desconocida: lotes de varios productores (pedir tolerancia a dispersión de peso) | DPV-044 |
 | Productos | Entero, trozado (pechuga, pata-muslo, alas, esqueleto), deshuesado (suprema, solomillo, muslo), garras, menudencias; refrigerado y congelado; opción exportación | [`../06_productos/catalogo_productos.md`](../06_productos/catalogo_productos.md) |
 | Enfriamiento | Cotizar **inmersión** y **aire** (y mixto si lo ofrecen) por separado | DEC-026 |
-| Aturdido | Cotizar **eléctrico** y, si lo ofrecen, **CAS** | DEC-09A-05 |
+| Aturdido | Cotizar **eléctrico** y, si lo ofrecen, **CAS** | DEC-041 |
 | Estándar higiénico | Habilitación SENASA; indicar si el diseño cumple estándar UE | DEC-009, DEC-012 |
 | Servicios disponibles | **Desconocidos** (sin localización): pedir consumos, no suponer disponibilidad | DEC-003 |
 | Energía eléctrica | 380 V / 50 Hz trifásico (norma argentina) | Conocimiento general |
@@ -33,7 +33,7 @@ Cada línea de la oferta debe completar:
 | # | Campo | Unidad / detalle | Por qué se necesita |
 |---|---|---|---|
 | 1 | **Capacidad nominal** | aves/h, kg/h, piezas/h, envases/min, **con la definición que usa el proveedor** (§2.1) | Comparación básica; los fabricantes no definen "aves/h" igual |
-| 2 | **Capacidad real esperable** y **capacidad garantizada** | Misma unidad; la garantizada con sus condiciones contractuales (§2.1) y **referencias de plantas** donde se midió | La nominal no es la real; los factores del modelo son solo sensibilidad (SUP-09A-01) |
+| 2 | **Capacidad real esperable** y **capacidad garantizada** | Misma unidad; la garantizada con sus condiciones contractuales (§2.1) y **referencias de plantas** donde se midió | La nominal no es la real; los factores del modelo son solo sensibilidad (SUP-061) |
 | 3 | Rango de producto | Peso mínimo/máximo, calibres, tipos de corte | Pesos variables en lotes argentinos |
 | 4 | **Dimensiones** | Largo × ancho × alto (m), peso (kg), espacio de mantenimiento, cargas a piso/estructura | Layout futuro (no ahora) |
 | 5 | **Potencia** | kW instalados y kW de consumo medio; tensión | Energía (`12_energia_frio`) |
@@ -52,8 +52,8 @@ Cada línea de la oferta debe completar:
 | 18 | **Garantía** | Plazo, alcance, condiciones (uso de repuestos originales) | Riesgo |
 | 19 | **Mantenimiento** | Plan preventivo, horas/semana, consumibles, contrato de servicio, soporte remoto | OPEX y ventana horaria |
 | 20 | **Lead time** | Semanas de fabricación + transporte + montaje + puesta en marcha | Plan de etapas (DPV-086) |
-| 21 | **Servicio técnico local** | **Técnicos disponibles en Argentina** (cuántos, dónde, especialidad) y **tiempo de respuesta** garantizado (remoto y en planta) | DPV-09A-02 |
-| 22 | **Tiempo de lavado** y **tiempo de sanitización** | Por separado: horas y personas por día; desarme; CIP / espuma / manual; qué puede limpiarse mientras otro sector produce | Ecuación de 24 h (`t_limpieza` provisional, SUP-09A-02) |
+| 21 | **Servicio técnico local** | **Técnicos disponibles en Argentina** (cuántos, dónde, especialidad) y **tiempo de respuesta** garantizado (remoto y en planta) | DPV-089 |
+| 22 | **Tiempo de lavado** y **tiempo de sanitización** | Por separado: horas y personas por día; desarme; CIP / espuma / manual; qué puede limpiarse mientras otro sector produce | Ecuación de 24 h (`t_limpieza` provisional, SUP-062) |
 | 23 | **Posibilidad de expansión** y **componentes a reemplazar al ampliar** | Hasta qué capacidad; qué se mantiene, qué se agrega y **qué debe reemplazarse**; si requiere parar la planta y cuánto | Modularidad ([`../05_proceso_industrial/arquitecturas_por_escala.md` §8](../05_proceso_industrial/arquitecturas_por_escala.md)) |
 | 24 | Materiales y certificaciones | Acero inoxidable (tipo), plásticos aptos, seguridad eléctrica y de máquinas | Habilitación |
 | 25 | Referencias | Plantas en Argentina o la región con el mismo equipo, visitables | Validación |

@@ -57,10 +57,10 @@ FÓRMULAS (E = aves faenadas/día operativo)
 
 PARÁMETROS (todos [SUPUESTO] de sensibilidad o [PVDP]; IDs provisionales en
 actualizaciones_gestion_09A.md)
-  D, R por escenario .............................................. SUP-09A-01
-  ventanas no productivas y t_limpieza provisional ................ SUP-09A-02
-  productividad manual de referencia y factor prudente 0,5 ........ SUP-09A-03
-  residencia en enfriamiento: inmersión 50 min; aire 90–150 min ... SUP-09A-04
+  D, R por escenario .............................................. SUP-061
+  ventanas no productivas y t_limpieza provisional ................ SUP-062
+  productividad manual de referencia y factor prudente 0,5 ........ SUP-063
+  residencia en enfriamiento: inmersión 50 min; aire 90–150 min ... SUP-064
   kg/ave: balance v1.1 vía 23_plan_expansion/modelo_escala.py; perfiles P1–P3 (SUP-055).
 
 UNIDADES: aves, aves/h, kg, kg/h, t, h, min. CSV con punto decimal.
@@ -104,7 +104,7 @@ PESO = me.PESO_REF                       # 2,9 kg
 SUP = "[SUPUESTO]"
 NOTA_SENS = "sensibilidad del modelo; NO es desempeño industrial demostrado"
 
-# SUP-09A-01 — factores de SENSIBILIDAD (no datos): D disponibilidad, R factor de velocidad.
+# SUP-061 — factores de SENSIBILIDAD (no datos): D disponibilidad, R factor de velocidad.
 # η = D × R ≈ 0,70 / 0,80 / 0,90. Ningún fabricante ni planta argentina respalda estos valores.
 SENSIBILIDAD = {
     "baja":  {"D": 0.85, "R": 0.82},
@@ -112,8 +112,8 @@ SENSIBILIDAD = {
     "alta":  {"D": 0.95, "R": 0.95},
 }
 
-# SUP-09A-02 — ventanas no productivas (h). Tres escenarios de calendario; cada uno toma la
-# disponibilidad D del escenario de sensibilidad asociado. Sin dato argentino (DPV-082, DPV-09A-04).
+# SUP-062 — ventanas no productivas (h). Tres escenarios de calendario; cada uno toma la
+# disponibilidad D del escenario de sensibilidad asociado. Sin dato argentino (DPV-082, DPV-091).
 VENTANAS = {
     "optimista":    {"sens": "alta", "preparacion_arranque": 0.50, "pausas_8h": 0.50, "limpieza_intermedia_8h": 0.25,
                      "cierre_vaciado": 0.50, "cambio_turno": 0.25, "limpieza": 2.00, "sanitizacion": 1.00,
@@ -128,27 +128,27 @@ VENTANAS = {
 COMPONENTES_24H = ("faena_neta", "paradas_durante_produccion", "pausas", "cambio_turno", "preparacion_arranque",
                    "cierre_vaciado", "limpieza_intermedia", "limpieza", "sanitizacion", "mantenimiento")
 # Relación de la limpieza con escala, configuración y automatización: PROVISIONAL (factor 1).
-# Dato de campo pendiente: duración, dotación, simultaneidad, CIP/manual, preoperacional (DPV-09A-04).
+# Dato de campo pendiente: duración, dotación, simultaneidad, CIP/manual, preoperacional (DPV-091).
 LIMPIEZA_PROVISIONAL = True
 
-# SUP-09A-03 — productividades manuales de referencia [PVDP · débil] (no argentinas; no dotación)
+# SUP-063 — productividades manuales de referencia [PVDP · débil] (no argentinas; no dotación)
 PRODUCTIVIDAD = {
-    "colgado": {"aves_h_operario": 23 * 60, "fuente": "FTE-09A-026"},
-    "eviscerado_manual": {"aves_h_operario": 2 * 60, "fuente": "FTE-09A-025"},
+    "colgado": {"aves_h_operario": 23 * 60, "fuente": "FTE-219"},
+    "eviscerado_manual": {"aves_h_operario": 2 * 60, "fuente": "FTE-218"},
 }
 FACTOR_PRUDENTE = 0.5
 
-# SUP-09A-04 — tiempo de residencia en el enfriamiento [PVDP] (FTE-09A-024)
+# SUP-064 — tiempo de residencia en el enfriamiento [PVDP] (FTE-217)
 RESIDENCIA_MIN = {"inmersion": 50, "aire_min": 90, "aire_max": 150}
 
 # Referencias de proveedores: capacidades NOMINALES DECLARADAS en páginas oficiales. Evidencia de
 # que existen arquitecturas; PROHIBIDO usarlas como capacidad de diseño (test T18).
 REFERENCIAS_PROVEEDORES = {
-    "baader_compact_plant_396": {"min_aves_h": 600, "max_aves_h": 1600, "fuente": "FTE-09A-007",
+    "baader_compact_plant_396": {"min_aves_h": 600, "max_aves_h": 1600, "fuente": "FTE-200",
                                  "nota": "evisceración manual; según tamaño de ave; expansión prevista"},
-    "meyn_leap": {"min_aves_h": 1300, "max_aves_h": 15000, "fuente": "FTE-09A-001",
+    "meyn_leap": {"min_aves_h": 1300, "max_aves_h": 15000, "fuente": "FTE-194",
                   "nota": "concepto modular; no implica que la inversión inicial llegue a 15.000"},
-    "jbt_marel_calisa2": {"min_aves_h": 9500, "max_aves_h": 15000, "fuente": "FTE-09A-004",
+    "jbt_marel_calisa2": {"min_aves_h": 9500, "max_aves_h": 15000, "fuente": "FTE-197",
                           "nota": "planta argentina; referencia tecnológica, NO benchmark económico"},
 }
 ORIGENES_VALIDOS = {"sensibilidad", "rfq_garantizada", "medicion_planta"}
@@ -261,7 +261,7 @@ def puestos_equivalentes(rate, operacion, prudente=False):
 # ---------------------------------------------------------------------------
 def t_limpieza(escala=None, configuracion="B", automatizacion=None, escenario="media"):
     """Tiempo de limpieza (h/día). PROVISIONAL: hoy no varía con escala, configuración ni
-    automatización (factor 1). Reemplazar con datos de campo (DPV-09A-04)."""
+    automatización (factor 1). Reemplazar con datos de campo (DPV-091)."""
     base = VENTANAS[escenario]["limpieza"]
     factor = 1.0                              # f(escala, configuracion, automatizacion) pendiente
     return base * factor
@@ -372,7 +372,7 @@ def construir(escalas=None, horas=None):
             for nombre, s in SENSIBILIDAD.items():
                 t.add("ritmo_nominal", E, h, f"sensibilidad={nombre}", "ritmo_nominal_requerido_h_netas",
                       ritmo_nominal_requerido(E, h, s["R"]), "aves/h", "aves", F_PROPIO, SUP,
-                      f"= E/(h×R); R = {s['R']}; SUP-09A-01; {NOTA_SENS}")
+                      f"= E/(h×R); R = {s['R']}; SUP-061; {NOTA_SENS}")
                 t.add("ritmo_nominal", E, h, f"sensibilidad={nombre}", "ritmo_nominal_requerido_h_programadas",
                       ritmo_nominal_requerido(E, h, s["R"], s["D"]), "aves/h", "aves", F_PROPIO, SUP,
                       f"= E/(h×D×R) si h incluyera paradas; η = {eta(nombre):.3f}; {NOTA_SENS}")
@@ -382,9 +382,9 @@ def construir(escalas=None, horas=None):
                 for c, val in w["componentes"].items():
                     t.add("ventana_24h", E, h, pref, f"h_{c}", val, "h", "h", F_PROPIO,
                           "[ESTIMACIÓN]" if c == "faena_neta" else SUP,
-                          "t_limpieza PROVISIONAL (no varía con escala)" if c == "limpieza" else "SUP-09A-02")
+                          "t_limpieza PROVISIONAL (no varía con escala)" if c == "limpieza" else "SUP-062")
                 t.add("ventana_24h", E, h, pref, "ventana_total_establecimiento", w["total"], "h", "h", F_PROPIO, SUP,
-                      "SUP-09A-02; relación con la escala provisional")
+                      "SUP-062; relación con la escala provisional")
                 t.add("ventana_24h", E, h, pref, "holgura_24h", w["holgura"], "h", "h", F_PROPIO, SUP,
                       "negativa = restricción severa de calendario; validar con proveedores y plantas antes de descartar")
                 t.add("ventana_24h", E, h, pref, "alerta_calendario", w["alerta"], "0/1", "h", F_PROPIO, SUP,
@@ -392,7 +392,7 @@ def construir(escalas=None, horas=None):
             for modo, minutos in RESIDENCIA_MIN.items():
                 n = r * minutos / 60
                 t.add("enfriamiento", E, h, f"residencia={modo}", "carcasas_simultaneas_en_enfriamiento", n,
-                      "aves", "aves", F_PROPIO, SUP, f"{minutos} min; SUP-09A-04 [PVDP]")
+                      "aves", "aves", F_PROPIO, SUP, f"{minutos} min; SUP-064 [PVDP]")
                 t.add("enfriamiento", E, h, f"residencia={modo}", "kg_carcasa_simultaneos_en_enfriamiento",
                       n * kgs["B"]["carcasa_pre_chiller"][0], "kg", "biologica", F_BAL, SUP,
                       "carcasa eviscerada caliente 2,9 kg (sin agua)")
