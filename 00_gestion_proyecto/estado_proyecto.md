@@ -40,6 +40,7 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | 2026-09-29 | Estudio de producción primaria (`03_produccion_primaria`): ciclo productivo, rangos de edad/peso/FCR/mortalidad, densidad y bienestar, galpones, energía y clima, alimento y agua, bioseguridad, transporte de aves vivas, modelos propio/integrado/compra/mixto, pollito BB, KPIs, escenarios físicos (72) con modelo documentado y guía para el responsable | Completado v1.1 (marco y escenarios, **sin datos de campo**; auditoría del modelo físico con corrección de pollitos/semana y galpones +4,3 % y pruebas automáticas). **Verificación documental primaria no realizada: acceso bloqueado (DPV-009)**. Calidad: MEDIA como marco y modelo físico, BAJA como evidencia de campo argentina |
 | — | Validación de demanda con datos de campo (red de supermercados y otros canales) | Pendiente: requiere el cuestionario y las tareas de `02_clientes_demanda/conclusiones_demanda.md` §6 |
 | 2026-09-30 | Balance de masa (`04_balance_masa`): definiciones (vivo, eviscerado, carcasa fría, RTC, comercial), balance por ave para 6 pesos, cortes y deshuese, menudencias, garras, plumas, sangre, vísceras, agua del chiller separada de la masa biológica, condenas y mermas, 3 configuraciones (entero / trozado / deshuesado), escalado 1 ave–20.000 aves/día y 1 M aves/año, clases A/B/C/D, modelo reproducible con 13 tests y protocolo de ensayo en planta | Completado v1.1 (**sin datos de planta argentinos**). Auditoría conceptual v1.1: sin doble contabilización; nomenclatura del agua corregida (agua incorporada a productos y subproductos ≠ agua de proceso de la planta); rutas alternativas exclusivas esqueleto/CMS; 21 tests sobre 1.008 balances con error ≤ 2 × 10⁻¹⁵ kg/ave. **Verificación documental primaria no realizada: acceso bloqueado (DPV-009)**. Calidad: MEDIA como modelo, BAJA como evidencia numérica |
+| 2026-09-30 | Mapa de productos, coproductos y subproductos (`06_productos`, `07_subproductos`): inventario de 39 salidas con kg/ave trazables al balance v1.1, clasificación económica condicional al comprador, productos de mercado interno y exportación, garras, menudencias, carcasa/CMS, piel y grasa, sangre, plumas, vísceras, cabeza y huesos, rendering (propio / tercerizado / venta directa), pet food, elaborados, matriz de valorización, índice de aprovechamiento del ave, árboles de rutas con 15 incompatibilidades, escalado 2.500–20.000 aves/día, lista maestra de precios y tareas de campo; generador con 9 tests | Completado v1.0 (**sin precios ni compradores**; normativa solo en extractos, DPV-009). Calidad: MEDIA como mapa y método, BAJA como evidencia comercial y normativa |
 | — | Escenarios CAPEX/OPEX y modelo financiero | Pendiente |
 | — | Informe de prefactibilidad | Pendiente |
 
@@ -95,6 +96,18 @@ Síntesis en [`../04_balance_masa/conclusiones_balance.md`](../04_balance_masa/c
 - Nuevas decisiones: método de enfriamiento (DEC-026), destino de subproductos (DEC-027), ensayo de balance en planta (DEC-028).
 - **Alcance:** es un balance de masa del ave y sus productos; **no dimensiona el consumo industrial de agua ni el caudal de efluentes**, ni energía, ni economía, ni maquinaria. Auditoría conceptual en [`../04_balance_masa/auditoria_balance.md`](../04_balance_masa/auditoria_balance.md).
 
+## Resultado del mapa de productos y subproductos (2026-09-30)
+
+Síntesis en [`../07_subproductos/conclusiones_valorizacion.md`](../07_subproductos/conclusiones_valorizacion.md):
+
+- Pollo de 2,9 kg (trozado, V1): ~80 % del PV es comestible (A 48,8 % + B 30,9 %), 15,3 % subproductos C, 3,3 % residuos y 1,8 % pérdidas. **IAA técnico 95 %**; el IAA económico depende de compradores que hoy no están identificados (DEC-032).
+- La **carcasa-esqueleto** (13,6 % PV; 4,1 t/día a 10.000 aves/día) es la tercera masa comestible y no tiene comprador identificado: vender / CMS / rendering sin ganador (DEC-029). La CMS, según extracto de la Res. SENASA 368/2003, solo puede usarse en chacinados cocidos y conservas (SUP-048).
+- **Garras:** valor alto solo con Asia abierta; China no disponible confirmada. A 2.500 aves/día un contenedor tarda ~6 meses (DEC-031).
+- **Subproductos C:** 5,3 t/día (trozado) a 8,6 t/día (deshuesado) a 10.000 aves/día; plumas 2,4 t/día. Sin comprador son costo (SUP-046). Rendering propio / tercerizado / venta directa comparados sin decisión; caso de referencia sin rendering propio (SUP-049).
+- **Sangre:** recuperarla por separado reduce ~7 veces la DQO que llega al efluente, aunque no genere ingreso.
+- Lista maestra de 44 precios a obtener (interno, exportación, subproductos, servicios) y 10 tareas de campo por actor; DPV-070 a DPV-081.
+- **Alcance:** no se asignaron precios, no se eligió portafolio ni ruta, no se diseñó maquinaria ni se fijó escala.
+
 ## Próximos pasos
 
 0. **No iniciar la fase siguiente hasta que el promotor lo indique** (instrucción 2026-09-29).
@@ -103,6 +116,7 @@ Síntesis en [`../04_balance_masa/conclusiones_balance.md`](../04_balance_masa/c
 3. Relevamiento de faena a façon y pollito BB; seguimiento del concurso de GTA sin supuestos (DPV-006, DPV-016).
 4. ~~Sesión específica de estrategia exportadora~~ (realizada 2026-09-29). Pendiente: información de campo de exportación (DPV-024, DPV-026, DPV-027, DPV-032) y verificación de acceso por país (DPV-031).
 5. Producción primaria (realizada 2026-09-29). Pendiente: datos de campo de desempeño (DPV-044), productores integrables (DPV-048), pollito BB (DPV-047), normativa completa (DPV-046) y manuales genéticos (DPV-045); preguntas en `03_produccion_primaria/guia_ramiro.md`. El balance de masa se realizó el 2026-09-30 (punto 6).
-6. Balance de masa (realizado 2026-09-30). Pendiente: tablas genéticas de rendimiento (DPV-059), **ensayo en planta argentina** (DPV-060, DEC-028), normativa de agua y subproductos (DPV-061, DPV-066), decomisos (DPV-063), garras (DPV-064), rendering (DPV-065) y convenciones comerciales (DPV-068). **No se iniciaron** productos/precios, maquinaria ni layout.
+6. Balance de masa (realizado 2026-09-30). Pendiente: tablas genéticas de rendimiento (DPV-059), **ensayo en planta argentina** (DPV-060, DEC-028), normativa de agua y subproductos (DPV-061, DPV-066), decomisos (DPV-063), garras (DPV-064), rendering (DPV-065) y convenciones comerciales (DPV-068). El mapa de productos y subproductos se realizó el 2026-09-30 (punto 7). **No se iniciaron** maquinaria, layout ni escala óptima.
+7. Mapa de productos y subproductos (realizado 2026-09-30). Pendiente: precios y compradores reales por parte y subproducto (tareas F1–F10 de `07_subproductos/conclusiones_valorizacion.md` §9; DPV-070 a DPV-081), receptores de rendering en zonas candidatas (DPV-065) y verificación de normativa de CMS, harinas, pet food y decomisos (DPV-066, DPV-073, DPV-074). **No se iniciaron** modelo financiero, maquinaria, escala óptima ni layout.
 
 Ver [`decisiones_pendientes.md`](decisiones_pendientes.md) y [`datos_por_validar.md`](datos_por_validar.md).
