@@ -143,3 +143,19 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Índice de aprovechamiento del ave (IAA) | kg de masa biológica con salida comercial o valorizable / kg de peso vivo recibido. Técnico (hay destino posible) vs económico (vendido con net-back ≥ 0). |
 | Treats (mascotas) | Golosinas para mascotas, p. ej. patas, cuellos o corazones deshidratados. |
 | Categorías de subproductos animales (UE) | Reg. (CE) 1069/2009: categorías 1, 2 y 3 según riesgo; solo la 3 puede ir a alimento para mascotas; una mezcla adopta la categoría de mayor riesgo. |
+| Escala (de planta) | En este proyecto, **aves efectivamente faenadas por día operativo** cuando la planta trabaja a su capacidad operativa (utilización 100 %). No son aves alojadas, cargadas ni vendidas (SUP-052). |
+| Capacidad nominal | Aves/día que la instalación podría procesar a su ritmo nominal de línea durante las horas netas previstas. Depende de los equipos. Siempre ≥ capacidad operativa. |
+| Capacidad operativa | Aves/día que la planta puede **sostener** con sus restricciones reales (personal, frío, efluentes, abastecimiento de aves, retiro de subproductos, cuello de botella). |
+| Utilización de capacidad | Aves realmente faenadas / capacidad operativa, promedio de un período. **Capacidad no es ventas.** |
+| Ritmo de línea | Aves por hora que procesa la línea de faena: aves faenadas/día ÷ horas netas de faena. |
+| Horas de turno / horas netas de faena | Horas de turno: tiempo de trabajo organizado. Horas netas: tiempo en que la línea efectivamente recibe aves (turno menos arranque, pausas, limpieza intermedia, cambios y paradas). |
+| Cuello de botella | Operación de menor capacidad del sistema; fija la capacidad de toda la planta (puede ser la línea, el enfriamiento, el deshuese, el congelado, las cámaras, los efluentes o el abastecimiento de aves). |
+| Día operativo / día calendario | Día operativo: día con faena (250 o 300 por año). Día calendario: 365 por año; unidad de la demanda. X/día calendario = X/día operativo × días operativos / 365. |
+| Modularidad | Diseño que permite agregar capacidad por partes (líneas, cámaras, salas, turnos) sin rehacer lo existente, dejando previstos terreno, servicios y flujos. |
+| Sobredimensionamiento / subdimensionamiento | Construir más capacidad de la que se usará (capital ocioso, equipos fuera de rango) / construir menos de la necesaria o sin posibilidad de crecer (clientes no atendidos, costo unitario alto, techo físico). |
+| Escala mínima eficiente | Tamaño por debajo del cual el costo por unidad es excesivo porque los costos fijos se reparten entre poco volumen. Se estima con CAPEX y OPEX (DPV-083). |
+| Economías de escala | Reducción del costo por unidad al aumentar el volumen (reparto de fijos, compras, lotes completos). Solo se materializan con utilización alta. |
+| Arquitectura de crecimiento | Secuencia de escalas, turnos, líneas y módulos por la que una planta pasa de su primera etapa a la final (`23_plan_expansion/arquitectura_escalable.md`). |
+| Gate (puerta) de expansión | Conjunto de métricas verificables que deben cumplirse antes de ampliar (demanda asegurada, utilización, pollitos, productores, frío, subproductos, capital, habilitación) (`23_plan_expansion/gates_expansion.md`). |
+| Parte limitante | Parte del ave cuya demanda fija cuántas aves hay que faenar; el resto de las partes queda como excedente a colocar en otros canales. Ver factor de mix. |
+| Inventario (días de producción) | Stock físico expresado como producción diaria × días; se separa en refrigerado, congelado, exportación y subproductos que requieren frío. |
