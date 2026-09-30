@@ -14,7 +14,7 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Vacío sanitario | Período sin aves entre lotes para limpieza y desinfección. |
 | Conversión alimenticia (CA / FCR) | kg de alimento consumido por kg de peso vivo producido. |
 | Peso vivo | Peso del ave viva al momento de la faena o venta. |
-| Rendimiento de faena / de canal | Relación porcentual entre peso de la canal y peso vivo. |
+| Rendimiento de faena / de canal | Relación porcentual entre peso de la canal y peso vivo. **Siempre declarar la definición** (con o sin cuello, menudencias, agua): en este proyecto el rendimiento eviscerado es carcasa caliente sin cuello ni menudencias / peso vivo en planta (`04_balance_masa/balance_por_ave.md` §2). |
 | Canal (carcasa) | Cuerpo del ave faenada, eviscerada, sin plumas, cabeza ni patas (según especificación). |
 | Menudencias | Subproductos comestibles: hígado, corazón, molleja, cogote, etc. |
 | Trozado | Despiece de la canal en cortes (pechuga, pata-muslo, alas, etc.). |
@@ -120,3 +120,16 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Aves faenadas | Aves vivas que llegan a la planta y se faenan (aves cargadas menos mortalidad en transporte). "Planta de N aves/día" en este proyecto = N aves faenadas por día de faena. |
 | Semana plena (de faena) | Semana sin feriados, con todos los días de faena previstos (5 o 6). Base para dimensionar galpones y el suministro de pollitos; el promedio semanal anual es menor. |
 | Aves simultáneas | Aves vivas presentes al mismo tiempo en el conjunto de granjas; se calcula con la ley de Little (ritmo de alojamiento × edad × supervivencia media). |
+| Peso vivo en planta | Peso del ave viva al llegar a la planta, después del ayuno y del transporte; base del balance de masa (SUP-035). Menor que el peso vivo en granja. |
+| Carcasa eviscerada (peso eviscerado) | Ave faenada sin sangre, plumas, cabeza, patas, vísceras, cuello ni menudencias, con piel y grasa abdominal, antes del enfriamiento. "Carcasa" en el modelo de balance. |
+| Ready-to-cook (RTC) | "Listo para cocinar": carcasa enfriada y limpia. Según la fuente puede incluir cuello y menudencias; en este proyecto no los incluye salvo indicación. |
+| Chiller (enfriador) | Equipo que baja la temperatura de la carcasa después de la evisceración. **Por inmersión** (en agua; la carcasa absorbe agua) o **por aire** (*air chilling*; la carcasa pierde humedad por evaporación). |
+| Agua retenida / absorbida | Agua que la carcasa incorpora en el proceso (sobre todo en el chiller por inmersión). No es carne: el modelo la contabiliza aparte de la masa biológica. |
+| Goteo (purga, *drip loss*) | Líquido que pierde el producto después del enfriamiento (escurrido, bandeja). |
+| Masa biológica | Masa de tejidos del ave (sin agua de proceso). La suma de la masa biológica de todas las salidas del balance es igual al peso vivo. |
+| Suprema / solomillo | Suprema: filet de pechuga (pectoral mayor) sin hueso ni piel. Solomillo (*tender*, sassami): pectoral menor. |
+| Garra (*paw*) | Pata de pollo escaldada y pelada (sin cutícula), clasificada por grado y calibre para venta; su definición exacta depende del comprador. |
+| Menudencias | Vísceras comestibles: hígado, corazón y molleja. Declarar si incluye el cuello. |
+| Rendering | Proceso de cocción, esterilización y secado de subproductos no comestibles (plumas, vísceras, sangre, huesos) para obtener harinas y grasa. |
+| Producto / coproducto / subproducto / residuo | Clases del balance de masa: producto principal (A), coproducto comestible (B), subproducto valorizable no comestible (C), residuo o efluente (D); más pérdidas (P). Una parte puede cambiar de clase si no tiene comprador. |
+| Balance de masa | Contabilidad de dónde termina cada kg que entra a un proceso; las entradas deben igualar a las salidas dentro de una tolerancia. |
