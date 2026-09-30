@@ -38,6 +38,8 @@ Complementarios: consumo de agua (alerta temprana), decomisos en planta, DOA y m
 
 ## 3. Preguntas para hacerle a un productor avícola (o integrado)
 
+> Versión de campo con registro y planilla de 6–12 crianzas: [`cuestionario_productores.md`](cuestionario_productores.md). Incubadoras: [`../15_incubacion/cuestionario_incubadoras.md`](../15_incubacion/cuestionario_incubadoras.md).
+
 **Sus números (pedir registros de los últimos 6–12 lotes, no promedios de memoria):**
 1. ¿Cuántos m² de galpón tiene, de qué tipo (abierto, blackout, túnel) y de qué año?
 2. ¿Cuántos pollitos aloja por galpón y cuántas aves salen? ¿Cuántos kg/m² al final, en invierno y en verano?

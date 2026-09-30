@@ -119,4 +119,6 @@ Las capacidades publicadas por fabricantes (p. ej., las tres referencias de fuen
 
 ## 5. Formato de comparación (neutral)
 
+> Plantilla completa de comparación por capas de costo y secuencia de envío: [`plan_rfq.md`](plan_rfq.md) §5 (2026-09-30).
+
 Las respuestas se cargarán en una tabla con **una fila por equipo y por proveedor**, con las columnas del §2 y una columna de "campos no respondidos". La comparación económica (CAPEX, OPEX, costo por ave) se hará en `19_capex` y `20_opex` **después** de validar demanda y escala, no en esta fase. Ninguna oferta debe usarse como dato `[VERIFICADO]` de capacidad real sin referencia de planta.

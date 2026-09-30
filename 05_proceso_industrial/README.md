@@ -16,6 +16,7 @@
   - [`guia_ramiro.md`](guia_ramiro.md), [`conclusiones_proceso.md`](conclusiones_proceso.md).
   - [`actualizaciones_gestion_09A.md`](actualizaciones_gestion_09A.md): **histórico** — propuestas de la sesión con IDs provisionales, ya integradas en los registros centrales por la reconciliación 09 ([`../00_gestion_proyecto/reconciliacion_sesiones_09.md`](../00_gestion_proyecto/reconciliacion_sesiones_09.md)).
   - Equipos, automatización, proveedores y RFQ: [`../08_maquinaria/`](../08_maquinaria/README.md).
+- [`guia_visita_planta.md`](guia_visita_planta.md) (2026-09-30): guía para visitar frigoríficos avícolas sin pedir secretos comerciales (capacidad, turnos, dotación, limpieza, servicios, subproductos, efluentes, logística, cuellos de botella, faena a façon) y hoja de registro post-visita; ola O3 del [plan de trabajo de campo](../00_gestion_proyecto/plan_trabajo_campo.md).
 
 **Modelo [`modelo_capacidad_proceso.py`](modelo_capacidad_proceso.py) (v1.1, corrección conceptual final)** — regla 15
 
