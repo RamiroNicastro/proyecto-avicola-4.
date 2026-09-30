@@ -26,7 +26,7 @@ Cada variable tiene fórmula, fuente de evidencia y **umbral a definir** (UAD). 
 |---|---|---|---|---|---|
 | V1 | **Demanda asegurada** (A) | kg de producto/día calendario con contrato, orden de compra, carta de intención con volumen y precio, o historial propio; **por producto** | Documentos firmados; registro de ventas | UAD: A ≥ x % de la capacidad de la **etapa siguiente** | G0–G3 |
 | V2 | **Demanda en negociación** (B) | kg/día con negociación activa (especificación, precio, prueba piloto) × factor de conversión α | Minutas con el decisor de compras; cotizaciones pedidas | UAD: A + α·B ≥ y % de la capacidad siguiente; α calibrado con la tasa real de conversión | G0–G3 |
-| V3 | **Utilización de planta** | Aves faenadas / capacidad operativa, promedio del período | Registro de producción | UAD: u ≥ z % sostenido (el modelo muestra que 70–85 % es el rango donde la planta está "cerca de llena"; no es meta) | G1–G3 |
+| V3 | **Utilización de planta** (0–100 %) y **factor demanda/capacidad** (puede superar 100 %) | Utilización = aves faenadas / capacidad operativa, promedio del período; factor = aves que requiere la demanda A + α·B / capacidad; demanda no atendida = demanda × (1 − cobertura) | Registro de producción | UAD: u ≥ z % sostenido (el modelo muestra que 70–85 % es el rango donde la planta está "cerca de llena"; no es meta) | G1–G3 |
 | V4 | **Balance de partes** | Excedente de partes sin comprador (kg/día) / producción comestible; cada parte con **≥ 2 salidas** identificadas | Pedidos por parte; compradores de pata-muslo, alas, carcasa, garras, menudencias | UAD; regla cualitativa: ninguna parte relevante sin comprador | G0–G3 |
 | V5 | **Concentración** | Participación del mayor cliente; top 5; partes vinculadas; HHI | Ventas por cliente | UAD (DEC-017); prueba de estrés: la etapa siguiente debe resistir la pérdida del mayor cliente | G1–G3 |
 | V6 | **Contratos comerciales** | Cantidad, plazo y volumen de contratos vigentes; condiciones de pago | Contratos | UAD | G0–G3 |
@@ -34,7 +34,7 @@ Cada variable tiene fórmula, fuente de evidencia y **umbral a definir** (UAD). 
 | V8 | **Productores integrados disponibles** | m² de galpón comprometidos vs necesarios (9.500 / 19.000 / 37.900 / 75.900 m², medio) | Relevamiento y contratos de integración (DPV-048) | UAD | G0–G3 |
 | V9 | **Alimento** | t/semana plena comprometidas (62 / 124 / 247 / 494 t, medio) y capacidad de entrega | Acuerdos con fábricas o plan propio (DEC-024) | UAD | G1–G3 |
 | V10 | **Desempeño productivo real** | Mortalidad, FCR, peso y decomisos medidos vs supuestos del modelo | Registros de lotes y de faena | UAD: los supuestos del modelo se reemplazan por los medidos antes de dimensionar la etapa siguiente | G1–G3 |
-| V11 | **Capacidad de frío** | Inventario proyectado (t) vs capacidad de cámaras y túneles para el perfil refrigerado/congelado real | Registro de stocks | UAD | G1–G3 |
+| V11 | **Capacidad de frío** | Inventario proyectado (t, declarando si es en días de producción o días calendario de cobertura) vs capacidad de cámaras y túneles para el perfil refrigerado/congelado real | Registro de stocks | UAD | G1–G3 |
 | V12 | **Salida de subproductos** | t/día de clase C retiradas vs generadas; contrato con receptor; distancia | Contrato de retiro; remitos | UAD: 100 % retirado a diario con contrato vigente para el volumen siguiente | G0–G3 |
 | V13 | **Efluentes** | Caudal y carga tratables vs proyectados; cumplimiento de límites de vuelco | Análisis de laboratorio; permiso | UAD (`11_agua_efluentes`) | G1–G3 |
 | V14 | **Capital disponible** | Capital comprometido (no declarado) para CAPEX + capital de trabajo de la etapa siguiente | Compromiso documentado del inversor (DPV-001) | UAD (DEC-010) | G0–G3 |
@@ -49,12 +49,16 @@ La capacidad debe estar disponible **cuando** llega la demanda, no después. For
 
 ```
 Disparar la ampliación en el mes t si:
-    (A + α·B) proyectada al mes t + plazo_de_ampliación  ≥  u_umbral × capacidad_actual
+    factor demanda/capacidad proyectado = (A + α·B) proyectada al mes t + plazo_de_ampliación
+                                          ÷ capacidad_actual  ≥  umbral
     y se cumplen V7, V8, V12, V14, V15 y V17 para la escala siguiente
 ```
 
+- Demanda (día calendario) y capacidad (día operativo) se comparan **después** de convertir la capacidad a día calendario (× días operativos / 365).
+- El criterio usa el **factor demanda/capacidad** (que puede superar 100 %), no la utilización (que nunca lo supera): una utilización del 100 % no dice cuánta demanda queda sin atender.
+
 - La **proyección** se basa en el pipeline documentado, nunca en el mercado total (categoría D).
-- Si la demanda aparece antes de que la ampliación esté lista, los **amortiguadores** son: sexto día de faena (+20 %), segundo turno (×2 sobre la misma línea), faena a façon o compra de producto de terceros (DEC-018).
+- Si la demanda aparece antes de que la ampliación esté lista, los **amortiguadores posibles** son: sexto día de faena (+20 % de volumen **anual** con la misma capacidad diaria), segundo turno (hasta ×2 de la capacidad **teórica de la línea**, sujeto a verificar los demás cuellos de botella), faena a façon o compra de producto de terceros (DEC-018).
 
 ## 4. Señales que **no** habilitan una ampliación
 

@@ -31,7 +31,19 @@ aves/hora necesarias = aves faenadas/día ÷ horas netas de faena/día
 
 ## 3. Cuello de botella
 
-La capacidad operativa de la planta es la de su **operación más lenta** (cuello de botella), no la de la línea de faena. Candidatos a verificar en fases posteriores: recepción y espera de aves vivas (andén, ventilación), colgado, escaldado/desplumado, evisceración e inspección, **enfriamiento** (tiempo de residencia), clasificación, **trozado y deshuese** (mano de obra), empaque, **túnel de congelado**, **cámaras**, docks de despacho, **tratamiento de efluentes** (caudal y carga diaria) y **retiro de subproductos**. El mix comercial cambia el cuello de botella: una planta de entero y una de deshuesado con las mismas aves/hora tienen cuellos distintos ([`../23_plan_expansion/escenarios_escala.md`](../23_plan_expansion/escenarios_escala.md) §9).
+La capacidad operativa de la planta es la de su **operación más lenta** (cuello de botella), no la de la línea de faena. Sistemas a verificar en fases posteriores, todos candidatos a cuello de botella:
+
+| Grupo | Sistemas |
+|---|---|
+| Entrada de aves | Recepción y espera de aves vivas (andén ventilado), **bienestar animal**, logística de granjas (captura, carga y programación de camiones) |
+| Faena | Colgado, aturdimiento, escaldado y desplumado, **eviscerado** e inspección |
+| Enfriamiento y proceso | **Chilling** (tiempo de residencia), clasificación, **salas de corte y deshuese**, empaque |
+| Frío y despacho | **Túneles de congelado**, **cámaras**, docks de **expedición** |
+| Servicios | **Agua**, **efluentes** (caudal y carga diaria), **energía**, **refrigeración** (sala de máquinas) |
+| Organización | **Mano de obra** por turno, **limpieza y sanitización** entre turnos y diaria, **mantenimiento** |
+| Subproductos | Retiro diario de sangre, plumas y vísceras |
+
+El mix comercial cambia el cuello de botella: una planta de entero y una de deshuesado con las mismas aves/hora tienen cuellos distintos ([`../23_plan_expansion/escenarios_escala.md`](../23_plan_expansion/escenarios_escala.md) §9).
 
 ## 4. Ritmo de línea requerido (aves faenadas/hora neta)
 
@@ -46,10 +58,11 @@ La capacidad operativa de la planta es la de su **operación más lenta** (cuell
 
 **Lecturas:**
 
-1. **Las mismas aves/hora sirven para escalas distintas según las horas:** 1.250 aves/h son 10.000 aves/día con 8 h netas o 20.000 con 16 h (dos turnos). El segundo turno es una **palanca de crecimiento sin nueva línea**, a costa de personal, limpieza y frío que también deben duplicarse (DEC-036).
-2. **Horas netas cortas exigen equipos más rápidos:** 10.000 aves/día en 6 h netas requieren 1.667 aves/h, un 67 % más que en 10 h.
-3. **El ritmo no dice nada de la escala mínima eficiente:** que un equipo pueda procesar 300 aves/h no implica que una planta de 2.500 aves/día sea viable. Contexto: el relevamiento de mercado ubica a las plantas medianas del sector en 80.000–200.000 aves/día y a un modelo regional en ~27.000 aves/día ([`../01_mercado/competidores.md`](../01_mercado/competidores.md), `[PVDP · débil]`); la escala mayor estudiada aquí (20.000) está por debajo de todas ellas. La escala mínima eficiente se estima con CAPEX y OPEX (DPV-083), no aquí.
-4. Las aves/hora son **aves faenadas**: la llegada de aves vivas debe cubrir además la mortalidad en transporte (0,3 % en el escenario medio, `03_produccion_primaria`) y la programación de la espera en planta.
+1. **Segundo turno = capacidad teórica de la LÍNEA:** 1.250 aves/h son 10.000 aves/día con 8 h netas y, **solo si existen 16 h netas de faena**, 20.000 con dos turnos. Eso no es la capacidad de la **planta**: antes deben comprobarse todos los sistemas de §3 (recepción de aves, colgado, eviscerado, chilling, salas de corte, mano de obra, cámaras, congelado, expedición, agua, efluentes, energía, refrigeración, limpieza y sanitización —que además necesita su propia ventana horaria—, mantenimiento, bienestar animal y logística de granjas). **No se afirma** que un segundo turno permita 20.000 aves/día sin obra nueva (DEC-036).
+2. **Sexto día ≠ segundo turno:** pasar de 250 a 300 días de faena por año aumenta ~20 % el **volumen anual** potencial con la **misma capacidad diaria**; no cambia las aves por día ni el ritmo de la línea. El segundo turno actúa sobre las horas por día; el sexto día, sobre los días por año.
+3. **Horas netas cortas exigen equipos más rápidos:** 10.000 aves/día en 6 h netas requieren 1.667 aves/h, un 67 % más que en 10 h.
+4. **El ritmo no dice nada de la escala mínima eficiente:** que un equipo pueda procesar 300 aves/h no implica que una planta de 2.500 aves/día sea viable, ni lo contrario. **No se concluye** que 2.500 sea demasiado chico ni que 20.000 sea demasiado grande: la escala mínima eficiente surgirá después de estudiar maquinaria, turnos, dotación, CAPEX, OPEX, servicios y utilización (DPV-083). Contexto: el relevamiento de mercado ubica a las plantas medianas del sector en 80.000–200.000 aves/día y a un modelo regional en ~27.000 aves/día ([`../01_mercado/competidores.md`](../01_mercado/competidores.md), `[PVDP · débil]`); la escala mayor estudiada aquí (20.000) está por debajo de todas ellas. La escala mínima eficiente se estima con CAPEX y OPEX (DPV-083), no aquí.
+5. Las aves/hora son **aves faenadas**: la llegada de aves vivas debe cubrir además la mortalidad en transporte (0,3 % en el escenario medio, `03_produccion_primaria`) y la programación de la espera en planta.
 
 ## 5. Datos faltantes
 

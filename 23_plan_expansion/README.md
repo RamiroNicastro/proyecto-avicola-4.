@@ -13,7 +13,7 @@
 | [`gates_expansion.md`](gates_expansion.md) | Puertas G0–G3 y 18 variables medibles para ampliar (sin umbrales definitivos) |
 | [`especificacion_simulador_html.md`](especificacion_simulador_html.md) | Especificación del futuro simulador HTML v0.1 (no construido) |
 | [`guia_ramiro.md`](guia_ramiro.md) | Conceptos de capacidad y escala; "¿por qué no construir directamente 20.000 aves/día?" |
-| [`conclusiones_escala.md`](conclusiones_escala.md) | Hallazgos, información faltante priorizada, tests, calidad |
+| [`conclusiones_escala.md`](conclusiones_escala.md) | Auditoría conceptual v1.1, hallazgos, información faltante priorizada, tests, calidad |
 | [`modelo_escala.py`](modelo_escala.py) | Modelo reproducible: importa producción primaria v1.1, balance de masa v1.1 y subproductos v1.0 sin modificarlos; lee la demanda |
 | [`escenarios_escala.csv`](escenarios_escala.csv) | Resultados en formato largo (archivo maestro de las cifras de escala) |
 
@@ -21,9 +21,9 @@
 
 ```
 python3 23_plan_expansion/modelo_escala.py                # tests + CSV
-python3 23_plan_expansion/modelo_escala.py --solo-tests   # 17 pruebas
+python3 23_plan_expansion/modelo_escala.py --solo-tests   # 23 pruebas
 python3 23_plan_expansion/modelo_escala.py --tablas       # tablas de los .md
-python3 23_plan_expansion/modelo_escala.py --mutaciones   # prueba de mutación (14)
+python3 23_plan_expansion/modelo_escala.py --mutaciones   # prueba de mutación (22)
 python3 23_plan_expansion/modelo_escala.py --escenario --aves-dia 7500 --dias-semana 6 --utilizacion 0.6 --demanda ESC-BAS
 ```
 

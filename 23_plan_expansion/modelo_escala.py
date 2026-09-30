@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 """
-MODELO PRELIMINAR DE ESCALA — versión 1.0 (2026-09-30)
-=======================================================
+MODELO PRELIMINAR DE ESCALA — versión 1.1 (2026-09-30, auditoría conceptual)
+============================================================================
+
+v1.1: separa utilización de planta (≤ 100 %), factor demanda/capacidad (puede > 100 %) y
+cobertura de demanda (≤ 100 %); obliga a convertir día operativo ↔ día calendario antes de
+comparar (función `cociente`); inventario con dos bases temporales (días de producción y días
+calendario de cobertura); masa biológica comestible separada del agua retenida y del peso
+comercial. Tests T16-T21 y mutaciones M15-M22.
 
 Pregunta: ¿qué tiene que ser verdad para que 2.500 / 5.000 / 10.000 / 20.000
 aves faenadas por día tengan sentido?
@@ -70,8 +76,7 @@ FÓRMULAS PROPIAS (todo lo demás se importa)
   Aves procesadas (utilización u)    = E × u
   t/día operativo de un material     = kg/ave (balance v1.1) × aves faenadas/día / 1.000
   t/año                              = t/día operativo × días operativos/año
-  Inventario [t]                     = producción [t/día operativo] × días de inventario
-                                       (días expresados en días de producción; SUP-056)
+  Inventario [t]                     = ver "Inventario" más abajo (dos bases temporales)
   Camiones/día                       = t/día / capacidad útil por camión (capacidad = VARIABLE
                                        sin valor, DPV-084); aves vivas: aves cargadas/día /
                                        aves por camión (SUP-033: 4.000-7.000, sin fuente)
@@ -79,7 +84,20 @@ FÓRMULAS PROPIAS (todo lo demás se importa)
   Productores necesarios             = m² de galpón / m² por productor (VARIABLE pendiente,
                                        DPV-048; el modelo no la inventa)
 
-  Demanda vs capacidad (SUP-054; demanda en kg de PRODUCTO por DÍA CALENDARIO):
+  Tres métricas que NO se confunden (SUP-060):
+     factor_demanda_capacidad = aves requeridas por la demanda / capacidad   (puede superar 100 %)
+     utilizacion_planta       = aves procesadas / capacidad = min(factor, 100 %)
+     cobertura_demanda        = producción posible / demanda = min(1 / factor, 100 %)
+     kg atendidos = D × cobertura; kg no atendidos = D × (1 − cobertura);
+     capacidad ociosa [aves/día operativo] = E × (1 − utilización)
+  Bases temporales: la demanda está en día CALENDARIO y la capacidad en día OPERATIVO; solo se
+     comparan tras `convertir` (× días operativos / 365); `cociente` rechaza períodos distintos.
+  Inventario (SUP-056):  días de producción  = producción/día operativo × días
+                         días calendario     = despacho promedio/día calendario × días
+                         (despacho promedio/día cal. = producción/día op. × días op. / 365)
+  Masa: peso comercial = masa biológica comestible + agua retenida en producto (SUP-042).
+
+  Demanda vs capacidad (SUP-054; demanda en kg de PRODUCTO COMERCIAL por DÍA CALENDARIO):
   M0 "ave completa" (cota INFERIOR de aves): toda la masa comestible del ave (A + B,
      con agua retenida) se vende dentro de la demanda:
          aves/día cal = D / kg comestible por ave (configuración elegida)
@@ -92,7 +110,7 @@ FÓRMULAS PROPIAS (todo lo demás se importa)
          pechuga requerida = kg pechuga + kg milanesa × 0,75 (SUP-023)
          "otros elaborados" quedan FUERA del balance (SUP-023)
          excedentes = producido − demandado por parte + partes comestibles no demandadas
-  Utilización requerida = aves/día cal × 365 / días operativos / E
+  Factor demanda/capacidad = aves/día cal / (E × días operativos / 365)
   kg sin destino a plena escala = producción comestible a plena escala − masa demandada
   Demanda adicional para llenar la planta (mismo mix) = D × (E_cal / aves/día cal − 1)
 
@@ -123,7 +141,7 @@ import modelo_escenarios_produccion as mp  # noqa: E402  (producción primaria v
 import modelo_balance_masa as mb           # noqa: E402  (balance de masa v1.1)
 import modelo_subproductos as ms           # noqa: E402  (subproductos v1.0)
 
-VERSION = "1.0"
+VERSION = "1.1"
 FECHA = "2026-09-30"
 
 # ---------------------------------------------------------------------------
@@ -248,18 +266,20 @@ def produccion(aves_faenadas_dia, dias_semana=5, dias_anio=None, **kw):
 # ---------------------------------------------------------------------------
 # 3. BALANCE DE MASA (kg por ave desde el balance v1.1 vía las variantes de 07)
 # ---------------------------------------------------------------------------
-def balance_config(config=CONFIG_REF, peso=PESO_REF):
+def balance_config(config=CONFIG_REF, peso=PESO_REF, enfriamiento=ENF):
     if config not in CONFIG_VARIANTE:
         raise ErrorEscala(f"Configuración {config} inexistente (A entero / B trozado / C deshuesado)")
     cfg, rutas, _ = ms.VARIANTES[CONFIG_VARIANTE[config]]
-    b = mb.balance(peso, cfg, REND, COND, ENF, rutas)
+    b = mb.balance(peso, cfg, REND, COND, enfriamiento, rutas)
     mb.verificar_cierre(b)
     return b
 
 
-def kg_por_ave(config=CONFIG_REF, peso=PESO_REF):
-    """kg por ave (masa biológica + agua incorporada) de cada ítem y agregados físicos."""
-    b = balance_config(config, peso)
+def kg_por_ave(config=CONFIG_REF, peso=PESO_REF, enfriamiento=ENF):
+    """kg por ave de cada ítem y agregados físicos. Salvo las claves *_bio y agua_*, los valores son
+    masa biológica + agua incorporada (peso COMERCIAL para productos; SUP-042): el agua retenida
+    se vende con el producto pero NUNCA es carne."""
+    b = balance_config(config, peso, enfriamiento)
     ms.agrupar(b)                                   # falla si un componente no tiene grupo
     tot = lambda comps: sum(f["bio"] + f["agua"] for f in b["filas"] if f["componente"] in comps)
     cla = lambda c: sum(f["bio"] + f["agua"] for f in b["filas"] if f["clase"] == c)
@@ -271,6 +291,9 @@ def kg_por_ave(config=CONFIG_REF, peso=PESO_REF):
         "producto_principal": cla("A"), "coproductos": cla("B"), "comestible": cla("A") + cla("B"),
         "subproductos_c": cla("C"), "residuos_d": cla("D"), "perdidas_p": cla("P"),
         "agua_retenida_comestible": sum(f["agua"] for f in b["filas"] if f["clase"] in "AB"),
+        # masa biológica (carne y tejidos) SIN agua retenida: nunca aumenta por el chiller
+        "comestible_bio": sum(f["bio"] for f in b["filas"] if f["clase"] in "AB"),
+        "producto_principal_bio": sum(f["bio"] for f in b["filas"] if f["clase"] == "A"),
         "rendering_potencial": cla("C"),                                 # = D01 de 07_subproductos
         "solidos_a_retirar": cla("C") + tot(SOLIDOS_D),                  # = D02 (C + decomisos + contenido)
         "efluente_o_perdida": cla("D") - tot(SOLIDOS_D) + cla("P"),      # no se transporta
@@ -361,26 +384,54 @@ def aves_por_mix(D, mix, y, factor_milanesa):
             "fuera_balance": kg["fuera_balance"], "comestible_por_ave_mix": producida / n if n else 0.0}
 
 
+PERIODOS_POR_ANIO = ("dia_operativo", "dia_calendario", "anio")
+
+
+def convertir(valor, de, a, dias_anio):
+    """Convierte un flujo entre día operativo (dias_anio por año), día calendario (365) y año.
+    Única vía permitida para pasar de una base temporal a otra (SUP-020, SUP-025, SUP-060)."""
+    por_anio = {"dia_operativo": dias_anio, "dia_calendario": DIAS_CALENDARIO, "anio": 1}
+    if de not in por_anio or a not in por_anio:
+        raise ErrorEscala(f"Conversión no definida: {de} -> {a}")
+    return valor * por_anio[de] / por_anio[a]
+
+
+def cociente(num, den):
+    """num, den = (valor, periodo). Impide comparar flujos de bases temporales distintas
+    (p. ej. t/día de faena contra t/día calendario de demanda) sin convertir antes."""
+    if num[1] != den[1]:
+        raise ErrorEscala(f"Comparación inválida: {num[1]} contra {den[1]} sin conversión")
+    return num[0] / den[0] if den[0] else math.inf
+
+
 def comparar_demanda(E, dias_anio, D, res):
-    """Utilización requerida y kg sin destino si la planta opera a plena escala.
-    D en kg de producto/día calendario; res = resultado de M0 o de aves_por_mix.
-    Si la demanda excede la escala, la planta atiende la fracción E_cal/n de la demanda (mismo
+    """Demanda vs capacidad con TRES métricas que no deben confundirse (SUP-060):
+      factor_demanda_capacidad = capacidad requerida por la demanda / capacidad instalada (puede > 100 %)
+      utilizacion_planta       = aves procesadas / capacidad = min(factor, 100 %)  (0-100 %)
+      cobertura_demanda        = producción posible / demanda requerida = min(1 / factor, 100 %)
+    D en kg de producto COMERCIAL por día CALENDARIO; la capacidad E en aves por día OPERATIVO:
+    se comparan solo después de convertir E a día calendario. res = resultado de M0 o de un mix.
+    Si la demanda excede la escala, la planta atiende la fracción 'cobertura' de la demanda (mismo
     mix) y sus excedentes de partes escalan en la misma proporción."""
     n = res["aves_dia_cal"]
-    E_cal = E * dias_anio / DIAS_CALENDARIO
-    aves_op = n * DIAS_CALENDARIO / dias_anio
-    frac = min(1.0, E_cal / n) if n else 0.0
-    prod_plena = E_cal * res["comestible_por_ave_mix"]
+    cap_cal = convertir(E, "dia_operativo", "dia_calendario", dias_anio)
+    factor = cociente((n, "dia_calendario"), (cap_cal, "dia_calendario"))
+    utiliz = min(1.0, factor)
+    cobertura = min(1.0, 1 / factor) if factor else 1.0
+    com = res["comestible_por_ave_mix"]
     return {
-        "utilizacion_requerida": aves_op / E,
-        "aves_necesarias_dia_operativo": aves_op,
-        "aves_faltantes_dia_operativo": max(0.0, aves_op - E),
-        "produccion_comestible_plena_kg_dia_cal": prod_plena,
-        "kg_sin_destino_plena_escala": (res["excedente_total"] * frac
-                                        + max(0.0, E_cal - n) * res["comestible_por_ave_mix"]),
-        "kg_demanda_insatisfecha": D * (1 - frac),
-        "demanda_adicional_para_llenar_kg_dia_cal": max(0.0, D * (E_cal / n - 1)) if n else 0.0,
-        "fraccion_demanda_atendida": frac,
+        "factor_demanda_capacidad": factor,
+        "utilizacion_planta": utiliz,
+        "cobertura_demanda": cobertura,
+        "aves_necesarias_dia_operativo": convertir(n, "dia_calendario", "dia_operativo", dias_anio),
+        "aves_procesadas_dia_operativo": E * utiliz,
+        "aves_faltantes_dia_operativo": max(0.0, convertir(n, "dia_calendario", "dia_operativo", dias_anio) - E),
+        "capacidad_ociosa_aves_dia_operativo": E * (1 - utiliz),
+        "kg_atendidos_dia_cal": D * cobertura,
+        "kg_no_atendidos_dia_cal": D * (1 - cobertura),
+        "produccion_comestible_plena_kg_dia_cal": cap_cal * com,
+        "kg_sin_destino_plena_escala": res["excedente_total"] * cobertura + max(0.0, cap_cal - n) * com,
+        "demanda_adicional_para_llenar_kg_dia_cal": max(0.0, D * (1 / factor - 1)) if factor else 0.0,
     }
 
 
@@ -517,6 +568,15 @@ def construir(peso=PESO_REF, config=CONFIG_REF, escalas=None, calendarios=None, 
             t.add("balance_productos", E, ds, da, "entrada_agua_incorporada_t", k["agua_incorporada"] * aves / 1000,
                   "t", "dia_operativo", "agua", F_BAL, parametro=cfg_txt, sumable="no",
                   nota="agua incorporada a productos y subproductos; NO es consumo de agua de planta")
+            # --- 4b. masa biológica vs peso comercial (SUP-042; el agua no es carne) --------
+            for clave, base, nota in (("comestible_bio", "biologica", "masa biológica comestible (carne y tejidos)"),
+                                      ("agua_retenida_comestible", "agua", "agua retenida en producto: NO es carne"),
+                                      ("comestible", "comercial", "peso comercial = biológica + agua retenida"),
+                                      ("producto_principal_bio", "biologica", "clase A, masa biológica"),
+                                      ("producto_principal", "comercial", "clase A, peso comercial")):
+                for per in PERIODOS_POR_ANIO:
+                    t.add("masa_comestible", E, ds, da, f"{clave}_t", convertir(k[clave] * aves / 1000,
+                          "dia_operativo", per, da), "t", per, base, F_BAL, parametro=cfg_txt, nota=nota)
             # --- 5. configuraciones comerciales (§9) ---------------------------------------
             for c, kc in kcfg.items():
                 pc = f"config={c}; peso={peso}"
@@ -555,19 +615,25 @@ def construir(peso=PESO_REF, config=CONFIG_REF, escalas=None, calendarios=None, 
                       sumable="no" if clave in ("sangre_drenada", "rendering_potencial", "solidos_a_retirar") else "-",
                       nota=nota)
             # --- 7. inventario conceptual (§11) -----------------------------------------------
-            prod_com = k["comestible"] * aves / 1000
+            prod_com = k["comestible"] * aves / 1000                  # t comerciales por día OPERATIVO
+            desp_cal = convertir(prod_com, "dia_operativo", "dia_calendario", da)   # despacho promedio/día cal.
             sub_frio = k["c_perecedero_sin_plumas"] * aves / 1000
-            for dinv in DIAS_INVENTARIO:
-                pd = f"dias_inventario={dinv}"
-                t.add("inventario", E, ds, da, "comestible_total_t", prod_com * dinv, "t", "stock", "comercial",
-                      F_PROPIO, parametro=pd, nota="toda la producción comestible (cota superior)")
-                for pid, (desc, sh) in PERFILES_DESTINO.items():
-                    for cat, s in sh.items():
-                        t.add("inventario", E, ds, da, f"{cat}_t", prod_com * s * dinv, "t", "stock", "comercial",
-                              F_PROPIO, parametro=f"{pd}; perfil_destino={pid}", clasif="[SUPUESTO] ilustrativo",
-                              nota=f"{desc}; exportación de la demanda = 0 (SUP-022)" if cat == "exportacion" else desc)
+            bases_inv = (("dias_produccion", prod_com, "producción por día operativo × días de producción en stock"),
+                         ("dias_calendario", desp_cal, "despacho promedio por día calendario × días calendario de cobertura"))
+            for base_t, flujo, nota_b in bases_inv:
+                for dinv in DIAS_INVENTARIO:
+                    pd = f"base_temporal={base_t}; dias={dinv}"
+                    t.add("inventario", E, ds, da, "comestible_total_t", flujo * dinv, "t", "stock", "comercial",
+                          F_PROPIO, parametro=pd, nota=f"{nota_b}; toda la producción comestible (cota superior)")
+                    for pid, (desc, sh) in PERFILES_DESTINO.items():
+                        for cat, sh_ in sh.items():
+                            t.add("inventario", E, ds, da, f"{cat}_t", flujo * sh_ * dinv, "t", "stock", "comercial",
+                                  F_PROPIO, parametro=f"{pd}; perfil_destino={pid}", clasif="[SUPUESTO] ilustrativo",
+                                  nota=f"{desc}; exportación de la demanda = 0 (SUP-022)" if cat == "exportacion"
+                                  else desc)
+            for dinv in DIAS_INVENTARIO:     # los subproductos solo se generan en días de faena
                 t.add("inventario", E, ds, da, "subproductos_perecederos_frio_t", sub_frio * dinv, "t", "stock",
-                      "biologica+agua", F_PROPIO, parametro=pd,
+                      "biologica+agua", F_PROPIO, parametro=f"base_temporal=dias_produccion; dias={dinv}",
                       nota="clase C sin plumas, si no se retira en el día (sangre, vísceras, cabezas, huesos)")
             # --- 8. logística (§12) ------------------------------------------------------------
             L = (("aves_vivas_cargadas_t_dia", r["aves_cargadas_dia"] * peso / 1000, "vivo",
@@ -626,21 +692,25 @@ def construir(peso=PESO_REF, config=CONFIG_REF, escalas=None, calendarios=None, 
                     t.add("demanda_capacidad", E, ds, da, "aves_necesarias_dia_operativo",
                           cmp_["aves_necesarias_dia_operativo"], "aves", "dia_operativo", "aves", F_PROPIO,
                           parametro=pm_)
-                    t.add("demanda_capacidad", E, ds, da, "utilizacion_requerida", 100 * cmp_["utilizacion_requerida"],
-                          "%", "adimensional", "aves", F_PROPIO, parametro=pm_,
-                          nota=">100 % = la demanda del escenario excede la escala")
-                    for var in ("aves_faltantes_dia_operativo",):
+                    for var, nota in (
+                            ("factor_demanda_capacidad", "capacidad requerida / instalada; >100 % = la escala no "
+                                                         "alcanza; <100 % = capacidad ociosa. NO es utilización"),
+                            ("utilizacion_planta", "aves procesadas / capacidad; siempre 0-100 %"),
+                            ("cobertura_demanda", "producción posible / demanda requerida; siempre 0-100 %")):
+                        t.add("demanda_capacidad", E, ds, da, var, 100 * cmp_[var], "%", "adimensional", "aves",
+                              F_PROPIO, parametro=pm_, nota=nota)
+                    for var in ("aves_procesadas_dia_operativo", "aves_faltantes_dia_operativo",
+                                "capacidad_ociosa_aves_dia_operativo"):
                         t.add("demanda_capacidad", E, ds, da, var, cmp_[var], "aves", "dia_operativo", "aves",
                               F_PROPIO, parametro=pm_)
-                    for var in ("produccion_comestible_plena_kg_dia_cal", "kg_sin_destino_plena_escala",
-                                "kg_demanda_insatisfecha", "demanda_adicional_para_llenar_kg_dia_cal"):
+                    for var in ("kg_atendidos_dia_cal", "kg_no_atendidos_dia_cal",
+                                "produccion_comestible_plena_kg_dia_cal", "kg_sin_destino_plena_escala",
+                                "demanda_adicional_para_llenar_kg_dia_cal"):
                         t.add("demanda_capacidad", E, ds, da, var, cmp_[var], "kg", "dia_calendario", "comercial",
                               F_PROPIO, parametro=pm_)
                     t.add("demanda_capacidad", E, ds, da, "excedente_partes_kg_dia_cal", res["excedente_total"], "kg",
                           "dia_calendario", "comercial", F_PROPIO, parametro=pm_,
                           nota="partes producidas sin comprador dentro del escenario (aun sin capacidad ociosa)")
-                    t.add("demanda_capacidad", E, ds, da, "demanda_atendida_a_plena_escala", 100 * cmp_[
-                        "fraccion_demanda_atendida"], "%", "adimensional", "comercial", F_PROPIO, parametro=pm_)
                     if res["fuera_balance"]:
                         t.add("demanda_capacidad", E, ds, da, "demanda_fuera_del_balance_kg_dia_cal",
                               res["fuera_balance"], "kg", "dia_calendario", "comercial", F_DEM, parametro=pm_,
@@ -658,13 +728,23 @@ def construir(peso=PESO_REF, config=CONFIG_REF, escalas=None, calendarios=None, 
                     ("plazas_granja", r["capacidad_alojamiento_pollitos"], "plazas", "stock", "aves"),
                     ("m2_galpones", r["m2_galpon"], "m²", "stock", "superficie"),
                     ("alimento_t_anio", r["alimento_t_anio"], "t", "anio", "alimento"),
-                    ("producto_comercial_t_dia", k["comestible"] * E / 1000, "t", "dia_operativo", "comercial"),
+                    ("comestible_masa_biologica_t_dia_operativo", k["comestible_bio"] * E / 1000, "t",
+                     "dia_operativo", "biologica"),
+                    ("agua_retenida_en_producto_t_dia_operativo", k["agua_retenida_comestible"] * E / 1000, "t",
+                     "dia_operativo", "agua"),
+                    ("producto_comercial_t_dia_operativo", k["comestible"] * E / 1000, "t", "dia_operativo",
+                     "comercial"),
+                    ("producto_comercial_t_dia_calendario_promedio", convertir(k["comestible"] * E / 1000,
+                     "dia_operativo", "dia_calendario", da), "t", "dia_calendario", "comercial"),
+                    ("producto_comercial_t_anio", k["comestible"] * E * da / 1000, "t", "anio", "comercial"),
                     ("producto_principal_t_dia", k["producto_principal"] * E / 1000, "t", "dia_operativo", "comercial"),
                     ("plumas_t_dia", k["plumas"] * E / 1000, "t", "dia_operativo", "biologica+agua"),
                     ("sangre_recuperada_t_dia", k["sangre"] * E / 1000, "t", "dia_operativo", "biologica"),
                     ("visceras_t_dia", k["visceras"] * E / 1000, "t", "dia_operativo", "biologica"),
                     ("ritmo_linea_8h_aves_h", E / 8, "aves/h", "hora", "aves"),
-                    ("inventario_7_dias_comestible_t", k["comestible"] * E / 1000 * 7, "t", "stock", "comercial"),
+                    ("inventario_7_dias_de_produccion_t", k["comestible"] * E / 1000 * 7, "t", "stock", "comercial"),
+                    ("inventario_7_dias_calendario_t", convertir(k["comestible"] * E / 1000, "dia_operativo",
+                     "dia_calendario", da) * 7, "t", "stock", "comercial"),
                     ("demanda_necesaria_100pct_kg_dia_cal", prod_E, "kg", "dia_calendario", "comercial"),
                     ("demanda_necesaria_85pct_kg_dia_cal", 0.85 * kg_com_cal, "kg", "dia_calendario", "comercial"),
                     ("demanda_necesaria_70pct_kg_dia_cal", 0.70 * kg_com_cal, "kg", "dia_calendario", "comercial"),
@@ -719,12 +799,13 @@ def ejecutar_tests(verbose=True):
     malos = 0
     idx2 = {(f["bloque"], f["escala_aves_dia"], f["dias_semana"], f["parametro"], f["variable"], f["periodo"]):
             f["valor"] for f in t2.filas}
-    intensivas = {"utilizacion_requerida", "flujos_comestibles_distintos", "coproductos_por_t_de_producto_principal",
+    intensivas = {"factor_demanda_capacidad", "utilizacion_planta", "cobertura_demanda",
+                  "aves_procesadas_dia_operativo", "capacidad_ociosa_aves_dia_operativo", "kg_atendidos_dia_cal",
+                  "kg_no_atendidos_dia_cal", "flujos_comestibles_distintos", "coproductos_por_t_de_producto_principal",
                   "demanda_kg_producto_dia_calendario", "aves_necesarias_dia_calendario",
                   "aves_necesarias_dia_operativo", "excedente_partes_kg_dia_cal", "demanda_fuera_del_balance_kg_dia_cal",
                   "utilizacion_con_demanda_documentada_A_mas_B", "kg_sin_destino_plena_escala",
-                  "demanda_atendida_a_plena_escala",
-                  "kg_demanda_insatisfecha", "demanda_adicional_para_llenar_kg_dia_cal", "aves_faltantes_dia_operativo"}
+                  "demanda_adicional_para_llenar_kg_dia_cal", "aves_faltantes_dia_operativo"}
     n_lin = 0
     for f in num:
         if f["variable"] in intensivas:
@@ -834,22 +915,25 @@ def ejecutar_tests(verbose=True):
     chk("T06 subproductos no se duplican: cada componente en un ítem y una clase; Σ ítems = PV + agua; "
         "rutas alternativas y agregados marcados no sumables", ok)
 
-    # T07 inventario = producción × días
-    ok = True
+    # T07 inventario = flujo diario × días, con el flujo de su base temporal
+    def _param(f):
+        return dict(x.strip().split("=") for x in f["parametro"].split(";") if "=" in x)
+    ok, n = True, 0
     for f in F:
-        if f["bloque"] == "inventario" and f["variable"] == "comestible_total_t":
-            dinv = int(f["parametro"].split("=")[1])
-            prod = t.valor(bloque="logistica", escala_aves_dia=f["escala_aves_dia"], dias_semana=f["dias_semana"],
-                           variable="producto_comestible_sale_t_dia")
-            ok &= _cerca(f["valor"], prod * dinv)
-        if f["bloque"] == "inventario" and "perfil_destino" in f["parametro"]:
-            dinv = int(f["parametro"].split(";")[0].split("=")[1])
-            base = t.valor(bloque="inventario", escala_aves_dia=f["escala_aves_dia"], dias_semana=f["dias_semana"],
-                           variable="comestible_total_t", parametro=f"dias_inventario={dinv}")
-            pid = f["parametro"].split("perfil_destino=")[1]
-            ok &= _cerca(f["valor"], base * PERFILES_DESTINO[pid][1][f["variable"][:-2]])
-    ok &= all(_cerca(sum(sh.values()), 1.0) for _, sh in PERFILES_DESTINO.values())
-    chk("T07 inventario = producción diaria × días (y perfiles de destino suman 100 %)", ok)
+        if f["bloque"] != "inventario":
+            continue
+        pr = _param(f)
+        prod = t.valor(bloque="logistica", escala_aves_dia=f["escala_aves_dia"], dias_semana=f["dias_semana"],
+                       variable="producto_comestible_sale_t_dia")
+        flujo = prod if pr["base_temporal"] == "dias_produccion" else prod * f["dias_anio"] / 365
+        if f["variable"] == "comestible_total_t":
+            n += 1
+            ok &= _cerca(f["valor"], flujo * int(pr["dias"]))
+        elif "perfil_destino" in pr:
+            ok &= _cerca(f["valor"], flujo * int(pr["dias"]) * PERFILES_DESTINO[pr["perfil_destino"]][1][
+                f["variable"][:-2]])
+    ok &= all(_cerca(sum(sh.values()), 1.0) for _, sh in PERFILES_DESTINO.values()) and n > 0
+    chk("T07 inventario = flujo diario de su base temporal × días (y perfiles de destino suman 100 %)", ok)
 
     # T08 ninguna variable física negativa ni no finita
     ok = all(math.isfinite(f["valor"]) and f["valor"] >= 0 for f in num)
@@ -866,7 +950,7 @@ def ejecutar_tests(verbose=True):
                          q(bloque="balance_productos", variable="pata_muslo_t", periodo="dia_operativo") * da)
             ok &= _cerca(q(bloque="capacidad", variable="aves_faenadas_dia_calendario_equivalente"), E * da / 365)
             ok &= _cerca(q(bloque="ritmo_linea", variable="aves_por_hora_neta", parametro="horas_netas=8"), E / 8)
-            ok &= q(bloque="tabla_central", variable="producto_comercial_t_dia") < \
+            ok &= q(bloque="tabla_central", variable="producto_comercial_t_dia_operativo") < \
                 q(bloque="tabla_central", variable="kg_vivo_dia") / 1000
     chk("T09 unidades consistentes (t = kg/1.000; t/año = t/día × días; vivo > comercial; unidades válidas)", ok)
 
@@ -901,17 +985,18 @@ def ejecutar_tests(verbose=True):
     dem, _ = leer_demanda()
     t3 = construir(demanda_override={i: 3 * float(e["total_kg_dia"]) for i, e in dem.items()})
     bloques_fisicos = {"capacidad", "ritmo_linea", "produccion_primaria", "utilizacion", "balance_productos",
-                       "configuraciones", "subproductos", "inventario", "logistica", "exportacion", "tabla_central"}
+                       "configuraciones", "subproductos", "inventario", "logistica", "exportacion", "tabla_central",
+                       "masa_comestible"}
     a = [(f["variable"], f["valor"]) for f in F if f["bloque"] in bloques_fisicos]
     b = [(f["variable"], f["valor"]) for f in t3.filas if f["bloque"] in bloques_fisicos]
     ok = a == b
     ok &= all(e["sumable_a_demanda"] == "no" and e["categoria_demanda_actual"].startswith("C/D") for e in dem.values())
     ok &= all(float(e["exportacion_kg_dia"]) == 0 for e in dem.values())
-    u_dem = [f["valor"] for f in F if f["variable"] == "utilizacion_requerida"]
-    u3 = [f["valor"] for f in t3.filas if f["variable"] == "utilizacion_requerida"]
+    u_dem = [f["valor"] for f in F if f["variable"] == "factor_demanda_capacidad"]
+    u3 = [f["valor"] for f in t3.filas if f["variable"] == "factor_demanda_capacidad"]
     ok &= all(_cerca(y3, 3 * y1) for y1, y3 in zip(u_dem, u3)) and len(set(round(x, 6) for x in u_dem)) > 10
     ok &= all(f["valor"] == 0 for f in F if f["variable"] == "utilizacion_con_demanda_documentada_A_mas_B")
-    chk("T12 capacidad ≠ demanda: la demanda (C/D, exportación 0) no altera la capacidad; utilización = demanda "
+    chk("T12 capacidad ≠ demanda: la demanda (C/D, exportación 0) no altera la capacidad; factor = demanda "
         "/ capacidad", ok)
 
     # T13 mix: lectura, suma 100 %, roles, cierre de masa y parte limitante ≥ ave completa
@@ -928,7 +1013,7 @@ def ejecutar_tests(verbose=True):
         for E in ESCALAS:                # plena escala: producido − sin destino = demandado atendido
             c = comparar_demanda(E, 250, 7500, r)
             ok &= _cerca(c["produccion_comestible_plena_kg_dia_cal"] - c["kg_sin_destino_plena_escala"],
-                         r["masa_demandada_ave"] * c["fraccion_demanda_atendida"])
+                         r["masa_demandada_ave"] * c["cobertura_demanda"])
     chk("T13 mixes M1-M3 leídos de supermercados.md; masa producida = demandada + excedentes; "
         "parte limitante ≥ ave completa", ok, f"factor pechuga/milanesa {f_mila}")
 
@@ -947,6 +1032,108 @@ def ejecutar_tests(verbose=True):
             errores += 1
     chk("T15 entradas inválidas (días/semana, días/año, configuración, peso fuera de rango) detienen el modelo",
         errores == 4)
+
+    # --- Auditoría conceptual v1.1 --------------------------------------------------------
+    dcap = [f for f in F if f["bloque"] == "demanda_capacidad" and f["parametro"].startswith("escenario=")]
+    grupos_d = {}
+    for f in dcap:
+        grupos_d.setdefault((f["escala_aves_dia"], f["dias_semana"], f["parametro"]), {})[f["variable"]] = f["valor"]
+
+    # T16 utilización de planta y cobertura nunca > 100 %; el factor sí puede superarlo
+    ok = all(0 <= g["utilizacion_planta"] <= 100 + 1e-9 and 0 <= g["cobertura_demanda"] <= 100 + 1e-9
+             for g in grupos_d.values())
+    ok &= all(_cerca(g["utilizacion_planta"], min(100.0, g["factor_demanda_capacidad"])) for g in grupos_d.values())
+    ok &= any(g["factor_demanda_capacidad"] > 100 for g in grupos_d.values())
+    ok &= any(g["factor_demanda_capacidad"] < 100 for g in grupos_d.values())
+    ok &= not any(f["unidad"] == "%" and f["valor"] > 100 + 1e-9 for f in num
+                  if f["variable"] != "factor_demanda_capacidad")
+    chk("T16 utilización de planta y cobertura de demanda ≤ 100 %; solo el factor demanda/capacidad puede superarlo",
+        ok, f"{len(grupos_d)} casos; factor máx {max(g['factor_demanda_capacidad'] for g in grupos_d.values()):.0f} %")
+
+    # T17 demanda > capacidad => demanda no atendida; capacidad > demanda => capacidad ociosa
+    ok, n_exc, n_oci = True, 0, 0
+    for (E, ds, _), g in grupos_d.items():
+        D = g["demanda_kg_producto_dia_calendario"]
+        ok &= _cerca(g["kg_atendidos_dia_cal"] + g["kg_no_atendidos_dia_cal"], D)
+        ok &= _cerca(g["aves_procesadas_dia_operativo"] + g["capacidad_ociosa_aves_dia_operativo"], E)
+        if g["factor_demanda_capacidad"] > 100 + 1e-9:
+            n_exc += 1
+            ok &= g["kg_no_atendidos_dia_cal"] > 0 and g["aves_faltantes_dia_operativo"] > 0 \
+                and _cerca(g["utilizacion_planta"], 100) and g["capacidad_ociosa_aves_dia_operativo"] < 1e-9
+        elif g["factor_demanda_capacidad"] < 100 - 1e-9:
+            n_oci += 1
+            ok &= g["capacidad_ociosa_aves_dia_operativo"] > 0 and _cerca(g["cobertura_demanda"], 100) \
+                and g["kg_no_atendidos_dia_cal"] < 1e-6
+    chk("T17 si demanda > capacidad hay demanda no atendida (utilización 100 %); si capacidad > demanda hay "
+        "capacidad ociosa (cobertura 100 %)", ok and n_exc > 0 and n_oci > 0, f"{n_exc} excedidos, {n_oci} con ociosidad")
+
+    # T18 día operativo ≠ día calendario: toda comparación exige conversión explícita
+    ok = True
+    try:
+        cociente((24.0, "dia_operativo"), (7.5, "dia_calendario"))
+        ok = False                                  # debió rechazarse
+    except ErrorEscala:
+        pass
+    for (E, ds, prm), g in grupos_d.items():
+        da = CALENDARIOS[ds]
+        n_cal = g["aves_necesarias_dia_operativo"] * da / 365
+        ok &= _cerca(g["factor_demanda_capacidad"], 100 * n_cal / (E * da / 365))
+    for E in ESCALAS:
+        for ds, da in CALENDARIOS.items():
+            q = lambda v: t.valor(bloque="tabla_central", escala_aves_dia=E, dias_semana=ds, variable=v)
+            op, cal, an = (q(f"producto_comercial_t_{x}") for x in ("dia_operativo", "dia_calendario_promedio", "anio"))
+            ok &= _cerca(cal, op * da / 365) and _cerca(an, op * da) and _cerca(an, cal * 365)
+            ok &= not _cerca(cal, op)               # 250 o 300 días ≠ 365
+    ok &= all(f["periodo"] == "dia_calendario" for f in F if f["variable"].endswith(("_dia_cal", "_dia_calendario")))
+    ok &= all(f["periodo"] == "dia_operativo" for f in F if f["variable"].endswith("_dia_operativo"))
+    chk("T18 día operativo vs día calendario: comparar sin convertir se rechaza; conversiones 250/300/365 "
+        "coherentes y etiquetas de período correctas", ok)
+
+    # T19 sexto día: +20 % de volumen anual con la misma capacidad diaria
+    ok = True
+    for E in ESCALAS:
+        q = lambda ds, **kw: t.valor(escala_aves_dia=E, dias_semana=ds, **kw)
+        ok &= _cerca(q(6, bloque="capacidad", variable="aves_faenadas_anio_plena_escala"),
+                     1.2 * q(5, bloque="capacidad", variable="aves_faenadas_anio_plena_escala"))
+        ok &= _cerca(q(6, bloque="tabla_central", variable="producto_comercial_t_anio"),
+                     1.2 * q(5, bloque="tabla_central", variable="producto_comercial_t_anio"))
+        for var, blo, prm in (("escala_aves_faenadas_dia_operativo", "capacidad", ""),
+                              ("aves_por_hora_neta", "ritmo_linea", "horas_netas=8"),
+                              ("producto_comercial_t_dia_operativo", "tabla_central", f"config=B; peso={PESO_REF}")):
+            ok &= _cerca(q(6, bloque=blo, variable=var, parametro=prm), q(5, bloque=blo, variable=var, parametro=prm))
+    tA = construir(escalas=[10000], calendarios={6: 250})
+    tB = construir(escalas=[10000], calendarios={6: 300})
+    for f, g in zip(tA.filas, tB.filas):
+        if f["periodo"] in ("dia_operativo", "hora") and f["bloque"] not in ("demanda_capacidad",) and _num(f["valor"]):
+            ok &= _cerca(f["valor"], g["valor"])    # la capacidad diaria no depende de los días/año
+    chk("T19 300 días/año = +20 % de volumen anual que 250; los días/año no cambian la capacidad diaria", ok)
+
+    # T20 la masa biológica no aumenta por el agua retenida
+    ok = True
+    for c in CONFIG_VARIANTE:
+        k6, _ = kg_por_ave(c, enfriamiento="inmersion")
+        k8, _ = kg_por_ave(c, enfriamiento="inmersion_limite")
+        ok &= _cerca(k6["comestible_bio"], k8["comestible_bio"]) and k8["comestible"] > k6["comestible"]
+        ok &= _cerca(k6["comestible"], k6["comestible_bio"] + k6["agua_retenida_comestible"])
+        ok &= k6["agua_retenida_comestible"] > 0 and k6["comestible_bio"] < k6["comestible"]
+    for E in ESCALAS:
+        q = lambda v: t.valor(bloque="tabla_central", escala_aves_dia=E, dias_semana=5, variable=v)
+        ok &= _cerca(q("producto_comercial_t_dia_operativo"),
+                     q("comestible_masa_biologica_t_dia_operativo") + q("agua_retenida_en_producto_t_dia_operativo"))
+    chk("T20 masa biológica comestible idéntica con 6 % u 8 % de absorción; peso comercial = biológica + agua", ok)
+
+    # T21 todo inventario declara su base temporal (días de producción o días calendario)
+    inv = [f for f in F if f["bloque"] == "inventario"]
+    ok = all(_param(f).get("base_temporal") in ("dias_produccion", "dias_calendario") for f in inv)
+    ok &= all("inventario_7_dias_de_produccion" in v or "inventario_7_dias_calendario" in v
+              for v in {f["variable"] for f in F if f["variable"].startswith("inventario_")})
+    for E in ESCALAS:
+        for ds, da in CALENDARIOS.items():
+            vp, vc = (t.valor(bloque="inventario", escala_aves_dia=E, dias_semana=ds, variable="comestible_total_t",
+                              parametro=f"base_temporal={b}; dias=7") for b in ("dias_produccion", "dias_calendario"))
+            ok &= _cerca(vc, vp * da / 365) and vc < vp
+    chk("T21 el inventario identifica su base temporal; 7 días calendario ≠ 7 días de producción", ok,
+        f"{len(inv)} filas")
 
     if verbose:
         print(f"\nTESTS — modelo_escala.py v{VERSION}")
@@ -968,17 +1155,33 @@ MUTACIONES = [
      'k = {clave: tot(comps) * (1.05 if clave == "pechuga" else 1) for clave, _, comps in ITEMS}'),
     ("M06 subproducto duplicado (vísceras en dos ítems)", '("cabeza", "Cabezas", {"cabeza"}),',
      '("cabeza", "Cabezas", {"cabeza", "pulmones"}),'),
-    ("M07 inventario = producción × (días + 1)", "prod_com * dinv, \"t\"", "prod_com * (dinv + 1), \"t\""),
-    ("M08 kg sin destino negativo", '"kg_demanda_insatisfecha": D * (1 - frac),',
-     '"kg_demanda_insatisfecha": D * (0.5 - frac),'),
+    ("M07 inventario = producción × (días + 1)", "flujo * dinv, \"t\"", "flujo * (dinv + 1), \"t\""),
+    ("M08 demanda no atendida negativa", '"kg_no_atendidos_dia_cal": D * (1 - cobertura),',
+     '"kg_no_atendidos_dia_cal": D * (0.5 - cobertura),'),
     ("M09 unidades: t = kg / 100", '("kg_vivo_dia", k["peso_vivo"] * E, "kg"', '("kg_vivo_dia", k["peso_vivo"] * E * 10, "kg"'),
     ("M10 semana plena mezclada con promedio", '("pollitos_alojados_semana_plena", "pollitos_bb_semana_plena"',
      '("pollitos_alojados_semana_promedio", "pollitos_bb_semana_plena"'),
     ("M11 cifra económica introducida", '("aves_anio", E * da, "aves", "anio", "aves"),',
      '("aves_anio", E * da, "aves", "anio", "aves"), ("precio_usd_kg", 2.5, "kg", "anio", "comercial"),'),
-    ("M12 capacidad igualada a la demanda", '"utilizacion_requerida": aves_op / E,', '"utilizacion_requerida": 1.0,'),
+    ("M12 capacidad igualada a la demanda", '"factor_demanda_capacidad": factor,', '"factor_demanda_capacidad": 1.0,'),
     ("M13 CMS alternativa sumada como producto", 'sumable="no" if clave == "cms_alternativa_no_sumable" else "-"',
      'sumable="-"'),
+    ("M15 utilización sin tope de 100 %", "utiliz = min(1.0, factor)", "utiliz = factor"),
+    ("M16 cobertura sin tope de 100 %", "cobertura = min(1.0, 1 / factor) if factor else 1.0",
+     "cobertura = 1 / factor if factor else 1.0"),
+    ("M17 demanda calendario comparada con capacidad por día de faena sin convertir",
+     'cap_cal = convertir(E, "dia_operativo", "dia_calendario", dias_anio)', "cap_cal = E"),
+    ("M18 comparación directa de períodos distintos",
+     'factor = cociente((n, "dia_calendario"), (cap_cal, "dia_calendario"))',
+     'factor = cociente((n, "dia_calendario"), (E, "dia_operativo"))'),
+    ("M19 inventario calendario sin conversión",
+     'desp_cal = convertir(prod_com, "dia_operativo", "dia_calendario", da)', "desp_cal = prod_com"),
+    ("M20 inventario sin base temporal declarada", 'pd = f"base_temporal={base_t}; dias={dinv}"',
+     'pd = f"base_temporal=dias_produccion; dias={dinv}"'),
+    ("M21 el sexto día aumenta la capacidad diaria", '"aves_por_hora_neta", E / h,', '"aves_por_hora_neta", E * da / 250 / h,'),
+    ("M22 agua retenida contada como masa biológica",
+     '"comestible_bio": sum(f["bio"] for f in b["filas"] if f["clase"] in "AB"),',
+     '"comestible_bio": sum(f["bio"] + f["agua"] for f in b["filas"] if f["clase"] in "AB"),'),
     ("M14 días/año alteran la semana plena", "    for clave in CLAVES_ANUALES:\n        r[clave] *= k\n",
      "    for clave in CLAVES_ANUALES | {'pollitos_alojados_semana_plena'}:\n        r[clave] *= k\n"),
 ]
@@ -1006,7 +1209,9 @@ def prueba_mutaciones():
             detectadas += ok
             print(f"  [{'DETECTADA' if ok else 'NO DETECTADA'}] {nombre}"
                   + (f" -> tests que fallan: {', '.join(fallas)}" if fallas else
-                     (f" -> {p.stderr.strip().splitlines()[-1][:90]}" if p.stderr.strip() else "")))
+                     (" -> " + next(ln.strip() for ln in p.stdout.splitlines() if "DETENIDO" in ln)[:110]
+                      if "DETENIDO" in p.stdout else
+                      (f" -> {p.stderr.strip().splitlines()[-1][:90]}" if p.stderr.strip() else ""))))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print(f"  Mutaciones detectadas: {detectadas}/{len(MUTACIONES)}")
@@ -1035,14 +1240,18 @@ def imprimir_tablas(t):
     q = t.valor
     print("\n## Tabla central (5 d/sem · 250 d | 6 d/sem · 300 d), config B, 2,9 kg")
     for var in ("aves_anio", "kg_vivo_dia", "t_vivas_anio", "pollitos_semana_plena", "plazas_granja", "m2_galpones",
-                "alimento_t_anio", "producto_comercial_t_dia", "producto_principal_t_dia", "plumas_t_dia",
+                "alimento_t_anio", "comestible_masa_biologica_t_dia_operativo",
+                "agua_retenida_en_producto_t_dia_operativo", "producto_comercial_t_dia_operativo",
+                "producto_comercial_t_dia_calendario_promedio", "producto_comercial_t_anio",
+                "producto_principal_t_dia", "plumas_t_dia",
                 "sangre_recuperada_t_dia", "visceras_t_dia", "ritmo_linea_8h_aves_h",
-                "inventario_7_dias_comestible_t", "demanda_necesaria_100pct_kg_dia_cal",
+                "inventario_7_dias_de_produccion_t", "inventario_7_dias_calendario_t",
+                "demanda_necesaria_100pct_kg_dia_cal",
                 "demanda_necesaria_70pct_kg_dia_cal", "kg_por_local_dia_si_todo_por_la_red_100pct"):
         cel = []
         for E in ESCALAS:
             a, b = (q(bloque="tabla_central", escala_aves_dia=E, dias_semana=ds, variable=var) for ds in (5, 6))
-            d = 1 if var.endswith("t_dia") and a < 100 else 0
+            d = 1 if a < 100 else 0
             cel.append(fmt(a, d) if _cerca(a, b) else f"{fmt(a, d)} / {fmt(b, d)}")
         print(f"| {var} | " + " | ".join(cel) + " |")
 
@@ -1102,20 +1311,34 @@ def imprimir_tablas(t):
     print("| rendering potencial (config C) | " + " | ".join(fmt(kc["rendering_potencial"] * E / 1000, 2)
                                                           for E in ESCALAS) + " |")
 
-    print("\n## Inventario comestible total (t) por días, y perfiles")
-    for E in ESCALAS:
-        cel = [fmt(q(bloque="inventario", escala_aves_dia=E, dias_semana=5, variable="comestible_total_t",
-                     parametro=f"dias_inventario={d}"), 1) for d in DIAS_INVENTARIO]
-        sub = [fmt(q(bloque="inventario", escala_aves_dia=E, dias_semana=5, variable="subproductos_perecederos_frio_t",
-                     parametro=f"dias_inventario={d}"), 1) for d in DIAS_INVENTARIO]
-        print(f"| {fmt(E)} | " + " | ".join(cel) + " | " + " | ".join(sub) + " |")
-    for pid in PERFILES_DESTINO:
+    print("\n## Inventario comestible (t): días de producción | días calendario, por días; y subproductos")
+    for ds in (5, 6):
         for E in ESCALAS:
+            celp = [fmt(q(bloque="inventario", escala_aves_dia=E, dias_semana=ds, variable="comestible_total_t",
+                          parametro=f"base_temporal=dias_produccion; dias={d}"), 1) for d in DIAS_INVENTARIO]
+            celc = [fmt(q(bloque="inventario", escala_aves_dia=E, dias_semana=ds, variable="comestible_total_t",
+                          parametro=f"base_temporal=dias_calendario; dias={d}"), 1) for d in DIAS_INVENTARIO]
+            sub = [fmt(q(bloque="inventario", escala_aves_dia=E, dias_semana=ds,
+                         variable="subproductos_perecederos_frio_t",
+                         parametro=f"base_temporal=dias_produccion; dias={d}"), 1) for d in DIAS_INVENTARIO]
+            print(f"| {ds} d | {fmt(E)} | " + " | ".join(celp) + " | " + " | ".join(celc) + " | " + " | ".join(sub) + " |")
+    for base_t in ("dias_produccion", "dias_calendario"):
+        for pid in PERFILES_DESTINO:
             cel = []
-            for cat, d in (("refrigerado", 3), ("congelado", 14), ("exportacion", 14)):
-                cel.append(fmt(q(bloque="inventario", escala_aves_dia=E, dias_semana=5, variable=f"{cat}_t",
-                                 parametro=f"dias_inventario={d}; perfil_destino={pid}"), 1))
-            print(f"| {pid} | {fmt(E)} | " + " | ".join(cel) + " |")
+            for E in ESCALAS:
+                cel.append(" / ".join(fmt(q(bloque="inventario", escala_aves_dia=E, dias_semana=5, variable=f"{cat}_t",
+                                            parametro=f"base_temporal={base_t}; dias={d}; perfil_destino={pid}"), 1)
+                                      for cat, d in (("refrigerado", 3), ("congelado", 14), ("exportacion", 14))))
+            print(f"| {base_t} | {pid} | " + " | ".join(cel) + " |")
+
+    print("\n## Masa comestible (t): biológica | agua retenida | comercial — día operativo, día calendario, año (5 d)")
+    for E in ESCALAS:
+        cel = []
+        for per in PERIODOS_POR_ANIO:
+            cel.append(" / ".join(fmt(q(bloque="masa_comestible", escala_aves_dia=E, dias_semana=5, periodo=per,
+                                        variable=f"{c}_t"), 2 if per != "anio" else 0)
+                                  for c in ("comestible_bio", "agua_retenida_comestible", "comestible")))
+        print(f"| {fmt(E)} | " + " | ".join(cel) + " |")
 
     print("\n## Logística (t/día operativo; 5 d)")
     for var in ("aves_vivas_cargadas_t_dia", "aves_vivas_recibidas_faenadas_t_dia", "producto_comestible_sale_t_dia",
@@ -1136,35 +1359,37 @@ def imprimir_tablas(t):
                for E in ESCALAS]
         print(f"| {var} | " + " | ".join(cel) + " |")
 
-    print("\n## Demanda vs capacidad: utilización requerida % (5 d/250 | 6 d/300) por escenario y método")
     dem, _ = leer_demanda()
+    print("\n## Demanda vs capacidad (5 d/250): factor % | utilización % | cobertura % por escenario y método")
     for eid in dem:
         for met in ("M0_ave_completa", "M1_parte_limitante", "M2_parte_limitante", "M3_parte_limitante"):
             p = f"escenario={eid}; metodo={met}"
             aves = q(bloque="demanda_capacidad", escala_aves_dia=2500, dias_semana=5, parametro=p,
                      variable="aves_necesarias_dia_operativo")
-            exc = q(bloque="demanda_capacidad", escala_aves_dia=2500, dias_semana=5, parametro=p,
-                    variable="excedente_partes_kg_dia_cal")
             cel = []
             for E in ESCALAS:
-                a, b = (q(bloque="demanda_capacidad", escala_aves_dia=E, dias_semana=ds, parametro=p,
-                          variable="utilizacion_requerida") for ds in (5, 6))
-                cel.append(f"{fmt(a)} / {fmt(b)}")
-            print(f"| {eid} | {met} | {fmt(aves)} | {fmt(exc)} | " + " | ".join(cel) + " |")
+                v = [q(bloque="demanda_capacidad", escala_aves_dia=E, dias_semana=5, parametro=p, variable=x)
+                     for x in ("factor_demanda_capacidad", "utilizacion_planta", "cobertura_demanda")]
+                cel.append(" / ".join(fmt(x) for x in v))
+            print(f"| {eid} | {met} | {fmt(aves)} | " + " | ".join(cel) + " |")
+    print("\n## Ídem 6 d/300: factor %")
+    for eid in dem:
+        for met in ("M0_ave_completa", "M1_parte_limitante", "M3_parte_limitante"):
+            p = f"escenario={eid}; metodo={met}"
+            print(f"| {eid} | {met} | " + " | ".join(fmt(q(bloque="demanda_capacidad", escala_aves_dia=E, dias_semana=6,
+                  parametro=p, variable="factor_demanda_capacidad")) for E in ESCALAS) + " |")
 
-    print("\n## kg/día calendario sin destino a plena escala | demanda adicional para llenar (M0 y M2), 5 d")
+    print("\n## kg/día cal atendidos | no atendidos | capacidad ociosa (aves/día op.) | kg/día cal sin destino a "
+          "plena escala | demanda adicional para llenar (5 d)")
     for eid in dem:
         for met in ("M0_ave_completa", "M2_parte_limitante"):
             p = f"escenario={eid}; metodo={met}"
             cel = []
             for E in ESCALAS:
-                sd = q(bloque="demanda_capacidad", escala_aves_dia=E, dias_semana=5, parametro=p,
-                       variable="kg_sin_destino_plena_escala")
-                ins = q(bloque="demanda_capacidad", escala_aves_dia=E, dias_semana=5, parametro=p,
-                        variable="kg_demanda_insatisfecha")
-                ad = q(bloque="demanda_capacidad", escala_aves_dia=E, dias_semana=5, parametro=p,
-                       variable="demanda_adicional_para_llenar_kg_dia_cal")
-                cel.append(f"{fmt(sd)} / {fmt(ad)}" + (f" (falta {fmt(ins)})" if ins > 0 else ""))
+                v = [q(bloque="demanda_capacidad", escala_aves_dia=E, dias_semana=5, parametro=p, variable=x)
+                     for x in ("kg_atendidos_dia_cal", "kg_no_atendidos_dia_cal", "capacidad_ociosa_aves_dia_operativo",
+                               "kg_sin_destino_plena_escala", "demanda_adicional_para_llenar_kg_dia_cal")]
+                cel.append(" / ".join(fmt(x) for x in v))
             print(f"| {eid} | {met} | " + " | ".join(cel) + " |")
     y = rendimientos_mix()
     print("\nRendimientos del mix (kg/ave):", {kk: round(v, 4) for kk, v in y.items()})
@@ -1194,11 +1419,18 @@ def resumen_escenario(a):
              ("Pollitos BB/semana plena", r["pollitos_alojados_semana_plena"], 0),
              ("Plazas de granja", r["capacidad_alojamiento_pollitos"], 0), ("m² de galpón", r["m2_galpon"], 0),
              ("Alimento t/año", r["alimento_t_anio"], 0), ("Agua de bebida m³/año", r["agua_bebida_m3_anio"], 0),
-             ("Producto comestible t/día", k["comestible"] * faen / 1000, 2),
+             ("Producto comercial t/día operativo", k["comestible"] * faen / 1000, 2),
              ("Producto principal t/día", k["producto_principal"] * faen / 1000, 2),
              ("Plumas húmedas t/día", k["plumas"] * faen / 1000, 2), ("Sangre recuperada t/día", k["sangre"] * faen / 1000, 2),
              ("Rendering potencial t/día", k["rendering_potencial"] * faen / 1000, 2),
-             (f"Inventario comestible {a.dias_inventario} días (t)", k["comestible"] * faen / 1000 * a.dias_inventario, 1)]
+             ("Comestible masa biológica t/día operativo", k["comestible_bio"] * faen / 1000, 2),
+             ("Agua retenida en producto t/día operativo", k["agua_retenida_comestible"] * faen / 1000, 2),
+             ("Producto comercial t/día calendario (promedio)",
+              convertir(k["comestible"] * faen / 1000, "dia_operativo", "dia_calendario", da), 2),
+             (f"Inventario {a.dias_inventario:g} días de producción (t)",
+              k["comestible"] * faen / 1000 * a.dias_inventario, 1),
+             (f"Inventario {a.dias_inventario:g} días calendario de cobertura (t)",
+              convertir(k["comestible"] * faen / 1000, "dia_operativo", "dia_calendario", da) * a.dias_inventario, 1)]
     for n, v, d in filas:
         print(f"  {n:45s} {fmt(v, d):>14s}")
     if a.demanda:
@@ -1206,11 +1438,13 @@ def resumen_escenario(a):
         D = float(dem[a.demanda]["total_kg_dia"])
         cmp_ = comparar_demanda(E, da, D, {"aves_dia_cal": D / k["comestible"], "excedente_total": 0.0,
                                            "comestible_por_ave_mix": k["comestible"]})
-        print(f"  Demanda {a.demanda} ({fmt(D)} kg/día cal, categoría C/D): utilización requerida (M0) "
-              f"{cmp_['utilizacion_requerida']:.0%}; kg sin destino a plena escala {fmt(cmp_['kg_sin_destino_plena_escala'])}")
-        if cmp_["utilizacion_requerida"] < u:
+        print(f"  Demanda {a.demanda} ({fmt(D)} kg/día cal, categoría C/D), método M0: factor demanda/capacidad "
+              f"{cmp_['factor_demanda_capacidad']:.0%}; utilización {cmp_['utilizacion_planta']:.0%}; cobertura "
+              f"{cmp_['cobertura_demanda']:.0%}; no atendidos {fmt(cmp_['kg_no_atendidos_dia_cal'])} kg/día cal; "
+              f"capacidad ociosa {fmt(cmp_['capacidad_ociosa_aves_dia_operativo'])} aves/día operativo")
+        if cmp_["utilizacion_planta"] < u:
             print("  ALERTA: la utilización supuesta supera la que la demanda del escenario justifica.")
-        if cmp_["utilizacion_requerida"] > 1:
+        if cmp_["factor_demanda_capacidad"] > 1:
             print("  ALERTA: la demanda del escenario excede la escala.")
 
 

@@ -4,7 +4,7 @@
 
 > **Pregunta:** ¿qué tiene que ser verdad para que una planta de **2.500 / 5.000 / 10.000 / 20.000 aves faenadas por día** tenga sentido?
 > **Alcance:** integra por primera vez demanda → aves → producción primaria → faena → productos → subproductos → frío e inventario (conceptual) → logística (conceptual) → exportación → expansión. **No** elige la escala, **no** calcula CAPEX, OPEX, precios ni indicadores financieros, **no** selecciona maquinaria, proveedores, layout ni localización. **No** asume que USD 2 M alcanzan ni que son un tope (regla 7).
-> **Modelo:** [`modelo_escala.py`](modelo_escala.py) → [`escenarios_escala.csv`](escenarios_escala.csv) (3.368 filas; archivo maestro de las cifras). El modelo **importa** los modelos de producción primaria (v1.1), balance de masa (v1.1) y subproductos (v1.0) sin modificarlos, y **lee** los escenarios de demanda. Todas las cifras son `[ESTIMACIÓN]` sobre supuestos ya registrados (SUP-019 a SUP-051) y los nuevos SUP-052 a SUP-059; **ninguna proviene de datos de campo argentinos**.
+> **Modelo:** [`modelo_escala.py`](modelo_escala.py) → [`escenarios_escala.csv`](escenarios_escala.csv) (4.232 filas; archivo maestro de las cifras; versión 1.1 tras la auditoría conceptual del 2026-09-30). El modelo **importa** los modelos de producción primaria (v1.1), balance de masa (v1.1) y subproductos (v1.0) sin modificarlos, y **lee** los escenarios de demanda. Todas las cifras son `[ESTIMACIÓN]` sobre supuestos ya registrados (SUP-019 a SUP-051) y los nuevos SUP-052 a SUP-059; **ninguna proviene de datos de campo argentinos**.
 > Documentos hermanos: [`arquitectura_escalable.md`](arquitectura_escalable.md) (modularidad, arquitecturas de crecimiento, matriz sin ganador) · [`gates_expansion.md`](gates_expansion.md) · [`especificacion_simulador_html.md`](especificacion_simulador_html.md) · [`guia_ramiro.md`](guia_ramiro.md) · [`conclusiones_escala.md`](conclusiones_escala.md) · ritmos de faena en [`../05_proceso_industrial/capacidad_preliminar.md`](../05_proceso_industrial/capacidad_preliminar.md).
 
 **Referencia de todas las tablas salvo indicación:** perfil y desempeño **medios** de `03_produccion_primaria` (2,9 kg vivo, 47 días, FCR de campo 1,70, mortalidad en granja 5 %, en transporte 0,3 %, 35 kg/m², 15 días entre lotes); balance **v1.1** medio (rendimiento y condenas medios, chiller por inmersión); configuración **B trozado** con carcasa-esqueleto vendida (V1, SUP-050: referencia, **no decisión**).
@@ -34,11 +34,23 @@ Los dos calendarios se muestran **por separado**. Semana plena = semana sin feri
 | 10.000 | 50.000 · 60.000 | 2.500.000 | 3.000.000 | 6.849 · 8.219 |
 | 20.000 | 100.000 · 120.000 | 5.000.000 | 6.000.000 | 13.699 · 16.438 |
 
-Pasar de 5 a 6 días de faena por semana aumenta **20 %** todo lo anual y lo semanal (aves, pollitos, alimento, m² de galpón, productos) **sin cambiar el ritmo diario de la línea**. Es otra palanca de crecimiento (además del segundo turno) y otro riesgo: menos días para mantenimiento y limpieza profunda.
+**Sexto día de faena ≠ segundo turno.** Pasar de 250 a 300 días/año aumenta ~**20 % el volumen anual potencial** (aves, productos, alimento) y, en granjas, un 20 % los pollitos y m² de la semana plena, **manteniendo la misma capacidad diaria**: no aumenta 20 % las aves por día ni el ritmo de la línea (test T19). El segundo turno, en cambio, actúa sobre las **horas netas por día** (§3). El sexto día también exige personal, frío, pollitos y abastecimiento para ese día, y reduce los días disponibles para mantenimiento y limpieza profunda.
+
+**Tres bases temporales que no se mezclan** (test T18):
+
+| Base | Definición | Ejemplo: comestible comercial a 10.000 aves/día |
+|---|---|---|
+| Por día operativo (día de faena) | Lo que sale un día en que se faena | 23,96 t/día operativo (5 d y 6 d) |
+| Por día calendario (promedio) | Producción anual ÷ 365; unidad de la demanda (SUP-020) | 16,41 t/día cal (250 d) · 19,70 (300 d) |
+| Anual | Por día operativo × días operativos/año | 5.991 t/año (250 d) · 7.189 (300 d) |
+
+Conversión: `por día calendario = por día operativo × días operativos / 365` (× 0,685 con 250 días; × 0,822 con 300). En el modelo, toda comparación entre demanda y capacidad pasa por la función `convertir`, y la función `cociente` **rechaza** comparar directamente t/día de faena con t/día calendario.
 
 ## 3. Capacidad horaria
 
-Ritmo requerido = aves faenadas/día ÷ horas **netas** de faena. A 8 h netas: **312 / 625 / 1.250 / 2.500 aves/h** para las cuatro escalas; con 6 h netas, 417 a 3.333; con dos turnos de 8 h, 156 a 1.250. Tabla completa, horas de turno vs netas y cuello de botella: [`../05_proceso_industrial/capacidad_preliminar.md`](../05_proceso_industrial/capacidad_preliminar.md) §2–§4. No se asume eficiencia de máquina.
+Ritmo requerido = aves faenadas/día ÷ horas **netas** de faena. A 8 h netas: **312 / 625 / 1.250 / 2.500 aves/h** para las cuatro escalas; con 6 h netas, 417 a 3.333; con 16 h netas (dos turnos de 8 h), 156 a 1.250. Tabla completa, horas de turno vs netas y cuello de botella: [`../05_proceso_industrial/capacidad_preliminar.md`](../05_proceso_industrial/capacidad_preliminar.md) §2–§4. No se asume eficiencia de máquina.
+
+**Segundo turno = capacidad teórica de la línea, no capacidad de la planta.** Que 1.250 aves/h equivalgan a 10.000 aves/día con 8 h netas o a 20.000 con 16 h netas es aritmética de la **línea**. Antes de afirmar que un segundo turno permite 20.000 aves/día hay que comprobar los demás cuellos de botella (recepción de aves, colgado, eviscerado, chilling, salas de corte, mano de obra, cámaras, congelado, expedición, agua, efluentes, energía, refrigeración, limpieza y sanitización, mantenimiento, bienestar animal y logística de granjas; [`capacidad_preliminar.md` §3](../05_proceso_industrial/capacidad_preliminar.md)). **No se afirma** que 20.000 aves/día sean posibles "sin obra nueva".
 
 ---
 
@@ -62,40 +74,82 @@ Con los rendimientos del balance, el factor de mix frente a la fórmula simple d
 
 **Limitaciones:** (1) los mixes son de supermercado y se aplican a toda la demanda (los otros canales podrían absorber las partes excedentes, lo que acercaría el resultado a M0); (2) "otros elaborados" (5–13 % del kg) quedan fuera del balance (SUP-023); (3) la exportación es 0; (4) la pechuga deshuesada se toma de la configuración C y la pata-muslo de la B sobre la misma carcasa fría (combinación físicamente coherente, con diferencias de agua retenida despreciables); (5) no hay estacionalidad: la demanda es un promedio diario.
 
-### 4.3 Utilización que exigiría cada escenario
+### 4.3 Tres métricas que no deben confundirse (SUP-060)
 
-Utilización requerida (%) = aves necesarias por día operativo ÷ escala. Formato: **5 d/sem (250 d) · 6 d/sem (300 d)**. > 100 % = la demanda del escenario excede la escala.
+| Métrica | Fórmula | Rango | Lectura |
+|---|---|---|---|
+| **Factor demanda/capacidad** | aves que requiere la demanda ÷ capacidad instalada (ambas por día calendario) | 0 a ∞ | 100 % = coincide con la capacidad; **> 100 % = la escala no alcanza**; < 100 % = existe capacidad ociosa. **No es utilización** |
+| **Utilización de planta** | aves efectivamente procesadas ÷ capacidad = mín(factor; 100 %) | 0–100 % | Si la demanda excede la capacidad, la planta está al 100 % y el resto es **demanda no atendida** |
+| **Cobertura de demanda** | producción posible ÷ demanda requerida = mín(1 ÷ factor; 100 %) | 0–100 % | Parte de la demanda que la escala puede atender |
 
-| Escenario (kg/día cal) | Método | Aves necesarias/día operativo (5 d) | Excedente de partes (kg/día cal) | 2.500 | 5.000 | 10.000 | 20.000 |
-|---|---|---|---|---|---|---|---|
-| Conservador (1.500) | M0 ave completa | 914 | 0 | 37 · 30 | 18 · 15 | 9 · 8 | 5 · 4 |
-| | M1–M3 parte limitante | 1.238–1.630 | 592–1.336 | 50–65 · 41–54 | 25–33 · 21–27 | 12–16 · 10–14 | 6–8 · 5–7 |
-| **Base (7.500)** | M0 ave completa | 4.569 | 0 | **183** · 152 | **91** · 76 | **46** · 38 | **23** · 19 |
-| | M1–M3 parte limitante | 6.192–8.149 | 2.961–6.682 | 248–326 · 206–272 | 124–163 · 103–136 | **62–81** · 52–68 | 31–41 · 26–34 |
-| Expansivo (23.500) | M0 ave completa | 14.317 | 0 | 573 · 477 | 286 · 239 | 143 · 119 | **72** · 60 |
-| | M1–M3 parte limitante | 19.403–25.534 | 9.278–20.937 | 776–1.021 · 647–851 | 388–511 · 323–426 | 194–255 · 162–213 | **97–128** · 81–106 |
+Además: **kg atendidos** = demanda × cobertura; **kg no atendidos** = demanda × (1 − cobertura); **capacidad ociosa** = escala × (1 − utilización), en aves/día operativo. La demanda está en kg de **peso comercial** por **día calendario**; la capacidad, en aves por **día operativo**: se comparan después de convertir la capacidad a día calendario.
 
-### 4.4 kg sin destino y demanda que falta para llenar la planta
+**Tabla corregida — 5 d/sem (250 d).** Cada celda: **factor · utilización · cobertura** (%).
 
-Si la planta operara a **plena escala** (5 d/sem), kg de producto por día calendario **sin comprador** dentro del escenario / **demanda adicional** (mismo mix) necesaria para llenarla. "Falta" = demanda que la escala no puede atender.
+| Escenario (kg/día cal) | Método | 2.500 | 5.000 | 10.000 | 20.000 |
+|---|---|---|---|---|---|
+| Conservador (1.500) | M0 | 37 · 37 · 100 | 18 · 18 · 100 | 9 · 9 · 100 | 5 · 5 · 100 |
+| | M1–M3 | 50–65 · 50–65 · 100 | 25–33 · 25–33 · 100 | 12–16 · 12–16 · 100 | 6–8 · 6–8 · 100 |
+| **Base (7.500)** | M0 | **183 · 100 · 55** | 91 · 91 · 100 | 46 · 46 · 100 | 23 · 23 · 100 |
+| | M1–M3 | 248–326 · 100 · 31–40 | 124–163 · 100 · 61–81 | 62–81 · 62–81 · 100 | 31–41 · 31–41 · 100 |
+| Expansivo (23.500) | M0 | 573 · 100 · 17 | 286 · 100 · 35 | **143 · 100 · 70** | 72 · 72 · 100 |
+| | M1–M3 | 776–1.021 · 100 · 10–13 | 388–511 · 100 · 20–26 | 194–255 · 100 · 39–52 | 97–128 · 97–100 · 78–100 |
+
+**6 d/sem (300 d)**, mismo formato:
 
 | Escenario | Método | 2.500 | 5.000 | 10.000 | 20.000 |
 |---|---|---|---|---|---|
-| Conservador | M0 | 2.604 / 2.604 | 6.707 / 6.707 | 14.914 / 14.914 | 31.329 / 31.329 |
-| | M2 | 2.592 / 1.137 | 6.549 / 3.773 | 14.464 / 9.046 | 30.292 / 19.592 |
-| Base | M0 | 0 / 0 (falta 3.396) | 707 / 707 | 8.914 / 8.914 | 25.329 / 25.329 |
-| | M2 | 1.558 / 0 (falta 4.863) | 3.116 / 0 (falta 2.227) | 9.004 / 3.046 | 24.832 / 13.592 |
-| Expansivo | M0 | 0 / 0 (falta 19.396) | 0 / 0 (falta 15.293) | 0 / 0 (falta 7.086) | 9.329 / 9.329 |
-| | M2 | 1.558 / 0 (falta 20.863) | 3.116 / 0 (falta 18.227) | 6.232 / 0 (falta 12.954) | 12.463 / 0 (falta 2.408) |
+| Conservador | M0 | 30 · 30 · 100 | 15 · 15 · 100 | 8 · 8 · 100 | 4 · 4 · 100 |
+| | M1–M3 | 41–54 · 41–54 · 100 | 21–27 · 21–27 · 100 | 10–14 · 10–14 · 100 | 5–7 · 5–7 · 100 |
+| Base | M0 | 152 · 100 · 66 | 76 · 76 · 100 | 38 · 38 · 100 | 19 · 19 · 100 |
+| | M1–M3 | 206–272 · 100 · 37–48 | 103–136 · 100 · 74–97 | 52–68 · 52–68 · 100 | 26–34 · 26–34 · 100 |
+| Expansivo | M0 | 477 · 100 · 21 | 239 · 100 · 42 | 119 · 100 · 84 | 60 · 60 · 100 |
+| | M1–M3 | 647–851 · 100 · 12–15 | 323–426 · 100 · 23–31 | 162–213 · 100 · 47–62 | 81–106 · 81–100 · 94–100 |
+
+Aves necesarias por día operativo (5 d): conservador 914 (M0) a 1.630 (M3); base 4.569 a 8.149; expansivo 14.317 a 25.534.
+
+### 4.4 kg atendidos, no atendidos, capacidad ociosa y kg sin destino
+
+5 d/sem. Cada celda: **kg/día cal atendidos / no atendidos / capacidad ociosa (aves/día operativo)**. Debajo, con la planta operando a plena escala: kg/día cal **sin destino** dentro del escenario (incluye partes excedentes del mix) / **demanda adicional** (mismo mix) para llenarla.
+
+| Escenario | Método | 2.500 | 5.000 | 10.000 | 20.000 |
+|---|---|---|---|---|---|
+| Conservador | M0 | 1.500 / 0 / 1.586 | 1.500 / 0 / 4.086 | 1.500 / 0 / 9.086 | 1.500 / 0 / 19.086 |
+| | — sin destino / adicional | 2.604 / 2.604 | 6.707 / 6.707 | 14.914 / 14.914 | 31.329 / 31.329 |
+| | M2 | 1.500 / 0 / 1.078 | 1.500 / 0 / 3.578 | 1.500 / 0 / 8.578 | 1.500 / 0 / 18.578 |
+| | — sin destino / adicional | 2.592 / 1.137 | 6.549 / 3.773 | 14.464 / 9.046 | 30.292 / 19.592 |
+| Base | M0 | 4.104 / **3.396** / 0 | 7.500 / 0 / 431 | 7.500 / 0 / 5.431 | 7.500 / 0 / 15.431 |
+| | — sin destino / adicional | 0 / 0 | 707 / 707 | 8.914 / 8.914 | 25.329 / 25.329 |
+| | M2 | 2.637 / **4.863** / 0 | 5.273 / **2.227** / 0 | 7.500 / 0 / 2.888 | 7.500 / 0 / 12.888 |
+| | — sin destino / adicional | 1.558 / 0 | 3.116 / 0 | 9.004 / 3.046 | 24.832 / 13.592 |
+| Expansivo | M0 | 4.104 / **19.396** / 0 | 8.207 / **15.293** / 0 | 16.414 / **7.086** / 0 | 23.500 / 0 / 5.683 |
+| | — sin destino / adicional | 0 / 0 | 0 / 0 | 0 / 0 | 9.329 / 9.329 |
+| | M2 | 2.637 / **20.863** / 0 | 5.273 / **18.227** / 0 | 10.546 / **12.954** / 0 | 21.092 / **2.408** / 0 |
+| | — sin destino / adicional | 1.558 / 0 | 3.116 / 0 | 6.232 / 0 | 12.463 / 0 |
+
+Con 6 d/sem, todas las combinaciones en el CSV (bloque `demanda_capacidad`).
+
+**Ejemplo: 10.000 aves/día (5 d/sem · 250 días)** — capacidad = 10.000 aves/día operativo = 6.849 aves/día calendario:
+
+| Escenario | Método | Aves requeridas/día operativo | Factor | Utilización | Cobertura | kg/día cal atendidos | No atendidos | Capacidad ociosa (aves/día op.) | Partes excedentes (kg/día cal) |
+|---|---|---|---|---|---|---|---|---|---|
+| Conservador | M0 | 914 | 9 % | 9 % | 100 % | 1.500 | 0 | 9.086 | 0 |
+| | M1–M3 | 1.238–1.630 | 12–16 % | 12–16 % | 100 % | 1.500 | 0 | 8.370–8.762 | 592–1.336 |
+| Base | M0 | 4.569 | 46 % | 46 % | 100 % | 7.500 | 0 | 5.431 | 0 |
+| | M1–M3 | 6.192–8.149 | 62–81 % | 62–81 % | 100 % | 7.500 | 0 | 1.851–3.808 | 2.961–6.682 |
+| Expansivo | M0 | 14.317 | 143 % | **100 %** | 70 % | 16.414 | **7.086** | 0 (faltan 4.317 aves/día) | 0 |
+| | M1–M3 | 19.403–25.534 | 194–255 % | **100 %** | 39–52 % | 9.203–12.112 | **11.388–14.297** | 0 (faltan 9.403–15.534) | 4.782–8.200* |
+
+\* Partes excedentes de la fracción atendida (kg sin destino con la planta llena). Con 6 d/sem (300 días) el expansivo M0 queda en factor 119 %, utilización 100 %, cobertura 84 % y 3.803 kg/día cal no atendidos.
 
 **Lecturas:**
 
 1. **Con la evidencia actual, ninguna escala está justificada** (utilización documentada 0 %). Todo lo que sigue compara hipótesis.
-2. **2.500 aves/día** se llena con el escenario base aun con la cota optimista (183 %) y con el conservador queda al 37–65 %.
-3. **5.000** es la escala más cercana al escenario base con ave completa (91 %); con mix de supermercado, la base la excede (124–163 %).
-4. **10.000** necesita **más que el escenario base**: 46 % con ave completa y 62–81 % con mix; para llenarla falta demanda por **~9 t/día calendario** (M0).
-5. **20.000** solo se acerca a llenarse con el **escenario expansivo** (72 % M0; 97–128 % con mix), que supone los 90 locales a 150 kg/día más una cartera multicanal desarrollada que hoy no existe.
-6. **Aunque la escala coincida con la demanda, sobran partes:** con mix M2, aun cuando la planta está "llena", quedan 1,6–12,5 t/día calendario de partes (pata-muslo, alas, carcasa, cuello, garras) que necesitan **otros canales**. Esas toneladas son el costo físico de no vender el ave completa (SUP-013).
+2. **2.500 aves/día** no alcanza para el escenario base: factor 183 % con ave completa (la planta estaría al 100 % y quedarían 3,4 t/día cal sin atender); con el conservador, utilización 37–65 %.
+3. **5.000** es la escala más cercana al escenario base con ave completa (utilización 91 %); con mix de supermercado la base la excede (factor 124–163 %; cobertura 61–81 %).
+4. **10.000** necesita **más que el escenario base**: utilización 46 % con ave completa y 62–81 % con mix; para llenarla falta demanda por **~9 t/día calendario** (M0).
+5. **20.000** solo se acerca a llenarse con el **escenario expansivo** (utilización 72 % con ave completa; factor 97–128 % con mix), que supone los 90 locales a 150 kg/día más una cartera multicanal desarrollada que hoy no existe.
+6. **Aunque la escala coincida con la demanda, sobran partes:** con mix M2, aun cuando la planta está llena, quedan 1,6–12,5 t/día calendario de partes (pata-muslo, alas, carcasa, cuello, garras) que necesitan **otros canales**. Esas toneladas son el costo físico de no vender el ave completa (SUP-013).
 
 ---
 
@@ -279,26 +333,40 @@ t/día operativo (B trozado salvo indicación). Sin rendering propio (SUP-049).
 
 ## 11. Inventario y frío — modelo conceptual
 
-`inventario requerido [t] = producción [t/día operativo] × días de inventario` (días de producción, SUP-056). **No se diseñan** cámaras, potencia frigorífica ni equipos.
+**No se diseñan** cámaras, potencia frigorífica ni equipos. Dos bases temporales distintas (SUP-056; test T21):
 
-**Comestible total (A + B, cota superior) y subproductos que requieren frío** si no se retiran en el día (clase C sin plumas: sangre, vísceras, cabezas, huesos), t:
+| Concepto | Fórmula | Pregunta que responde |
+|---|---|---|
+| **Días de producción en stock** | producción comercial por día **operativo** × días equivalentes de producción | ¿Cuántas jornadas de faena caben en la cámara? |
+| **Días calendario de cobertura** | despacho promedio por día **calendario** × días calendario | ¿Cuántos días de venta (calendario) cubre el stock? Despacho promedio = producción × días operativos / 365 |
 
-| Escala | 1 día | 3 días | 7 días | 14 días | Subproductos 1 d | 3 d | 7 d | 14 d |
-|---|---|---|---|---|---|---|---|---|
-| 2.500 | 6,0 | 18,0 | 41,9 | 83,9 | 0,7 | 2,2 | 5,1 | 10,2 |
-| 5.000 | 12,0 | 35,9 | 83,9 | 167,8 | 1,5 | 4,4 | 10,2 | 20,4 |
-| 10.000 | 24,0 | 71,9 | 167,8 | 335,5 | 2,9 | 8,8 | 20,4 | 40,9 |
-| 20.000 | 47,9 | 143,8 | 335,5 | 671,0 | 5,8 | 17,5 | 40,9 | 81,8 |
+Con 250 días de faena, **7 días calendario de cobertura** equivalen a **~4,8 días de producción** (7 × 250/365): a 10.000 aves/día son **115 t**, no 168 t. Con 300 días, 138 t. El simulador debe mostrar siempre cuál de las dos bases se usa.
 
-**Separación por destino** con tres perfiles **ilustrativos** (SUP-055; no son demanda): P1 mercado interno fresco (90 % refrigerado / 10 % congelado), P2 interno con congelado (60 / 40), P3 opción exportadora (50 / 30 / 20 % exportación). Refrigerado con 3 días de inventario; congelado y exportación con 14 días (t):
+**Comestible total (A + B, peso comercial, cota superior), t** — días de producción · días calendario (5 d/sem · 250 d):
 
-| Perfil | Escala | Refrigerado (3 d) | Congelado (14 d) | Exportación (14 d) |
+| Escala | 1 día | 3 días | 7 días | 14 días |
 |---|---|---|---|---|
-| P1 | 2.500 / 5.000 / 10.000 / 20.000 | 16,2 / 32,4 / 64,7 / 129,4 | 8,4 / 16,8 / 33,6 / 67,1 | 0 |
-| P2 | 2.500 / 5.000 / 10.000 / 20.000 | 10,8 / 21,6 / 43,1 / 86,3 | 33,6 / 67,1 / 134,2 / 268,4 | 0 |
-| P3 | 2.500 / 5.000 / 10.000 / 20.000 | 9,0 / 18,0 / 35,9 / 71,9 | 25,2 / 50,3 / 100,7 / 201,3 | 16,8 / 33,6 / 67,1 / 134,2 |
+| 2.500 | 6,0 · 4,1 | 18,0 · 12,3 | 41,9 · 28,7 | 83,9 · 57,4 |
+| 5.000 | 12,0 · 8,2 | 35,9 · 24,6 | 83,9 · 57,4 | 167,8 · 114,9 |
+| 10.000 | 24,0 · 16,4 | 71,9 · 49,2 | 167,8 · 114,9 | 335,5 · 229,8 |
+| 20.000 | 47,9 · 32,8 | 143,8 · 98,5 | 335,5 · 229,8 | 671,0 · 459,6 |
 
-Todas las combinaciones (1/3/7/14 días × perfiles) en el CSV (bloque `inventario`). **Lecturas:** (1) el producto refrigerado vive días (SUP-051): su inventario es corto y el frío que exige es sobre todo de **enfriamiento rápido y despacho diario**; (2) el congelado y la exportación **acumulan**: 14 días de congelado a 20.000 aves/día con el perfil P2 son ~270 t de producto en stock; (3) el inventario es **capital de trabajo físico**: el dimensionamiento de cámaras depende más del **canal y del perfil de destino** que de la escala.
+Con 6 d/sem (300 d) los días de producción no cambian y los días calendario pasan a 4,9 / 9,8 / 19,7 / 39,4 t por día (p. ej. 7 días calendario a 10.000 aves/día = 137,9 t).
+
+**Subproductos que requieren frío** si no se retiran en el día (clase C sin plumas: sangre, vísceras, cabezas, huesos), en **días de producción** (solo se generan en días de faena), t: 1 / 3 / 7 / 14 días = 0,7 / 2,2 / 5,1 / 10,2 (2.500) · 1,5 / 4,4 / 10,2 / 20,4 (5.000) · 2,9 / 8,8 / 20,4 / 40,9 (10.000) · 5,8 / 17,5 / 40,9 / 81,8 (20.000).
+
+**Separación por destino** con tres perfiles **ilustrativos** (SUP-055; no son demanda): P1 mercado interno fresco (90 % refrigerado / 10 % congelado), P2 interno con congelado (60 / 40), P3 opción exportadora (50 / 30 / 20 % exportación). Refrigerado con 3 días; congelado y exportación con 14 días; t para 2.500 / 5.000 / 10.000 / 20.000:
+
+| Base temporal | Perfil | Refrigerado (3 d) | Congelado (14 d) | Exportación (14 d) |
+|---|---|---|---|---|
+| Días de producción | P1 | 16,2 / 32,4 / 64,7 / 129,4 | 8,4 / 16,8 / 33,6 / 67,1 | 0 |
+| | P2 | 10,8 / 21,6 / 43,1 / 86,3 | 33,6 / 67,1 / 134,2 / 268,4 | 0 |
+| | P3 | 9,0 / 18,0 / 35,9 / 71,9 | 25,2 / 50,3 / 100,7 / 201,3 | 16,8 / 33,6 / 67,1 / 134,2 |
+| Días calendario | P1 | 11,1 / 22,2 / 44,3 / 88,6 | 5,7 / 11,5 / 23,0 / 46,0 | 0 |
+| | P2 | 7,4 / 14,8 / 29,5 / 59,1 | 23,0 / 46,0 / 91,9 / 183,8 | 0 |
+| | P3 | 6,2 / 12,3 / 24,6 / 49,2 | 17,2 / 34,5 / 68,9 / 137,9 | 11,5 / 23,0 / 46,0 / 91,9 |
+
+Todas las combinaciones (1/3/7/14 días × 2 bases × perfiles × calendarios) en el CSV (bloque `inventario`, parámetro `base_temporal`). **Lecturas:** (1) el producto refrigerado vive días (SUP-051): su inventario es corto y el frío que exige es sobre todo de **enfriamiento rápido y despacho**; (2) el congelado y la exportación **acumulan**: 14 días de producción congelada a 20.000 aves/día con el perfil P2 son ~270 t en stock; (3) el inventario es **capital de trabajo físico**, y depende más del **canal y del perfil de destino** que de la escala; (4) un fin de semana sin faena exige cubrir 2–3 días calendario de despacho con stock o con entregas previas.
 
 ## 12. Logística conceptual
 
@@ -324,7 +392,7 @@ camiones de alimento/día  = t de alimento/día ÷ capacidad útil del camión d
 retiros de subproductos   = t de sólidos/día ÷ capacidad útil del contenedor/camión     (variable)
 ```
 
-**Lecturas:** (1) cada día operativo entran a la planta más toneladas vivas que las que salen como producto (29 t vs 24 t a 10.000 aves): la planta debe estar **cerca de las granjas** y el producto viaja al mercado (`03_produccion_primaria` §1, hallazgo 9); (2) el alimento es el **mayor flujo físico** de todo el sistema y ocurre en granjas, no en la planta; (3) en distribución, el número de viajes lo fija el **número de paradas** (90 locales vs un centro de distribución) más que las toneladas (DPV-036).
+**Lecturas:** (1) **localización respecto de las granjas: hipótesis a estudiar, no decisión.** La relación de masas (29 t vivas que entran contra 24 t comerciales que salen a 10.000 aves/día) **no es el argumento principal**. La ubicación relativa de planta y granjas se analizará después (`10_localizacion`, DEC-003) considerando tiempo de transporte de aves vivas, bienestar, mortalidad (DOA), merma de ayuno, bioseguridad, disponibilidad de productores, costo logístico, caminos, distancia a mercados, servicios, efluentes y exportación; (2) el alimento es el **mayor flujo físico** de todo el sistema y ocurre en granjas, no en la planta; (3) en distribución, el número de viajes lo fija el **número de paradas** (90 locales vs un centro de distribución) más que las toneladas (DPV-036).
 
 ## 13. Escala y exportación
 
@@ -370,20 +438,27 @@ Base del futuro simulador ([`especificacion_simulador_html.md`](especificacion_s
 | Plazas de granja | 120.507 · 144.609 | 241.014 · 289.217 | 482.029 · 578.435 | 964.058 · 1.156.870 |
 | m² de galpones | 9.486 · 11.383 | 18.971 · 22.766 | 37.943 · 45.531 | 75.885 · 91.062 |
 | Alimento t/año | 3.091 · 3.709 | 6.181 · 7.417 | 12.362 · 14.835 | 24.724 · 29.669 |
-| Producto comercial (A + B) t/día operativo | 6,0 | 12,0 | 24,0 | 47,9 |
-| — de él, producto principal (A) t/día | 3,7 | 7,4 | 14,7 | 29,5 |
+| Comestible: **masa biológica** t/día operativo | 5,78 | 11,55 | 23,11 | 46,22 |
+| Comestible: **agua retenida** en producto t/día operativo (no es carne) | 0,21 | 0,43 | 0,86 | 1,71 |
+| Comestible: **peso comercial** (= biológica + agua) t/día operativo | 5,99 | 11,98 | 23,96 | 47,93 |
+| Peso comercial, promedio por **día calendario** (t) | 4,1 · 4,9 | 8,2 · 9,8 | 16,4 · 19,7 | 32,8 · 39,4 |
+| Peso comercial por **año** (t) | 1.498 · 1.797 | 2.996 · 3.595 | 5.991 · 7.189 | 11.982 · 14.379 |
+| — de él, producto principal (A), peso comercial t/día operativo | 3,7 | 7,4 | 14,7 | 29,5 |
 | Plumas húmedas t/día | 0,6 | 1,2 | 2,4 | 4,8 |
 | Sangre recuperada t/día | 0,2 | 0,4 | 0,8 | 1,7 |
 | Vísceras no comestibles t/día | 0,3 | 0,7 | 1,3 | 2,6 |
 | Ritmo de línea a 8 h netas (aves/h) | 312 | 625 | 1.250 | 2.500 |
-| Inventario de 7 días de comestible (t) | 42 | 84 | 168 | 336 |
-| **Demanda necesaria para 100 %** (kg de producto/día calendario, M0) | 4.104 · 4.924 | 8.207 · 9.849 | 16.414 · 19.697 | 32.829 · 39.394 |
+| Inventario: 7 **días de producción** (t) | 42 | 84 | 168 | 336 |
+| Inventario: 7 **días calendario** de cobertura (t) | 29 · 34 | 57 · 69 | 115 · 138 | 230 · 276 |
+| **Demanda necesaria para 100 %** (kg de peso comercial/día calendario, M0) | 4.104 · 4.924 | 8.207 · 9.849 | 16.414 · 19.697 | 32.829 · 39.394 |
 | Demanda necesaria para 70 % | 2.872 · 3.447 | 5.745 · 6.894 | 11.490 · 13.788 | 22.980 · 27.576 |
 | **Equivalente por local** si toda la demanda viniera de los 90 locales (kg/local/día, 100 %) | 46 · 55 | 91 · 109 | 182 · 219 | 365 · 438 |
-| Comparación con escenarios de demanda (M0, 5 d) | Base la excede (183 %) | ≈ Base (91 %) | 2,2 × la base | ≈ 1,4 × el expansivo |
+| Frente a los escenarios (M0, 5 d): factor demanda/capacidad del escenario base | 183 % (no alcanza) | 91 % | 46 % | 23 % |
 | Complejidad operativa relativa | MENOR | MEDIA | MEDIA | MAYOR |
 
-**Cómo leer la "demanda necesaria":** es la **cota inferior** (ave completa vendida). Con mixes de supermercado, la demanda útil para llenar la planta es menor y aparecen partes excedentes (§4). El rango de la red por local es 25–300 kg/local/día ([`../02_clientes_demanda/supermercados.md`](../02_clientes_demanda/supermercados.md) §1): **20.000 aves/día exigirían más pollo por local que el extremo superior de ese rango**, aun vendiendo el ave completa por la red.
+**Masa biológica vs peso comercial:** la cifra de "producto comercial" es **peso comercial** después del enfriamiento por inmersión = masa biológica comestible (carne, piel, hueso de los cortes, menudencias, garras) + agua retenida en producto (~3,6 %; SUP-042), trazable al balance v1.1 (clases A + B). **El agua retenida nunca es carne producida** (test T20: la masa biológica es idéntica con 6 % u 8 % de absorción). La demanda se expresa en peso comercial (kg vendidos), por eso se compara con el peso comercial.
+
+**Cómo leer la "demanda necesaria":** es la **cota inferior** (ave completa vendida), en kg de peso comercial por día calendario (producción por día operativo × días operativos / 365). Con mixes de supermercado, la demanda útil para llenar la planta es menor y aparecen partes excedentes (§4). El rango de la red por local es 25–300 kg/local/día ([`../02_clientes_demanda/supermercados.md`](../02_clientes_demanda/supermercados.md) §1): **20.000 aves/día exigirían más pollo por local que el extremo superior de ese rango**, aun vendiendo el ave completa por la red.
 
 **Complejidad operativa relativa** (MENOR/MEDIA/MAYOR solo como orden físico): crece con el número de aves, lotes, productores, movimientos diarios y flujos de subproductos, todos ×8 entre 2.500 y 20.000. 5.000 y 10.000 comparten MEDIA porque el cambio de naturaleza (red de productores, flujo industrial de subproductos, frío con stock) aparece entre ambas sin un umbral físico claro.
 
@@ -400,7 +475,7 @@ Base del futuro simulador ([`especificacion_simulador_html.md`](especificacion_s
 
 Todas las variables son modificables en la línea de comandos (`--escenario`, §20). Ejemplo a **10.000 aves/día** (5 d, B, 100 % salvo indicación):
 
-| Caso | Aves/año | t vivas/año | Pollitos/semana plena | m² galpón | Alimento t/año | Comestible t/día | Producto principal t/día | Rendering potencial t/día | Días para 25 t de pata-muslo |
+| Caso | Aves/año | t vivas/año | Pollitos/semana plena | m² galpón | Alimento t/año | Comestible (peso comercial) t/día operativo | Producto principal t/día operativo | Rendering potencial t/día | Días para 25 t de pata-muslo |
 |---|---|---|---|---|---|---|---|---|---|
 | Base (2,9 kg; FCR 1,70; mort. 5 %) | 2.500.000 | 7.250 | 52.790 | 37.943 | 12.362 | 24,0 | 14,7 | 5,33 | 3,8 |
 | FCR 1,60 | = | = | = | = | 11.635 | = | = | = | = |
@@ -423,9 +498,9 @@ Todas las variables son modificables en la línea de comandos (`--escenario`, §
 
 ```
 python3 23_plan_expansion/modelo_escala.py                 # tests + CSV
-python3 23_plan_expansion/modelo_escala.py --solo-tests    # 17 pruebas (incluye las de los modelos importados)
+python3 23_plan_expansion/modelo_escala.py --solo-tests    # 23 pruebas (incluye las de los modelos importados)
 python3 23_plan_expansion/modelo_escala.py --tablas        # tablas de este documento
-python3 23_plan_expansion/modelo_escala.py --mutaciones    # 14 mutaciones que los tests deben detectar
+python3 23_plan_expansion/modelo_escala.py --mutaciones    # 22 mutaciones que los tests deben detectar
 python3 23_plan_expansion/modelo_escala.py --escenario --aves-dia 7500 --dias-semana 6 --dias-anio 290 \
     --horas-netas 8 --peso 3.1 --edad 50 --mortalidad 0.07 --fcr 1.78 --config C --utilizacion 0.6 \
     --dias-inventario 5 --demanda ESC-BAS                  # sensibilidad (no escribe CSV; emite alertas)
@@ -446,10 +521,11 @@ python3 23_plan_expansion/modelo_escala.py --escenario --aves-dia 7500 --dias-se
 
 | Columna | Contenido |
 |---|---|
-| `bloque` | `capacidad`, `ritmo_linea`, `produccion_primaria`, `abastecimiento`, `utilizacion`, `balance_productos`, `configuraciones`, `subproductos`, `inventario`, `logistica`, `exportacion`, `demanda_capacidad`, `tabla_central` |
+| `bloque` | `capacidad`, `ritmo_linea`, `produccion_primaria`, `abastecimiento`, `utilizacion`, `balance_productos`, `masa_comestible` (biológica / agua retenida / comercial por día operativo, día calendario y año), `configuraciones`, `subproductos`, `inventario`, `logistica`, `exportacion`, `demanda_capacidad`, `tabla_central` |
 | `escala_aves_dia` | Escala E (aves faenadas/día operativo a utilización 100 %) |
 | `dias_semana`, `dias_anio` | Calendario (5/250 o 6/300); nunca mezclados |
-| `parametro` | Parámetros de la fila (`utilizacion=`, `horas_netas=`, `dias_inventario=`, `perfil_destino=`, `config=`, `peso=`, `escenario=`, `metodo=`, `aves_por_camion=`) |
+| `parametro` | Parámetros de la fila (`utilizacion=`, `horas_netas=`, `base_temporal=` (`dias_produccion` o `dias_calendario`) y `dias=`, `perfil_destino=`, `config=`, `peso=`, `escenario=`, `metodo=`, `aves_por_camion=`) |
+| `variable` en `demanda_capacidad` | `factor_demanda_capacidad` (puede superar 100 %), `utilizacion_planta` y `cobertura_demanda` (siempre 0–100 %), `kg_atendidos_dia_cal`, `kg_no_atendidos_dia_cal`, `aves_procesadas_dia_operativo`, `aves_faltantes_dia_operativo`, `capacidad_ociosa_aves_dia_operativo`, `kg_sin_destino_plena_escala`, `demanda_adicional_para_llenar_kg_dia_cal`, `excedente_partes_kg_dia_cal` |
 | `variable`, `valor`, `unidad` | Variable física, valor y unidad (aves, aves/h, pollitos, plazas, t, kg, m², m³, galpones, %, ratio, días, contenedores/mes, camiones, productores, índice). Sin unidades monetarias (test T11). Valor vacío = variable pendiente (p. ej. `productores_necesarios`, DPV-048) |
 | `periodo` | `dia_operativo`, `dia_calendario`, `semana_plena`, `semana_promedio`, `anio`, `hora`, `stock`, `adimensional` |
 | `base` | `vivo`, `comercial` (biológica + agua retenida), `biologica`, `biologica+agua`, `aves`, `alimento`, `agua`, `superficie`, `conteo` |
@@ -458,6 +534,6 @@ python3 23_plan_expansion/modelo_escala.py --escenario --aves-dia 7500 --dias-se
 | `sumable` | `si` (partición que cierra), `no` (alternativa excluyente, agregado o entrada), `-` |
 | `nota` | Advertencias |
 
-**Tests (17) y mutaciones (14):** resultados en [`conclusiones_escala.md`](conclusiones_escala.md) §6.
+**Tests (23) y mutaciones (22):** resultados en [`conclusiones_escala.md`](conclusiones_escala.md) §6.
 
 **Limitaciones del modelo:** (1) todo es lineal en aves: no hay economías de escala físicas (rendimientos iguales en cualquier tamaño) ni estacionalidad; (2) peso en granja = peso en planta (la merma de ayuno queda fuera, SUP-058); (3) los días de 6 d/sem solo admiten 5 o 6 días/semana porque así lo define el modelo de producción; (4) los mixes de demanda son hipotéticos; (5) no incluye agua de proceso, efluentes, energía ni personal; (6) ningún dato es de campo argentino.

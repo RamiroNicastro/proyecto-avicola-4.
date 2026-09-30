@@ -23,7 +23,7 @@
 | I10 | Escenario de demanda | Conservador / Base / Expansivo / Manual (kg/día calendario) | Base | `02_clientes_demanda/escenarios_demanda.csv` (C/D) |
 | I11 | Método de conversión de la demanda | M0 ave completa / M1 / M2 / M3 | M0 y M2 lado a lado | SUP-054 |
 | I12 | Configuración comercial | A entero / B trozado / C deshuesado | B | SUP-050 (referencia, no decisión) |
-| I13 | Días de inventario | 1–30 | 3 refrigerado / 14 congelado | SUP-056 |
+| I13 | Días de inventario **y su base temporal** | 1–30 + selector: días de producción / días calendario de cobertura | 3 refrigerado / 14 congelado; base = días de producción | SUP-056 |
 | I14 | Perfil de destino | P1 / P2 / P3 / Manual (% refrigerado, congelado, exportación) | P1 | SUP-055 (ilustrativo) |
 | I15 | Modelo de abastecimiento | Propias / Integrados / Mixto (% propio) | Mixto 0 % propio | DEC-020 (sin ganador) |
 | I16 | m² por productor integrado | Numérico o vacío | **Vacío** (DPV-048) | Si está vacío, el output "productores" muestra "dato pendiente" |
@@ -37,13 +37,34 @@
 | Granjas | Plazas; m² de galpón; galpones equivalentes (1.200 / 2.400 m²); productores (si I16) | `produccion_primaria`, `abastecimiento` |
 | Alimento y agua | t/semana plena, t/año, alimento de un ciclo de crianza; agua de bebida | `produccion_primaria` |
 | Kg vivos | t vivas/día operativo y /año; ritmo de línea (aves/h y kg vivo/h) | `tabla_central`, `ritmo_linea` |
-| Productos | Producto principal, coproductos, comestible; detalle por parte (12 ítems + otros) | `balance_productos`, `configuraciones` |
+| Productos | Producto principal, coproductos, comestible, **siempre con su base de masa** (biológica / agua retenida / peso comercial); detalle por parte (12 ítems + otros) | `balance_productos`, `masa_comestible`, `configuraciones` |
 | Subproductos | Plumas, sangre, vísceras, cabezas, huesos, rendering potencial, sólidos a retirar | `subproductos` |
-| Capacidad utilizada | Utilización elegida vs utilización que justifica la demanda | `demanda_capacidad` |
-| Demanda faltante / excedente | Aves necesarias; kg sin destino a plena escala; demanda adicional para llenar; excedente de partes; demanda insatisfecha | `demanda_capacidad` |
-| Inventario | t por categoría (refrigerado, congelado, exportación, subproductos con frío) | `inventario` |
+| Demanda vs capacidad | Tres indicadores separados: **factor demanda/capacidad** (puede superar 100 %), **utilización de capacidad** (0–100 %), **cobertura de demanda** (0–100 %) | `demanda_capacidad` |
+| Demanda no atendida / capacidad ociosa | kg/día cal atendidos y **no atendidos**; aves faltantes; **capacidad ociosa** (aves/día operativo); kg sin destino a plena escala; demanda adicional para llenar; excedente de partes | `demanda_capacidad` |
+| Inventario | t por categoría (refrigerado, congelado, exportación, subproductos con frío), **en días de producción y en días calendario de cobertura** (dos números rotulados) | `inventario` |
 | Logística física | t/día de aves vivas, producto, subproductos, alimento; camiones (si I17) | `logistica` |
 | Exportación | Días de faena para 25 t por parte `[PVDP · débil]`; aviso "no es demanda" | `exportacion` |
+
+### 2.1 Variables que la interfaz nunca debe confundir
+
+Cada una se muestra como output **distinto**, con nombre, unidad y base temporal explícitos:
+
+| Output | Definición | Rango / unidad |
+|---|---|---|
+| **Utilización de capacidad** | aves procesadas / capacidad operativa | 0–100 % (nunca más) |
+| **Factor demanda/capacidad** | capacidad que requiere la demanda / capacidad instalada | 0 % a más de 100 % (>100 % = la escala no alcanza; <100 % = capacidad ociosa) |
+| **Cobertura de demanda** | producción posible / demanda requerida | 0–100 % |
+| **Demanda no atendida** | demanda × (1 − cobertura) | kg/día calendario |
+| **Capacidad ociosa** | capacidad × (1 − utilización) | aves/día operativo |
+| **Producción por día operativo** | lo que sale en un día de faena | t/día operativo |
+| **Producción promedio por día calendario** | producción anual / 365 | t/día calendario |
+| **Inventario en días de producción** | producción por día operativo × días | t (base: días de producción) |
+| **Inventario en días calendario** | despacho promedio por día calendario × días | t (base: días calendario) |
+| **Masa biológica** | carne y tejidos comestibles, sin agua | t |
+| **Agua incorporada** | agua retenida en producto (chiller); **no es carne** | t |
+| **Peso comercial** | masa biológica + agua retenida (lo que se vende) | t |
+
+Reglas de interfaz: (1) nunca rotular "utilización" a un valor mayor que 100 %; (2) toda cifra diaria lleva "por día operativo" o "por día calendario"; (3) la demanda (día calendario) y la producción (día operativo) solo se comparan convertidas, y la interfaz muestra la conversión (× días operativos / 365); (4) toda cifra de producto dice si es masa biológica o peso comercial; (5) todo inventario muestra su base temporal.
 
 ## 3. Pantallas / vistas
 
@@ -57,8 +78,8 @@
 | # | Condición | Mensaje |
 |---|---|---|
 | AL1 | Demanda documentada A + B = 0 | "La utilización que justifica la evidencia actual es 0 %. Los escenarios son hipótesis C/D." (siempre visible) |
-| AL2 | Utilización elegida > utilización requerida por la demanda | "Estás suponiendo más producción de la que la demanda del escenario justifica: habría kg sin destino." |
-| AL3 | Utilización requerida > 100 % | "La demanda del escenario excede la escala: faltan X aves/día." |
+| AL2 | Utilización elegida > utilización que permite la demanda (mín(factor; 100 %)) | "Estás suponiendo más producción de la que la demanda del escenario justifica: habría kg sin destino." |
+| AL3 | Factor demanda/capacidad > 100 % | "La demanda del escenario excede la escala: utilización 100 %, cobertura X %, Y kg/día calendario no atendidos (faltan Z aves/día operativo)." |
 | AL4 | Excedente de partes > 0 con método M1–M3 | "Aun con la planta llena, X kg/día de partes necesitan otros compradores." |
 | AL5 | Peso fuera de 2,0–3,8 kg | Bloqueo: el balance no extrapola (SUP-036) |
 | AL6 | Días/año > días/semana × 52,14 | Bloqueo |
@@ -95,8 +116,10 @@ Plantilla para que el usuario compare tres configuraciones completas (no confund
 | → Alimento t/año | | | |
 | → Producto principal · comestible (t/día) | | | |
 | → Rendering potencial (t/día) | | | |
-| → Utilización requerida por la demanda · kg sin destino | | | |
-| → Inventario (t) | | | |
+| → Factor demanda/capacidad · utilización · cobertura | | | |
+| → kg/día cal no atendidos · capacidad ociosa (aves/día op.) · kg sin destino | | | |
+| → Comestible: masa biológica · agua retenida · peso comercial | | | |
+| → Inventario (t): días de producción · días calendario | | | |
 | → t/día que entran y salen | | | |
 | → Alertas activas | | | |
 | CAPEX (USD) | *versión futura* | *versión futura* | *versión futura* |

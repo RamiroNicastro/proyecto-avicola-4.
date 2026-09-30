@@ -146,7 +146,10 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Escala (de planta) | En este proyecto, **aves efectivamente faenadas por día operativo** cuando la planta trabaja a su capacidad operativa (utilización 100 %). No son aves alojadas, cargadas ni vendidas (SUP-052). |
 | Capacidad nominal | Aves/día que la instalación podría procesar a su ritmo nominal de línea durante las horas netas previstas. Depende de los equipos. Siempre ≥ capacidad operativa. |
 | Capacidad operativa | Aves/día que la planta puede **sostener** con sus restricciones reales (personal, frío, efluentes, abastecimiento de aves, retiro de subproductos, cuello de botella). |
-| Utilización de capacidad | Aves realmente faenadas / capacidad operativa, promedio de un período. **Capacidad no es ventas.** |
+| Utilización de capacidad | Aves realmente faenadas / capacidad operativa, promedio de un período. **Siempre entre 0 y 100 %**: si la demanda excede la capacidad, la utilización es 100 % y el exceso es demanda no atendida. **Capacidad no es ventas.** |
+| Factor demanda/capacidad | Capacidad que requiere la demanda / capacidad instalada, en la misma base temporal. Puede superar 100 % (la escala no alcanza); por debajo de 100 % hay capacidad ociosa. **No es utilización.** |
+| Cobertura de demanda | Producción posible / demanda requerida, con tope de 100 %. Con factor 143 %, cobertura 70 %. |
+| Demanda no atendida / capacidad ociosa | Demanda no atendida: demanda × (1 − cobertura), en kg/día calendario. Capacidad ociosa: capacidad × (1 − utilización), en aves/día operativo. |
 | Ritmo de línea | Aves por hora que procesa la línea de faena: aves faenadas/día ÷ horas netas de faena. |
 | Horas de turno / horas netas de faena | Horas de turno: tiempo de trabajo organizado. Horas netas: tiempo en que la línea efectivamente recibe aves (turno menos arranque, pausas, limpieza intermedia, cambios y paradas). |
 | Cuello de botella | Operación de menor capacidad del sistema; fija la capacidad de toda la planta (puede ser la línea, el enfriamiento, el deshuese, el congelado, las cámaras, los efluentes o el abastecimiento de aves). |
@@ -158,4 +161,5 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Arquitectura de crecimiento | Secuencia de escalas, turnos, líneas y módulos por la que una planta pasa de su primera etapa a la final (`23_plan_expansion/arquitectura_escalable.md`). |
 | Gate (puerta) de expansión | Conjunto de métricas verificables que deben cumplirse antes de ampliar (demanda asegurada, utilización, pollitos, productores, frío, subproductos, capital, habilitación) (`23_plan_expansion/gates_expansion.md`). |
 | Parte limitante | Parte del ave cuya demanda fija cuántas aves hay que faenar; el resto de las partes queda como excedente a colocar en otros canales. Ver factor de mix. |
-| Inventario (días de producción) | Stock físico expresado como producción diaria × días; se separa en refrigerado, congelado, exportación y subproductos que requieren frío. |
+| Inventario en días de producción / en días calendario | Días de producción: producción por día operativo × días (jornadas de faena en stock). Días calendario de cobertura: despacho promedio por día calendario × días (días de venta cubiertos). Con 250 días de faena, 7 días calendario ≈ 4,8 días de producción. Siempre declarar la base. |
+| Peso comercial / masa biológica / agua retenida | Peso comercial: lo que se vende = masa biológica (carne y tejidos) + agua retenida en el chiller. El agua retenida **nunca** es carne producida (SUP-042). |
