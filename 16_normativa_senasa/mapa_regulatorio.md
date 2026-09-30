@@ -85,7 +85,7 @@
 
 ## 6. Decreto 697/2026 — Sistema Nacional de Control de Alimentos
 
-**Identificación:** Decreto 697/2026 (DECTO-2026-697-APN-PTE), "Código Alimentario Argentino", publicado en el Boletín Oficial el **2026-08-03** (FTE-09B-25). Según los extractos, modifica la reglamentación del Sistema Nacional de Control de Alimentos (el Decreto 815/1999 —vínculo citado por la prensa, **no verificado en el texto**). **Texto no leído** (argentina.gob.ar y Boletín Oficial bloqueados): todo lo siguiente es `[PVDP]`, basado en noticias oficiales y comentarios jurídicos coincidentes.
+**Identificación:** Decreto 697/2026 (DECTO-2026-697-APN-PTE), "Código Alimentario Argentino", publicado en el Boletín Oficial el **2026-08-03** (FTE-09B-25). **Modifica/complementa el Decreto 815/1999** (reglamentación del Sistema Nacional de Control de Alimentos): la ficha oficial del Decreto 697/2026 en argentina.gob.ar/normativa lo incluye expresamente en "Normas modificadas" (constatación informada por el promotor el 2026-09-30; el portal estuvo bloqueado para esta sesión). **Cuestión separada y abierta:** cómo impacta esa reforma en un frigorífico avícola regido también por el Decreto 4238/68 (§6.2, P-39). **Texto no leído** (argentina.gob.ar y Boletín Oficial bloqueados): todo lo siguiente es `[PVDP]`, basado en noticias oficiales y comentarios jurídicos coincidentes.
 
 ### 6.1 Qué cambia (según extractos)
 
