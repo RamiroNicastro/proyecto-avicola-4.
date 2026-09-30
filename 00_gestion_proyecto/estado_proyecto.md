@@ -27,7 +27,7 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 
 - **No** se realizan recomendaciones de inversión.
 - **No** se selecciona maquinaria ni proveedores (solo relevamiento).
-- **No** se fija capacidad de faena.
+- **No** se fija capacidad de faena (el modelo de escala de 2026-09-30 compara escenarios; no elige escala).
 
 ## Hitos
 
@@ -41,6 +41,7 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | — | Validación de demanda con datos de campo (red de supermercados y otros canales) | Pendiente: requiere el cuestionario y las tareas de `02_clientes_demanda/conclusiones_demanda.md` §6 |
 | 2026-09-30 | Balance de masa (`04_balance_masa`): definiciones (vivo, eviscerado, carcasa fría, RTC, comercial), balance por ave para 6 pesos, cortes y deshuese, menudencias, garras, plumas, sangre, vísceras, agua del chiller separada de la masa biológica, condenas y mermas, 3 configuraciones (entero / trozado / deshuesado), escalado 1 ave–20.000 aves/día y 1 M aves/año, clases A/B/C/D, modelo reproducible con 13 tests y protocolo de ensayo en planta | Completado v1.1 (**sin datos de planta argentinos**). Auditoría conceptual v1.1: sin doble contabilización; nomenclatura del agua corregida (agua incorporada a productos y subproductos ≠ agua de proceso de la planta); rutas alternativas exclusivas esqueleto/CMS; 21 tests sobre 1.008 balances con error ≤ 2 × 10⁻¹⁵ kg/ave. **Verificación documental primaria no realizada: acceso bloqueado (DPV-009)**. Calidad: MEDIA como modelo, BAJA como evidencia numérica |
 | 2026-09-30 | Mapa de productos, coproductos y subproductos (`06_productos`, `07_subproductos`): inventario de 39 salidas con kg/ave trazables al balance v1.1, clasificación económica condicional al comprador, productos de mercado interno y exportación, garras, menudencias, carcasa/CMS, piel y grasa, sangre, plumas, vísceras, cabeza y huesos, rendering (propio / tercerizado / venta directa), pet food, elaborados, matriz de valorización, índice de aprovechamiento del ave, árboles de rutas con 15 incompatibilidades, escalado 2.500–20.000 aves/día, lista maestra de precios y tareas de campo; generador con 9 tests | Completado v1.0 (**sin precios ni compradores**; normativa solo en extractos, DPV-009). Calidad: MEDIA como mapa y método, BAJA como evidencia comercial y normativa |
+| 2026-09-30 | Modelo preliminar de escala (`23_plan_expansion`, `05_proceso_industrial/capacidad_preliminar.md`): definición de capacidad (nominal / operativa / faenada / utilización), calendarios 250 y 300 días, ritmo de línea por horas netas, demanda vs capacidad con dos métodos (ave completa y parte limitante con balance v1.1), utilización 30–100 %, producción primaria importada, modelos de abastecimiento, balance de productos, configuraciones A/B/C, subproductos, inventario y logística conceptuales, exportación (lotes), modularidad, arquitecturas de crecimiento A–E, gates G0–G3, matriz sin ganador, especificación del simulador HTML v0.1 y guía; modelo reproducible que importa los modelos previos; auditoría conceptual v1.1 (utilización ≤ 100 % separada de factor demanda/capacidad y cobertura; día operativo vs calendario; inventario con dos bases; masa biológica vs peso comercial; segundo turno y sexto día; localización como hipótesis), 23 tests y 22 mutaciones detectadas | Completado v1.1 (**sin escala elegida, sin CAPEX/OPEX, sin datos de campo**). Calidad: MEDIA como modelo integrador, BAJA como evidencia para decidir la escala |
 | — | Escenarios CAPEX/OPEX y modelo financiero | Pendiente |
 | — | Informe de prefactibilidad | Pendiente |
 
@@ -108,6 +109,16 @@ Síntesis en [`../07_subproductos/conclusiones_valorizacion.md`](../07_subproduc
 - Lista maestra de 44 precios a obtener (interno, exportación, subproductos, servicios) y 10 tareas de campo por actor; DPV-070 a DPV-081.
 - **Alcance:** no se asignaron precios, no se eligió portafolio ni ruta, no se diseñó maquinaria ni se fijó escala.
 
+## Resultado del modelo preliminar de escala (2026-09-30)
+
+Síntesis en [`../23_plan_expansion/conclusiones_escala.md`](../23_plan_expansion/conclusiones_escala.md):
+
+- **Con la demanda documentada (~0) ninguna escala está justificada:** la utilización respaldada por evidencia es 0 %. Demanda necesaria para llenar 2.500 / 5.000 / 10.000 / 20.000 aves faenadas/día: **4,1 / 8,2 / 16,4 / 32,8 t de peso comercial por día calendario** (ave completa, 5 d/sem; +20 % con 6 d; = 6,0 / 12,0 / 24,0 / 47,9 t por día de faena × 250/365); equivalente a 46 / 91 / 182 / 365 kg/local/día si todo pasara por los 90 locales.
+- Contra los escenarios de prueba (factor demanda/capacidad; la utilización nunca supera 100 %): el **base** (7,5 t/día) excede 2.500 (factor 183–326 %, cobertura 31–55 %), ronda **5.000** (factor 91 % con ave completa; 124–163 % con mix de supermercado) y deja 10.000 con utilización 46–81 %; el **expansivo** (23,5 t/día) excede 10.000 (cobertura 39–70 %) y recién acerca 20.000 (factor 72–128 %). Aun con la planta llena, el mix deja **partes sin comprador** (3,0–6,7 t/día en el escenario base).
+- Físico (medio, 5 d): 13.200 / 26.400 / 52.800 / 105.600 pollitos BB por semana plena; 9.500–75.900 m² de galpón; 3.100–24.700 t de alimento/año; 312–2.500 aves/h a 8 h netas; 1,3–10,7 t/día de subproductos C (hasta 17,3 con deshuese); 42–336 t de comestible en 7 días de producción (29–230 t en 7 días calendario de cobertura).
+- El segundo turno es **capacidad teórica de la línea** (16 h netas) sujeta a verificar los demás cuellos de botella; el sexto día agrega ~20 % de **volumen anual** con la misma capacidad diaria; ninguno se afirma como crecimiento sin obra. La **escala mínima eficiente** (DPV-083) es un dato crítico pendiente: no se concluye que 2.500 sea chico ni 20.000 grande. La cercanía a granjas es una hipótesis a estudiar (DEC-003). Cinco arquitecturas de crecimiento y una matriz de ocho criterios **sin ganador** (DEC-033); gates con 18 variables medibles **sin umbrales** (DEC-034).
+- **Alcance:** no se eligió escala; no se calcularon CAPEX, OPEX ni precios; no se seleccionaron maquinaria, proveedores, layout ni localización; el HTML solo se especificó.
+
 ## Próximos pasos
 
 0. **No iniciar la fase siguiente hasta que el promotor lo indique** (instrucción 2026-09-29).
@@ -118,5 +129,7 @@ Síntesis en [`../07_subproductos/conclusiones_valorizacion.md`](../07_subproduc
 5. Producción primaria (realizada 2026-09-29). Pendiente: datos de campo de desempeño (DPV-044), productores integrables (DPV-048), pollito BB (DPV-047), normativa completa (DPV-046) y manuales genéticos (DPV-045); preguntas en `03_produccion_primaria/guia_ramiro.md`. El balance de masa se realizó el 2026-09-30 (punto 6).
 6. Balance de masa (realizado 2026-09-30). Pendiente: tablas genéticas de rendimiento (DPV-059), **ensayo en planta argentina** (DPV-060, DEC-028), normativa de agua y subproductos (DPV-061, DPV-066), decomisos (DPV-063), garras (DPV-064), rendering (DPV-065) y convenciones comerciales (DPV-068). El mapa de productos y subproductos se realizó el 2026-09-30 (punto 7). **No se iniciaron** maquinaria, layout ni escala óptima.
 7. Mapa de productos y subproductos (realizado 2026-09-30). Pendiente: precios y compradores reales por parte y subproducto (tareas F1–F10 de `07_subproductos/conclusiones_valorizacion.md` §9; DPV-070 a DPV-081), receptores de rendering en zonas candidatas (DPV-065) y verificación de normativa de CMS, harinas, pet food y decomisos (DPV-066, DPV-073, DPV-074). **No se iniciaron** modelo financiero, maquinaria, escala óptima ni layout.
+
+8. Modelo preliminar de escala (realizado 2026-09-30). Pendiente: datos **críticos antes de definir escala** — compras reales y mix de la red (DPV-003, DPV-037, DPV-085), evidencia de compromiso (DPV-002, DPV-020, DPV-038), canales para las partes excedentes (DPV-040, DPV-070), escala mínima eficiente (DPV-083), productores y pollitos (DPV-048, DPV-047) y faena a façon (DPV-006) — y calibración de gates (DEC-034). Lista priorizada en `23_plan_expansion/conclusiones_escala.md` §4. **No se iniciaron** CAPEX, OPEX, modelo financiero, maquinaria, layout, localización ni el HTML.
 
 Ver [`decisiones_pendientes.md`](decisiones_pendientes.md) y [`datos_por_validar.md`](datos_por_validar.md).
