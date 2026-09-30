@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 **Fase actual:** FASE 0 — DEFINICIÓN Y PREFACTIBILIDAD
-**Última actualización:** 2026-09-29
+**Última actualización:** 2026-09-30
 
 ## Situación de partida
 
@@ -39,7 +39,7 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | 2026-09-29 | Modelo de demanda comercial (`02_clientes_demanda`): categorías A/B/C/D, niveles de exportación 0–6, escenarios de la red (25–300 kg/local/día), mix, logística, concentración, precio-margen, marca, indicadores, cuestionario y tareas de campo | Completado v1 (marco, **sin datos de campo**). Calidad: MEDIA como método, BAJA como evidencia cuantitativa |
 | 2026-09-29 | Estudio de producción primaria (`03_produccion_primaria`): ciclo productivo, rangos de edad/peso/FCR/mortalidad, densidad y bienestar, galpones, energía y clima, alimento y agua, bioseguridad, transporte de aves vivas, modelos propio/integrado/compra/mixto, pollito BB, KPIs, escenarios físicos (72) con modelo documentado y guía para el responsable | Completado v1.1 (marco y escenarios, **sin datos de campo**; auditoría del modelo físico con corrección de pollitos/semana y galpones +4,3 % y pruebas automáticas). **Verificación documental primaria no realizada: acceso bloqueado (DPV-009)**. Calidad: MEDIA como marco y modelo físico, BAJA como evidencia de campo argentina |
 | — | Validación de demanda con datos de campo (red de supermercados y otros canales) | Pendiente: requiere el cuestionario y las tareas de `02_clientes_demanda/conclusiones_demanda.md` §6 |
-| — | Balance de masa preliminar (`04_balance_masa`) | Pendiente |
+| 2026-09-30 | Balance de masa (`04_balance_masa`): definiciones (vivo, eviscerado, carcasa fría, RTC, comercial), balance por ave para 6 pesos, cortes y deshuese, menudencias, garras, plumas, sangre, vísceras, agua del chiller separada de la masa biológica, condenas y mermas, 3 configuraciones (entero / trozado / deshuesado), escalado 1 ave–20.000 aves/día y 1 M aves/año, clases A/B/C/D, modelo reproducible con 13 tests y protocolo de ensayo en planta | Completado v1.1 (**sin datos de planta argentinos**). Auditoría conceptual v1.1: sin doble contabilización; nomenclatura del agua corregida (agua incorporada a productos y subproductos ≠ agua de proceso de la planta); rutas alternativas exclusivas esqueleto/CMS; 21 tests sobre 1.008 balances con error ≤ 2 × 10⁻¹⁵ kg/ave. **Verificación documental primaria no realizada: acceso bloqueado (DPV-009)**. Calidad: MEDIA como modelo, BAJA como evidencia numérica |
 | — | Escenarios CAPEX/OPEX y modelo financiero | Pendiente |
 | — | Informe de prefactibilidad | Pendiente |
 
@@ -82,6 +82,19 @@ Síntesis en [`../03_produccion_primaria/conclusiones_produccion.md`](../03_prod
 - Riesgos críticos: IAAP, golpe de calor y fallas eléctricas, pollito BB concentrado, disponibilidad de integrados.
 - Modelos de abastecimiento (propio / integrado / compra / mixto) comparados **sin ganador** (DEC-020). No se asume granja ni incubadora propia (SUP-034).
 
+## Resultado del balance de masa (2026-09-30)
+
+Síntesis en [`../04_balance_masa/conclusiones_balance.md`](../04_balance_masa/conclusiones_balance.md):
+
+- Pollo de 2,9 kg (medio): carcasa eviscerada sin cuello ni menudencias **2,07 kg (71,5 %)**; rango 70,0–72,7 % según escenario y 70,2–72,6 % entre 2,2 y 3,5 kg. Con cuello y menudencias 77,9 %: **el "rendimiento" siempre debe declararse con su definición**.
+- Cortes (medio, % de la carcasa apta): pechuga con hueso 38,5 %, pata-muslo 31,0 %, alas 10,2 %, carcasa-esqueleto 19,3 %; filet (suprema + solomillo) 20,5 % del peso vivo.
+- Subproductos por ave: plumas 0,151 kg (0,241 kg húmedas), sangre 0,099 kg (85 % recuperable), cabeza 0,072 kg, vísceras no comestibles 0,165 kg, garras vendibles 0,101 kg, menudencias + cuello 0,185 kg.
+- **Agua:** el chiller por inmersión agrega ~0,086 kg vendidos por ave (4 % del peso comercial); entre inmersión y aire hay 0,122 kg/ave (6 %) de diferencia. El agua se contabiliza aparte y nunca como carne (SUP-042).
+- Entero / trozado / deshuesado: comestible 2,32 / 2,31 / 1,98 kg por ave; **sin ganador** (DEC-005). El peso cambia el mix de forma no lineal (DEC-021).
+- 10.000 aves/día de 2,9 kg: 29 t/día de pollo vivo → 14,8 t/día de productos principales trozados, 9,2 t/día de coproductos, 5,3 t/día de subproductos, 1,3 t/día de residuos (masa del ave; no incluye el agua de proceso de la planta). **Escenario, no escala.**
+- Nuevas decisiones: método de enfriamiento (DEC-026), destino de subproductos (DEC-027), ensayo de balance en planta (DEC-028).
+- **Alcance:** es un balance de masa del ave y sus productos; **no dimensiona el consumo industrial de agua ni el caudal de efluentes**, ni energía, ni economía, ni maquinaria. Auditoría conceptual en [`../04_balance_masa/auditoria_balance.md`](../04_balance_masa/auditoria_balance.md).
+
 ## Próximos pasos
 
 0. **No iniciar la fase siguiente hasta que el promotor lo indique** (instrucción 2026-09-29).
@@ -89,6 +102,7 @@ Síntesis en [`../03_produccion_primaria/conclusiones_produccion.md`](../03_prod
 2. Verificación documental primaria de las cifras de mercado (requiere acceso de red o descarga manual) y completado de series (DPV-009, DPV-010, DPV-013, DPV-021).
 3. Relevamiento de faena a façon y pollito BB; seguimiento del concurso de GTA sin supuestos (DPV-006, DPV-016).
 4. ~~Sesión específica de estrategia exportadora~~ (realizada 2026-09-29). Pendiente: información de campo de exportación (DPV-024, DPV-026, DPV-027, DPV-032) y verificación de acceso por país (DPV-031).
-5. Producción primaria (realizada 2026-09-29). Pendiente: datos de campo de desempeño (DPV-044), productores integrables (DPV-048), pollito BB (DPV-047), normativa completa (DPV-046) y manuales genéticos (DPV-045); preguntas en `03_produccion_primaria/guia_ramiro.md`. **No se inició** el balance de masa, el dimensionamiento del frigorífico ni la maquinaria.
+5. Producción primaria (realizada 2026-09-29). Pendiente: datos de campo de desempeño (DPV-044), productores integrables (DPV-048), pollito BB (DPV-047), normativa completa (DPV-046) y manuales genéticos (DPV-045); preguntas en `03_produccion_primaria/guia_ramiro.md`. El balance de masa se realizó el 2026-09-30 (punto 6).
+6. Balance de masa (realizado 2026-09-30). Pendiente: tablas genéticas de rendimiento (DPV-059), **ensayo en planta argentina** (DPV-060, DEC-028), normativa de agua y subproductos (DPV-061, DPV-066), decomisos (DPV-063), garras (DPV-064), rendering (DPV-065) y convenciones comerciales (DPV-068). **No se iniciaron** productos/precios, maquinaria ni layout.
 
 Ver [`decisiones_pendientes.md`](decisiones_pendientes.md) y [`datos_por_validar.md`](datos_por_validar.md).
