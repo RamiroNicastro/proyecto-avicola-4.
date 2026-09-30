@@ -19,6 +19,7 @@
 | [`modelos_integracion.md`](modelos_integracion.md) | Granjas propias vs integrados vs compra vs mixto; pollito BB, incubadoras, contratos y riesgos |
 | [`kpis_productivos.md`](kpis_productivos.md) | Indicadores, fórmulas, rangos orientativos y uso gerencial |
 | [`guia_ramiro.md`](guia_ramiro.md) | Conceptos, indicadores y preguntas para el responsable del proyecto |
+| [`cuestionario_productores.md`](cuestionario_productores.md) | (2026-09-30) Cuestionario de campo para productores: capacidad, desempeño, insumos, bioseguridad, contratos, reparto de costos productor/integrador y registro de 6–12 crianzas |
 | [`escenarios_produccion.csv`](escenarios_produccion.csv) | 72 escenarios físicos (4 plantas de 2.500–20.000 aves faenadas/día × 2 regímenes de faena × 3 perfiles × 3 desempeños). **ESCENARIOS, no diseño** |
 | [`modelo_escenarios_produccion.py`](modelo_escenarios_produccion.py) | Modelo que genera el CSV: fórmulas, parámetros, fuentes y verificación de balances (`python3 modelo_escenarios_produccion.py --tablas`) |
 

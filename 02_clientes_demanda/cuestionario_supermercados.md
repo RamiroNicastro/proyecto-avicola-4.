@@ -2,6 +2,8 @@
 
 **Fecha:** 2026-09-29 · **Versión:** 1 · Uso: entrevista con el potencial inversor y con los responsables de compras y logística de la red. Contexto: [`supermercados.md`](supermercados.md).
 
+> El bloque 0 se cubre en la reunión con inversores ([`../24_inversores/cuestionario_maestro_inversores.md`](../24_inversores/cuestionario_maestro_inversores.md)); la escala de evidencia comercial E1–E6 está en [`plan_validacion_comercial.md`](plan_validacion_comercial.md) (2026-09-30).
+
 **Objetivo:** pasar la red de categoría C condicionada a C firme, B o A ([`modelo_demanda.md` §1](modelo_demanda.md)) con datos verificables. **No** es una negociación comercial ni implica compromiso de ninguna de las partes.
 
 ---

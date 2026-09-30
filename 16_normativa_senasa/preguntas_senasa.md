@@ -2,6 +2,7 @@
 
 **Fecha:** 2026-09-30 · **Versión:** 1.0 · Sesión 09B · **No** es el cuestionario de inversores (se mantiene separado).
 
+> Versión corta para una primera reunión (12 preguntas): [`preguntas_senasa_ejecutivas.md`](preguntas_senasa_ejecutivas.md).
 > Objetivo de la reunión: salir sabiendo **categoría exacta de planta, procedimiento, planos/documentación, inspección, exportación, subproductos, CMS, agua, frío, trazabilidad y plazos orientativos**.
 > Antes de la reunión: llevar anteproyecto conceptual (sin layout cerrado), escalas en estudio (2.500–20.000 aves/día como **escenarios**, no capacidad decidida) y la lista de productos posibles (entero, trozado, deshuesado, menudencias, garras, CMS, elaborados).
 > Registrar en cada respuesta: quién respondió (cargo), fecha, norma citada (número/año), y si es criterio escrito u opinión. Una respuesta verbal **no** equivale a verificación documental.

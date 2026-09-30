@@ -16,6 +16,7 @@
 | [`modelo_subproductos.py`](modelo_subproductos.py) | Generador del CSV y tests de trazabilidad |
 | [`guia_ramiro.md`](guia_ramiro.md) | Guía breve para explicar el tema |
 | [`conclusiones_valorizacion.md`](conclusiones_valorizacion.md) | Síntesis, lista maestra de precios, tareas de campo, riesgos y evaluación |
+| [`cuestionario_subproductos.md`](cuestionario_subproductos.md) | (2026-09-30) Preguntas para rendering, pet food, traders de garras y compradores de carcasa, CMS y menudencias; grilla por material (compra / gratis / cobra, precio, volumen, frecuencia, presentación, temperatura, calidad, transporte, contrato) |
 
 ## Documentación del modelo (regla 15)
 

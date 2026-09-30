@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 **Fase actual:** FASE 0 — DEFINICIÓN Y PREFACTIBILIDAD
-**Última actualización:** 2026-09-30 (reconciliación de las sesiones paralelas 09A–09D: [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md))
+**Última actualización:** 2026-09-30 (plan de validación de campo: [`plan_trabajo_campo.md`](plan_trabajo_campo.md); antes, reconciliación de las sesiones 09A–09D: [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md))
 
 ## Situación de partida
 
@@ -32,7 +32,7 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | Agua y efluentes (`11`) | **Completado** v1.1 (modelo de utilities, 30 tests) | Pendiente — agua, vuelco, DQO/DBO/SST, lodos | [`conclusiones_agua_efluentes.md`](../11_agua_efluentes/conclusiones_agua_efluentes.md) |
 | Energía y frío (`12`) | **Completado** v1.1 (mismo modelo; pico, carga frigorífica total y generador PENDIENTES) | Pendiente — lista de cargas, balance frigorífico | [`conclusiones_energia_frio.md`](../12_energia_frio/conclusiones_energia_frio.md) |
 | Simulador HTML v0.1 (`23/simulador_html`) | **Construido** v0.1 (20/20 validaciones; sin economía) | No aplica (interfaz de modelos) | [`simulador_html/README.md`](../23_plan_expansion/simulador_html/README.md) |
-| Trabajo de campo (demanda, plantas, proveedores, SENASA, sitios) | — | **Pendiente** | [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md) §11 |
+| Trabajo de campo (demanda, plantas, proveedores, SENASA, sitios) | **Plan completado** v1.0 (115 DPV priorizados N1–N4, instrumentos, orden de trabajo; sin evidencia recolectada) | **Pendiente** — ningún actor contactado | [`plan_trabajo_campo.md`](plan_trabajo_campo.md) |
 | Localización (`10`) | **Pendiente** (no iniciado) | Pendiente | — |
 | Logística detallada (`13`) | **Pendiente** (no iniciado) | Pendiente | — |
 | Layout y obra civil (`09`) | **Pendiente** (no iniciado) | Pendiente | — |
@@ -77,6 +77,7 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | 2026-09-30 | Agua, efluentes, energía y frío (`11_agua_efluentes`, `12_energia_frio`; sesión 09C): modelo **top-down de sensibilidad** de cinco aguas, efluente por dos métodos, lodos (pendiente), energía, térmico, frío, congelado y respaldo; `modelo_utilities.py` v1.1 | **Modelo preliminar completado** v1.1 (30 tests; 20 mutaciones). Potencia pico, pico térmico, carga frigorífica total, lodos y grupo electrógeno **PENDIENTES**. **Evidencia de campo pendiente.** Calidad: MEDIA como método, BAJA como evidencia |
 | 2026-09-30 | Simulador HTML v0.1 (`23_plan_expansion/simulador_html`; sesión 09D) | **Construido.** Reproduce los modelos físicos aprobados (4.224 cifras de `escenarios_escala.csv` sin diferencias; 20/20 validaciones; prueba en navegador 16/16); funciona offline (`file://`, sin CDN); comparador A/B/C; **sin economía** (CAPEX, OPEX, EBITDA, VAN, TIR y payback pendientes); no integra todavía proceso (09A) ni utilities (09C) |
 | 2026-09-30 | Reconciliación de las sesiones 09A–09D en los registros maestros | Completada: 17 SUP, 28 DPV, 13 DEC y 75 FTE nuevos; 15 IDs provisionales consolidados en registros existentes o fusionados entre sí (ninguno duplicado); tensiones abiertas registradas sin resolver. Ver [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md) |
+| 2026-09-30 | Plan de validación de campo (`00_gestion_proyecto`, `24_inversores` y cuestionarios por carpeta): 115 DPV clasificados en N1–N4 (18 / 53 / 11 / 33) con actor, método, evidencia requerida, decisión que desbloquea y consecuencia; matriz de validación; cuestionario maestro y ejecutivo (20 preguntas) para inversores y minuta; plan de validación comercial con escala de evidencia E1–E6; cuestionarios de productores, incubadoras y subproductos; guía de visita a plantas; plan de RFQ con plantilla de comparación por capas de costo; preguntas ejecutivas a SENASA; ficha de terreno; data room; guía de recolección de evidencia; orden de trabajo en olas O0–O9 con hitos H-A / H-B / H-C | **Plan completado.** Ningún DPV validado, ninguna decisión cerrada, ninguna cotización pedida. Trabajo de campo **no iniciado** |
 | — | Escenarios CAPEX/OPEX y modelo financiero | Pendiente |
 | — | Informe de prefactibilidad | Pendiente |
 
@@ -188,10 +189,20 @@ Documentación en [`../23_plan_expansion/simulador_html/README.md`](../23_plan_e
 - **Sin economía:** CAPEX, OPEX, EBITDA, VAN, TIR y payback **pendientes** (pestaña deshabilitada). No integra todavía la capacidad de proceso (09A), utilities (09C), gates ni localización.
 - Umbrales de alerta de interfaz — **no son límites industriales validados**: utilización < 50 % (umbral visual ilustrativo), inventario ≥ 7 días (umbral visual ilustrativo), FCR ±0,15 (criterio de interfaz), ganancia diaria ±15 % (criterio de interfaz). Registrados en la anotación de SUP-060.
 
+## Plan de validación de campo (2026-09-30)
+
+Síntesis en [`plan_trabajo_campo.md`](plan_trabajo_campo.md); matriz en [`matriz_validacion_campo.csv`](matriz_validacion_campo.csv):
+
+- **Qué bloquea hoy la decisión (N1, 18 DPV):** capital y relación inversor–red (DPV-001, 038); acceso, locales, volumen, mix, fresco/congelado, proveedor actual, logística y condiciones de la red (DPV-002, 018, 003, 037, 085, 020, 036, 039); otros canales y precios de cortes y coproductos (DPV-040, 013, 070); façon, pollito, productores y costo del pollo vivo (DPV-006, 047, 048, 019); escala mínima eficiente (DPV-083). Diez de ellos dependen de la relación grupo inversor → red.
+- **Orden de trabajo:** O0 preparación (góndola, carnicería, descargas) → **O1 inversores y red** (resuelve 10 N1) → O2 otros canales y precios (en paralelo) → O3 frigoríficos (façon y datos reales de proceso) → O4 productores e incubadoras → O5 subproductos → O6 SENASA → O7 maquinaria (sin cotizar hasta el hito H-B) → O8 terrenos. Exportación (O9) posterior.
+- **Hitos de decisión del campo** (sin umbrales numéricos): H-A capital y ancla; H-B rango de escala y abastecimiento; H-C insumos para CAPEX/OPEX.
+- **Instrumentos:** reunión única con inversores (maestro + 20 preguntas ejecutivas + minuta), plan comercial con escala E1–E6 (el interés verbal no es demanda), cuestionarios de productores (registro de 6–12 crianzas), incubadoras y subproductos, guía y hoja de visita a plantas, plan de RFQ con comparación por capas de costo (EXW/FOB ≠ instalado y en marcha), 12 preguntas a SENASA, ficha de terreno, data room fuera del repositorio.
+- **Alcance:** no se investigaron tecnologías nuevas ni se construyeron modelos; no se inició localización, logística, layout, CAPEX ni OPEX.
+
 ## Próximos pasos
 
 0. **No iniciar la fase siguiente hasta que el promotor lo indique** (instrucción 2026-09-29).
-1. Validación de demanda de campo: aplicar el cuestionario a la red y al potencial inversor y ejecutar las tareas priorizadas de `02_clientes_demanda/conclusiones_demanda.md` §6 (DPV-002, DPV-003, DPV-018, DPV-020, DPV-036 a DPV-040). Evaluar una etapa de validación comercial previa a la inversión (DEC-018).
+1. Validación de demanda de campo: aplicar el cuestionario a la red y al potencial inversor y ejecutar las tareas priorizadas de `02_clientes_demanda/conclusiones_demanda.md` §6 (DPV-002, DPV-003, DPV-018, DPV-020, DPV-036 a DPV-040). Evaluar una etapa de validación comercial previa a la inversión (DEC-018). *Actualización 2026-09-30:* el trabajo de campo completo quedó ordenado en [`plan_trabajo_campo.md`](plan_trabajo_campo.md); **primer paso: la reunión con el padre de Ramiro y los inversores** ([`../24_inversores/cuestionario_ejecutivo_inversores.md`](../24_inversores/cuestionario_ejecutivo_inversores.md)) y, en paralelo, las tareas de inicio inmediato (§5.4 del plan).
 2. Verificación documental primaria de las cifras de mercado (requiere acceso de red o descarga manual) y completado de series (DPV-009, DPV-010, DPV-013, DPV-021).
 3. Relevamiento de faena a façon y pollito BB; seguimiento del concurso de GTA sin supuestos (DPV-006, DPV-016).
 4. ~~Sesión específica de estrategia exportadora~~ (realizada 2026-09-29). Pendiente: información de campo de exportación (DPV-024, DPV-026, DPV-027, DPV-032) y verificación de acceso por país (DPV-031).

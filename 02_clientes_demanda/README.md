@@ -20,3 +20,4 @@
 | [`canales_comerciales.md`](canales_comerciales.md) | Otros canales locales |
 | [`estrategia_comercial.md`](estrategia_comercial.md) | Concentración, precio y margen, marca, indicadores |
 | [`conclusiones_demanda.md`](conclusiones_demanda.md) | Conclusiones, riesgos, tareas de campo, datos faltantes |
+| [`plan_validacion_comercial.md`](plan_validacion_comercial.md) | (2026-09-30) Plan de validación de demanda por actor, escala de evidencia comercial E1–E6, relevamiento de góndola y pipeline; parte del [plan de trabajo de campo](../00_gestion_proyecto/plan_trabajo_campo.md) |

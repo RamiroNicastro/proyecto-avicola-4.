@@ -18,6 +18,7 @@
 | [`subproductos_normativa.md`](subproductos_normativa.md) | Destinos regulatorios de sangre, plumas, vísceras, huesos, grasa, CMS, pet food, decomisos |
 | [`ruta_critica_habilitacion.md`](ruta_critica_habilitacion.md) | Reglas de precedencia y decisiones irreversibles |
 | [`preguntas_senasa.md`](preguntas_senasa.md) | Preguntas técnicas para SENASA / asesor (7 prioritarias en §0) |
+| [`preguntas_senasa_ejecutivas.md`](preguntas_senasa_ejecutivas.md) | (2026-09-30) Versión corta de 12 preguntas para una primera reunión, con hoja de registro de respuestas |
 | [`guia_ramiro.md`](guia_ramiro.md) | Explicación en lenguaje simple |
 | [`matriz_regulatoria.csv`](matriz_regulatoria.csv) | Matriz de 64 requisitos |
 | [`actualizaciones_gestion_09B.md`](actualizaciones_gestion_09B.md) | **Histórico:** propuestas de la sesión paralela, ya integradas por la reconciliación 09 ([`../00_gestion_proyecto/reconciliacion_sesiones_09.md`](../00_gestion_proyecto/reconciliacion_sesiones_09.md)) |
