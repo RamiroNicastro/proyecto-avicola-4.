@@ -19,7 +19,7 @@ Responder primero estas siete; reemplazan o precisan preguntas anteriores (indic
 | **P-41** | ¿Qué documentación municipal/provincial **ya no debe presentarse** ante SENASA tras la Res. 233/2026 y cuál **sigue siendo obligatoria ante la autoridad local** (uso de suelo, habilitación municipal, ambiental, vuelco, bomberos)? (precisa P-08) | Contradicción C1 |
 | **P-42** | ¿Qué **aplicación concreta** tiene hoy la Ley 22.375 (habilitaciones provinciales/municipales, tránsito federal) frente a las reformas 2025–2026 y al Decreto 697/2026? (reemplaza P-01) | DEC-009 |
 | **P-43** | ¿Qué **excepciones al Plan APPCC** (Res. 205/2014) existen, si existen, para una planta avícola o para alguno de sus rubros? ¿Qué verifica SENASA en el plan de una planta nueva? (reemplaza P-16) | Programas obligatorios |
-| **P-44** | ¿Cuál es el **plazo real actual desde anteproyecto hasta habilitación operativa** de un frigorífico avícola, según casos recientes? (reemplaza P-35) | DPV-086, DPV-09B-13 |
+| **P-44** | ¿Cuál es el **plazo real actual desde anteproyecto hasta habilitación operativa** de un frigorífico avícola, según casos recientes? (reemplaza P-35) | DPV-086, DPV-086 |
 | **P-45** | ¿Existe una instancia **formal o informal** de revisión del anteproyecto **antes de construir**? ¿Con qué documentación y qué valor tiene su respuesta? (reemplaza P-04) | Ruta crítica R3/R10 |
 
 ## A. Categoría de planta y marco legal

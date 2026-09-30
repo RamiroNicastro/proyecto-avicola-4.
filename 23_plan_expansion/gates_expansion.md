@@ -75,4 +75,4 @@ Disparar la ampliación en el mes t si:
 ## 5. Pendiente
 
 - Calibrar umbrales x, y, z, α, período de medición y márgenes (DEC-034) cuando haya: datos de la red (DPV-003, DPV-037), escala mínima eficiente (DPV-083), plazos de ampliación (DPV-086) y modelo financiero.
-- Integrar los gates al futuro simulador como **alertas**, no como decisiones automáticas ([`especificacion_simulador_html.md`](especificacion_simulador_html.md) §4).
+- Integrar los gates al simulador (v0.1 construido **sin** gates; AL11 propuesto para v0.5) como **alertas**, no como decisiones automáticas ([`especificacion_simulador_html.md`](especificacion_simulador_html.md) §4).

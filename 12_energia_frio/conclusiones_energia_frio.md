@@ -2,6 +2,7 @@
 
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C) · Base: [`demanda_energia.md`](demanda_energia.md), [`sistema_frio.md`](sistema_frio.md), [`congelado_almacenamiento.md`](congelado_almacenamiento.md), [`respaldo_energia.md`](respaldo_energia.md); modelo [`../11_agua_efluentes/modelo_utilities.py`](../11_agua_efluentes/modelo_utilities.py) v1.1 y CSV [`../11_agua_efluentes/escenarios_utilities.csv`](../11_agua_efluentes/escenarios_utilities.csv)
 
+> **Reconciliación 2026-09-30:** los IDs provisionales de esta sesión fueron reemplazados por definitivos y sus supuestos, datos por validar, decisiones y fuentes se integraron en los registros centrales ([`../00_gestion_proyecto/reconciliacion_sesiones_09.md`](../00_gestion_proyecto/reconciliacion_sesiones_09.md)). Donde este documento dice que los registros centrales no se modificaron, describe el estado de la sesión original.
 > **Modelo top-down de sensibilidad.** Ninguna cifra es especificación de diseño. **No** se eligen fuente térmica, refrigerante, sistema de frío, generador ni proveedores; **no** se calculan CAPEX, OPEX ni m² de cámara; **no** se elige sitio. Toda cifra externa es `[PVDP]`; ninguna es argentina medida.
 > Tabla física por escala, auditoría v1.1, integración con 09A, incertidumbres, qué medir/cotizar, tests y calidad: [`../11_agua_efluentes/conclusiones_agua_efluentes.md`](../11_agua_efluentes/conclusiones_agua_efluentes.md) (no se duplican aquí).
 

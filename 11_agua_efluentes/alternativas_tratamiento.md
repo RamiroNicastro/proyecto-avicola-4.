@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C) · Fase 0
 
-> **Alcance:** comparación **conceptual** de pretratamientos, tratamientos biológicos y manejo de lodos. **No se elige tecnología**, no se dimensionan unidades, no se selecciona proveedor ni se calcula CAPEX/OPEX. Las eficiencias citadas son `[PVDP]` (FTE-09C-05, 09C-12, 09C-13). Cargas por escala: [`caracterizacion_efluentes.md` §4](caracterizacion_efluentes.md).
+> **Alcance:** comparación **conceptual** de pretratamientos, tratamientos biológicos y manejo de lodos. **No se elige tecnología**, no se dimensionan unidades, no se selecciona proveedor ni se calcula CAPEX/OPEX. Las eficiencias citadas son `[PVDP]` (FTE-256, FTE-263, FTE-264). Cargas por escala: [`caracterizacion_efluentes.md` §4](caracterizacion_efluentes.md).
 
 ---
 
@@ -32,22 +32,22 @@ La primera "etapa de tratamiento" es **no ensuciar el agua**: cada kg de sangre,
 | **Separación de sólidos** (sedimentador, hidrociclón) | Separa arena y sólidos sedimentables | SST sedimentables | Útil si hay transporte hidráulico o lavado de camiones | Genera lodo primario |
 | **Recuperación de grasas** (trampa, desnatador) | Separa grasa libre flotante | Grasas libres | Protege cañerías y el biológico; la grasa puede ir a rendering | Mantenimiento frecuente; olor |
 | **Ecualización** (tanque homogeneizador) | Amortigua picos de caudal, carga, pH y temperatura (vaciado del escaldador, limpieza con químicos) | Nada por sí sola: **estabiliza** | Muy relevante: la planta descarga en ~12 h y con pulsos; el biológico prefiere caudal y carga constantes | Volumen ≈ fracción del caudal diario (no se dimensiona); aireación/mezcla para evitar olores |
-| **DAF** (flotación por aire disuelto, a menudo con coagulante/floculante) | Burbujas finas flotan grasas y sólidos finos | DBO 30–90 %, DQO 70–80 %, SST 38–70 %, grasas 63–95 % (FTE-09C-05 `[PVDP]`) | Estándar en plantas cárnicas; reduce mucho la carga al biológico | Genera **flotado** (lodo) con 10–15 % de sólidos (FTE-09C-13); consumo de químicos y energía; la **DQO soluble** (sangre) no se remueve |
-| Otros: coagulación química, electrocoagulación, membranas (UF/ósmosis) | Remoción avanzada / reúso | Alta | Aparecen en revisiones recientes (FTE-09C-05); membranas orientadas a **reúso** | Costo, ensuciamiento; no se evalúan en esta fase |
+| **DAF** (flotación por aire disuelto, a menudo con coagulante/floculante) | Burbujas finas flotan grasas y sólidos finos | DBO 30–90 %, DQO 70–80 %, SST 38–70 %, grasas 63–95 % (FTE-256 `[PVDP]`) | Estándar en plantas cárnicas; reduce mucho la carga al biológico | Genera **flotado** (lodo) con 10–15 % de sólidos (FTE-264); consumo de químicos y energía; la **DQO soluble** (sangre) no se remueve |
+| Otros: coagulación química, electrocoagulación, membranas (UF/ósmosis) | Remoción avanzada / reúso | Alta | Aparecen en revisiones recientes (FTE-256); membranas orientadas a **reúso** | Costo, ensuciamiento; no se evalúan en esta fase |
 
 ## 3. Tratamiento biológico — comparación conceptual
 
 | Criterio | **Lagunas anaerobias** (abiertas o cubiertas) | **Reactores anaerobios** (UASB, EGSB, filtros) | **Lagunas aireadas / facultativas** | **Lodos activados / SBR** (reactores aerobios) | **Combinación anaerobio + aerobio** |
 |---|---|---|---|---|---|
 | Terreno | **Muy alto** (grandes superficies) | Bajo | Alto | Bajo–medio | Medio |
-| Carga que tolera | Alta; robustas a variaciones | Alta (hasta 7–11 kg DQO/m³·día a 20–30 °C en ensayos, FTE-09C-12); sensibles a grasas y SST (necesitan buen DAF) | Media | Media; sensibles a picos (necesitan ecualización) | Alta |
+| Carga que tolera | Alta; robustas a variaciones | Alta (hasta 7–11 kg DQO/m³·día a 20–30 °C en ensayos, FTE-263); sensibles a grasas y SST (necesitan buen DAF) | Media | Media; sensibles a picos (necesitan ecualización) | Alta |
 | Calidad de salida | Insuficiente sola para vuelco estricto | Remoción parcial (55 % DQO total en un ensayo con efluente sin sedimentar); necesita postratamiento | Media | Alta; puede nitrificar/desnitrificar | Alta |
 | Nitrógeno | No lo remueve (lo convierte en amonio) | No lo remueve | Parcial | **Sí** (con diseño específico) | Sí (etapa aerobia) |
 | Olor | **Alto** si son abiertas (sulfhídrico); cubiertas lo controlan | Bajo (cerrado) | Medio | Bajo | Bajo–medio |
 | Energía | Muy baja; **genera biogás** (cubiertas) | Baja; **genera biogás** | Media (aireación) | **Alta** (aireación: 0,7–2 kWh/kg DBO removida en el modelo, `[SUPUESTO]`) | Menor que aerobio solo |
 | Lodos | Muy pocos; acumulación y retiro periódico | Pocos | Medios | **Muchos** (0,3–0,5 kg MS/kg DBO, `[SUPUESTO]`) | Menos que aerobio solo |
 | Operación | Simple; arranque lento; estacional (temperatura) | Técnica; arranque de semanas a meses | Simple–media | **Técnica** (operador calificado, laboratorio) | Técnica |
-| Emisiones | CH₄, CO₂, N₂O si abiertas (FTE-09C-12) | Biogás captado | CO₂ | CO₂, lodos | Biogás captado |
+| Emisiones | CH₄, CO₂, N₂O si abiertas (FTE-263) | Biogás captado | CO₂ | CO₂, lodos | Biogás captado |
 | Escalabilidad por módulos | Por celdas (requiere terreno reservado) | Por reactores | Por celdas | Por trenes | Por trenes |
 
 **Cómo se relaciona la elección con el proyecto** (no se decide aquí; DEC propuesta):
@@ -89,7 +89,7 @@ Solo para mostrar el orden de magnitud y qué parámetros mandan (bloque `lodos_
 
 | Eslabón | Parámetro (bajo · **medio** · alto) | Origen | kg/día (medio) |
 |---|---|---|---|
-| SST removidos | remoción 70 · **54** · 38 % de 350 kg SST | FUENTE `[PVDP]` (DAF 38–70 %, FTE-09C-05) | 189 |
+| SST removidos | remoción 70 · **54** · 38 % de 350 kg SST | FUENTE `[PVDP]` (DAF 38–70 %, FTE-256) | 189 |
 | Grasas flotadas | remoción 95 · **80** · 63 % de 110 kg GyA | FUENTE `[PVDP]` (DAF 63–95 %) | 88 |
 | Sólidos químicos | dosis 50 · **100** · 200 g/m³ × 220 m³ | `[SUPUESTO]` sin fuente | 22 |
 | Biomasa (si fuera aerobio) | DBO al biológico (1 − 45 %) × 95 % × 0,3 · **0,4** · 0,5 kg MS/kg DBO | FUENTE `[PVDP]` + `[SUPUESTO]` | 105 |
@@ -104,7 +104,7 @@ Rango ilustrativo por escala (t/día húmedas, bajo · medio · alto): 2.500 →
 | Tipo | Características | Manejo | Disposición / valorización posible |
 |---|---|---|---|
 | **Tamizado y sólidos gruesos** | Plumas finas, recortes, restos de vísceras que escaparon a la segregación en origen | Contenedor, retiro diario | Rendering con la clase C ([`../07_subproductos/rendering.md`](../07_subproductos/rendering.md)) |
-| **Flotado de DAF** | 5–30 % de sólidos (habitual 10–15 %); en base seca 30–40 % proteína y ~40 % grasa (FTE-09C-13 `[PVDP]`); putrescible; con químicos si se usan coagulantes | Espesado, deshidratación, retiro diario | **Rendering** (si el receptor acepta químicos), biodigestión, compost; disposición como último recurso |
+| **Flotado de DAF** | 5–30 % de sólidos (habitual 10–15 %); en base seca 30–40 % proteína y ~40 % grasa (FTE-264 `[PVDP]`); putrescible; con químicos si se usan coagulantes | Espesado, deshidratación, retiro diario | **Rendering** (si el receptor acepta químicos), biodigestión, compost; disposición como último recurso |
 | **Lodo biológico aerobio** | Biomasa; estabilizable | Espesado, deshidratación, estabilización | Compost, uso agronómico (registro de enmiendas, FTE-188), relleno |
 | **Lodo anaerobio** | Mucho menor y estabilizado | Retiro periódico (lagunas: años) | Uso agronómico / relleno |
 

@@ -1,5 +1,7 @@
 # Propuestas de actualización de registros globales — sesión 09B
 
+> **ARCHIVO HISTÓRICO — RECONCILIADO el 2026-09-30.** Todo lo propuesto aquí ya fue integrado en `00_gestion_proyecto/` y `25_fuentes/`. Los IDs provisionales que aparecen abajo **ya no están activos**: sus equivalentes definitivos (y los casos consolidados en registros existentes) están en [`../00_gestion_proyecto/reconciliacion_sesiones_09.md`](../00_gestion_proyecto/reconciliacion_sesiones_09.md) §2. El CSV de fuentes provisional citado abajo se retiró: las fuentes están en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv). No editar este archivo.
+
 **Fecha:** 2026-09-30 · Sesión 09B (normativa y habilitaciones), **paralela** a otras sesiones.
 
 > Esta sesión **no modificó** `00_gestion_proyecto/`, `25_fuentes/registro_fuentes.csv` ni `25_fuentes/bibliografia.md`. Las altas y anotaciones se proponen aquí para consolidarlas después.
@@ -99,4 +101,4 @@
 
 ## 7. Fuentes (`registro_fuentes.csv` y `bibliografia.md`)
 
-Las 25 fuentes nuevas están en [`fuentes_09B.csv`](fuentes_09B.csv) con las mismas columnas que `registro_fuentes.csv` (IDs `FTE-09B-01` a `FTE-09B-25`). Al consolidar: renumerar como FTE-194 en adelante (o el siguiente libre), copiar las filas al registro y agregar a `bibliografia.md` bajo "Normativa". Anotaciones a fuentes existentes: **FTE-016** y **FTE-192** ("texto actualizado identificado; ver FTE-09B-23"), **FTE-083** ("detalle de requisitos en FTE-09B-05"), **FTE-082** ("complemento FTE-09B-18"), **FTE-146** ("complemento FTE-09B-12").
+Las 25 fuentes nuevas están en `fuentes_09B.csv` (retirado en la reconciliación 09) con las mismas columnas que `registro_fuentes.csv` (IDs `FTE-09B-01` a `FTE-09B-25`). Al consolidar: renumerar como FTE-194 en adelante (o el siguiente libre), copiar las filas al registro y agregar a `bibliografia.md` bajo "Normativa". Anotaciones a fuentes existentes: **FTE-016** y **FTE-192** ("texto actualizado identificado; ver FTE-09B-23"), **FTE-083** ("detalle de requisitos en FTE-09B-05"), **FTE-082** ("complemento FTE-09B-18"), **FTE-146** ("complemento FTE-09B-12").

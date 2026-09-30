@@ -3,7 +3,7 @@
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C) · Fase 0 (prefactibilidad)
 
 > **Alcance:** agua **industrial** de la planta de faena y proceso (no la de bebida de las granjas, que está en [`../03_produccion_primaria`](../03_produccion_primaria/README.md)). **Los escenarios de 15 / 25 / 38 L por ave son un RANGO DE SENSIBILIDAD PRELIMINAR, no el consumo esperado de nuestra futura planta ni una especificación de diseño.** No se diseña captación, tratamiento de agua ni tanques; no se elige ubicación; no se calcula CAPEX.
-> **Modelo:** [`modelo_utilities.py`](modelo_utilities.py) v1.1 → [`escenarios_utilities.csv`](escenarios_utilities.csv) (bloques `agua` y `agua_incorporada`). **Fuentes:** acceso directo bloqueado (`EGRESS_BLOCKED`; DPV-009): **toda cifra externa es `[PVDP]`** (IDs `FTE-09C-xx` en [`fuentes_09C.csv`](fuentes_09C.csv)). Ninguna cifra es una medición argentina.
+> **Modelo:** [`modelo_utilities.py`](modelo_utilities.py) v1.1 → [`escenarios_utilities.csv`](escenarios_utilities.csv) (bloques `agua` y `agua_incorporada`). **Fuentes:** acceso directo bloqueado (`EGRESS_BLOCKED`; DPV-009): **toda cifra externa es `[PVDP]`** (IDs `FTE-###` en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv)). Ninguna cifra es una medición argentina.
 
 ---
 
@@ -29,13 +29,13 @@ Reglas del modelo:
 | Etapa | Bajo | **Medio** | Alto | Origen | Referencia |
 |---|---|---|---|---|---|
 | Recepción (lavado de jaulas/módulos, camiones, andén) | 0,5 | **1,0** | 2,0 | `[SUPUESTO]` | Sin dato por ave |
-| Escaldado (llenado, reposición, desborde) | 0,9 | **1,2** | 2,0 | FUENTE `[PVDP]` | ~1 cuarto de galón (0,95 L)/ave (FTE-09C-11, FTE-09C-18) |
-| Desplumado (duchas, transporte de plumas) | 1,0 | **2,0** | 3,5 | `[SUPUESTO]` | Dentro de los totales de FTE-09C-01/02 |
-| Evisceración (lavados, transporte hidráulico de vísceras) | 4,0 | **6,0** | 8,0 | FUENTE `[PVDP]` | 7,57 L/ave (FTE-09C-01) |
-| Lavado final de carcasas | 1,5 | **3,0** | 4,5 | FUENTE `[PVDP]` | 4,25–4,35 L/ave (FTE-09C-01) |
-| Chiller (reposición en contracorriente) | 1,9 | **2,8** | 4,5 | FUENTE `[PVDP]` | Mín. 0,5 gal = 1,9 L; típico 2,8–5,7 L (FTE-09C-18); 2,12 L (FTE-09C-01) |
-| Despiece y deshuese | 0,5 | **1,0** | 2,0 | FUENTE `[PVDP]` | 3,03 L/ave (FTE-09C-01) |
-| Limpieza de equipos y salas | 3,0 | **5,0** | 7,5 | FUENTE `[PVDP]` | 5,7–11,4 L saneamiento + 0,9–3,8 L equipos (FTE-09C-01) |
+| Escaldado (llenado, reposición, desborde) | 0,9 | **1,2** | 2,0 | FUENTE `[PVDP]` | ~1 cuarto de galón (0,95 L)/ave (FTE-262, FTE-252) |
+| Desplumado (duchas, transporte de plumas) | 1,0 | **2,0** | 3,5 | `[SUPUESTO]` | Dentro de los totales de FTE-252/FTE-253 |
+| Evisceración (lavados, transporte hidráulico de vísceras) | 4,0 | **6,0** | 8,0 | FUENTE `[PVDP]` | 7,57 L/ave (FTE-252) |
+| Lavado final de carcasas | 1,5 | **3,0** | 4,5 | FUENTE `[PVDP]` | 4,25–4,35 L/ave (FTE-252) |
+| Chiller (reposición en contracorriente) | 1,9 | **2,8** | 4,5 | FUENTE `[PVDP]` | Mín. 0,5 gal = 1,9 L; típico 2,8–5,7 L (FTE-252); 2,12 L (FTE-252) |
+| Despiece y deshuese | 0,5 | **1,0** | 2,0 | FUENTE `[PVDP]` | 3,03 L/ave (FTE-252) |
+| Limpieza de equipos y salas | 3,0 | **5,0** | 7,5 | FUENTE `[PVDP]` | 5,7–11,4 L saneamiento + 0,9–3,8 L equipos (FTE-252) |
 | Sanitización | 0,7 | **1,0** | 1,5 | `[SUPUESTO]` | Sin dato separado |
 | Servicios auxiliares | 1,0 | **2,0** | 2,5 | `[SUPUESTO]` | Sin dato separado |
 | **Total** | **15,0** | **25,0** | **38,0** | `[ESTIMACIÓN]` | Calibrado a totales de fuentes (§3) |
@@ -54,10 +54,10 @@ Contraste con fuentes (`[PVDP]`):
 
 | Fuente | Dato | En L/ave | En m³/t | ¿Compatible? |
 |---|---|---|---|---|
-| Georgia, 2009 (FTE-09C-02) | 7 gal/carcasa | 26 | ~10,8 (con 2,40 kg/ave) | Sí |
-| Carolina del Norte (FTE-09C-02) | 13,2–37,8 L/ave | 13–38 | ~5,5–15,8 | Sí |
-| Revisión de mataderos (FTE-09C-04) | 3,8–17,9 kL/t de **carcasa** | ~8–38 (con ~2,1 kg de carcasa) | 3,8–17,9 | Sí (base distinta: carcasa vs producto) |
-| Brasil (FTE-09C-03) | 22–30 L/ave | 22–30 | ~9–12,5 | Sí |
+| Georgia, 2009 (FTE-253) | 7 gal/carcasa | 26 | ~10,8 (con 2,40 kg/ave) | Sí |
+| Carolina del Norte (FTE-253) | 13,2–37,8 L/ave | 13–38 | ~5,5–15,8 | Sí |
+| Revisión de mataderos (FTE-255) | 3,8–17,9 kL/t de **carcasa** | ~8–38 (con ~2,1 kg de carcasa) | 3,8–17,9 | Sí (base distinta: carcasa vs producto) |
+| Brasil (FTE-254) | 22–30 L/ave | 22–30 | ~9–12,5 | Sí |
 
 Expresar el consumo **en las dos unidades** sirve para detectar inconsistencias: un dato en L/ave de aves livianas (2,3 kg en EE.UU.) no es comparable directamente con uno de aves de 2,9 kg; el m³/t corrige el tamaño del ave pero depende de la base (carcasa, producto, peso vivo). El modelo emite la alerta `AGUA_M3_T` si el m³/t de producto sale del rango 3,8–17,9 (test **U28**).
 
@@ -87,7 +87,7 @@ Expresar el consumo **en las dos unidades** sirve para detectar inconsistencias:
 
 | Tema | Por qué importa | Qué se necesita saber | Estado |
 |---|---|---|---|
-| **Potabilidad** | El agua en contacto con producto y superficies debe ser potable (Decreto 4238/68; CAA art. 982) | Análisis físico-químico y microbiológico completo | Normas leídas solo en extractos `[PVDP]` (FTE-016, FTE-09C-16) |
+| **Potabilidad** | El agua en contacto con producto y superficies debe ser potable (Decreto 4238/68; CAA art. 982) | Análisis físico-químico y microbiológico completo | Normas leídas solo en extractos `[PVDP]` (FTE-016, FTE-236) |
 | **Perforación vs red** | Caudal disponible, riesgo de corte, permisos | Ensayo de bombeo, acuífero, permiso de explotación; caudal y presión garantizados por la red | DPV-053 |
 | **Arsénico, flúor, nitratos** | Parte de la llanura chaco-pampeana puede superar límites (CAA: As ≤ 0,01 mg/L `[PVDP]`) | Análisis en el sitio; la potabilización con rechazo hace que **agua captada > agua utilizada** | DPV-053 |
 | **Dureza** | Incrustaciones en caldera, escaldador, intercambiadores | Dureza y alcalinidad | Sin dato |
@@ -101,7 +101,7 @@ Expresar el consumo **en las dos unidades** sirve para detectar inconsistencias:
 
 ## 6. Reúso de agua (conceptual)
 
-Las fuentes de EE.UU. describen reúso del agua del chiller para escaldado o transporte de vísceras bajo reglas sanitarias específicas (FTE-09C-01). En Argentina **no se relevó** qué admite el Decreto 4238/68 (DPV-061). Opción a estudiar: acercaría el nivel alto al bajo y **cambiaría la relación entre agua utilizada y efluente**.
+Las fuentes de EE.UU. describen reúso del agua del chiller para escaldado o transporte de vísceras bajo reglas sanitarias específicas (FTE-252). En Argentina **no se relevó** qué admite el Decreto 4238/68 (DPV-061). Opción a estudiar: acercaría el nivel alto al bajo y **cambiaría la relación entre agua utilizada y efluente**.
 
 ## 7. Qué medir
 

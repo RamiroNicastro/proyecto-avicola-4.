@@ -11,8 +11,8 @@
 
 | Corriente | Origen | Qué aporta | Controlable en origen | Observación |
 |---|---|---|---|---|
-| **Sangre** | Desangrado (no recuperada), escaldado, lavados | La mayor carga específica: DQO ~375.000 mg/L en la sangre pura (FTE-181 `[PVDP]`); nitrógeno y fósforo solubles | **Sí**: canaleta y tanque separados, tiempo de desangrado | La fracción no recuperada del modelo es 15 % (SUP-040); lo soluble no se retira con tamiz ni DAF (FTE-09C-06) |
-| **Grasas** | Evisceración, lavados, despiece (piel, grasa abdominal), limpieza | Grasas y aceites (origen animal, no mineral: FTE-09C-03), taponamiento, DQO | Parcial: retiro en seco, trampas, DAF | Condiciona el pretratamiento y el biológico |
+| **Sangre** | Desangrado (no recuperada), escaldado, lavados | La mayor carga específica: DQO ~375.000 mg/L en la sangre pura (FTE-181 `[PVDP]`); nitrógeno y fósforo solubles | **Sí**: canaleta y tanque separados, tiempo de desangrado | La fracción no recuperada del modelo es 15 % (SUP-040); lo soluble no se retira con tamiz ni DAF (FTE-257) |
+| **Grasas** | Evisceración, lavados, despiece (piel, grasa abdominal), limpieza | Grasas y aceites (origen animal, no mineral: FTE-254), taponamiento, DQO | Parcial: retiro en seco, trampas, DAF | Condiciona el pretratamiento y el biológico |
 | **Sólidos** | Recortes, restos de vísceras, plumas finas, contenido GI, cutícula de patas | SST, DQO particulada, materia sedimentable | **Sí**: transporte en seco, rejas y tamices | El balance manda 0,006 kg/ave de cutícula al efluente/lodos |
 | **Plumas** | Desplumado; transporte hidráulico en canal (si se usa) | Sólidos gruesos; lixiviado orgánico si se transportan con agua | **Sí**: transporte en seco o tamizado inmediato | 0,241 kg/ave húmedas; deben retirarse, no tratarse |
 | **Materia orgánica disuelta** | Todas las etapas en contacto con carne y vísceras; escaldado | DBO/DQO soluble, NTK | Parcial (menos contacto, menos agua caliente) | Es lo que llega al biológico |
@@ -28,12 +28,12 @@ Todas `[PVDP]` (extractos de buscador; originales no leídos). **Rango amplio po
 
 | Parámetro | Rango/valor citado | Fuente |
 |---|---|---|
-| DQO | 1.223–9.695 mg/L; promedio de plantas ~2.000 mg/L; un estudio 3.154–7.719 mg/L; ~2.900–7.700 mg/L; caso de baja carga 155 mg/L; caso venezolano 820 mg/L | FTE-09C-05, FTE-181, FTE-09C-07 |
-| DBO₅ | Promedio 2.375 mg/L; 1.341–1.821 mg/L; ~970–2.900 mg/L; caso 784 mg/L | FTE-09C-05, FTE-181, FTE-09C-07 |
-| SST | 378–5.462 mg/L; caso 1.410 mg/L | FTE-09C-05, FTE-09C-07 |
-| Grasas y aceites | ~500 mg/L (efluente tamizado) | FTE-09C-06 `[débil]` |
-| NTK | ~150 mg/L (tamizado); 296 ± 53 mg/L (una planta de EE.UU.) | FTE-09C-06 |
-| Fósforo total | ~18,5 mg/L (tamizado); −60 % al mejorar la recolección de sangre | FTE-09C-06 |
+| DQO | 1.223–9.695 mg/L; promedio de plantas ~2.000 mg/L; un estudio 3.154–7.719 mg/L; ~2.900–7.700 mg/L; caso de baja carga 155 mg/L; caso venezolano 820 mg/L | FTE-256, FTE-181, FTE-258 |
+| DBO₅ | Promedio 2.375 mg/L; 1.341–1.821 mg/L; ~970–2.900 mg/L; caso 784 mg/L | FTE-256, FTE-181, FTE-258 |
+| SST | 378–5.462 mg/L; caso 1.410 mg/L | FTE-256, FTE-258 |
+| Grasas y aceites | ~500 mg/L (efluente tamizado) | FTE-257 `[débil]` |
+| NTK | ~150 mg/L (tamizado); 296 ± 53 mg/L (una planta de EE.UU.) | FTE-257 |
+| Fósforo total | ~18,5 mg/L (tamizado); −60 % al mejorar la recolección de sangre | FTE-257 |
 | Relación DBO/DQO | ~0,4–0,6 en la mayoría; ~0,95 en un caso | Calculada de las anteriores `[ESTIMACIÓN]` |
 
 **No se adopta un valor único.** Desde la v1.1 el modelo estima la carga por **dos métodos independientes** y los compara; ninguno se calibra con el otro.
@@ -73,7 +73,7 @@ Por escala (kg/día, método A · método B, medio): DQO 250 · 297 / 500 · 594
 
 ## 5. Límite de vuelco: solo ejemplo regulatorio
 
-El modelo usa como **EJEMPLO REGULATORIO DE REFERENCIA** la Res. ADA 336/2003 de la Provincia de Buenos Aires para vuelco a **conducto pluvial** (DQO 250 mg/L, DBO 50 mg/L; FTE-09C-08 `[PVDP]`). Cada límite del modelo lleva jurisdicción, autoridad, norma y tipo de descarga; un límite sin esos datos detiene el modelo (test **U26**, mutación M19).
+El modelo usa como **EJEMPLO REGULATORIO DE REFERENCIA** la Res. ADA 336/2003 de la Provincia de Buenos Aires para vuelco a **conducto pluvial** (DQO 250 mg/L, DBO 50 mg/L; FTE-259 `[PVDP]`). Cada límite del modelo lleva jurisdicción, autoridad, norma y tipo de descarga; un límite sin esos datos detiene el modelo (test **U26**, mutación M19).
 
 > **Bajo el ejemplo de límite utilizado, el escenario medio exigiría aproximadamente 94,5 % (método A) a 95,4 % (método B) de remoción de DQO** (rango de todos los escenarios: 87,5–97,4 %).
 
@@ -100,11 +100,11 @@ Masa segregable en origen por escala (t/día, del balance; no son reducciones me
 | **Masa biológica potencialmente segregable en origen** (no sumar con las filas anteriores) | 0,608 | **1,52** | **3,04** | **6,08** | **12,17** |
 | Masa que el balance asigna a efluente o pérdida (sangre no recuperada, cutícula, goteo, pérdidas no asignadas) — **no equivale a SST** | 0,108 | 0,27 | 0,54 | 1,08 | 2,16 |
 
-Test **U22**: triplicar la masa de subproductos del balance no cambia los SST de ningún método, y la variable "sólidos que entran efectivamente al efluente" queda vacía (mutación M12). Si esos materiales se transportan con agua (canales de plumas y vísceras), parte se disuelve y ya no puede separarse: el **transporte en seco vs hidráulico** es una decisión de efluentes (DEC-09C-02 propuesta).
+Test **U22**: triplicar la masa de subproductos del balance no cambia los SST de ningún método, y la variable "sólidos que entran efectivamente al efluente" queda vacía (mutación M12). Si esos materiales se transportan con agua (canales de plumas y vísceras), parte se disuelve y ya no puede separarse: el **transporte en seco vs hidráulico** es una decisión de efluentes (DEC-044 propuesta).
 
 ## 7. Sangre: principio firme, magnitud como referencia
 
-- **Principio:** recuperar la sangre antes de que llegue al drenaje reduce fuertemente la carga orgánica, y su nitrógeno y fósforo solubles no se retiran con tamiz ni DAF (FTE-09C-06 `[PVDP]`).
+- **Principio:** recuperar la sangre antes de que llegue al drenaje reduce fuertemente la carga orgánica, y su nitrógeno y fósforo solubles no se retiran con tamiz ni DAF (FTE-257 `[PVDP]`).
 - **Magnitud (referencia `[PVDP]` de sensibilidad, no resultado de la planta):** con DQO de la sangre ~0,357 kg/kg (FTE-181), la sangre recuperada aportaría ~299 kg DQO/día a 10.000 aves/día (75 / 150 / 299 / 599 por escala), del orden de **30 % de la carga del método A medio**.
 - **Variable editable:** `fraccion_sangre_recuperada` (0,85 por defecto, SUP-040; `--frac-sangre`). El test U15 verifica que la DQO adicional sea exactamente sangre no recuperada × DQO de la sangre.
 - **Validación:** medir DQO del efluente **antes y después** de mejorar la recolección, o medir **masa recuperada por ave** y carga específica.
@@ -117,4 +117,4 @@ Test **U22**: triplicar la masa de subproductos del balance no cambia los SST de
 | Límite regulatorio real del sitio (provincia, autoridad, cuerpo receptor, permiso) | DPV-067 |
 | DQO/DBO/N de la sangre de pollo (original de FTE-181) y masa de sangre recuperada por ave | DPV-067, DPV-080 |
 | Sólidos que efectivamente llegan al drenaje en plantas con y sin transporte en seco | Nueva DPV propuesta |
-| Productos de limpieza y sanitizantes admitidos y su efecto en el tratamiento | DPV-09C-05 propuesta |
+| Productos de limpieza y sanitizantes admitidos y su efecto en el tratamiento | DPV-112 propuesta |

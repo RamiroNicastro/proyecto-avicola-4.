@@ -1,7 +1,8 @@
 # Conclusiones — hoja de ruta regulatoria (terreno → exportación)
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 · Sesión 09B (paralela) · Base: [`mapa_regulatorio.md`](mapa_regulatorio.md), [`habilitacion_planta.md`](habilitacion_planta.md), [`requisitos_sanitarios.md`](requisitos_sanitarios.md), [`exportacion_y_certificaciones.md`](exportacion_y_certificaciones.md), [`subproductos_normativa.md`](subproductos_normativa.md), [`matriz_regulatoria.csv`](matriz_regulatoria.csv), [`ruta_critica_habilitacion.md`](ruta_critica_habilitacion.md), [`preguntas_senasa.md`](preguntas_senasa.md), [`guia_ramiro.md`](guia_ramiro.md), [`fuentes_09B.csv`](fuentes_09B.csv), [`actualizaciones_gestion_09B.md`](actualizaciones_gestion_09B.md)
+**Fecha:** 2026-09-30 · **Versión:** 1.0 · Sesión 09B (paralela) · Base: [`mapa_regulatorio.md`](mapa_regulatorio.md), [`habilitacion_planta.md`](habilitacion_planta.md), [`requisitos_sanitarios.md`](requisitos_sanitarios.md), [`exportacion_y_certificaciones.md`](exportacion_y_certificaciones.md), [`subproductos_normativa.md`](subproductos_normativa.md), [`matriz_regulatoria.csv`](matriz_regulatoria.csv), [`ruta_critica_habilitacion.md`](ruta_critica_habilitacion.md), [`preguntas_senasa.md`](preguntas_senasa.md), [`guia_ramiro.md`](guia_ramiro.md), [`registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv), [`actualizaciones_gestion_09B.md`](actualizaciones_gestion_09B.md)
 
+> **Reconciliación 2026-09-30:** los IDs provisionales de esta sesión fueron reemplazados por definitivos y sus supuestos, datos por validar, decisiones y fuentes se integraron en los registros centrales ([`../00_gestion_proyecto/reconciliacion_sesiones_09.md`](../00_gestion_proyecto/reconciliacion_sesiones_09.md)). Donde este documento dice que los registros centrales no se modificaron, describe el estado de la sesión original.
 > **Pregunta central:** ¿qué habilitaciones, registros, condiciones sanitarias y controles necesita el proyecto desde el terreno hasta exportar?
 > **Respuesta corta:** una cadena de **cuatro niveles** (local → SENASA tránsito federal → autorización SENASA por destino → listado/aceptación del importador), más **habilitaciones locales** que dependen de la ubicación, **registros por producto y por vehículo**, **programas sanitarios** (BPM, POES y **Plan APPCC/HACCP obligatorios** por norma SENASA, también para mercado interno; los destinos agregan exigencias) y **certificaciones de destino** (Halal, atestaciones UE). Nada de esto está verificado en texto primario.
 > **No es asesoramiento jurídico. No se selecciona localización, maquinaria ni proveedores.** Acceso primario bloqueado (séptima sesión, DPV-009): **ninguna norma leída en original; 0 datos `[VERIFICADO]`.**
@@ -78,21 +79,21 @@ Uso de suelo; categoría y aptitud ambiental; permiso de agua; permiso de vuelco
 
 | # | Documento | Para qué | Registro propuesto |
 |---|---|---|---|
-| 1 | **Decreto 4238/68 — texto actualizado**: índice oficial, cap. XX completo, capítulos generales de construcción, inspección, cámaras, graserías, transporte, rotulado; cap. XXXII | Base de diseño | DPV-09B-01 (FTE-016, FTE-192, FTE-09B-23) |
-| 2 | Res. SENASA 553/2002 | Modificaciones del cap. XX | DPV-09B-01 |
-| 3 | Aplicación actual de la **Ley 22.375** | Régimen provincial alternativo | DPV-09B-03 |
-| 3b | **Decreto 697/2026** (texto completo) | Convivencia con el Decreto 4238/68; registro único; base única | DPV-09B-15 |
-| 4 | **Res. SENASA 233/2026** (anexo de trámites alcanzados) | Documentación local en el trámite de faena | DPV-09B-04 |
-| 5 | Res. SENASA 592/2026 y 591/2026 | Cambios 2026 y normas derogadas | DPV-09B-12 |
+| 1 | **Decreto 4238/68 — texto actualizado**: índice oficial, cap. XX completo, capítulos generales de construcción, inspección, cámaras, graserías, transporte, rotulado; cap. XXXII | Base de diseño | DPV-090 (FTE-016, FTE-192, FTE-016) |
+| 2 | Res. SENASA 553/2002 | Modificaciones del cap. XX | DPV-090 |
+| 3 | Aplicación actual de la **Ley 22.375** | Régimen provincial alternativo | DPV-099 |
+| 3b | **Decreto 697/2026** (texto completo) | Convivencia con el Decreto 4238/68; registro único; base única | DPV-107 |
+| 4 | **Res. SENASA 233/2026** (anexo de trámites alcanzados) | Documentación local en el trámite de faena | DPV-100 |
+| 5 | Res. SENASA 592/2026 y 591/2026 | Cambios 2026 y normas derogadas | DPV-105 |
 | 6 | **Res. SENASA 593/2026** | Requisitos de autorización de destinos | DPV-024 / DPV-031 (existentes) |
 | 7 | **Res. SENASA 233/1998** | BPM y POES | DPV-007 |
-| 8 | **Res. SENASA 205/2014** (APPCC) y manuales complementarios | Contenido del Plan APPCC y excepciones | DPV-09B-07 |
-| 9 | **Res. SENASA 723/2025** | Transporte | DPV-09B-10 / DPV-058 |
-| 10 | CAA arts. 982 y ss. + requisitos de agua del reglamento | Agua | DPV-09B-08 |
-| 11 | Numeral de enfriamiento/absorción de agua y temperaturas | Frío y rótulo | DPV-061 / DPV-09B-02 |
-| 12 | Manual SENASA de bienestar en faena de aves y lagomorfos | Recepción y aturdimiento | DPV-09B-11 |
-| 13 | Res. 368/2003 (CMS), 1415/1416/2024, 1389/2004 | Subproductos | DPV-066 / DPV-074 / DPV-09B-06 |
-| 14 | Normativa ambiental, hídrica y municipal por candidata | Terreno | DPV-09B-14 |
+| 8 | **Res. SENASA 205/2014** (APPCC) y manuales complementarios | Contenido del Plan APPCC y excepciones | DPV-102 |
+| 9 | **Res. SENASA 723/2025** | Transporte | DPV-058 / DPV-058 |
+| 10 | CAA arts. 982 y ss. + requisitos de agua del reglamento | Agua | DPV-103 |
+| 11 | Numeral de enfriamiento/absorción de agua y temperaturas | Frío y rótulo | DPV-061 / DPV-098 |
+| 12 | Manual SENASA de bienestar en faena de aves y lagomorfos | Recepción y aturdimiento | DPV-094 |
+| 13 | Res. 368/2003 (CMS), 1415/1416/2024, 1389/2004 | Subproductos | DPV-066 / DPV-074 / DPV-066 |
+| 14 | Normativa ambiental, hídrica y municipal por candidata | Terreno | DPV-106 |
 
 ## 11. Qué debe aprender Ramiro
 
@@ -100,7 +101,7 @@ Resumen simple en [`guia_ramiro.md`](guia_ramiro.md): qué es SENASA; tránsito 
 
 ## 12. Archivos creados y modificados
 
-**Creados (`16_normativa_senasa/`):** `mapa_regulatorio.md`, `habilitacion_planta.md`, `requisitos_sanitarios.md`, `exportacion_y_certificaciones.md`, `subproductos_normativa.md`, `matriz_regulatoria.csv` (64 requisitos), `ruta_critica_habilitacion.md`, `preguntas_senasa.md`, `guia_ramiro.md`, `conclusiones_normativa.md`, `actualizaciones_gestion_09B.md`, `fuentes_09B.csv` (25 fuentes).
+**Creados (`16_normativa_senasa/`):** `mapa_regulatorio.md`, `habilitacion_planta.md`, `requisitos_sanitarios.md`, `exportacion_y_certificaciones.md`, `subproductos_normativa.md`, `matriz_regulatoria.csv` (64 requisitos), `ruta_critica_habilitacion.md`, `preguntas_senasa.md`, `guia_ramiro.md`, `conclusiones_normativa.md`, `actualizaciones_gestion_09B.md`, `fuentes_09B.csv` (integrado a `25_fuentes/` y retirado en la reconciliación 09) (25 fuentes).
 **Modificado:** `16_normativa_senasa/README.md` (índice y documentación de los CSV, regla 15).
 **No modificados (sesión paralela):** `00_gestion_proyecto/`, `25_fuentes/registro_fuentes.csv`, `25_fuentes/bibliografia.md`. Las propuestas de actualización están en [`actualizaciones_gestion_09B.md`](actualizaciones_gestion_09B.md).
 
@@ -108,7 +109,7 @@ Resumen simple en [`guia_ramiro.md`](guia_ramiro.md): qué es SENASA; tránsito 
 
 | Control | Resultado |
 |---|---|
-| Fuente primaria antes que prensa | Se buscó primero SENASA/Infoleg/BO/digesto: **todos bloqueados**; se usaron fichas oficiales vía extracto y prensa como complemento identificado (FTE-09B-11 y FTE-09B-22 son prensa, categoría C) |
+| Fuente primaria antes que prensa | Se buscó primero SENASA/Infoleg/BO/digesto: **todos bloqueados**; se usaron fichas oficiales vía extracto y prensa como complemento identificado (FTE-238 y FTE-249 son prensa, categoría C) |
 | Extracto de buscador = PVDP | Sí: 37 requisitos PVDP, 15 por consultar a SENASA, 12 dependientes de jurisdicción; **0 "VERIFICADO EN PRIMARIA"** |
 | Vigencia normativa comprobada | **No** (imposible sin texto): se registraron 6 puntos abiertos (C1–C6) y se detectaron normas **reemplazadas** (Res. 503/2022 → 723/2025; sistema de destinos 2010 → 593/2026; Director Técnico derogado) |
 | Habilitación local ≠ federal ≠ exportadora | Explícito en todos los archivos |

@@ -16,7 +16,7 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Peso vivo | Peso del ave viva al momento de la faena o venta. |
 | Rendimiento de faena / de canal | Relación porcentual entre peso de la canal y peso vivo. **Siempre declarar la definición** (con o sin cuello, menudencias, agua): en este proyecto el rendimiento eviscerado es carcasa caliente sin cuello ni menudencias / peso vivo en planta (`04_balance_masa/balance_por_ave.md` §2). |
 | Canal (carcasa) | Cuerpo del ave faenada, eviscerada, sin plumas, cabeza ni patas (según especificación). |
-| Menudencias | Subproductos comestibles: hígado, corazón, molleja, cogote, etc. |
+| Menudencias | Vísceras comestibles: hígado, corazón y molleja (coproductos comestibles). Declarar siempre si incluye el cuello (cogote). *(Consolidado 2026-09-30: unifica dos entradas previas.)* |
 | Trozado | Despiece de la canal en cortes (pechuga, pata-muslo, alas, etc.). |
 | Elaborados | Productos procesados con valor agregado (rebozados, hamburguesas, embutidos, etc.). |
 | Subproductos no comestibles | Plumas, sangre, vísceras no comestibles, destinados a harinas u otros usos. |
@@ -25,14 +25,14 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Faena a façon | Faena realizada por un tercero por cuenta del dueño de las aves, a cambio de una tarifa. |
 | Integración vertical | Control por una misma empresa de varios eslabones de la cadena productiva. |
 | Integrador / integrado | Esquema en que una empresa (integrador) provee pollitos, alimento y asistencia a productores (integrados) que aportan galpones y mano de obra. |
-| Balance de masa | Cuantificación del flujo de aves y kg entre etapas de la cadena, incluyendo pérdidas y rendimientos. |
+| Balance de masa | Cuantificación del flujo de aves y kg entre etapas de la cadena, incluyendo pérdidas y rendimientos: contabilidad de dónde termina cada kg que entra a un proceso; las entradas deben igualar a las salidas dentro de una tolerancia. *(Consolidado 2026-09-30: unifica dos entradas previas.)* |
 | Alimento balanceado | Alimento formulado (principalmente maíz y harina de soja, más núcleo vitamínico-mineral) para cada etapa de crianza. |
 | Cadena de frío | Conjunto de etapas de refrigeración/congelado que mantienen la inocuidad del producto hasta el consumidor. |
 | IQF | Individual Quick Freezing: congelado rápido individual de piezas. |
 | SENASA | Servicio Nacional de Sanidad y Calidad Agroalimentaria, autoridad sanitaria nacional. |
 | RENSPA | Registro Nacional Sanitario de Productores Agropecuarios (SENASA). |
-| Tránsito federal | Habilitación que permite comercializar productos entre provincias; se diferencia de habilitaciones provinciales o municipales. |
-| HACCP | Análisis de Peligros y Puntos Críticos de Control. |
+| Tránsito federal | Habilitación de SENASA que permite comercializar productos en todo el país (entre provincias) y es condición previa para exportar; se diferencia de habilitaciones provinciales o municipales. Caso de referencia del análisis normativo, no decisión (SUP-066, DEC-009). |
+| APPCC / HACCP | Análisis de Peligros y Puntos Críticos de Control: método para identificar peligros y controlarlos en puntos críticos con límites, monitoreo y registros. El Plan APPCC es obligatorio para establecimientos SENASA que faenen, elaboren, fraccionen o depositen alimentos, salvo excepciones (Res. SENASA 205/2014, `[PVDP]`, DPV-102); no es solo un requisito de exportación. |
 | BPM | Buenas Prácticas de Manufactura. |
 | CAPEX | Inversión en activos fijos (capital expenditure). |
 | OPEX | Costos operativos recurrentes (operating expenditure). |
@@ -52,7 +52,8 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Compartimento libre | Establecimiento o grupo de establecimientos con sistema de bioseguridad común reconocido como libre de una enfermedad (Res. SENASA 484/2017). |
 | Concurso preventivo | Procedimiento judicial en que una empresa en cesación de pagos negocia con sus acreedores para evitar la quiebra. |
 | PSD / GAIN | Base de datos de producción, oferta y demanda (*Production, Supply and Distribution*) e informes de agregados agrícolas (*Global Agricultural Information Network*) del USDA. |
-| PVDP | "Pendiente de verificación documental primaria": cifra de fuente identificada que no fue cotejada con el documento original (regla 16 de `CLAUDE.md`). |
+| PVDP | "Pendiente de verificación documental primaria": cifra de fuente identificada que no fue cotejada con el documento original (regla 16 de `CLAUDE.md`). Un extracto de buscador o de prensa nunca es `[VERIFICADO]`. |
+| Confirmado en revisión externa (lectura primaria pendiente de reproducir) | Estado de una fuente cuyo documento original fue leído fuera de la sesión (p. ej., por el promotor) pero que la sesión de análisis no pudo abrir. Se registra tal cual: no se degrada a extracto ni se presenta como leído por la sesión (p. ej., FTE-194, FTE-197, FTE-200, FTE-251). |
 | Ingreso total por ave | Suma del ingreso de todas las partes de un ave (pechuga, pata-muslo, alas, garras, menudencias, recortes, subproductos), cada una vendida en su mejor mercado accesible, neto de costos de separación, frío y logística. Principio estratégico del proyecto. |
 | Halal | Conjunto de requisitos religiosos islámicos para alimentos (incluye el método de faena), certificado por entidades reconocidas por el país importador (ej.: CIRA en Argentina). |
 | Regionalización / zonificación | Reconocimiento por un país importador de zonas libres de una enfermedad dentro de un país afectado, que permite seguir exportando desde esas zonas. |
@@ -126,17 +127,15 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Chiller (enfriador) | Equipo que baja la temperatura de la carcasa después de la evisceración. **Por inmersión** (en agua; la carcasa absorbe agua) o **por aire** (*air chilling*; la carcasa pierde humedad por evaporación). |
 | Agua retenida en producto / agua absorbida | Agua absorbida por la carcasa en el chiller por inmersión; la parte que no gotea antes de la venta queda **retenida en el producto** y se vende. No es carne: el modelo la contabiliza aparte de la masa biológica. |
 | Agua incorporada a productos y subproductos | En el balance de masa: agua absorbida por la carcasa en el chiller (retenida en producto + goteo del producto) más agua adherida a las plumas. **No** es el agua de proceso total de la planta. |
-| Agua de proceso (de la planta) | Todo el caudal que usa la planta: lavado, escaldado, llenado y renovación del chiller, limpieza, sanitización y otros usos. Se calculará en `11_agua_efluentes`; no forma parte del balance de masa. |
+| Agua de proceso (de la planta) | Todo el caudal que usa la planta: lavado, escaldado, llenado y renovación del chiller, limpieza, sanitización y otros usos. Equivale al **agua utilizada** del modelo de utilities (`11_agua_efluentes`, SUP-069); no forma parte del balance de masa. |
 | Ruta alternativa (balance de masa) | Destino exclusivo de un material que puede venderse o reprocesarse (p. ej. carcasa-esqueleto vendida **o** procesada a CMS); nunca ambos a la vez. |
 | Merma de acondicionamiento de patas | Cutícula y suciedad removidas al escaldar y pelar las patas para obtener garras. |
 | Goteo (purga, *drip loss*) | Líquido que pierde el producto después del enfriamiento (escurrido, bandeja). |
 | Masa biológica | Masa de tejidos del ave (sin agua de proceso). La suma de la masa biológica de todas las salidas del balance es igual al peso vivo. |
 | Suprema / solomillo | Suprema: filet de pechuga (pectoral mayor) sin hueso ni piel. Solomillo (*tender*, sassami): pectoral menor. |
 | Garra (*paw*) | Pata de pollo escaldada y pelada (sin cutícula), clasificada por grado y calibre para venta; su definición exacta depende del comprador. |
-| Menudencias | Vísceras comestibles: hígado, corazón y molleja. Declarar si incluye el cuello. |
 | Rendering | Proceso de cocción, esterilización y secado de subproductos no comestibles (plumas, vísceras, sangre, huesos) para obtener harinas y grasa. |
 | Producto / coproducto / subproducto / residuo | Clases del balance de masa: producto principal (A), coproducto comestible (B), subproducto valorizable no comestible (C), residuo o efluente (D); más pérdidas (P). Una parte puede cambiar de clase si no tiene comprador. |
-| Balance de masa | Contabilidad de dónde termina cada kg que entra a un proceso; las entradas deben igualar a las salidas dentro de una tolerancia. |
 | Digestor / grasería | Términos del Decreto 4238/68: el **digestor** es la instalación que procesa decomisos y desperdicios (equivalente a un rendering); la **grasería** elabora grasas animales. |
 | Harina de plumas hidrolizada | Harina proteica (~90 % de proteína bruta) obtenida por hidrólisis a presión con vapor y secado de las plumas. |
 | Valorización técnica / económica | Técnica: existe un proceso y un uso permitido para una salida. Económica: existe un comprador y el precio neto (net-back) es positivo y mayor que el de la ruta alternativa. |
@@ -163,3 +162,75 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Parte limitante | Parte del ave cuya demanda fija cuántas aves hay que faenar; el resto de las partes queda como excedente a colocar en otros canales. Ver factor de mix. |
 | Inventario en días de producción / en días calendario | Días de producción: producción por día operativo × días (jornadas de faena en stock). Días calendario de cobertura: despacho promedio por día calendario × días (días de venta cubiertos). Con 250 días de faena, 7 días calendario ≈ 4,8 días de producción. Siempre declarar la base. |
 | Peso comercial / masa biológica / agua retenida | Peso comercial: lo que se vende = masa biológica (carne y tejidos) + agua retenida en el chiller. El agua retenida **nunca** es carne producida (SUP-042). |
+| Aves/h (*birds per hour*, bph) | Aves que pasan por la línea en una hora de funcionamiento. Cada fabricante puede definirla distinto (DPV-097). |
+| Velocidad nominal | Velocidad (aves/h) que el fabricante declara o especifica para el equipo sin interrupciones. Es una referencia de catálogo: **no** es capacidad del proyecto. |
+| Velocidad de diseño | Velocidad para la que se especifica y dimensiona la línea del proyecto. |
+| Velocidad garantizada (contractual) | Velocidad que el proveedor se compromete a alcanzar bajo condiciones contractuales (peso, producto, dotación, disponibilidad), verificada con una prueba de aceptación. Dato crítico a pedir en el RFQ (DPV-097). |
+| Velocidad operativa | Velocidad real media mientras la línea está en marcha (descuenta microparadas, grilletes vacíos y velocidad reducida). No confundir con capacidad operativa (aves/día de la planta). |
+| Disponibilidad | Fracción del tiempo programado de producción en que la línea está efectivamente en marcha (descuenta paradas no planificadas y cambios). En el proyecto solo se usa como sensibilidad (SUP-061). |
+| Factor de velocidad | Velocidad operativa ÷ velocidad nominal. Sensibilidad (SUP-061). |
+| Microparada | Interrupción de segundos a pocos minutos que no se registra como parada pero reduce la producción. |
+| Eficiencia de línea (η) | Producción real ÷ (velocidad nominal × tiempo programado) = disponibilidad × factor de velocidad. En el estudio solo como rango de sensibilidad 0,70–0,90, no como dato. |
+| OEE (*overall equipment effectiveness*) | Eficacia global del equipo = disponibilidad × rendimiento de velocidad × calidad (fracción conforme). Indicador estándar de desempeño de una línea. |
+| Prueba de aceptación (FAT / SAT) | Ensayo contractual que verifica velocidad y calidad garantizadas: FAT en la fábrica del proveedor; SAT en el sitio. |
+| Holgura horaria | 24 h − (faena neta + paradas + ventanas auxiliares). Negativa = alerta de calendario, no descarte (SUP-062). |
+| Ventana horaria del establecimiento | Horas netas de faena + preoperativo + pausas + limpieza intermedia + cierre + limpieza + sanitización + mantenimiento. Con 8 h netas la planta opera ~14–21 h/día (sensibilidad). |
+| Mecanizado | Operación hecha por una máquina sin control automático del proceso; la persona la alimenta y regula. |
+| Grillete (*shackle*) | Gancho del transportador aéreo del que cuelgan las aves. |
+| Línea de faena / línea de evisceración | Tramo del transportador desde el colgado hasta el desplumado / desde la transferencia hasta el enfriamiento. |
+| Transferencia (recolgado, *rehang*) | Paso de la carcasa de la línea de faena a la de evisceración; límite higiénico entre zona sucia y evisceración. |
+| CAS (*controlled atmosphere stunning*) | Aturdimiento por atmósfera controlada (gases) antes del colgado. Admisión por SENASA y destinos a verificar (DPV-094). |
+| MAP (*modified atmosphere packaging*) | Envase con atmósfera modificada para extender la vida útil del producto refrigerado. |
+| Termoformado / *skin pack* | Envase formado en línea a partir de film / film que se adhiere al producto. |
+| Bypass (de un equipo) | Forma alternativa, generalmente manual, de seguir operando si falla un equipo. |
+| N+1 | Redundancia: una unidad más de las necesarias (compresor, caldera, generador, bomba) como reserva. |
+| RFQ (*request for quotation*) | Solicitud formal de cotización a proveedores (`08_maquinaria/requerimientos_cotizacion.md`; no enviada en Fase 0). |
+| Incoterm | Regla de comercio internacional que define dónde se entrega, quién paga qué costos y quién asume qué riesgos (EXW, FOB, CIF, DAP, DDP). |
+| Lead time | Plazo desde el pedido hasta el equipo instalado y en marcha. |
+| SIV | Servicio de Inspección Veterinaria de SENASA destacado en un establecimiento: realiza la inspección ante y post mortem y dictamina la aptitud. |
+| Ante mortem / post mortem | Inspección oficial de los animales vivos antes de la faena / de carcasas y vísceras después de la faena. |
+| Rubro (habilitación) | Actividad específica autorizada a un establecimiento (faena, trozado, deshuese, elaboración, depósito, congelado); agregar rubros es una modificación de la habilitación. |
+| Ciclo I | Categoría de SENASA para plantas de faena de animales terrestres (incluye aves) en el trámite de habilitación. `[PVDP]` |
+| SIGTrámites / TAD | Plataforma digital de trámites de SENASA / Trámites a Distancia del Estado nacional. |
+| CAPA | Coordinación General de Aprobación de Productos Alimenticios de SENASA: registra productos y rótulos de origen animal. |
+| SIGCER | Sistema de Gestión de Certificaciones de SENASA para certificados sanitarios de exportación. |
+| DT-e | Documento de Tránsito electrónico de SENASA, obligatorio para mover animales (incluidas aves a faena). |
+| SIGSA | Sistema Integrado de Gestión de Sanidad Animal de SENASA (lotes, existencias, DT-e). |
+| Sistema Nacional de Control de Alimentos | Sistema integrado (desde el Decreto 697/2026) por la Secretaría de Gestión Sanitaria del Ministerio de Salud y SENASA, con registro único de productos y establecimientos y base única de datos. `[PVDP]`; su convivencia con el Decreto 4238/68 está abierta (DPV-107). No confundir con el Decreto 697/2024 (derechos de exportación). |
+| POES (SSOP) | Procedimientos Operativos Estandarizados de Saneamiento: procedimientos escritos de limpieza y desinfección, obligatorios (Res. SENASA 233/1998, `[PVDP]`). |
+| MIP | Manejo Integrado de Plagas. |
+| FSSC 22000 / BRCGS / IFS | Certificaciones privadas de inocuidad reconocidas por GFSI; voluntarias, exigidas por algunos compradores. |
+| OAA | Organismo Argentino de Acreditación. |
+| Depende de jurisdicción / Por consultar a SENASA | Estados de verificación de `16_normativa_senasa/matriz_regulatoria.csv` (junto con `VERIFICADO EN PRIMARIA` y `PVDP`): el requisito cambia según provincia o municipio / la respuesta requiere consulta al organismo. |
+| L/ave | Litros de agua utilizada por ave faenada; indicador de eficiencia hídrica de la planta. No incluye el agua retenida en el producto. |
+| m³/t de producto | Agua utilizada por tonelada de producto comestible; segunda unidad para contrastar con L/ave (declarar siempre la base). |
+| Cinco aguas (captada / utilizada / incorporada / evaporada o arrastrada / descargada) | Captada: extraída o comprada (incluye rechazo de potabilización). Utilizada: usada por las operaciones (= agua de proceso). Incorporada: la que se va con productos y subproductos (balance de masa). Evaporada o arrastrada: sale como vapor, con lodos o sólidos. Descargada: va al efluente. No se suman ni se sustituyen; la relación utilizada → descargada no es fija (SUP-070). |
+| DBO₅ | Demanda bioquímica de oxígeno a 5 días: oxígeno que consumen los microorganismos para degradar la materia orgánica biodegradable (mg/L). |
+| DQO | Demanda química de oxígeno: oxígeno necesario para oxidar químicamente toda la materia orgánica (mg/L); siempre ≥ DBO. |
+| SST | Sólidos suspendidos totales del efluente (mg/L). Provienen del efluente medido o estimado, no de la masa de subproductos del balance. |
+| Grasas y aceites / SSEE | Sustancias solubles en éter etílico: medida de grasas en el efluente. |
+| NTK | Nitrógeno total Kjeldahl: nitrógeno orgánico + amoniacal. |
+| Carga orgánica / carga específica | Carga orgánica: masa de DBO o DQO por día (kg/día) = concentración × caudal; dimensiona el tratamiento. Carga específica: la misma carga por ave faenada (g/ave). |
+| Método A / método B (carga del efluente) | A: carga específica (g/ave × aves). B: caudal × concentración (m³ × mg/L). Se calculan por separado y se comparan; si divergen, requieren validación de campo (SUP-071). |
+| DAF | Flotación por aire disuelto: pretratamiento que separa grasas y sólidos finos con microburbujas; genera un flotado (lodo). |
+| Ecualización | Tanque que amortigua variaciones de caudal, carga, pH y temperatura del efluente. |
+| Tratamiento anaerobio / aerobio | Degradación biológica sin oxígeno (lagunas, UASB; produce biogás y poco lodo) o con oxígeno (lodos activados, SBR; más energía y lodo, mejor calidad de salida). |
+| UASB | Reactor anaerobio de manto de lodo de flujo ascendente. |
+| Masa biológica segregable en origen | Subproductos y residuos del balance que deberían capturarse antes de los drenajes; no equivale a sólidos del efluente ni a SST. |
+| Ejemplo regulatorio de referencia | Límite de una jurisdicción (p. ej., ADA 336/03, PBA) usado solo para ilustrar órdenes de magnitud; se reemplaza por el límite real del sitio (DPV-106). |
+| kW (kilovatio) | Unidad de **potencia**: cuánta energía se usa por unidad de tiempo en un instante. Dimensiona acometida, transformador y generador. |
+| kWh (kilovatio-hora) | Unidad de **energía**: potencia × horas. Define el consumo y la factura. De los kWh diarios no se deduce la potencia pico. |
+| Potencia media equivalente bajo X horas | Energía diaria (kWh) ÷ X horas declaradas. No es potencia pico ni potencia contratada. |
+| Demanda máxima / potencia pico | Potencia simultánea máxima calculada desde una lista de cargas (kW nominal, factor de carga, simultaneidad, arranque, cos φ). Pendiente (DPV-095). |
+| Carga crítica | Consumo eléctrico que debe mantenerse durante un corte (frío de cámaras, control y seguridad, iluminación de emergencia, efluentes, agua mínima, ventilación del andén de aves). Su lista define el grupo electrógeno (DEC-047). |
+| kW frigorífico (kWf) / kW eléctrico (kWe) | kWf: calor que extrae el sistema de frío por unidad de tiempo. kWe: potencia eléctrica que consumen los compresores y auxiliares para lograrlo. |
+| COP (coeficiente de desempeño) | kWf ÷ kWe: cuántos kW de frío se obtienen por kW eléctrico. Cae cuanto más baja es la temperatura buscada y más alta la de condensación (verano). En el modelo es un supuesto declarado (SUP-075). |
+| TR (tonelada de refrigeración) | 3,517 kW frigoríficos. |
+| Carga sensible del producto | Calor a extraer para enfriar (o congelar) el producto; es solo una parte de la carga frigorífica total. |
+| Balance frigorífico | Suma de todas las cargas de frío (producto, latente, transmisión, infiltración, puertas, personas, iluminación, motores, docks, salas, cámaras, túneles, desescarche). Define la capacidad de la sala de máquinas (DPV-109). |
+| Capacidad de congelación | Toneladas por día de producto nuevo que túneles, espirales o IQF llevan a −18 °C (t/día). |
+| Capacidad de almacenamiento (frío) | Toneladas ya refrigeradas o congeladas que las cámaras guardan al mismo tiempo (t). Una cámara de 300 t no congela 300 t/día. |
+| PCI | Poder calorífico inferior de un combustible (MJ/m³ o MJ/kg). |
+| Top-down / bottom-up | Estimación por indicadores globales (por ave o por t) / por suma de equipos cotizados. Se contrastan sin ajustar uno para cerrar el otro (SUP-077). |
+| Umbral visual ilustrativo (simulador) | Criterio de interfaz del simulador HTML para mostrar una alerta (p. ej., utilización < 50 %, inventario ≥ 7 días, FCR ±0,15, ganancia diaria ±15 %). No es un límite industrial validado ni un supuesto del proyecto. |
+| Modelo preliminar completado / evidencia de campo pendiente | Estados que usa `estado_proyecto.md`: el primero indica que el método y el modelo están construidos y probados; el segundo, que sus cifras aún no fueron contrastadas con datos reales. "Completado" nunca significa "validado en campo". |

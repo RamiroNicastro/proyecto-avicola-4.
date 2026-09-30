@@ -1,5 +1,7 @@
 # Propuestas de actualización de registros globales — sesión 09C (utilities)
 
+> **ARCHIVO HISTÓRICO — RECONCILIADO el 2026-09-30.** Todo lo propuesto aquí ya fue integrado en `00_gestion_proyecto/` y `25_fuentes/`. Los IDs provisionales que aparecen abajo **ya no están activos**: sus equivalentes definitivos (y los casos consolidados en registros existentes) están en [`../00_gestion_proyecto/reconciliacion_sesiones_09.md`](../00_gestion_proyecto/reconciliacion_sesiones_09.md) §2. El CSV de fuentes provisional citado abajo se retiró: las fuentes están en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv). No editar este archivo.
+
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (incluye la auditoría conceptual de utilities) · Sesión en paralelo: **no se editaron** `00_gestion_proyecto/`, `25_fuentes/registro_fuentes.csv` ni `25_fuentes/bibliografia.md`. Este archivo contiene lo que debe incorporarse al integrar la sesión.
 
 > **IDs provisionales:** para evitar colisiones con otras sesiones paralelas, los registros nuevos usan IDs `SUP-09C-xx`, `DPV-09C-xx`, `DEC-09C-xx` y `FTE-09C-xx`. Al integrar, asignar el siguiente número libre de cada registro (al cierre de esta sesión los últimos eran SUP-060, DPV-087, DEC-036 y FTE-193) y reemplazar los IDs provisionales en `11_agua_efluentes/` y `12_energia_frio/` (búsqueda de texto `09C-`).
@@ -112,7 +114,7 @@
 
 ## 6. `25_fuentes/`
 
-- Incorporar `FTE-09C-01` a `FTE-09C-19` de [`fuentes_09C.csv`](fuentes_09C.csv) a `registro_fuentes.csv` con numeración definitiva (mismas columnas) y agregar sus entradas a `bibliografia.md` en la sección de agua/efluentes/energía/frío.
+- Incorporar `FTE-09C-01` a `FTE-09C-19` de `fuentes_09C.csv` (retirado en la reconciliación 09) a `registro_fuentes.csv` con numeración definitiva (mismas columnas) y agregar sus entradas a `bibliografia.md` en la sección de agua/efluentes/energía/frío.
 - Anotar en **FTE-181** (efluentes de faena) que se usó para la carga específica y la DQO de la sangre en `11_agua_efluentes` (sin cambiar su estado `[PVDP]`).
 - Anotar en **FTE-135** que la exigencia de ≤ −18 °C se usa como temperatura final de congelado en `12_energia_frio`.
 - Anotar en **FTE-157** (mortandades por fallas eléctricas) su uso en `12_energia_frio/respaldo_energia.md`.

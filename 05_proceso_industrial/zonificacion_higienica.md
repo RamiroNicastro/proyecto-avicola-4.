@@ -2,17 +2,17 @@
 
 **Fecha:** 2026-09-30 · **Versión:** 1.1 (sesión 09A; §5 alineado con la ecuación de 24 h) · Fase 0
 
-> **Alcance:** principios de separación sanitaria entre zonas y cruces de flujo que el diseño debe evitar. **No** es un layout: no hay metros, superficies ni ubicación de salas (eso corresponde a `09_layout_obra_civil`, fase posterior). Los requisitos normativos concretos (Decreto 4238/68, Res. SENASA 592/2026, estándar UE) están **sin leer en su texto original** (DPV-007, DPV-09A-03).
-> **Base:** principio de "marcha hacia adelante" de zona sucia a zona limpia, sin retrocesos ni cruces (guía INTA de faena de aves, FTE-09A-029 `[PVDP]`); requisitos de flujos separados para habilitación SENASA y exportación ([`../17_exportacion/requisitos_planta_exportadora.md` §1 y §3](../17_exportacion/requisitos_planta_exportadora.md)). Flujo de etapas: [`flujo_proceso.md`](flujo_proceso.md).
+> **Alcance:** principios de separación sanitaria entre zonas y cruces de flujo que el diseño debe evitar. **No** es un layout: no hay metros, superficies ni ubicación de salas (eso corresponde a `09_layout_obra_civil`, fase posterior). Los requisitos normativos concretos (Decreto 4238/68, Res. SENASA 592/2026, estándar UE) están **sin leer en su texto original** (DPV-007, DPV-090).
+> **Base:** principio de "marcha hacia adelante" de zona sucia a zona limpia, sin retrocesos ni cruces (guía INTA de faena de aves, FTE-222 `[PVDP]`); requisitos de flujos separados para habilitación SENASA y exportación ([`../17_exportacion/requisitos_planta_exportadora.md` §1 y §3](../17_exportacion/requisitos_planta_exportadora.md)). Flujo de etapas: [`flujo_proceso.md`](flujo_proceso.md).
 
 ---
 
 ## 1. Principios
 
-1. **Marcha hacia adelante:** el producto avanza siempre de lo más contaminado a lo más limpio y de lo caliente a lo frío; nunca vuelve atrás (FTE-09A-029 `[PVDP]`).
+1. **Marcha hacia adelante:** el producto avanza siempre de lo más contaminado a lo más limpio y de lo caliente a lo frío; nunca vuelve atrás (FTE-222 `[PVDP]`).
 2. **Barrera en cada cambio de zona:** paredes o separaciones físicas, con aberturas solo para el paso del producto (transportador aéreo, cinta, ventana de traspaso).
-3. **Personas y utensilios asignados a una zona:** el personal, los equipos y los utensilios de la zona sucia no circulan en la zona limpia (FTE-09A-029 `[PVDP]`); vestimenta de color distinto por zona, vestuarios y accesos separados, pediluvios y lavamanos en cada acceso.
-4. **Aire y agua de lo limpio a lo sucio:** el aire no debe ir de la zona sucia a la limpia (sobrepresión en la zona limpia; tomas de aire con filtro, FTE-09A-029 `[PVDP]`); los desagües corren desde la zona limpia hacia la sucia, nunca al revés.
+3. **Personas y utensilios asignados a una zona:** el personal, los equipos y los utensilios de la zona sucia no circulan en la zona limpia (FTE-222 `[PVDP]`); vestimenta de color distinto por zona, vestuarios y accesos separados, pediluvios y lavamanos en cada acceso.
+4. **Aire y agua de lo limpio a lo sucio:** el aire no debe ir de la zona sucia a la limpia (sobrepresión en la zona limpia; tomas de aire con filtro, FTE-222 `[PVDP]`); los desagües corren desde la zona limpia hacia la sucia, nunca al revés.
 5. **Subproductos y residuos salen por su propio camino:** nunca atraviesan salas de producto terminado ni comparten puertas con él.
 6. **Envases y materiales entran limpios y por separado:** el cartón y los pallets (sucios por definición) no entran a las salas de proceso; el envase primario entra por un pasaplatos o esclusa.
 7. **Temperatura como barrera:** a partir del enfriamiento, todo el producto permanece en salas refrigeradas hasta la expedición.
@@ -69,9 +69,9 @@
 
 ## 5. Limpieza y sanitización: horas netas de faena vs tiempo total del establecimiento
 
-La **hora neta de faena** es la hora en que la línea recibe aves. El **tiempo total del establecimiento** agrega todo lo que la planta necesita para poder volver a faenar al día siguiente. La cuantificación de sensibilidad está en [`cuellos_botella.md` §4](cuellos_botella.md) (ecuación de 24 h: 8 h netas → ~14–21 h de establecimiento; 16 h netas → ~23–32 h, es decir, **restricción severa de calendario** con los supuestos actuales, que debe validarse con proveedores y plantas antes de descartar dos turnos). El tiempo de limpieza es una relación **provisional** `t_limpieza(escala, configuración, automatización)`; datos de campo pendientes: duración, dotación, simultaneidad, CIP/manual, tiempos preoperacionales (DPV-09A-04). No se dimensionan todavía consumos de agua, químicos ni personal de limpieza.
+La **hora neta de faena** es la hora en que la línea recibe aves. El **tiempo total del establecimiento** agrega todo lo que la planta necesita para poder volver a faenar al día siguiente. La cuantificación de sensibilidad está en [`cuellos_botella.md` §4](cuellos_botella.md) (ecuación de 24 h: 8 h netas → ~14–21 h de establecimiento; 16 h netas → ~23–32 h, es decir, **restricción severa de calendario** con los supuestos actuales, que debe validarse con proveedores y plantas antes de descartar dos turnos). El tiempo de limpieza es una relación **provisional** `t_limpieza(escala, configuración, automatización)`; datos de campo pendientes: duración, dotación, simultaneidad, CIP/manual, tiempos preoperacionales (DPV-091). No se dimensionan todavía consumos de agua, químicos ni personal de limpieza.
 
-Secuencia conceptual del ciclo de limpieza y sanitización (POES; orden típico descrito en FTE-09A-028 `[PVDP · débil]`):
+Secuencia conceptual del ciclo de limpieza y sanitización (POES; orden típico descrito en FTE-221 `[PVDP · débil]`):
 
 | Paso | Qué se hace | Por qué importa para la capacidad | Dependencia de diseño |
 |---|---|---|---|
@@ -92,6 +92,6 @@ Secuencia conceptual del ciclo de limpieza y sanitización (POES; orden típico 
 
 ## 6. Pendientes
 
-- Leer el texto original del Decreto 4238/68 (capítulo de aves) y de la Res. SENASA 592/2026 sobre zonas, iluminación de puestos de inspección, temperaturas de salas y separación de subproductos (DPV-007, DPV-09A-03).
+- Leer el texto original del Decreto 4238/68 (capítulo de aves) y de la Res. SENASA 592/2026 sobre zonas, iluminación de puestos de inspección, temperaturas de salas y separación de subproductos (DPV-007, DPV-090).
 - Requisitos adicionales del estándar UE (listado de planta) y de certificaciones privadas (BRCGS, IFS) sobre zonificación (DEC-012).
 - Traducción a superficies y ubicación: `09_layout_obra_civil` (no iniciado).

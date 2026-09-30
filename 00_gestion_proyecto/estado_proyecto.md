@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 **Fase actual:** FASE 0 — DEFINICIÓN Y PREFACTIBILIDAD
-**Última actualización:** 2026-09-30
+**Última actualización:** 2026-09-30 (reconciliación de las sesiones paralelas 09A–09D: [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md))
 
 ## Situación de partida
 
@@ -13,20 +13,50 @@
 
 Detalle de premisas: [`supuestos.md`](supuestos.md).
 
+## Tablero de estado (2026-09-30)
+
+**Cómo leerlo:** *Modelo preliminar completado* = el método, el documento y (si corresponde) el modelo reproducible existen y pasan sus pruebas. **No** significa validado en campo. *Evidencia de campo pendiente* = sus cifras todavía no fueron contrastadas con datos reales (plantas argentinas, compradores, proveedores, organismos, sitios). En toda la Fase 0 **ninguna** cifra externa pudo leerse en su documento original desde el entorno de análisis (DPV-009).
+
+| Módulo | Modelo preliminar | Evidencia de campo | Síntesis |
+|---|---|---|---|
+| Mercado (`01`) | **Completado** v2 | Pendiente (verificación documental primaria) | [`conclusiones_mercado.md`](../01_mercado/conclusiones_mercado.md) |
+| Exportación (`17`) | **Completado** v1.1 | Pendiente | [`conclusiones_exportacion.md`](../17_exportacion/conclusiones_exportacion.md) |
+| Demanda (`02`) | **Completado** v1 (marco y escenarios de prueba) | Pendiente — demanda documentada ≈ 0 | [`conclusiones_demanda.md`](../02_clientes_demanda/conclusiones_demanda.md) |
+| Producción primaria (`03`) | **Completado** v1.1 (modelo y 72 escenarios) | Pendiente | [`conclusiones_produccion.md`](../03_produccion_primaria/conclusiones_produccion.md) |
+| Balance de masa (`04`) | **Completado** v1.1 (modelo, 21 tests) | Pendiente — ensayo en planta (DEC-028) | [`conclusiones_balance.md`](../04_balance_masa/conclusiones_balance.md) |
+| Productos y subproductos (`06`, `07`) | **Completado** v1.0 (mapa, 9 tests) | Pendiente — sin precios ni compradores | [`conclusiones_valorizacion.md`](../07_subproductos/conclusiones_valorizacion.md) |
+| Escala preliminar (`23`) | **Completado** v1.1 (modelo, 23 tests; **sin escala elegida**) | Pendiente | [`conclusiones_escala.md`](../23_plan_expansion/conclusiones_escala.md) |
+| Proceso industrial conceptual (`05`) | **Completado** v1.1 (modelo, 18 tests) | Pendiente — capacidad real, limpieza, productividad | [`conclusiones_proceso.md`](../05_proceso_industrial/conclusiones_proceso.md) |
+| Maquinaria conceptual (`08`) | **Completado** (76 equipos, RFQ no enviado; **sin proveedor**) | Pendiente — cotizaciones, servicio técnico | [`08_maquinaria/README.md`](../08_maquinaria/README.md) |
+| Normativa preliminar (`16`) | **Completado** v1.0 (hoja de ruta, 64 requisitos) | Pendiente — 0 normas leídas en original; consulta a SENASA | [`conclusiones_normativa.md`](../16_normativa_senasa/conclusiones_normativa.md) |
+| Agua y efluentes (`11`) | **Completado** v1.1 (modelo de utilities, 30 tests) | Pendiente — agua, vuelco, DQO/DBO/SST, lodos | [`conclusiones_agua_efluentes.md`](../11_agua_efluentes/conclusiones_agua_efluentes.md) |
+| Energía y frío (`12`) | **Completado** v1.1 (mismo modelo; pico, carga frigorífica total y generador PENDIENTES) | Pendiente — lista de cargas, balance frigorífico | [`conclusiones_energia_frio.md`](../12_energia_frio/conclusiones_energia_frio.md) |
+| Simulador HTML v0.1 (`23/simulador_html`) | **Construido** v0.1 (20/20 validaciones; sin economía) | No aplica (interfaz de modelos) | [`simulador_html/README.md`](../23_plan_expansion/simulador_html/README.md) |
+| Trabajo de campo (demanda, plantas, proveedores, SENASA, sitios) | — | **Pendiente** | [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md) §11 |
+| Localización (`10`) | **Pendiente** (no iniciado) | Pendiente | — |
+| Logística detallada (`13`) | **Pendiente** (no iniciado) | Pendiente | — |
+| Layout y obra civil (`09`) | **Pendiente** (no iniciado) | Pendiente | — |
+| Recursos humanos (`18`) | **Pendiente** (no iniciado) | Pendiente | — |
+| CAPEX (`19`) / OPEX (`20`) | **Pendiente** (no iniciado) | Pendiente | — |
+| Modelo financiero (`21`) y riesgo financiero (`22`) | **Pendiente** (no iniciado) | Pendiente | — |
+| Decisión de escala (DEC-001, DEC-033) | **Pendiente** (no tomada) | Pendiente | — |
+| Documentación final para inversores (`24`) | **Pendiente** | — | — |
+
 ## Alcance de la Fase 0
 
 1. Estructurar el repositorio y las reglas de trabajo. ✅
-2. Relevar información de mercado, normativa y tecnología con fuentes trazables.
-3. Validar (o descartar) la demanda del canal supermercados.
-4. Construir el balance de masa y escenarios de escala sin fijar capacidad a priori.
-5. Evaluar cada eslabón de la cadena: hacer / comprar / tercerizar / postergar.
-6. Estimar CAPEX y OPEX por escenario y construir el modelo financiero.
-7. Emitir conclusión de prefactibilidad (viable / viable con condiciones / no viable) y definir si se pasa a Fase 1 (factibilidad).
+2. Relevar información de mercado, normativa y tecnología con fuentes trazables. ✅ como modelo preliminar (mercado, exportación, normativa, proceso, maquinaria, utilities); verificación documental primaria pendiente (DPV-009).
+3. Validar (o descartar) la demanda del canal supermercados. ⏳ Marco listo; trabajo de campo pendiente.
+4. Construir el balance de masa y escenarios de escala sin fijar capacidad a priori. ✅ como modelo preliminar (sin escala elegida).
+5. Evaluar cada eslabón de la cadena: hacer / comprar / tercerizar / postergar. ⏳ Parcial (producción primaria, subproductos, faena a façon como opciones sin decisión).
+6. Estimar CAPEX y OPEX por escenario y construir el modelo financiero. ⏳ No iniciado.
+7. Emitir conclusión de prefactibilidad (viable / viable con condiciones / no viable) y definir si se pasa a Fase 1 (factibilidad). ⏳ No iniciado.
 
 ## Restricciones vigentes en esta fase
 
 - **No** se realizan recomendaciones de inversión.
-- **No** se selecciona maquinaria ni proveedores (solo relevamiento).
+- **No** se selecciona maquinaria ni proveedores (solo relevamiento; DEC-049 abierta). Las capacidades de fabricantes son nominales declaradas, nunca capacidad del proyecto.
+- **No** se eligen automatización, arquitectura de línea, segundo turno, enfriamiento, aturdido, tratamiento de efluentes, refrigerante, fuente térmica, respaldo, rendering ni ubicación (DEC-003, DEC-026, DEC-027, DEC-036 a DEC-049).
 - **No** se fija capacidad de faena (el modelo de escala de 2026-09-30 compara escenarios; no elige escala).
 
 ## Hitos
@@ -42,6 +72,11 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | 2026-09-30 | Balance de masa (`04_balance_masa`): definiciones (vivo, eviscerado, carcasa fría, RTC, comercial), balance por ave para 6 pesos, cortes y deshuese, menudencias, garras, plumas, sangre, vísceras, agua del chiller separada de la masa biológica, condenas y mermas, 3 configuraciones (entero / trozado / deshuesado), escalado 1 ave–20.000 aves/día y 1 M aves/año, clases A/B/C/D, modelo reproducible con 13 tests y protocolo de ensayo en planta | Completado v1.1 (**sin datos de planta argentinos**). Auditoría conceptual v1.1: sin doble contabilización; nomenclatura del agua corregida (agua incorporada a productos y subproductos ≠ agua de proceso de la planta); rutas alternativas exclusivas esqueleto/CMS; 21 tests sobre 1.008 balances con error ≤ 2 × 10⁻¹⁵ kg/ave. **Verificación documental primaria no realizada: acceso bloqueado (DPV-009)**. Calidad: MEDIA como modelo, BAJA como evidencia numérica |
 | 2026-09-30 | Mapa de productos, coproductos y subproductos (`06_productos`, `07_subproductos`): inventario de 39 salidas con kg/ave trazables al balance v1.1, clasificación económica condicional al comprador, productos de mercado interno y exportación, garras, menudencias, carcasa/CMS, piel y grasa, sangre, plumas, vísceras, cabeza y huesos, rendering (propio / tercerizado / venta directa), pet food, elaborados, matriz de valorización, índice de aprovechamiento del ave, árboles de rutas con 15 incompatibilidades, escalado 2.500–20.000 aves/día, lista maestra de precios y tareas de campo; generador con 9 tests | Completado v1.0 (**sin precios ni compradores**; normativa solo en extractos, DPV-009). Calidad: MEDIA como mapa y método, BAJA como evidencia comercial y normativa |
 | 2026-09-30 | Modelo preliminar de escala (`23_plan_expansion`, `05_proceso_industrial/capacidad_preliminar.md`): definición de capacidad (nominal / operativa / faenada / utilización), calendarios 250 y 300 días, ritmo de línea por horas netas, demanda vs capacidad con dos métodos (ave completa y parte limitante con balance v1.1), utilización 30–100 %, producción primaria importada, modelos de abastecimiento, balance de productos, configuraciones A/B/C, subproductos, inventario y logística conceptuales, exportación (lotes), modularidad, arquitecturas de crecimiento A–E, gates G0–G3, matriz sin ganador, especificación del simulador HTML v0.1 y guía; modelo reproducible que importa los modelos previos; auditoría conceptual v1.1 (utilización ≤ 100 % separada de factor demanda/capacidad y cobertura; día operativo vs calendario; inventario con dos bases; masa biológica vs peso comercial; segundo turno y sexto día; localización como hipótesis), 23 tests y 22 mutaciones detectadas | Completado v1.1 (**sin escala elegida, sin CAPEX/OPEX, sin datos de campo**). Calidad: MEDIA como modelo integrador, BAJA como evidencia para decidir la escala |
+| 2026-09-30 | Proceso industrial y maquinaria conceptual (`05_proceso_industrial`, `08_maquinaria`; sesión 09A): flujo de 32 etapas con flujos laterales, zonificación higiénica, capacidad horaria y ventana del establecimiento (ecuación de 24 h), cuellos de botella, arquitecturas por escala, 76 equipos conceptuales con automatización por escala y criticidad, proveedores preliminares, nuevo vs usado, RFQ futuro; `modelo_capacidad_proceso.py` v1.1 | **Modelo preliminar completado** v1.1 (18/18 tests; 9/9 mutaciones). **Evidencia de campo pendiente.** Sin escala, proveedor, CAPEX, layout ni localización. Tres fuentes de fabricante confirmadas en revisión externa (lectura primaria pendiente de reproducir). Calidad: MEDIA como método, BAJA como evidencia de capacidad real |
+| 2026-09-30 | Normativa preliminar (`16_normativa_senasa`; sesión 09B): mapa de autoridades y habilitaciones, rol del Decreto 4238/68, secuencia tentativa, requisitos sanitarios, APPCC obligatorio (Res. 205/2014), Decreto 697/2026, Ley 22.375, escalera exportadora, subproductos, matriz de 64 requisitos, ruta crítica (14 reglas), 7 preguntas prioritarias a SENASA | **Modelo preliminar completado** v1.0. **Ninguna norma leída en original** (DPV-009): 37 requisitos `[PVDP]`, 15 por consultar a SENASA, 12 dependientes de jurisdicción, 0 verificados en primaria. Calidad: MEDIA como estructura, BAJA como evidencia normativa |
+| 2026-09-30 | Agua, efluentes, energía y frío (`11_agua_efluentes`, `12_energia_frio`; sesión 09C): modelo **top-down de sensibilidad** de cinco aguas, efluente por dos métodos, lodos (pendiente), energía, térmico, frío, congelado y respaldo; `modelo_utilities.py` v1.1 | **Modelo preliminar completado** v1.1 (30 tests; 20 mutaciones). Potencia pico, pico térmico, carga frigorífica total, lodos y grupo electrógeno **PENDIENTES**. **Evidencia de campo pendiente.** Calidad: MEDIA como método, BAJA como evidencia |
+| 2026-09-30 | Simulador HTML v0.1 (`23_plan_expansion/simulador_html`; sesión 09D) | **Construido.** Reproduce los modelos físicos aprobados (4.224 cifras de `escenarios_escala.csv` sin diferencias; 20/20 validaciones; prueba en navegador 16/16); funciona offline (`file://`, sin CDN); comparador A/B/C; **sin economía** (CAPEX, OPEX, EBITDA, VAN, TIR y payback pendientes); no integra todavía proceso (09A) ni utilities (09C) |
+| 2026-09-30 | Reconciliación de las sesiones 09A–09D en los registros maestros | Completada: 17 SUP, 28 DPV, 13 DEC y 75 FTE nuevos; 15 IDs provisionales consolidados en registros existentes o fusionados entre sí (ninguno duplicado); tensiones abiertas registradas sin resolver. Ver [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md) |
 | — | Escenarios CAPEX/OPEX y modelo financiero | Pendiente |
 | — | Informe de prefactibilidad | Pendiente |
 
@@ -117,7 +152,41 @@ Síntesis en [`../23_plan_expansion/conclusiones_escala.md`](../23_plan_expansio
 - Contra los escenarios de prueba (factor demanda/capacidad; la utilización nunca supera 100 %): el **base** (7,5 t/día) excede 2.500 (factor 183–326 %, cobertura 31–55 %), ronda **5.000** (factor 91 % con ave completa; 124–163 % con mix de supermercado) y deja 10.000 con utilización 46–81 %; el **expansivo** (23,5 t/día) excede 10.000 (cobertura 39–70 %) y recién acerca 20.000 (factor 72–128 %). Aun con la planta llena, el mix deja **partes sin comprador** (3,0–6,7 t/día en el escenario base).
 - Físico (medio, 5 d): 13.200 / 26.400 / 52.800 / 105.600 pollitos BB por semana plena; 9.500–75.900 m² de galpón; 3.100–24.700 t de alimento/año; 312–2.500 aves/h a 8 h netas; 1,3–10,7 t/día de subproductos C (hasta 17,3 con deshuese); 42–336 t de comestible en 7 días de producción (29–230 t en 7 días calendario de cobertura).
 - El segundo turno es **capacidad teórica de la línea** (16 h netas) sujeta a verificar los demás cuellos de botella; el sexto día agrega ~20 % de **volumen anual** con la misma capacidad diaria; ninguno se afirma como crecimiento sin obra. La **escala mínima eficiente** (DPV-083) es un dato crítico pendiente: no se concluye que 2.500 sea chico ni 20.000 grande. La cercanía a granjas es una hipótesis a estudiar (DEC-003). Cinco arquitecturas de crecimiento y una matriz de ocho criterios **sin ganador** (DEC-033); gates con 18 variables medibles **sin umbrales** (DEC-034).
-- **Alcance:** no se eligió escala; no se calcularon CAPEX, OPEX ni precios; no se seleccionaron maquinaria, proveedores, layout ni localización; el HTML solo se especificó.
+- **Alcance:** no se eligió escala; no se calcularon CAPEX, OPEX ni precios; no se seleccionaron maquinaria, proveedores, layout ni localización; el HTML solo se especificó (se construyó después como v0.1, ver más abajo).
+
+## Resultado del proceso industrial y la maquinaria conceptual (2026-09-30, sesión 09A)
+
+Síntesis en [`../05_proceso_industrial/conclusiones_proceso.md`](../05_proceso_industrial/conclusiones_proceso.md):
+
+- Ritmo operativo a 8 h netas: 312 / 625 / 1.250 / 2.500 aves/h para 2.500–20.000 aves/día. **Capacidad de línea ≠ capacidad de planta** (equipo → cuello de botella → capacidad operativa → producción real). Disponibilidad y factor de velocidad solo como sensibilidad (SUP-061).
+- Ecuación de 24 h (SUP-062): con 8 h netas la planta opera ~14–21 h/día; con 16 h netas la holgura es +0,9 / −2,8 / −8,3 h: **restricción severa, a validar; segundo turno ni asumido ni descartado** (DEC-036).
+- 76 equipos conceptuales; evisceración manual **sin umbral fijo**; más automatización no es siempre mejor (DEC-037). Una vs dos líneas sin recomendación (DEC-038). Aturdido y enfriamiento sin elegir (DEC-041, DEC-026).
+- Proveedores: BAADER CP396, Meyn LEAP y JBT Marel/Calisa2 como **declaración del fabricante** (evidencia fuerte, confirmada en revisión externa); sus capacidades son **nominales declaradas, no capacidad del proyecto**; el resto `[PVDP]`. Dato crítico: definición contractual de capacidad (DPV-097). **Sin proveedor elegido** (DEC-049).
+
+## Resultado de la normativa preliminar (2026-09-30, sesión 09B)
+
+Síntesis en [`../16_normativa_senasa/conclusiones_normativa.md`](../16_normativa_senasa/conclusiones_normativa.md):
+
+- Cadena de cuatro niveles: habilitaciones locales → SENASA tránsito federal → autorización SENASA por destino → listado/aceptación del importador. Caso de referencia del análisis: tránsito federal (SUP-066), **no decidido** (DEC-009).
+- Cambios 2025–2026 detectados solo en extractos (hipótesis de vigencia, SUP-067): Res. SENASA 592, 593, 591 y 233/2026; Res. 723/2025; Decreto 697/2026. El Plan APPCC es obligatorio regulatorio (Res. 205/2014, `[PVDP]`). La Ley 22.375 sigue en el corpus oficial.
+- Estados de verificación preservados: `VERIFICADO EN PRIMARIA` (0), `PVDP`, `DEPENDE DE JURISDICCIÓN`, `POR CONSULTAR A SENASA`. Que el Decreto 697/2026 modifica/complementa el Decreto 815/1999 está **confirmado en revisión externa**; la lectura primaria queda pendiente de reproducir (DPV-107).
+- Pendientes prioritarios: texto del Decreto 4238/68 (DPV-090), revisión del anteproyecto por SENASA (DPV-115), plazos reales (DPV-086), Decreto 697/2026 (DPV-107), Ley 22.375 (DPV-099), APPCC (DPV-102), Res. 233/2026 (DPV-100) y normativa por sitio (DPV-106).
+
+## Resultado de agua, efluentes, energía y frío (2026-09-30, sesión 09C)
+
+Síntesis en [`../11_agua_efluentes/conclusiones_agua_efluentes.md`](../11_agua_efluentes/conclusiones_agua_efluentes.md) y [`../12_energia_frio/conclusiones_energia_frio.md`](../12_energia_frio/conclusiones_energia_frio.md) (todo **sensibilidad top-down**, fuentes `[PVDP]`):
+
+- Agua 15 / 25 / 38 L/ave (62–500 m³/día medio entre 2.500 y 20.000 aves/día); cinco aguas separadas; efluente ~1.000–1.200 kg DQO/día a 10.000 aves/día (medio) por dos métodos que **divergen en los extremos** → validación de campo. Lodos **PENDIENTES**.
+- ~0,8 kWh/ave y potencia **media** equivalente (pico PENDIENTE de lista de cargas); ~1 MJ/ave (pico térmico PENDIENTE); carga sensible del producto ~99 kWf a 10.000 aves/día (carga frigorífica total PENDIENTE; brecha ×5,7 con el benchmark sin cerrar); congelado dominado por el perfil P1–P3; grupo electrógeno PENDIENTE.
+- Agua, vuelco, potencia, gas y calidad de red son **criterios de localización** que pueden limitar la escala del sitio (DEC-003, DEC-043).
+
+## Simulador HTML v0.1 (2026-09-30, sesión 09D)
+
+Documentación en [`../23_plan_expansion/simulador_html/README.md`](../23_plan_expansion/simulador_html/README.md):
+
+- **Ya existe** y funciona offline (abrir `index.html`; sin servidor ni Internet). Reproduce los modelos físicos aprobados (producción, balance, subproductos, escala) sin reimplementar el balance; comparador de escenarios A/B/C; etiquetas de certeza por cifra ("Calculado por modelo" ≠ validado en planta).
+- **Sin economía:** CAPEX, OPEX, EBITDA, VAN, TIR y payback **pendientes** (pestaña deshabilitada). No integra todavía la capacidad de proceso (09A), utilities (09C), gates ni localización.
+- Umbrales de alerta de interfaz — **no son límites industriales validados**: utilización < 50 % (umbral visual ilustrativo), inventario ≥ 7 días (umbral visual ilustrativo), FCR ±0,15 (criterio de interfaz), ganancia diaria ±15 % (criterio de interfaz). Registrados en la anotación de SUP-060.
 
 ## Próximos pasos
 
@@ -131,5 +200,11 @@ Síntesis en [`../23_plan_expansion/conclusiones_escala.md`](../23_plan_expansio
 7. Mapa de productos y subproductos (realizado 2026-09-30). Pendiente: precios y compradores reales por parte y subproducto (tareas F1–F10 de `07_subproductos/conclusiones_valorizacion.md` §9; DPV-070 a DPV-081), receptores de rendering en zonas candidatas (DPV-065) y verificación de normativa de CMS, harinas, pet food y decomisos (DPV-066, DPV-073, DPV-074). **No se iniciaron** modelo financiero, maquinaria, escala óptima ni layout.
 
 8. Modelo preliminar de escala (realizado 2026-09-30). Pendiente: datos **críticos antes de definir escala** — compras reales y mix de la red (DPV-003, DPV-037, DPV-085), evidencia de compromiso (DPV-002, DPV-020, DPV-038), canales para las partes excedentes (DPV-040, DPV-070), escala mínima eficiente (DPV-083), productores y pollitos (DPV-048, DPV-047) y faena a façon (DPV-006) — y calibración de gates (DEC-034). Lista priorizada en `23_plan_expansion/conclusiones_escala.md` §4. **No se iniciaron** CAPEX, OPEX, modelo financiero, maquinaria, layout, localización ni el HTML.
+
+   *Actualización (reconciliación 2026-09-30):* después de ese punto se hicieron, en sesiones paralelas, proceso industrial y maquinaria conceptual (09A), normativa preliminar (09B), utilities (09C) y el simulador HTML v0.1 (09D); ver los resultados arriba.
+
+9. Proceso, maquinaria, normativa y utilities (realizados 2026-09-30, modelos preliminares). Pendiente de **campo**: capacidad real y definición contractual de capacidad (DPV-088, DPV-097), servicio técnico y repuestos (DPV-089), limpieza y sanitización reales (DPV-091), productividad (DPV-092), texto del Decreto 4238/68 y revisión de anteproyecto con SENASA (DPV-090, DPV-115, DEC-042), agua, vuelco y efluentes reales (DPV-053, DPV-067, DPV-106, DPV-114), lista de cargas y balance frigorífico de proveedores (DPV-095, DPV-109). Lista completa en [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md) §11.
+10. Simulador HTML: v0.5 (variantes del balance, gates, datos de campo) y v1.0 (economía) **solo cuando existan** los módulos correspondientes.
+11. **Próximos módulos técnicamente habilitados** (tienen insumos preliminares, pero **no se inician hasta que el promotor lo indique**): localización (`10`; criterios de 09B y 09C), logística detallada (`13`), layout y obra civil (`09`; zonificación de 09A y requisitos de 09B), recursos humanos (`18`; puestos equivalentes de 09A), CAPEX y OPEX (`19`, `20`; requieren cotizaciones y definición de alcance). Modelo financiero, riesgo financiero, decisión de escala y documentación para inversores dependen de los anteriores y del trabajo de campo.
 
 Ver [`decisiones_pendientes.md`](decisiones_pendientes.md) y [`datos_por_validar.md`](datos_por_validar.md).

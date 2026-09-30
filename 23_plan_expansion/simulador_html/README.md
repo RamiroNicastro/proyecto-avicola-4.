@@ -122,7 +122,7 @@ modelos aprobados (Python, sin modificar)
 - Demanda: escenarios de prueba categoría C/D; la exportación de la demanda es 0 (SUP-022). Sin perfil de destino «manual».
 - Productores y camiones solo con dato ingresado por el usuario (DPV-048, DPV-084); por defecto se muestran m² y toneladas.
 - Umbrales de alertas de interfaz (no son datos del proyecto): ver `observaciones_html_v01.md` §3.
-- No hay gates de expansión (AL11) ni localización, agua industrial, efluentes, energía o frío dimensionados.
+- No hay gates de expansión (AL11) ni localización. Agua industrial, efluentes, energía y frío **existen como modelo preliminar** (`11_agua_efluentes/modelo_utilities.py`, sesión 09C) pero **no están integrados** en v0.1; tampoco la capacidad de proceso de 09A (ecuación de 24 h).
 
 ## 9. Próximas versiones (propuesta, sujeta a las fases del proyecto)
 

@@ -11,7 +11,7 @@
 
 - Un corte de energía en una planta de faena no es solo producción perdida: hay **aves vivas esperando** en el andén (bienestar y mortalidad), **producto a medio proceso** (carcasas en escaldador, eviscerado o chiller que deben terminar su enfriamiento), **stock en cámaras** (pérdida total si se rompe la cadena de frío) y **efluentes** (el biológico puede morir o desbordar, con consecuencias ambientales).
 - Hay antecedentes en Argentina de **mortandad masiva de pollos por fallas eléctricas en granjas** (FTE-157 `[PVDP]`, prensa): el riesgo es real en zonas rurales con redes débiles (DPV-052).
-- Una cámara de congelado bien aislada puede mantener temperatura bajo cero **4–8 h** tras la falla del frío (FTE-09C-17 `[PVDP · débil]`, fuente comercial); una cámara refrigerada y el producto fresco toleran mucho menos. Esa inercia define cuánto tiempo hay para arrancar el respaldo, no si hace falta.
+- Una cámara de congelado bien aislada puede mantener temperatura bajo cero **4–8 h** tras la falla del frío (FTE-267 `[PVDP · débil]`, fuente comercial); una cámara refrigerada y el producto fresco toleran mucho menos. Esa inercia define cuánto tiempo hay para arrancar el respaldo, no si hace falta.
 - Destinos de exportación auditan la **integridad de la cadena de frío** y los registros de temperatura ([`../17_exportacion/requisitos_planta_exportadora.md`](../17_exportacion/requisitos_planta_exportadora.md) §3: "energía de respaldo para frío").
 
 ## 2. Cargas críticas
@@ -46,7 +46,7 @@ Desglose a 10.000 aves/día (medio, P1): cámaras 10 kW, efluentes 7 kW, control
 **El dimensionamiento real deberá considerar:** listado de cargas críticas; kW y kVA; factor de potencia; corriente de arranque; motores y compresores (el mayor arranque suele mandar); secuencia de arranque; simultaneidad; autonomía; combustible; redundancia (N+1); posibilidad de **mantener el frío sin mantener la faena**; black-start cuando corresponda. Esa lista saldrá del catálogo de equipos de la sesión 09A (en `main`) y de las cotizaciones ([`demanda_energia.md` §6](demanda_energia.md)).
 
 **Lecturas:**
-1. La decisión real es **qué se quiere seguir haciendo durante un corte** (DEC-09C-05 propuesta): solo cargas críticas, terminar el lote en proceso o planta completa.
+1. La decisión real es **qué se quiere seguir haciendo durante un corte** (DEC-047 propuesta): solo cargas críticas, terminar el lote en proceso o planta completa.
 2. Con más congelado (P2/P3) y más días de stock crece la carga crítica de cámaras.
 3. Las fracciones son supuestos; el cálculo real requiere el listado de cargas del proyecto eléctrico.
 

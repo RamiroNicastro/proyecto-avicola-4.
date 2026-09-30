@@ -11,19 +11,19 @@
 
 | Tema | Norma(s) identificada(s) | Qué regula | Estado |
 |---|---|---|---|
-| Establecimientos faenadores avícolas | Decreto 4238/68 cap. XX (mod. Res. 553/2002) | Definición de matadero de aves, ubicación, construcción, equipos, tecnología, inspección | `[PVDP]` FTE-016, FTE-09B-04 |
-| Habilitación y registro | Procedimiento SENASA (SIGTrámites); Res. 233/2026 (documentación local) | Trámite, documentación, rubros, plazos | `[PVDP]` FTE-09B-02, FTE-09B-11 |
+| Establecimientos faenadores avícolas | Decreto 4238/68 cap. XX (mod. Res. 553/2002) | Definición de matadero de aves, ubicación, construcción, equipos, tecnología, inspección | `[PVDP]` FTE-016, FTE-232 |
+| Habilitación y registro | Procedimiento SENASA (SIGTrámites); Res. 233/2026 (documentación local) | Trámite, documentación, rubros, plazos | `[PVDP]` FTE-230, FTE-238 |
 | Condiciones edilicias | Decreto 4238/68 (capítulos generales + cap. XX) | Materiales, desagües, iluminación, vestuarios, flujos | `[PVDP]` |
-| Higiene e inocuidad | Res. SENASA 233/1998 (POES); BPM (reglamento y CAA); **Res. SENASA 205/2014 (Plan APPCC obligatorio; cap. XXXI del Decreto 4238/68)** | Saneamiento diario, buenas prácticas y análisis de peligros | `[PVDP]` FTE-09B-03, FTE-09B-16 |
-| Sistema Nacional de Control de Alimentos | **Decreto 697/2026** (BO 2026-08-03) | Reorganiza el sistema alimentario general (CAA): SENASA concentra registro, control y fiscalización; registro único y base única de datos. **Convivencia con el Decreto 4238/68 por confirmar** ([`mapa_regulatorio.md` §6](mapa_regulatorio.md)) | `[PVDP]` FTE-09B-25 |
+| Higiene e inocuidad | Res. SENASA 233/1998 (POES); BPM (reglamento y CAA); **Res. SENASA 205/2014 (Plan APPCC obligatorio; cap. XXXI del Decreto 4238/68)** | Saneamiento diario, buenas prácticas y análisis de peligros | `[PVDP]` FTE-231, FTE-243 |
+| Sistema Nacional de Control de Alimentos | **Decreto 697/2026** (BO 2026-08-03) | Reorganiza el sistema alimentario general (CAA): SENASA concentra registro, control y fiscalización; registro único y base única de datos. **Convivencia con el Decreto 4238/68 por confirmar** ([`mapa_regulatorio.md` §6](mapa_regulatorio.md)) | `[PVDP]` FTE-251 |
 | Inspección veterinaria | Decreto 4238/68; SIV en planta | Ante/post mortem, dictamen, decomisos | `[PVDP]` |
-| Agua potable | CAA arts. 982 y ss.; Decreto 4238/68 | Potabilidad, análisis | `[PVDP]` FTE-09B-09 |
+| Agua potable | CAA arts. 982 y ss.; Decreto 4238/68 | Potabilidad, análisis | `[PVDP]` FTE-236 |
 | Efluentes | Nacional: requisito documental en habilitación SENASA; fondo: **provincial** | Tratamiento y vuelco | **[JURISDICCIÓN]** |
 | Decomisos | Decreto 4238/68 | Destino de lo no apto | `[PVDP]` |
 | Cámaras y temperaturas | Decreto 4238/68 (cap. a identificar) | Refrigeración, congelación | `[PVDP]` — contradicción C5 |
-| Trazabilidad | RENSPA, DT-e, SIGSA, Res. 1699/2019 (granjas); rotulado y registros de planta; Res. 593/2026 exige trazabilidad documentada para exportar | Lote granja → planta → producto | `[PVDP]` FTE-09B-12 |
-| Transporte | Res. SENASA 723/2025 (derogó 503/2022, 735/2022, 557/2024) | Vehículos de animales vivos, productos, subproductos | `[PVDP]` FTE-09B-07 |
-| Bienestar animal | Decreto 4238/68 cap. XXXII; manual SENASA de faena de aves y lagomorfos; Res. 575/2018 (granja) | Espera, manejo, insensibilización, sacrificio | `[PVDP]` FTE-09B-06, FTE-145 |
+| Trazabilidad | RENSPA, DT-e, SIGSA, Res. 1699/2019 (granjas); rotulado y registros de planta; Res. 593/2026 exige trazabilidad documentada para exportar | Lote granja → planta → producto | `[PVDP]` FTE-239 |
+| Transporte | Res. SENASA 723/2025 (derogó 503/2022, 735/2022, 557/2024) | Vehículos de animales vivos, productos, subproductos | `[PVDP]` FTE-234 |
+| Bienestar animal | Decreto 4238/68 cap. XXXII; manual SENASA de faena de aves y lagomorfos; Res. 575/2018 (granja) | Espera, manejo, insensibilización, sacrificio | `[PVDP]` FTE-233, FTE-145 |
 | Residuos veterinarios y contaminantes | Plan CREHA; Res. 445/2024 (antimicrobianos promotores) | Muestreo oficial; proveedores | `[PVDP]` FTE-110, FTE-109 |
 | Subproductos | Ver [`subproductos_normativa.md`](subproductos_normativa.md) | | |
 
@@ -56,7 +56,7 @@ Base: principios de diseño higiénico recogidos por el Decreto 4238/68 y por gu
 
 | Aspecto | Qué se sabe | Tipo | Estado |
 |---|---|---|---|
-| Potabilidad | Toda agua en contacto con el producto o superficies debe ser **potable** según el CAA (art. 982 y ss.) | Obligatorio | `[PVDP]` FTE-09B-09 |
+| Potabilidad | Toda agua en contacto con el producto o superficies debe ser **potable** según el CAA (art. 982 y ss.) | Obligatorio | `[PVDP]` FTE-236 |
 | Análisis | Análisis microbiológico y fisicoquímico en laboratorio habilitado, con registros; parámetros típicos: *E. coli*, coliformes, pH, turbiedad, nitratos, cloro residual | Obligatorio (frecuencia a confirmar) | `[PVDP]` |
 | Frecuencia | Un extracto de un sitio comercial menciona bacteriológico semestral y fisicoquímico anual como práctica general; **no es la norma de frigoríficos** | Desconocido | `[PVDP · débil]` — **no se adopta** |
 | Agua caliente | Necesaria para lavamanos, esterilizadores y limpieza; temperaturas reglamentarias **no leídas** | Obligatorio | `[PVDP]` |
@@ -72,7 +72,7 @@ Base: principios de diseño higiénico recogidos por el Decreto 4238/68 y por gu
 
 | Etapa | Qué es | Quién | Registros | Estado |
 |---|---|---|---|---|
-| Documentación de ingreso | Verificar DT-e, RENSPA de origen y registro del criador (mortandad, tratamientos) antes de faenar | SIV (SENASA) y operador | DT-e; registro del criador | `[PVDP]` FTE-09B-12 |
+| Documentación de ingreso | Verificar DT-e, RENSPA de origen y registro del criador (mortandad, tratamientos) antes de faenar | SIV (SENASA) y operador | DT-e; registro del criador | `[PVDP]` FTE-239 |
 | **Ante mortem** | Examen del lote vivo en recepción: estado, mortalidad en transporte (DOA), signos de enfermedad; puede ordenar faena separada o rechazo | Veterinario oficial | Acta/planilla por lote | `[PVDP]` |
 | **Post mortem** | Examen de carcasas y vísceras en la línea (puestos de inspección con iluminación y espacio); dictamen de aptitud | Veterinario oficial y auxiliares | Planillas de hallazgos por causa | `[PVDP]` |
 | **Decomisos** | Total (carcasa entera) o parcial (partes); el veterinario oficial determina eliminación o retiro | SIV decide; operador ejecuta destino | Registro de decomisos por lote y causa | `[PVDP]` |
@@ -80,16 +80,16 @@ Base: principios de diseño higiénico recogidos por el Decreto 4238/68 y por gu
 | Muestreos oficiales | Plan CREHA (residuos), microbiología oficial | SIV | Actas | `[PVDP]` FTE-110 |
 | Responsabilidad del operador | Autocontroles (BPM, POES y Plan APPCC —Res. 205/2014—), trazabilidad, destino de decomisos, bienestar | Empresa | Programas escritos y registros | `[PVDP]` |
 
-**Dotación:** no se especula; es pregunta a SENASA (P-12). Costo de inspección y tasas: no relevado (DPV-09B-05).
+**Dotación:** no se especula; es pregunta a SENASA (P-12). Costo de inspección y tasas: no relevado (DPV-101).
 **Vínculo con el balance de masa:** los registros de decomisos del SIV son la fuente para calibrar la condena del modelo (DPV-063).
 
 ## 5. BPM, POES, APPCC/HACCP y certificaciones voluntarias (no son equivalentes)
 
 | Programa | Qué es | Obligatoriedad en Argentina | Para exportar | Estado |
 |---|---|---|---|---|
-| **BPM / BPF** (Buenas Prácticas de Manufactura) | Condiciones básicas de higiene del personal, edificio, equipos, materias primas, plagas, agua, capacitación | **Obligatorias** para establecimientos que faenen, elaboren, fraccionen o depositen alimentos (Res. SENASA 233/1998; CAA) | Base de todo | `[PVDP]` FTE-09B-03 |
-| **POES / SSOP** (Procedimientos Operativos Estandarizados de Saneamiento) | Procedimientos **escritos** de limpieza y desinfección diaria (pre-operativa y operativa), con responsables, frecuencias, verificación y acciones correctivas | **Obligatorios** (Res. SENASA 233/1998): firmados por un responsable con autoridad y presentados ante SENASA; se actualizan ante cambios | Exigidos | `[PVDP]` FTE-09B-03 |
-| **APPCC / HACCP regulatorio SENASA** | Análisis de peligros y control de puntos críticos (p. ej., enfriamiento, temperatura de cámaras, contaminación fecal) | **Obligatorio (regulatorio, no solo exportador).** La **Res. SENASA 205/2014** (BO 2014-05-20) incorporó el APPCC al Reglamento del Decreto 4238/68 (cap. XXXI, renombrado "BPF, POES y APPCC"): los establecimientos **bajo jurisdicción SENASA** donde se faenen animales, elaboren, fraccionen y/o depositen alimentos deben **desarrollar, implementar y mantener un Plan APPCC**, con las **excepciones** que establezca SENASA según tecnología o actividad (los extractos citan como exentos a establecimientos de clasificación de huevos). Implementación escalonada: 180 días para carne picada/molida y alimentos listos para consumo; 365 días para el resto | Base común; los destinos agregan exigencias propias (fila siguiente) | `[PVDP]` FTE-09B-16 (el extracto FAOLEX antes "sin norma identificada" corresponde a esta resolución). Excepciones aplicables a una planta avícola: POR CONSULTAR A SENASA (P-43) |
+| **BPM / BPF** (Buenas Prácticas de Manufactura) | Condiciones básicas de higiene del personal, edificio, equipos, materias primas, plagas, agua, capacitación | **Obligatorias** para establecimientos que faenen, elaboren, fraccionen o depositen alimentos (Res. SENASA 233/1998; CAA) | Base de todo | `[PVDP]` FTE-231 |
+| **POES / SSOP** (Procedimientos Operativos Estandarizados de Saneamiento) | Procedimientos **escritos** de limpieza y desinfección diaria (pre-operativa y operativa), con responsables, frecuencias, verificación y acciones correctivas | **Obligatorios** (Res. SENASA 233/1998): firmados por un responsable con autoridad y presentados ante SENASA; se actualizan ante cambios | Exigidos | `[PVDP]` FTE-231 |
+| **APPCC / HACCP regulatorio SENASA** | Análisis de peligros y control de puntos críticos (p. ej., enfriamiento, temperatura de cámaras, contaminación fecal) | **Obligatorio (regulatorio, no solo exportador).** La **Res. SENASA 205/2014** (BO 2014-05-20) incorporó el APPCC al Reglamento del Decreto 4238/68 (cap. XXXI, renombrado "BPF, POES y APPCC"): los establecimientos **bajo jurisdicción SENASA** donde se faenen animales, elaboren, fraccionen y/o depositen alimentos deben **desarrollar, implementar y mantener un Plan APPCC**, con las **excepciones** que establezca SENASA según tecnología o actividad (los extractos citan como exentos a establecimientos de clasificación de huevos). Implementación escalonada: 180 días para carne picada/molida y alimentos listos para consumo; 365 días para el resto | Base común; los destinos agregan exigencias propias (fila siguiente) | `[PVDP]` FTE-243 (el extracto FAOLEX antes "sin norma identificada" corresponde a esta resolución). Excepciones aplicables a una planta avícola: POR CONSULTAR A SENASA (P-43) |
 | **Exigencias APPCC adicionales de destinos de exportación** | Requisitos del país importador sobre el plan (p. ej., criterios microbiológicos, controles de *Salmonella*, verificación oficial, formato de auditoría) | No aplica en mercado interno | **Adicionales** al APPCC regulatorio; se verifican en la autorización de destino y en auditorías | `[PVDP]` — ver [`exportacion_y_certificaciones.md`](exportacion_y_certificaciones.md) |
 | **MIP** (Manejo Integrado de Plagas) | Programa de plagas | Parte de BPM | Exigido | `[PVDP]` |
 | **ISO 22000** | Sistema de gestión de inocuidad (norma ISO) | Voluntaria | Diferencial comercial | — |
@@ -107,7 +107,7 @@ El texto de la Res. 205/2014 no se leyó en original (acceso bloqueado): el cont
 
 ## 6. Bienestar animal (planta)
 
-**Normativa argentina** (`[PVDP]`, FTE-09B-06):
+**Normativa argentina** (`[PVDP]`, FTE-233):
 
 | Etapa | Qué se sabe | Estado |
 |---|---|---|
@@ -115,7 +115,7 @@ El texto de la Res. 205/2014 no se leyó en original (acceso bloqueado): el cont
 | Ayuno | Un extracto indica que los pollos **no deben ayunar más de 12 h** entre la captura y la insensibilización; no se identificó si es norma o guía | `[PVDP]` — norma vs guía a confirmar |
 | Transporte | Vehículos habilitados (Res. 723/2025); densidad y condiciones de jaulas: no leídas | `[PVDP]` |
 | Descarga y espera | Espera en planta **30 min a 3 h** según el manual de SENASA (guía); andén cubierto y ventilado | `[PVDP]` guía, no necesariamente norma |
-| Manejo y colgado | Manual SENASA de bienestar en plantas de faena de aves y lagomorfos (recepción, pesaje, espera, colgado, insensibilización, degüello) | `[PVDP]` FTE-09B-06 |
+| Manejo y colgado | Manual SENASA de bienestar en plantas de faena de aves y lagomorfos (recepción, pesaje, espera, colgado, insensibilización, degüello) | `[PVDP]` FTE-233 |
 | Aturdido (insensibilización) | Obligatorio previo al degüello según el enfoque de "sacrificio humanitario"; **parámetros eléctricos y verificación de inconsciencia no leídos** | `[PVDP]` |
 | Sacrificio | Sección de grandes vasos del cuello; tiempo hasta escaldado a verificar | `[PVDP]` |
 | Granja | Res. SENASA 575/2018 (engorde) | `[PVDP]` FTE-145 |
@@ -126,12 +126,12 @@ El texto de la Res. 205/2014 no se leyó en original (acceso bloqueado): el cont
 
 | Carga | Requisito identificado | Vehículo propio | Vehículo de tercero | Estado |
 |---|---|---|---|---|
-| **Aves vivas** | Habilitación sanitaria del vehículo (Res. 723/2025): número pintado en ambos laterales y trasera ("HABILITACIÓN SENASA N°…", letras ≥ 8 cm según norma anterior), lavado y desinfección, DT-e firmado por el transportista como DJ | La empresa habilita cada unidad y es responsable del lavado/desinfección y del bienestar | Exigir habilitación vigente y constancia de lavado; el remitente/receptor sigue siendo responsable de recibir solo aves con DT-e | `[PVDP]` FTE-09B-07 |
-| **Producto refrigerado / congelado** | Habilitación del vehículo por categoría según caja (isotermo, con equipo de frío = categoría A), termómetro, hermeticidad, bandejas colectoras; condiciones higiénicas | Idem, más registros de temperatura | Exigir habilitación y registros; cláusula contractual de cadena de frío | `[PVDP]` FTE-09B-08 |
-| **Subproductos** (plumas, sangre, vísceras) | Vehículo habilitado para subproductos no aptos para consumo humano; estanco | Idem | Habitual: lo retira el receptor (rendering) con su vehículo habilitado | `[PVDP]` FTE-09B-07 |
+| **Aves vivas** | Habilitación sanitaria del vehículo (Res. 723/2025): número pintado en ambos laterales y trasera ("HABILITACIÓN SENASA N°…", letras ≥ 8 cm según norma anterior), lavado y desinfección, DT-e firmado por el transportista como DJ | La empresa habilita cada unidad y es responsable del lavado/desinfección y del bienestar | Exigir habilitación vigente y constancia de lavado; el remitente/receptor sigue siendo responsable de recibir solo aves con DT-e | `[PVDP]` FTE-234 |
+| **Producto refrigerado / congelado** | Habilitación del vehículo por categoría según caja (isotermo, con equipo de frío = categoría A), termómetro, hermeticidad, bandejas colectoras; condiciones higiénicas | Idem, más registros de temperatura | Exigir habilitación y registros; cláusula contractual de cadena de frío | `[PVDP]` FTE-235 |
+| **Subproductos** (plumas, sangre, vísceras) | Vehículo habilitado para subproductos no aptos para consumo humano; estanco | Idem | Habitual: lo retira el receptor (rendering) con su vehículo habilitado | `[PVDP]` FTE-234 |
 | **Residuos** (lodos, contenido GI, decomisos no valorizables) | Transportista y operador habilitados por la autoridad ambiental; manifiesto si son residuos especiales | Raro | Habitual | **[JURISDICCIÓN]** |
 
-La **Res. SENASA 723/2025** se toma como el **marco consolidado** de habilitación sanitaria de medios de transporte de animales vivos y mercancías de origen animal (reemplazó a las Res. 503/2022, 735/2022 y 557/2024). **No se asume que todos los vehículos tengan requisitos idénticos:** la norma distingue tipos de unidad y carga y tiene **anexos y excepciones** que deben revisarse al desarrollar el módulo logístico (`13_logistica`, DPV-058, DPV-09B-10). También creó un programa de certificación de diseños de vehículos 0 km (validez 5 años). El **Decreto 697/2026** asigna a SENASA la fiscalización alimentaria general; si eso modifica el control del transporte de alimentos fuera del ámbito de la Res. 723/2025 queda por confirmar (P-39).
+La **Res. SENASA 723/2025** se toma como el **marco consolidado** de habilitación sanitaria de medios de transporte de animales vivos y mercancías de origen animal (reemplazó a las Res. 503/2022, 735/2022 y 557/2024). **No se asume que todos los vehículos tengan requisitos idénticos:** la norma distingue tipos de unidad y carga y tiene **anexos y excepciones** que deben revisarse al desarrollar el módulo logístico (`13_logistica`, DPV-058, DPV-058). También creó un programa de certificación de diseños de vehículos 0 km (validez 5 años). El **Decreto 697/2026** asigna a SENASA la fiscalización alimentaria general; si eso modifica el control del transporte de alimentos fuera del ámbito de la Res. 723/2025 queda por confirmar (P-39).
 
 ## 8. Cadena de frío
 
@@ -145,13 +145,13 @@ La **Res. SENASA 723/2025** se toma como el **marco consolidado** de habilitaci�
 | Transporte | Vehículos categoría con equipo de frío y termómetro (Res. 723/2025) | Obligatorio | `[PVDP]` |
 | Registros de temperatura | Continuos en cámaras y túneles (registradores), en recepción y despacho; registros del Plan APPCC | Obligatorio como parte del APPCC regulatorio (Res. 205/2014); destinos pueden exigir más | `[PVDP]` |
 
-**No se adopta ningún valor de temperatura** hasta leer el reglamento (DPV-09B-02).
+**No se adopta ningún valor de temperatura** hasta leer el reglamento (DPV-098).
 
 ## 9. Rotulado y productos (impacto regulatorio, sin diseñar etiquetas)
 
 | Producto | Cómo impacta la regulación | Estado |
 |---|---|---|
-| Pollo entero | Rótulo con número de establecimiento SENASA, producto registrado (CAPA), fechas; declaración de menudencias si las incluye | `[PVDP]` FTE-09B-14/15 |
+| Pollo entero | Rótulo con número de establecimiento SENASA, producto registrado (CAPA), fechas; declaración de menudencias si las incluye | `[PVDP]` FTE-241/FTE-242 |
 | Cortes | Cada corte y presentación se registra; denominaciones reglamentarias | `[PVDP]` |
 | Menudencias | Productos propios con registro; alta perecibilidad | `[PVDP]` |
 | **CMS** | Uso restringido (chacinados cocidos y conservas, según extracto); temperatura y plazo específicos; rotulado a verificar | `[PVDP]` FTE-185, DPV-074 |
@@ -160,11 +160,11 @@ La **Res. SENASA 723/2025** se toma como el **marco consolidado** de habilitaci�
 | Productos congelados | Denominación "congelado", temperatura de conservación, vida útil, eventual prohibición de recongelar | `[PVDP]` |
 | Exportación | Idioma, número de planta, marca sanitaria, logos (Halal), requisitos por destino | [`exportacion_y_certificaciones.md`](exportacion_y_certificaciones.md) |
 
-El registro es **por producto y presentación** ante CAPA, por TAD, con **monografía de proceso**: cada nuevo producto implica trámite (FTE-09B-14).
+El registro es **por producto y presentación** ante CAPA, por TAD, con **monografía de proceso**: cada nuevo producto implica trámite (FTE-241).
 
 ## 10. Trazabilidad (granja → despacho)
 
-Requerimientos identificados: RENSPA y DT-e para mover aves (sin RENSPA vigente no se emite DT-e); registro del criador por lote con mortandad cargada en SIGSA antes del primer DT-e a faena (Res. 1699/2019); la Res. 593/2026 exige **trazabilidad documentada** para autorizar destinos de exportación; la UE exige atestación de no uso de antimicrobianos prohibidos (art. 118) (FTE-09B-12, FTE-09B-05, FTE-107; `[PVDP]`).
+Requerimientos identificados: RENSPA y DT-e para mover aves (sin RENSPA vigente no se emite DT-e); registro del criador por lote con mortandad cargada en SIGSA antes del primer DT-e a faena (Res. 1699/2019); la Res. 593/2026 exige **trazabilidad documentada** para autorizar destinos de exportación; la UE exige atestación de no uso de antimicrobianos prohibidos (art. 118) (FTE-239, FTE-083, FTE-107; `[PVDP]`).
 
 | Eslabón | Datos que deberían capturarse | Base |
 |---|---|---|

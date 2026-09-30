@@ -427,7 +427,7 @@ Alternativa a escala chica: vender partes a **traders o exportadores que consoli
 
 ## 17. Qué debe ser verdad en cada escala — tabla central
 
-Base del futuro simulador ([`especificacion_simulador_html.md`](especificacion_simulador_html.md)). **5 d/sem (250 d) · 6 d/sem (300 d)** cuando difieren; config. B, 2,9 kg, escenario medio; utilización 100 % = punto de dimensionamiento, **no** supuesto de operación.
+Base del simulador ([`especificacion_simulador_html.md`](especificacion_simulador_html.md); v0.1 construida en [`simulador_html/`](simulador_html/README.md), que reproduce esta tabla sin diferencias). **5 d/sem (250 d) · 6 d/sem (300 d)** cuando difieren; config. B, 2,9 kg, escenario medio; utilización 100 % = punto de dimensionamiento, **no** supuesto de operación.
 
 | Variable | 2.500 | 5.000 | 10.000 | 20.000 |
 |---|---|---|---|---|

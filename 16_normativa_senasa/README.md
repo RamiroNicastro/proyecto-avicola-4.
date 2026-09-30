@@ -20,8 +20,7 @@
 | [`preguntas_senasa.md`](preguntas_senasa.md) | Preguntas técnicas para SENASA / asesor (7 prioritarias en §0) |
 | [`guia_ramiro.md`](guia_ramiro.md) | Explicación en lenguaje simple |
 | [`matriz_regulatoria.csv`](matriz_regulatoria.csv) | Matriz de 64 requisitos |
-| [`fuentes_09B.csv`](fuentes_09B.csv) | Fuentes nuevas de la sesión (pendientes de consolidar en `25_fuentes`) |
-| [`actualizaciones_gestion_09B.md`](actualizaciones_gestion_09B.md) | Propuestas para `00_gestion_proyecto` y `25_fuentes` (sesión paralela) |
+| [`actualizaciones_gestion_09B.md`](actualizaciones_gestion_09B.md) | **Histórico:** propuestas de la sesión paralela, ya integradas por la reconciliación 09 ([`../00_gestion_proyecto/reconciliacion_sesiones_09.md`](../00_gestion_proyecto/reconciliacion_sesiones_09.md)) |
 
 **Verificación:** ninguna norma se leyó en su texto original (acceso bloqueado, DPV-009). Todo contenido normativo es `[PVDP]`.
 
@@ -39,11 +38,11 @@ Separador de campos: coma; codificación UTF-8; una fila por requisito. No conti
 | `JURISDICCION` | Nacional / Provincial / Municipal / Extranjero / Privado |
 | `ETAPA_DEL_PROYECTO` | E0 terreno/zona · E1 proyecto · E2 documentación/aprobación · E3 construcción · E4 inspección/habilitación · E5 operación · E6 exportación |
 | `OBLIGATORIO_CONDICIONAL` | Obligatorio / Condicional (con la condición) / No obligatorio |
-| `FUENTE` | ID de `25_fuentes/registro_fuentes.csv` (`FTE-###`) o de `fuentes_09B.csv` (`FTE-09B-##`); "—" si no hay |
+| `FUENTE` | ID de `25_fuentes/registro_fuentes.csv` (`FTE-###`); "—" si no hay |
 | `ESTADO_VERIFICACION` | Uno de: `VERIFICADO EN PRIMARIA`, `PVDP`, `DEPENDE DE JURISDICCIÓN`, `POR CONSULTAR A SENASA` |
 | `IMPACTO` | Efecto sobre diseño, trámite, costo u operación |
 | `ACCION_PENDIENTE` | Próximo paso (pregunta `P-##` de `preguntas_senasa.md`, registro DPV, lectura) |
 
-## Documentación de `fuentes_09B.csv`
+## Fuentes de la sesión 09B
 
-Mismas columnas que `25_fuentes/registro_fuentes.csv`. IDs provisorios `FTE-09B-##` para evitar colisiones con sesiones paralelas; se renumeran al consolidar ([`actualizaciones_gestion_09B.md` §7](actualizaciones_gestion_09B.md)).
+Integradas el 2026-09-30 en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv): FTE-229 a FTE-251, más FTE-016 (texto actualizado del Decreto 4238/68) y FTE-083 (Res. SENASA 593/2026), que absorbieron referencias de la misma norma. `fuentes_09B.csv` se retiró para no duplicar el registro maestro. Mapa de IDs: [`../00_gestion_proyecto/reconciliacion_sesiones_09.md`](../00_gestion_proyecto/reconciliacion_sesiones_09.md).
