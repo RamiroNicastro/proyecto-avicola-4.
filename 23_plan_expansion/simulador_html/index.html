@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador de escala avícola</title>
+  <meta name="description" content="Simulador interno v0.1: escenarios físicos de escala (aves, granjas, productos, subproductos, inventario y demanda). Sin economía.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <header class="cabecera">
+    <div class="cabecera-titulo">
+      <h1>Simulador de escala <span class="version">v0.1</span></h1>
+      <p class="subtitulo">Proyecto avícola integrado · uso interno · <strong>escenarios físicos, no decisiones</strong></p>
+    </div>
+    <div class="cabecera-acciones">
+      <button type="button" class="btn-sec" id="btn-leyenda" aria-expanded="false" aria-controls="leyenda-estados">Estado de los datos</button>
+      <button type="button" class="btn-sec" id="btn-tema" title="Cambiar tema claro / oscuro">Tema: automático</button>
+    </div>
+  </header>
+
+  <div id="leyenda-estados" class="leyenda-estados" hidden></div>
+
+  <nav class="barra-escenarios" aria-label="Escenarios A, B y C">
+    <span class="barra-escenarios-rotulo">Editando:</span>
+    <div id="selector-escenarios" class="selector-escenarios" role="tablist"></div>
+    <button type="button" class="btn-sec solo-movil" id="btn-parametros" aria-expanded="false" aria-controls="panel-entradas">Parámetros</button>
+  </nav>
+
+  <div class="disposicion">
+    <aside id="panel-entradas" class="panel-entradas" aria-label="Parámetros del escenario"></aside>
+
+    <main id="contenido" class="principal">
+      <nav class="pestanas" aria-label="Secciones" id="pestanas"></nav>
+      <section id="alertas" class="alertas" aria-live="polite"></section>
+      <section id="vista" class="vista"></section>
+      <footer class="pie" id="pie"></footer>
+    </main>
+  </div>
+
+  <div id="sin-datos" class="sin-datos" hidden>
+    <h2>Faltan los datos del simulador</h2>
+    <p>No se encontró <code>data/simulador_data.js</code>. Regenerarlo con:</p>
+    <pre>python3 23_plan_expansion/simulador_html/generar_datos_simulador.py</pre>
+  </div>
+
+  <script src="data/simulador_data.js"></script>
+  <script src="calculo.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
