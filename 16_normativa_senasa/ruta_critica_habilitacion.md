@@ -11,7 +11,7 @@
 | # | No… | …sin antes | Por qué | Referencia |
 |---|---|---|---|---|
 | R1 | Comprar o alquilar terreno | Comprobar uso de suelo industrial, aptitud ambiental probable, agua (permiso), vuelco (cuerpo receptor), energía/gas y distancias a viviendas | Un terreno inapto es la decisión más cara e irreversible | [`habilitacion_planta.md` §5](habilitacion_planta.md) |
-| R2 | Elegir el nivel de habilitación "por defecto" | Decidir DEC-009 (provincial vs federal vs federal preparada para exportar) con la ubicación de la demanda | Planta provincial fuera de Buenos Aires **no puede vender al AMBA**; subir de nivel después implica reformas | DEC-009 |
+| R2 | Elegir el nivel de habilitación "por defecto" | Decidir DEC-009 (provincial vs federal vs federal preparada para exportar) con la ubicación de la demanda, el organismo que habilita cada rubro (P-40) y la aplicación actual de la Ley 22.375 y del Decreto 697/2026 (P-39, P-42) | Planta provincial fuera de Buenos Aires **no puede vender al AMBA**; subir de nivel después implica reformas | DEC-009 |
 | R3 | Cerrar el layout | Leer el cap. XX y los capítulos generales del Decreto 4238/68 **y** obtener observaciones de SENASA sobre el anteproyecto | Flujos sucio/limpio, desagües, iluminación de inspección y espacios del SIV se fijan en obra civil | [`requisitos_sanitarios.md` §2](requisitos_sanitarios.md) |
 | R4 | Diseñar la obra civil al estándar nacional mínimo | Evaluar el CAPEX incremental del estándar del destino más exigente previsible | Reformar una planta en operación para listarse es caro y detiene la faena | SUP-015, DEC-012 |
 | R5 | Asumir exportación en el modelo de negocio | Conocer, por destino: país abierto, producto autorizado, exigencia de listado/auditoría y compradores | Mercado abierto ≠ planta habilitada | [`exportacion_y_certificaciones.md` §1](exportacion_y_certificaciones.md) |
@@ -19,7 +19,7 @@
 | R7 | Planificar rendering propio o dar por sentado un receptor | Verificar receptores habilitados y normativa de decomisos | Sin receptor habilitado, la faena se detiene o los subproductos son costo | [`subproductos_normativa.md`](subproductos_normativa.md) |
 | R8 | Dimensionar la planta de efluentes | Conocer límites de vuelco del cuerpo receptor de la candidata | Los límites definen la tecnología de tratamiento | `11_agua_efluentes` |
 | R9 | Contratar el proyecto ejecutivo | Tener la lista vigente de documentación y formato de planos que exige SENASA | Evita rehacer planos | P-07 de [`preguntas_senasa.md`](preguntas_senasa.md) |
-| R10 | Iniciar obra | Tener aprobaciones locales (radicación, ambiental, construcción) **y** conformidad de SENASA al proyecto (si existe esa instancia) | Obra sin aprobación = riesgo de clausura o reforma | P-04 |
+| R10 | Iniciar obra | Tener aprobaciones locales (radicación, ambiental, construcción) **y** conformidad de SENASA al proyecto (si existe esa instancia) | Obra sin aprobación = riesgo de clausura o reforma. La Res. 233/2026 no elimina las aprobaciones locales | P-45, P-41 |
 | R11 | Comprar equipos de faena | Validar requisitos sanitarios del equipo (materiales, higiene) y de bienestar (aturdimiento) | Equipos no conformes no se habilitan | Fase de maquinaria (no habilitada) |
 | R12 | Lanzar productos con marca | Registrar productos y rótulos en CAPA | Sin registro no se comercializa con rótulo | FTE-09B-14 |
 | R13 | Integrar granjas | Verificar RENSPA, habilitación (Res. 1699/2019) y trazabilidad por lote | La planta no puede recibir aves sin DT-e | FTE-146 |

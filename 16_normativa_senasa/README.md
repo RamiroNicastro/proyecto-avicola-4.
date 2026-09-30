@@ -11,15 +11,15 @@
 | Archivo | Contenido |
 |---|---|
 | [`conclusiones_normativa.md`](conclusiones_normativa.md) | Síntesis de la hoja de ruta regulatoria, documentos pendientes y evaluación de calidad |
-| [`mapa_regulatorio.md`](mapa_regulatorio.md) | Autoridades, tipos de habilitación, temas dependientes de la ubicación, contradicciones C1–C5 |
+| [`mapa_regulatorio.md`](mapa_regulatorio.md) | Autoridades, tipos de habilitación, temas dependientes de la ubicación, puntos abiertos C1–C6, Decreto 697/2026 (§6) |
 | [`habilitacion_planta.md`](habilitacion_planta.md) | Rol e índice práctico del Decreto 4238/68, secuencia tentativa de habilitación, plantilla jurisdiccional |
-| [`requisitos_sanitarios.md`](requisitos_sanitarios.md) | Edilicios, agua, inspección, BPM/POES/HACCP, bienestar, transporte, frío, rotulado, trazabilidad |
+| [`requisitos_sanitarios.md`](requisitos_sanitarios.md) | Edilicios, agua, inspección, BPM/POES/APPCC, bienestar, transporte, frío, rotulado, trazabilidad |
 | [`exportacion_y_certificaciones.md`](exportacion_y_certificaciones.md) | Escalera exportadora, auditorías, listados, Halal |
 | [`subproductos_normativa.md`](subproductos_normativa.md) | Destinos regulatorios de sangre, plumas, vísceras, huesos, grasa, CMS, pet food, decomisos |
 | [`ruta_critica_habilitacion.md`](ruta_critica_habilitacion.md) | Reglas de precedencia y decisiones irreversibles |
-| [`preguntas_senasa.md`](preguntas_senasa.md) | 38 preguntas técnicas para SENASA / asesor |
+| [`preguntas_senasa.md`](preguntas_senasa.md) | Preguntas técnicas para SENASA / asesor (7 prioritarias en §0) |
 | [`guia_ramiro.md`](guia_ramiro.md) | Explicación en lenguaje simple |
-| [`matriz_regulatoria.csv`](matriz_regulatoria.csv) | Matriz de 60 requisitos |
+| [`matriz_regulatoria.csv`](matriz_regulatoria.csv) | Matriz de 64 requisitos |
 | [`fuentes_09B.csv`](fuentes_09B.csv) | Fuentes nuevas de la sesión (pendientes de consolidar en `25_fuentes`) |
 | [`actualizaciones_gestion_09B.md`](actualizaciones_gestion_09B.md) | Propuestas para `00_gestion_proyecto` y `25_fuentes` (sesión paralela) |
 
