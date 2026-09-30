@@ -137,3 +137,9 @@ Definiciones de términos técnicos usados en el proyecto. Se amplía a medida q
 | Rendering | Proceso de cocción, esterilización y secado de subproductos no comestibles (plumas, vísceras, sangre, huesos) para obtener harinas y grasa. |
 | Producto / coproducto / subproducto / residuo | Clases del balance de masa: producto principal (A), coproducto comestible (B), subproducto valorizable no comestible (C), residuo o efluente (D); más pérdidas (P). Una parte puede cambiar de clase si no tiene comprador. |
 | Balance de masa | Contabilidad de dónde termina cada kg que entra a un proceso; las entradas deben igualar a las salidas dentro de una tolerancia. |
+| Digestor / grasería | Términos del Decreto 4238/68: el **digestor** es la instalación que procesa decomisos y desperdicios (equivalente a un rendering); la **grasería** elabora grasas animales. |
+| Harina de plumas hidrolizada | Harina proteica (~90 % de proteína bruta) obtenida por hidrólisis a presión con vapor y secado de las plumas. |
+| Valorización técnica / económica | Técnica: existe un proceso y un uso permitido para una salida. Económica: existe un comprador y el precio neto (net-back) es positivo y mayor que el de la ruta alternativa. |
+| Índice de aprovechamiento del ave (IAA) | kg de masa biológica con salida comercial o valorizable / kg de peso vivo recibido. Técnico (hay destino posible) vs económico (vendido con net-back ≥ 0). |
+| Treats (mascotas) | Golosinas para mascotas, p. ej. patas, cuellos o corazones deshidratados. |
+| Categorías de subproductos animales (UE) | Reg. (CE) 1069/2009: categorías 1, 2 y 3 según riesgo; solo la 3 puede ir a alimento para mascotas; una mezcla adopta la categoría de mayor riesgo. |

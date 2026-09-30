@@ -12,6 +12,9 @@ Formato sugerido: `FTE-### — Autor/Organismo (año). Título. Editorial/Sitio.
 
 > **Nota (2026-09-29, sesión de producción primaria):** FTE-142 a FTE-160 se consultaron solo mediante extractos de buscador; el acceso directo a Cobb, Aviagen, SENASA, INTA y argentina.gob.ar volvió a estar bloqueado. Todas quedan PENDIENTES DE VERIFICACIÓN DOCUMENTAL PRIMARIA (DPV-009, DPV-045, DPV-046). FTE-151 se clasifica B (trabajo académico) y FTE-153 B (análisis sectorial con autores a identificar).
 
+> **Nota (2026-09-30, sesión de productos y subproductos):** FTE-185 a FTE-193 se consultaron solo mediante extractos de buscador; WebFetch sobre argentina.gob.ar e infoleg devolvió `EGRESS_BLOCKED`. Todas quedan PENDIENTES DE VERIFICACIÓN DOCUMENTAL PRIMARIA (DPV-009, DPV-066, DPV-073, DPV-074). FTE-189 es una guía doméstica (no vida útil comercial) y FTE-191 es prensa: no prueba acceso vigente a China.
+
+
 ## Organismos oficiales argentinos
 _(SENASA, Secretaría de Agricultura, Ganadería y Pesca, INTA, INTI, INDEC, organismos provinciales)_
 
@@ -54,6 +57,12 @@ _(SENASA, Secretaría de Agricultura, Ganadería y Pesca, INTA, INTI, INDEC, org
 - FTE-149 — SENASA (2017). *Compartimentos libres de influenza aviar y enfermedad de Newcastle — Resolución SENASA 484/2017*. https://www.argentina.gob.ar/influenza-aviar/compartimentos-libres-de-influenza-aviar-y-enfermedad-de-newcastle. Consultado 2026-09-29. Confiabilidad A.
 - FTE-150 — SAGyP - Área Avícola (2019-2025). *Relevamiento Integral de Granjas de Pollos Parrilleros — Superficie cubierta y capacidad instalada (2019)*. https://www.magyp.gob.ar/sitio/areas/aves/encuesta/_archivos/250000_Relevamiento%20Granjas%20Pollos%20SAGyP%20-%20Superficie%20cubierta%20y%20Capacidad%20Instalada.pdf. Consultado 2026-09-29. Confiabilidad A.
 
+- FTE-185 — SENASA (2003). *Resolución SENASA 368/2003 (incorpora al Decreto 4238/68 la carne mecánicamente separada de aves)*. https://www.argentina.gob.ar/normativa/nacional/norma-87430/texto. Consultado 2026-09-30. Confiabilidad A.
+- FTE-186 — SAGPyA / SENASA (2004). *Resolución SAGPyA 1389/2004 - prohibición de proteínas de origen animal en la alimentación de rumiantes*. https://www.argentina.gob.ar/normativa/nacional/norma-102568/texto. Consultado 2026-09-30. Confiabilidad A.
+- FTE-187 — SENASA (2024). *Resoluciones SENASA 1415/2024 y 1416/2024 (alimentos para animales: registro de productos y habilitación de establecimientos elaboradores)*. https://www.argentina.gob.ar/servicio/habilitar-establecimientos-elaboradores-de-alimentos-para-animales. Consultado 2026-09-30. Confiabilidad A.
+- FTE-188 — Poder Ejecutivo Nacional / SENASA (1973-2011). *Ley 20.466/73, Decreto 4830/73 y Resolución SENASA 264/2011 - registro de fertilizantes, enmiendas, sustratos y materias primas* (vía ASACOMP). https://asacomp.com.ar/esp/marco-legal/. Consultado 2026-09-30. Confiabilidad A.
+- FTE-192 — MAGyP / SENASA (1968, actualizado). *Reglamento de Inspección de Productos, Subproductos y Derivados de Origen Animal (Decreto 4238/68) - texto actualizado por capítulos*. https://www.magyp.gob.ar/sitio/areas/d_recursos_humanos/concurso/normativa/_archivos/000002_Decretos/000000_DECRETO%204238-68%20Sanidad%20Animal-Reglamento.pdf. Consultado 2026-09-30. Confiabilidad A.
+
 ## Organismos internacionales
 _(FAO, USDA, OMSA/WOAH, Codex Alimentarius)_
 
@@ -80,6 +89,9 @@ _(FAO, USDA, OMSA/WOAH, Codex Alimentarius)_
 - FTE-167 — Unión Europea (EUR-Lex; legislation.gov.uk) (2008). *Reglamento (CE) 543/2008 de la Comisión, normas de comercialización de la carne de aves de corral (anexos de determinación del contenido de agua)*. https://eur-lex.europa.eu/eli/reg/2008/543/oj. Consultado 2026-09-30. Confiabilidad A.
 - FTE-169 — USDA FSIS (eCFR; LII) (2001). *9 CFR 441.10 Retained water; regla final FSIS 'Retained Water in Raw Meat and Poultry Products; Poultry Chilling Requirements' (66 FR 1750, 2001-01-09)*. https://www.ecfr.gov/current/title-9/chapter-III/subchapter-E/part-441/section-441.10. Consultado 2026-09-30. Confiabilidad A.
 - FTE-170 — Ministério da Agricultura (Brasil); prensa técnica (1998-2019). *Portaria MAPA 210/1998 (modificada por Portaria 74/2019) y Resolución DIPOA 4/2002 sobre absorción de agua en carcasas de pollo (vía Agrimídia, Food Safety Brazil, Redalyc)*. https://foodsafetybrazil.org/alteracoes-na-portaria-no-210-98-mapa-aves-parte-1/. Consultado 2026-09-30. Confiabilidad A.
+
+- FTE-189 — US FDA; FAO (s/f). *Tabla de almacenamiento en refrigerador y congelador; tabla de conservación de alimentos* (guía para consumidores). https://www.fda.gov/media/76116/download. Consultado 2026-09-30. Confiabilidad B.
+- FTE-193 — Unión Europea (2009-2011). *Reglamento (CE) 1069/2009 sobre subproductos animales no destinados al consumo humano y Reglamento (UE) 142/2011*. https://www.boe.es/buscar/doc.php?id=DOUE-L-2009-82155. Consultado 2026-09-30. Confiabilidad A.
 
 ## Documentación técnica
 _(manuales de líneas genéticas, fabricantes, normas, papers)_
@@ -216,6 +228,9 @@ _(uso complementario; identificar como tales)_
 - FTE-168 — Prensa sectorial (s/f). *Recelos en la industria avícola por una práctica poco conocida: muchos pollos son inyectados con agua (Bichos de Campo; reproducido por El Sitio Avícola y Agro Rural Noticias)*. https://bichosdecampo.com/recelos-en-la-industria-avicola-por-una-practica-poco-conocida-muchos-pollos-son-inyectados-con-agua-para-mejorar-su-terneza-aunque-algunos-denuncian-que-es-solo-para-ganar-peso/. Consultado 2026-09-30. Confiabilidad C.
 - FTE-176 — Sitios de comercio (s/f). *Ofertas comerciales de garras grado A (meatcommerce.com; trade-wings.net; bestsuppliers.com)*. https://meatcommerce.com/trade/grade-a-proccessed-frozen-chicken-paws-34. Consultado 2026-09-30. Confiabilidad C.
 - FTE-180 — Varios (s/f). *Carne mecánicamente separada: rendimientos de separadoras (science.gov; Medium, divulgación); 9 CFR 381.168 (piel en pechuga deshuesada)*. https://www.science.gov/topicpages/b/boneless+uncooked+chicken. Consultado 2026-09-30. Confiabilidad C.
+
+- FTE-190 — Engormix (autores varios) (s/f). *Harina de plumas y sangre; Claves para una buena calidad en las harinas de subproductos avícolas*. https://www.engormix.com/balanceados/elaboracion-harina/harina-plumas-sangre_f5131/. Consultado 2026-09-30. Confiabilidad C.
+- FTE-191 — De Frente al Campo; La Nación; Bichos de Campo (2025). *China levanta la prohibición y habilita subproductos avícolas argentinos (garras) - anuncio GACC 38/2025*. https://www.defrentealcampo.com.ar/china-habilita-nuevamente-la-exportacion-de-subproductos-avicolas-desde-argentina/. Consultado 2026-09-30. Confiabilidad C.
 
 ## Cotizaciones
 _(proveedor, fecha, validez; archivos en la carpeta temática correspondiente)_
