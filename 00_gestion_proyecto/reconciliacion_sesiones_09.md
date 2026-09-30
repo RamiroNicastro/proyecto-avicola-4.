@@ -369,12 +369,99 @@ Consistencias verificadas (no son tensiones): t/día a congelar de 09A = capacid
 
 ## 12. Estado final de los tests
 
-RESULTADOS_TESTS
+Ejecutados el 2026-09-30 **después** del commit de integración (el test T08 de proceso exige árbol limpio en `03`, `04`, `07` y `23`). Ningún modelo físico se modificó en su lógica: en `modelo_capacidad_proceso.py` y `modelo_utilities.py` solo cambiaron IDs en comentarios y textos de salida; al regenerar, `capacidad_proceso.csv` y `escenarios_utilities.csv` resultaron **idénticos byte a byte** al reemplazo textual.
+
+| Suite | Comando | Resultado |
+|---|---|---|
+| Producción primaria | `03_produccion_primaria/modelo_escenarios_produccion.py` (pruebas) | 10/10 grupos OK |
+| Balance de masa | `04_balance_masa/modelo_balance_masa.py --solo-tests` | **21/21** |
+| Subproductos | `07_subproductos/modelo_subproductos.py --solo-tests` | **9/9** |
+| Escala | `23_plan_expansion/modelo_escala.py --solo-tests` / `--mutaciones` | **23/23**; mutaciones **22/22** detectadas |
+| Proceso | `05_proceso_industrial/modelo_capacidad_proceso.py --solo-tests` / `--mutaciones` | **18/18**; mutaciones **9/9** detectadas |
+| Utilities | `11_agua_efluentes/modelo_utilities.py --solo-tests` / `--mutaciones` | **30/30**; mutaciones **20/20** detectadas |
+| HTML (modelos ↔ simulador) | `node 23_plan_expansion/simulador_html/validar_simulador.js` | **20/20** |
+| HTML (navegador, `file://`, red bloqueada) | `pruebas/prueba_navegador.js` | **16/16**; autoverificación 784/784 |
+
+Nota: en la línea base (antes de integrar) T08 falló solo porque las corridas de otros modelos habían dejado `__pycache__/` sin versionar (tensión T-12); se agregó `.gitignore` y se corrió con `PYTHONDONTWRITEBYTECODE=1`.
 
 ## 13. Control de integridad
 
-CONTROL_INTEGRIDAD
+Script de control (reproducible, ejecutado tras la integración):
+
+| Control | Resultado | Detalle |
+|---|---|---|
+| IDs SUP únicos | OK | 77 IDs (SUP-001–SUP-077); duplicados []; huecos [] |
+| IDs DPV únicos | OK | 115 IDs (DPV-001–DPV-115); duplicados []; huecos [] |
+| IDs DEC únicos | OK | 49 IDs (DEC-001–DEC-049); duplicados []; huecos [] |
+| IDs FTE únicos | OK | 268 fuentes; duplicados [] |
+| Fuentes únicas (URL) | OK | URLs repetidas: 1 (preexistente FTE-001/FTE-071, T-13) |
+| Referencias SUP/DPV/DEC/FTE existentes | OK | todas definidas |
+| Sin IDs provisionales activos | OK | solo en archivos históricos y en el mapa de reconciliación |
+| Enlaces relativos válidos | OK | todos resuelven |
+| Sin marcadores de merge | OK | ninguno |
+| CSV válidos | OK | 14 CSV, columnas constantes |
+| Sin 'no existe' desactualizados | OK | ninguno |
 
 ## 14. Archivos modificados
 
-ARCHIVOS
+- `.gitignore` — creado
+- `00_gestion_proyecto/datos_por_validar.md` — modificado
+- `00_gestion_proyecto/decisiones_pendientes.md` — modificado
+- `00_gestion_proyecto/estado_proyecto.md` — modificado
+- `00_gestion_proyecto/glosario.md` — modificado
+- `00_gestion_proyecto/reconciliacion_sesiones_09.md` — creado
+- `00_gestion_proyecto/supuestos.md` — modificado
+- `05_proceso_industrial/README.md` — modificado
+- `05_proceso_industrial/actualizaciones_gestion_09A.md` — modificado
+- `05_proceso_industrial/arquitecturas_por_escala.md` — modificado
+- `05_proceso_industrial/capacidad_proceso.csv` — modificado
+- `05_proceso_industrial/conclusiones_proceso.md` — modificado
+- `05_proceso_industrial/cuellos_botella.md` — modificado
+- `05_proceso_industrial/flujo_proceso.md` — modificado
+- `05_proceso_industrial/modelo_capacidad_proceso.py` — modificado
+- `05_proceso_industrial/zonificacion_higienica.md` — modificado
+- `08_maquinaria/README.md` — modificado
+- `08_maquinaria/automatizacion_por_escala.md` — modificado
+- `08_maquinaria/catalogo_equipos.md` — modificado
+- `08_maquinaria/fuentes_09A.csv` — retirado
+- `08_maquinaria/matriz_equipos.csv` — modificado
+- `08_maquinaria/proveedores_preliminares.md` — modificado
+- `08_maquinaria/requerimientos_cotizacion.md` — modificado
+- `11_agua_efluentes/README.md` — modificado
+- `11_agua_efluentes/actualizaciones_gestion_09C.md` — modificado
+- `11_agua_efluentes/alternativas_tratamiento.md` — modificado
+- `11_agua_efluentes/balance_agua.md` — modificado
+- `11_agua_efluentes/caracterizacion_efluentes.md` — modificado
+- `11_agua_efluentes/conclusiones_agua_efluentes.md` — modificado
+- `11_agua_efluentes/escenarios_utilities.csv` — modificado
+- `11_agua_efluentes/fuentes_09C.csv` — retirado
+- `11_agua_efluentes/modelo_utilities.py` — modificado
+- `12_energia_frio/conclusiones_energia_frio.md` — modificado
+- `12_energia_frio/congelado_almacenamiento.md` — modificado
+- `12_energia_frio/demanda_energia.md` — modificado
+- `12_energia_frio/respaldo_energia.md` — modificado
+- `12_energia_frio/sistema_frio.md` — modificado
+- `16_normativa_senasa/README.md` — modificado
+- `16_normativa_senasa/actualizaciones_gestion_09B.md` — modificado
+- `16_normativa_senasa/conclusiones_normativa.md` — modificado
+- `16_normativa_senasa/exportacion_y_certificaciones.md` — modificado
+- `16_normativa_senasa/fuentes_09B.csv` — retirado
+- `16_normativa_senasa/habilitacion_planta.md` — modificado
+- `16_normativa_senasa/mapa_regulatorio.md` — modificado
+- `16_normativa_senasa/matriz_regulatoria.csv` — modificado
+- `16_normativa_senasa/preguntas_senasa.md` — modificado
+- `16_normativa_senasa/requisitos_sanitarios.md` — modificado
+- `16_normativa_senasa/ruta_critica_habilitacion.md` — modificado
+- `16_normativa_senasa/subproductos_normativa.md` — modificado
+- `17_exportacion/requisitos_planta_exportadora.md` — modificado
+- `23_plan_expansion/README.md` — modificado
+- `23_plan_expansion/conclusiones_escala.md` — modificado
+- `23_plan_expansion/escenarios_escala.md` — modificado
+- `23_plan_expansion/especificacion_simulador_html.md` — modificado
+- `23_plan_expansion/gates_expansion.md` — modificado
+- `23_plan_expansion/simulador_html/README.md` — modificado
+- `23_plan_expansion/simulador_html/observaciones_html_v01.md` — modificado
+- `25_fuentes/bibliografia.md` — modificado
+- `25_fuentes/registro_fuentes.csv` — modificado
+
+Total: 59 archivos (2 creados, 3 retirados, 54 modificados).
