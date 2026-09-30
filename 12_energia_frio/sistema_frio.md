@@ -1,57 +1,79 @@
 # Sistema de frío industrial: cargas y refrigerantes (conceptual)
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 (sesión 09C) · Fase 0
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C) · Fase 0
 
-> **Alcance:** mapa de cargas frigoríficas, diferencia entre **kW frigoríficos** y **kW eléctricos**, órdenes de magnitud por escala y comparación conceptual de refrigerantes. **No se elige sistema, refrigerante ni proveedor**, no se dimensiona sala de máquinas, no se calcula CAPEX. Congelado y cámaras en detalle: [`congelado_almacenamiento.md`](congelado_almacenamiento.md).
-> **Modelo:** [`../11_agua_efluentes/modelo_utilities.py`](../11_agua_efluentes/modelo_utilities.py) (bloque `frio`). Propiedades térmicas `[PVDP]` (FTE-09C-14); temperaturas, COP y factores `[SUPUESTO]`.
+> **Alcance:** mapa de cargas frigoríficas, diferencia entre **kW frigoríficos** y **kW eléctricos** (con COP declarado), **carga sensible preliminar del producto** por escala y comparación conceptual de refrigerantes. **No se calcula la capacidad frigorífica de la planta** (queda PENDIENTE del balance frigorífico), no se elige sistema, refrigerante ni proveedor, no se dimensiona sala de máquinas, no se calcula CAPEX. Congelado y cámaras: [`congelado_almacenamiento.md`](congelado_almacenamiento.md).
+> **Modelo:** [`../11_agua_efluentes/modelo_utilities.py`](../11_agua_efluentes/modelo_utilities.py) v1.1 (bloque `frio`). Propiedades térmicas `[PVDP]` (FTE-09C-14); temperaturas, COP y factores `[SUPUESTO]`.
 
 ---
 
-## 1. kW frigoríficos vs kW eléctricos vs TR
+## 1. kW frigoríficos, TR, COP y kW eléctricos
 
 | Unidad | Qué mide | Ejemplo (10.000 aves/día, medio) |
 |---|---|---|
-| **kW frigoríficos** (kWf) | Calor que el sistema **extrae** del producto o del recinto por unidad de tiempo | Enfriado del producto fresco: **~235 kWf** durante las 8 h de faena |
-| **TR** (tonelada de refrigeración) | Unidad histórica = calor para fundir 1 t corta de hielo en 24 h = **3,517 kWf** | ~67 TR |
-| **kW eléctricos** (kWe) | Potencia que consumen los compresores (y ventiladores/bombas asociados) | ~78 kWe (con COP 3) |
-| **COP** | kWf / kWe: cuántos kW de frío se obtienen por kW eléctrico | ~3 para agua helada (−5/0 °C); ~1,4 para congelado (−35/−40 °C) `[SUPUESTO]` |
+| **kW frigoríficos** (kWf) | Calor que el sistema **extrae** por unidad de tiempo | Carga sensible preliminar del producto: **~99 kWf** durante 8 h |
+| **TR** | 1 TR = **3,517 kWf** | ~28 TR |
+| **COP** (o EER) | kWf ÷ kWe | **Supuesto:** 4 · **3** · 2,3 para agua helada/hielo (−5/0 °C); 1,8 · **1,4** · 1,1 para congelado (−35/−40 °C) |
+| **kW eléctricos aproximados** | kWf ÷ **COP supuesto** | ~33 kWe para el producto con COP 3 |
 
-Un compresor que "mueve" 235 kW de calor consume ~78 kW de electricidad; **cuanto más baja la temperatura, peor el COP**: congelar cuesta, por kW de frío, ~2 veces más electricidad que enfriar. El test U10 del modelo impide confundirlos (mutación M04).
+Toda conversión frigorífico → eléctrico del modelo se llama `kw_electricos_aprox_*`, tiene una fila `cop_supuesto_*` con el COP usado y **no es un consumo garantizado** (test **U10**; mutaciones M04 y M16). El COP real depende del refrigerante, del ciclo, de las temperaturas de evaporación y condensación y del clima del sitio (verano).
 
-## 2. Mapa de cargas
+## 2. Carga sensible del producto ≠ carga frigorífica total
 
-| Carga | Qué se enfría | Temperatura típica | Perfil | Cómo la estima el modelo |
+La v1.0 llamaba "~235 kWf" a la suma de producto + agua del chiller + 40 % de cargas adicionales, y podía leerse como la capacidad de la planta. **Se corrige**: el modelo separa lo que calcula y deja la carga total **PENDIENTE**.
+
+| Componente | Qué calcula el modelo | 10.000 aves/día (bajo · **medio** · alto) | Estado |
+|---|---|---|---|
+| **Carga sensible preliminar asociada al enfriamiento del producto** | kg comestible × 3,5 kJ/(kg·K) × (38 − 4 °C), repartido en 8 h netas | **99** kWf (igual en los tres niveles) | `[ESTIMACIÓN]` con `[SUPUESTO]` |
+| Enfriamiento del agua de reposición del chiller | L/ave × 4,186 × (18 − 1 °C), en 8 h | 47 · **69** · 111 kWf | `[ESTIMACIÓN]`, fila separada |
+| Cargas adicionales ilustrativas (salas, docks, infiltración, motores, iluminación) | +25 · **40** · 60 % sobre las dos anteriores | 36 · **67** · 126 kWf | `[SUPUESTO]` ilustrativo, **no es un balance** |
+| Congelación del producto (sensible + latente + sensible) | 296 kJ/kg × t/día congeladas, repartido en 20 h | 10 kWf (P1) · 39 (P2) · 49 (P3), medio | `[ESTIMACIÓN]` (solo producto) |
+| **Carga frigorífica total de la planta** | — | **PENDIENTE** | Balance frigorífico posterior |
+
+**El balance frigorífico posterior deberá sumar, según corresponda:** enfriamiento sensible del producto; congelación sensible; calor latente de congelación; transmisión por paredes, techos y pisos; infiltración de aire; apertura de puertas; personas; iluminación; motores y equipos; docks; salas de proceso climatizadas; cámaras; túneles (potencia instalada según tiempo de congelación, no media diaria); desescarche; otras cargas. Test **U24**: ninguna variable se denomina "capacidad frigorífica" y la carga total queda vacía (mutación M15).
+
+## 3. Mapa de cargas
+
+| Carga | Qué se enfría | Temperatura típica | Perfil | En el modelo v1.1 |
 |---|---|---|---|---|
-| **Chiller / enfriado de carcasas** | Carcasas de ~38 °C a ~4 °C; agua de reposición del chiller de ~18 °C a ~1 °C | Agua/hielo 0–2 °C | Horas de faena | `[ESTIMACIÓN]` kg comestible × 3,5 kJ/(kg·K) × 34 K + L de reposición × 4,186 × 17 K |
-| **Menudencias y garras** | Enfriado rápido de piezas pequeñas | 0–4 °C | Faena | Incluidas en el comestible (config. B) |
-| **Producto refrigerado** (mantenimiento) | Producto ya frío en cámara 0–4 °C: paredes, puertas, infiltración, respiración nula | 0–4 °C | 24 h, 365 días | kWh/(t·día) `[SUPUESTO]` |
-| **Cámaras de congelado** | Producto a −18/−25 °C | −18 a −25 °C | 24 h, 365 días | kWh/(t·día) `[SUPUESTO]` |
-| **Túneles de congelado / IQF** | De +4 °C a −18 °C: sensible + **latente** (el agua se congela) + sensible bajo cero | Aire −30/−40 °C | Hasta 20 h/día | `[ESTIMACIÓN]` ~296 kJ/kg × 1,3 = ~385 kJ/kg ([`congelado_almacenamiento.md`](congelado_almacenamiento.md)) |
-| **Docks / antecámaras de expedición** | Aire, puertas abiertas, montacargas | 4–10 °C | Carga y despacho | Dentro de "cargas adicionales" (+25/**40**/60 % sobre el enfriado) `[SUPUESTO]` |
-| **Salas climatizadas** (despiece, empaque) | Aire de sala con personas, motores, iluminación, producto | 10–12 °C | Turno | Dentro de "cargas adicionales" `[SUPUESTO]` |
-| **Hielo** (si se usa en chiller o despacho) | Fabricación de hielo | < 0 °C | Faena | No separado (incluido en el enfriado) |
-| Contenedores reefer en muelle | Pre-enfriado y conexión | −18 °C | Exportación | No modelado (P3: prueba de diseño) |
+| **Chiller / enfriado de carcasas** | Carcasas ~38 → ~4 °C | Agua/hielo 0–2 °C | Faena | Carga sensible del producto |
+| **Agua de reposición del chiller** | ~18 → ~1 °C | | Faena | Fila separada |
+| **Menudencias y garras** | Enfriado rápido | 0–4 °C | Faena | Dentro del comestible |
+| **Cámaras refrigeradas** | Producto ya frío: paredes, puertas, infiltración | 0–4 °C | 24 h, 365 días | Solo energía ilustrativa kWh/(t·día) `[SUPUESTO]`; potencia PENDIENTE |
+| **Cámaras de congelado** | Producto a −18/−25 °C | −18/−25 °C | 24 h, 365 días | Idem |
+| **Túneles / IQF** | +4 → −18 °C | Aire −30/−40 °C | Hasta 20 h/día (lotes) | Calor del producto; potencia instalada PENDIENTE |
+| **Docks / antecámaras** | Aire, puertas, montacargas | 4–10 °C | Carga y despacho | Dentro de "adicionales ilustrativas" |
+| **Salas climatizadas** | Personas, motores, iluminación, producto | 10–12 °C | Turno | Idem |
+| **Hielo** | Fabricación de hielo | < 0 °C | Faena | No separado |
+| Contenedores reefer en muelle | Pre-enfriado y conexión | −18 °C | Exportación | No modelado |
 
-## 3. Órdenes de magnitud por escala
+## 4. Carga sensible del producto por escala
 
-`[ESTIMACIÓN]` con parámetros `[SUPUESTO]`. Bajo · **medio** · alto. Perfil P1 (90 % refrigerado / 10 % congelado; 3 d / 14 d en días de producción).
+`[ESTIMACIÓN]`; 8 h netas; COP `[SUPUESTO]`. Medio salvo indicación.
 
-| Escala | Enfriado fresco kWf (TR) | Enfriado fresco kWe | Congelación kWf (medio) | Cámaras kWf (medio) |
+| Escala | Carga sensible preliminar del producto kWf (TR) | kWe aprox. con COP 3 | Agua de chiller kWf (bajo · medio · alto) | Congelación del producto kWf, P1 · P2 · P3 (20 h) |
 |---|---|---|---|---|
-| 2.500 | 46 (13) · **59 (17)** · 84 (24) | 11 · **20** · 37 | 3 | 2 |
-| 5.000 | 91 (26) · **118 (33)** · 168 (48) | 23 · **39** · 73 | 6 | 5 |
-| 10.000 | 182 (52) · **235 (67)** · 336 (96) | 46 · **78** · 146 | 13 | 10 |
-| 20.000 | 365 (104) · **471 (134)** · 673 (191) | 91 · **157** · 292 | 26 | 19 |
+| 2.500 | 25 (7) | 8 | 12 · 17 · 28 | 2 · 10 · 12 |
+| 5.000 | 50 (14) | 17 | 23 · 35 · 56 | 5 · 20 · 25 |
+| 10.000 | 99 (28) | 33 | 47 · 69 · 111 | 10 · 39 · 49 |
+| 20.000 | 198 (56) | 66 | 94 · 138 · 222 | 20 · 79 · 99 |
 
-Con P2 (40 % congelado) la congelación sube a 13 / 26 / 51 / 103 kWf y con P3 (50 % congelado + exportación) a 16 / 32 / 64 / 128 kWf (medio, 20 h/día de túnel).
+**Lecturas:**
+1. La carga sensible del producto es **física del producto**, no depende del nivel; lo que cambia entre niveles son el agua del chiller, las cargas adicionales y el COP.
+2. En enfriado por **inmersión**, enfriar el agua de reposición del chiller puede pesar tanto como el producto (69 vs 99 kWf, medio): el método de enfriamiento (DEC-026) es también una decisión de frío.
+3. Los túneles se dimensionan por **tiempo de congelación** de cada lote: si se congela en 4–8 h en vez de repartir en 20 h, la potencia instalada se multiplica ×2,5–5. El modelo solo da la media diaria del producto.
 
-**Lecturas y cautelas:**
-1. **El enfriado del producto fresco domina** la carga frigorífica en P1: ~680 kJ por ave (medio), de los cuales ~41 % es el agua de reposición del chiller. Enfriar con **aire** en lugar de inmersión elimina esa agua pero agrega ventiladores y tiempo (DEC-026): el modelo no lo compara todavía.
-2. La carga **instalada** de túneles es mucho mayor que la media: si el producto debe congelarse en 4–8 h (lotes) en vez de repartirse en 20 h, la potencia frigorífica del túnel se multiplica ×2,5–5. El modelo reporta la media; el dimensionamiento es de un proveedor.
-3. **Contraste de consistencia:** el enfriado estimado desde abajo (78 kWe × 8 h ≈ 630 kWh/día a 10.000 aves/día) es mucho menor que el 35 % del indicador de proceso asignado a "frío de proceso" (~2.540 kWh/día). La diferencia puede ser hielo, salas, docks, pérdidas de distribución, bombas y ventiladores, o que el indicador de la UE incluya almacenamiento. **No se resuelve en esta fase** (DPV propuesta: balance frigorífico de un proveedor).
-4. Todo se escala linealmente (test U01); una instalación real tiene escalones (compresores discretos) y reservas.
+### 4.1 Brecha no cerrada: física del producto vs benchmark global
 
-## 4. Refrigerantes — comparación conceptual (no se elige)
+| | kWh eléctricos/día de frío de proceso (10.000 aves/día, medio) |
+|---|---|
+| Cálculo físico (producto + agua del chiller, con COP 3, 8 h) | ~450 |
+| 35 % del indicador global de proceso asignado a "frío" (reparto `[SUPUESTO]` didáctico) | ~2.540 |
+| **Relación** | **~5,7×** (5,2–6,2 según nivel) |
+
+La brecha puede deberse a salas, docks, infiltración, hielo, bombas y ventiladores, pérdidas de distribución, a que el indicador de la UE incluya almacenamiento o congelado, o a que el reparto del 35 % no aplique. **No se cierra arbitrariamente** (ni ajustando el COP ni el reparto): se resolverá con un balance frigorífico de proveedor y con la suma bottom-up de equipos (DPV-09C-02 propuesta; [`demanda_energia.md` §6](demanda_energia.md)).
+
+## 5. Refrigerantes — comparación conceptual (no se elige)
 
 | Alternativa | Uso industrial típico | Escala | Eficiencia | Seguridad | Personal | Regulación |
 |---|---|---|---|---|---|---|
@@ -65,11 +87,11 @@ Con P2 (40 % congelado) la congelación sube a 13 / 26 / 51 / 103 kWf y con P3 (
 
 **Cómo se relaciona con la escala (sin decidir):**
 
-- A **2.500–5.000 aves/día** (~20–40 kWe de enfriado medio más cámaras y túneles pequeños) son técnicamente posibles equipos paquetizados (HFC/HFO, CO₂ o amoníaco de baja carga); pesa la disponibilidad de **servicio técnico local**.
-- A **10.000–20.000 aves/día** (del orden de 250–700 kWf en proceso, más congelado según perfil), la práctica industrial habitual se inclina por **amoníaco** o **cascada NH₃/CO₂**, y aparecen la sala de máquinas, el personal especializado y el plan de emergencia como condiciones del sitio (distancia a viviendas, bomberos).
+- A **2.500–5.000 aves/día** (cargas sensibles del producto de ~25–50 kWf, más agua de chiller, cámaras y túneles pequeños) son técnicamente posibles equipos paquetizados (HFC/HFO, CO₂ o amoníaco de baja carga); pesa la disponibilidad de **servicio técnico local**.
+- A **10.000–20.000 aves/día** (carga sensible del producto ~100–200 kWf, más agua de chiller, salas, cámaras y túneles según perfil; total PENDIENTE), la práctica industrial habitual se inclina por **amoníaco** o **cascada NH₃/CO₂**, y aparecen la sala de máquinas, el personal especializado y el plan de emergencia como condiciones del sitio (distancia a viviendas, bomberos).
 - La **vocación exportadora** (congelado a −18 °C o menos, lotes para contenedores) aumenta la importancia de la baja temperatura, donde el COP y el refrigerante más importan.
 - **Modularidad:** el frío es uno de los sistemas que la arquitectura de expansión recomienda **dejar preparado** (sala de máquinas y troncales dimensionadas para crecer) y **construir por módulos** (compresores, túneles, cámaras) ([`../23_plan_expansion/arquitectura_escalable.md`](../23_plan_expansion/arquitectura_escalable.md)).
 
-## 5. Qué hace falta
+## 6. Qué hace falta
 
-Balance frigorífico de al menos dos proveedores por escala y perfil (P1/P2/P3), normativa argentina de seguridad para amoníaco y CO₂, disponibilidad de técnicos y repuestos en la zona, temperatura de diseño de verano del sitio. Lista: [`../11_agua_efluentes/conclusiones_agua_efluentes.md` §6](../11_agua_efluentes/conclusiones_agua_efluentes.md).
+Balance frigorífico de al menos dos proveedores por escala y perfil (P1/P2/P3), normativa argentina de seguridad para amoníaco y CO₂, disponibilidad de técnicos y repuestos en la zona, temperatura de diseño de verano del sitio. Lista: [`../11_agua_efluentes/conclusiones_agua_efluentes.md` §7](../11_agua_efluentes/conclusiones_agua_efluentes.md).

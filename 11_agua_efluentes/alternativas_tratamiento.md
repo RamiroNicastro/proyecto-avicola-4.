@@ -1,6 +1,6 @@
 # Alternativas de tratamiento de efluentes y manejo de lodos (conceptual)
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 (sesión 09C) · Fase 0
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C) · Fase 0
 
 > **Alcance:** comparación **conceptual** de pretratamientos, tratamientos biológicos y manejo de lodos. **No se elige tecnología**, no se dimensionan unidades, no se selecciona proveedor ni se calcula CAPEX/OPEX. Las eficiencias citadas son `[PVDP]` (FTE-09C-05, 09C-12, 09C-13). Cargas por escala: [`caracterizacion_efluentes.md` §4](caracterizacion_efluentes.md).
 
@@ -55,8 +55,8 @@ La primera "etapa de tratamiento" es **no ensuciar el agua**: cada kg de sangre,
 | Factor | Cómo empuja la elección |
 |---|---|
 | **Terreno** | Mucho terreno barato y alejado → lagunas posibles; terreno escaso o periurbano → reactores compactos |
-| **Carga** (escala × gestión) | A 2.500–5.000 aves/día (125–900 kg DQO/día) conviene la simplicidad; a 10.000–20.000 (500–3.600 kg DQO/día) la recuperación de biogás y la compacidad pesan más |
-| **Normativa** | Vuelco a cloaca (prestador fija límites y tarifa por carga) vs pluvial/curso (límites estrictos: 50 mg/L DBO, 250 mg/L DQO en PBA `[PVDP]`) vs suelo (restringido; inyección prohibida en PBA) → define el grado de tratamiento y si hace falta remover N y P |
+| **Carga** (escala × gestión) | A 2.500–5.000 aves/día (del orden de 60–1.750 kg DQO/día según método y nivel; ver [`caracterizacion_efluentes.md` §4](caracterizacion_efluentes.md)) conviene la simplicidad; a 10.000–20.000 (240–7.000 kg DQO/día) la recuperación de biogás y la compacidad pesan más |
+| **Normativa** | Vuelco a cloaca (prestador fija límites y tarifa por carga) vs pluvial/curso (ejemplo de referencia: 50 mg/L DBO y 250 mg/L DQO a conducto pluvial en PBA, Res. ADA 336/03 `[PVDP]`; el límite real lo fijará el sitio) vs suelo (restringido; inyección prohibida en PBA) → define el grado de tratamiento y si hace falta remover N y P |
 | **Olor y vecindad** | Lagunas abiertas y acopio de lodos cerca de poblaciones son un riesgo de conflicto y de habilitación ([`../07_subproductos/conclusiones_valorizacion.md`](../07_subproductos/conclusiones_valorizacion.md) §10) |
 | **Energía** | Red débil (zona rural) → penaliza aeración intensiva; biogás puede cubrir parte del calor (caldera) |
 | **Operación** | Personal técnico disponible en la zona; laboratorio; turnos (el biológico funciona 365 días aunque la planta faene 250) |
@@ -65,24 +65,52 @@ La primera "etapa de tratamiento" es **no ensuciar el agua**: cada kg de sangre,
 
 **Vuelco a colectora cloacal:** si el sitio tiene cloaca con capacidad, el prestador puede aceptar un efluente pretratado (tamiz + grasas + DAF) con límites y canon; el biológico lo haría la planta municipal. Depende 100 % del sitio: **no se supone**.
 
-## 4. Lodos
+## 4. Lodos — PENDIENTE DE DIMENSIONAMIENTO
 
-| Tipo | Generación (10.000 aves/día, medio; orden de magnitud `[ESTIMACIÓN]`) | Características | Manejo | Disposición / valorización posible |
-|---|---|---|---|---|
-| **Tamizado y sólidos gruesos** | Parte de los 6,1 t/día de sólidos a retirar (si no se retiraron antes) | Plumas finas, recortes, vísceras | Contenedor, retiro diario | Rendering con el resto de la clase C ([`../07_subproductos/rendering.md`](../07_subproductos/rendering.md)) |
-| **Flotado de DAF** | ~320 kg MS/día → **~2,7 t/día húmedo** (12 % sólidos) | 30–40 % proteína y ~40 % grasa en base seca (FTE-09C-13 `[PVDP]`); putrescible; con químicos si se usan coagulantes | Espesado, deshidratación (centrífuga, prensa), retiro diario | **Rendering** (si el receptor acepta químicos), biodigestión, compost; disposición como último recurso |
-| **Lodo biológico aerobio** | ~105 kg MS/día (si todo el biológico fuera aerobio) | Biomasa; estabilizable | Espesado, deshidratación, estabilización | Compost, uso agronómico (sujeto a normativa: registro de enmiendas, FTE-188), relleno |
-| **Lodo anaerobio** | Mucho menor | Estabilizado | Retiro periódico (lagunas: años) | Uso agronómico / relleno |
-| **Total deshidratado** (DAF + biológico) | **~2,4 t/día** (1,0–5,8 según nivel) | | | |
+La v1.0 daba "~2,4 t/día de lodo deshidratado" a 10.000 aves/día. **Se retira como salida física**: la generación de lodos depende de los SST que entran, de lo separado mecánicamente, de la eficiencia del DAF, de la dosificación química, de la biomasa generada (tecnología biológica y purga), de la concentración de sólidos y de la deshidratación, y **ninguno de esos parámetros existe todavía para nuestra planta**. En el modelo, **LODO = PENDIENTE DE DIMENSIONAMIENTO** por defecto (test **U23**; mutaciones M13 y M14).
 
-Por escala (t/día deshidratadas, bajo · medio · alto): 2.500 → 0,2 · 0,6 · 1,5; 5.000 → 0,5 · 1,2 · 2,9; 10.000 → 1,0 · 2,4 · 5,8; 20.000 → 2,0 · 4,7 · 11,7.
+### 4.1 Cadena explícita que exige el modelo
 
-**Lecturas:**
-1. Los lodos son **otro flujo diario de subproductos** que hay que sacar de la planta, del orden de un 40 % adicional sobre los 6,1 t/día de sólidos del balance (medio, 10.000 aves/día). Se suma al problema logístico de [`../07_subproductos`](../07_subproductos/README.md).
-2. El flotado de DAF es rico en grasa y proteína: puede ir a rendering (mejor destino) o a biodigestión (biogás). Es un argumento para **integrar** el diseño de efluentes con la decisión de rendering (DEC-027).
-3. Toda cifra de lodos es orden de magnitud: depende de químicos, de la tecnología y de la edad de lodo, ninguno decidido.
+```
+kg SST removidos/día        = SST del efluente (método A o B, NO subproductos del balance) × remoción mecánica + DAF
++ kg grasas flotadas/día    = grasas y aceites × remoción del DAF
++ kg sólidos químicos/día   = m³ de efluente × dosis de coagulante/floculante (g/m³) ÷ 1.000
++ kg biomasa/día            = DBO que llega al biológico × remoción × rendimiento de biomasa (depende de la tecnología)
+= kg SÓLIDOS SECOS/día
+÷ fracción de sólidos de la torta (tras deshidratación)
+= t de LODO HÚMEDO/día
+```
+
+Si falta cualquier eslabón, el sólido seco queda vacío; si falta el % de sólidos de torta, el lodo húmedo queda vacío.
+
+### 4.2 Escenario ilustrativo (cada supuesto visible y editable)
+
+Solo para mostrar el orden de magnitud y qué parámetros mandan (bloque `lodos_ilustrativo` del CSV; `--lodos-ilustrativo` en la línea de comandos). 10.000 aves/día, método A, nivel medio:
+
+| Eslabón | Parámetro (bajo · **medio** · alto) | Origen | kg/día (medio) |
+|---|---|---|---|
+| SST removidos | remoción 70 · **54** · 38 % de 350 kg SST | FUENTE `[PVDP]` (DAF 38–70 %, FTE-09C-05) | 189 |
+| Grasas flotadas | remoción 95 · **80** · 63 % de 110 kg GyA | FUENTE `[PVDP]` (DAF 63–95 %) | 88 |
+| Sólidos químicos | dosis 50 · **100** · 200 g/m³ × 220 m³ | `[SUPUESTO]` sin fuente | 22 |
+| Biomasa (si fuera aerobio) | DBO al biológico (1 − 45 %) × 95 % × 0,3 · **0,4** · 0,5 kg MS/kg DBO | FUENTE `[PVDP]` + `[SUPUESTO]` | 105 |
+| **Sólidos secos** | | `[ESTIMACIÓN ILUSTRATIVA]` | **~400** |
+| Fracción de sólidos de torta | 20 · **18** · 15 % | `[SUPUESTO]` | — |
+| **Lodo húmedo** | | `[ESTIMACIÓN ILUSTRATIVA]` | **~2,2 t/día** |
+
+Rango ilustrativo por escala (t/día húmedas, bajo · medio · alto): 2.500 → 0,2 · 0,6 · 1,4; 5.000 → 0,5 · 1,1 · 2,8; 10.000 → 0,9 · 2,2 · 5,6; 20.000 → 1,9 · 4,5 · 11,1. **No son salidas físicas establecidas.**
+
+### 4.3 Tipos de lodo (cualitativo)
+
+| Tipo | Características | Manejo | Disposición / valorización posible |
+|---|---|---|---|
+| **Tamizado y sólidos gruesos** | Plumas finas, recortes, restos de vísceras que escaparon a la segregación en origen | Contenedor, retiro diario | Rendering con la clase C ([`../07_subproductos/rendering.md`](../07_subproductos/rendering.md)) |
+| **Flotado de DAF** | 5–30 % de sólidos (habitual 10–15 %); en base seca 30–40 % proteína y ~40 % grasa (FTE-09C-13 `[PVDP]`); putrescible; con químicos si se usan coagulantes | Espesado, deshidratación, retiro diario | **Rendering** (si el receptor acepta químicos), biodigestión, compost; disposición como último recurso |
+| **Lodo biológico aerobio** | Biomasa; estabilizable | Espesado, deshidratación, estabilización | Compost, uso agronómico (registro de enmiendas, FTE-188), relleno |
+| **Lodo anaerobio** | Mucho menor y estabilizado | Retiro periódico (lagunas: años) | Uso agronómico / relleno |
+
+**Lecturas:** (1) los lodos serán **otro flujo diario** a retirar, que se suma a la logística de [`../07_subproductos`](../07_subproductos/README.md); su magnitud se conocerá con el tren de tratamiento y la caracterización medida; (2) el flotado de DAF es rico en grasa y proteína: argumento para **integrar** efluentes y rendering (DEC-027); (3) los sólidos del lodo **no se derivan** de la masa de subproductos del balance, sino de los SST del efluente (ver [`caracterizacion_efluentes.md` §6](caracterizacion_efluentes.md)).
 
 ## 5. Qué no se decide y qué hace falta para decidir
 
 - **No se decide:** tecnología, número de etapas, vuelco a cloaca o a cuerpo receptor, destino de lodos, biogás.
-- **Hace falta:** límites de vuelco del sitio y cuerpo receptor; terreno disponible y distancia a viviendas; caracterización medida (DPV-067); receptor de flotados y lodos; potencia eléctrica disponible; cotizaciones de tratamiento llave en mano por escala (fase posterior, `19_capex`). Lista completa: [`conclusiones_agua_efluentes.md` §6](conclusiones_agua_efluentes.md).
+- **Hace falta:** límites de vuelco del sitio y cuerpo receptor; terreno disponible y distancia a viviendas; caracterización medida (DPV-067); receptor de flotados y lodos; potencia eléctrica disponible; cotizaciones de tratamiento llave en mano por escala (fase posterior, `19_capex`). Lista completa: [`conclusiones_agua_efluentes.md` §7](conclusiones_agua_efluentes.md).

@@ -1,9 +1,9 @@
 # Respaldo eléctrico y cargas críticas (conceptual)
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 (sesión 09C) · Fase 0
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C) · Fase 0
 
-> **Alcance:** identificar cargas críticas, ordenar de qué protege el respaldo y dar un **orden de magnitud** de la potencia de respaldo por escala. **No** se dimensiona generador, marca ni modelo, no se elige arquitectura de redundancia ni se calcula CAPEX.
-> **Modelo:** [`../11_agua_efluentes/modelo_utilities.py`](../11_agua_efluentes/modelo_utilities.py) (bloque `respaldo`); todas las fracciones son `[SUPUESTO]`.
+> **Alcance:** identificar cargas críticas, ordenar de qué protege el respaldo y mostrar una **carga crítica ilustrativa de escenario** (proxy preliminar de sensibilidad). **No se dimensiona el grupo electrógeno** (queda PENDIENTE de una lista de cargas críticas), ni marca ni modelo, no se elige arquitectura de redundancia ni se calcula CAPEX.
+> **Modelo:** [`../11_agua_efluentes/modelo_utilities.py`](../11_agua_efluentes/modelo_utilities.py) v1.1 (bloque `respaldo`); todas las fracciones son `[SUPUESTO]`.
 
 ---
 
@@ -18,33 +18,37 @@
 
 | Carga | Por qué es crítica | Tolerancia a un corte | Prioridad | Estimación en el modelo |
 |---|---|---|---|---|
-| **Ventilación y seguridad de aves** en el andén de espera | Bienestar animal; calor en verano con aves apiladas en módulos | **Minutos** en verano | 1 | 2 % de la potencia pico de proceso `[SUPUESTO]` |
-| **Frío de cámaras** (refrigerado y congelado) | Pérdida del stock; ruptura de cadena de frío | Horas (congelado 4–8 h; refrigerado menos) | 1 | kW eléctricos de almacenamiento × factor de rearranque 1,3 / **1,5** / 2,0 `[SUPUESTO]` |
-| **Sistemas de control, seguridad y comunicaciones** (PLC, registros de temperatura, detección de amoníaco, alarmas, CCTV) | Seguridad de personas (fugas de refrigerante), trazabilidad de temperatura | Segundos (UPS) | 1 | 2 % `[SUPUESTO]` |
-| **Iluminación de emergencia** y salidas | Evacuación | Inmediata (baterías) | 1 | 1 % `[SUPUESTO]` |
-| **Bombeo mínimo de agua** | Incendio, sanitización mínima, enfriado de emergencia | Minutos–horas | 2 | 3 % `[SUPUESTO]` |
+| **Ventilación y seguridad de aves** en el andén de espera | Bienestar animal; calor en verano con aves apiladas en módulos | **Minutos** en verano | 1 | 3 % de la potencia media equivalente de proceso `[SUPUESTO]` |
+| **Frío de cámaras** (refrigerado y congelado) | Pérdida del stock; ruptura de cadena de frío | Horas (congelado 4–8 h; refrigerado menos) | 1 | kWh ilustrativos de almacenamiento ÷ 24 × factor de rearranque 1,3 / **1,5** / 2,0 `[SUPUESTO]` |
+| **Sistemas de control, seguridad y comunicaciones** (PLC, registros de temperatura, detección de amoníaco, alarmas, CCTV) | Seguridad de personas (fugas de refrigerante), trazabilidad de temperatura | Segundos (UPS) | 1 | 3 % de la potencia media de proceso `[SUPUESTO]` |
+| **Iluminación de emergencia** y salidas | Evacuación | Inmediata (baterías) | 1 | 1,5 % `[SUPUESTO]` |
+| **Bombeo mínimo de agua** | Incendio, sanitización mínima, enfriado de emergencia | Minutos–horas | 2 | 4,5 % `[SUPUESTO]` |
 | **Efluentes** (aireación mínima, bombas de elevación, ecualización) | Evitar desbordes y la muerte del biológico | Horas | 2 | 50 % de la potencia media de aireación `[SUPUESTO]` |
-| **Línea de faena** (terminar las aves en proceso) | Producto en escaldador/eviscerado/chiller; aves colgadas | Minutos | 3 (decisión) | Solo en "planta completa" |
-| **Túneles de congelado** | Terminar el ciclo de congelado en curso | Horas | 3 | Solo en "planta completa" |
+| **Línea de faena** (terminar las aves en proceso) | Producto en escaldador/eviscerado/chiller; aves colgadas | Minutos | 3 (decisión) | No estimado |
+| **Túneles de congelado** | Terminar el ciclo de congelado en curso | Horas | 3 | No estimado |
 | Oficinas, climatización de confort | — | Alta | 4 | No |
 
-## 3. Orden de magnitud por escala
+## 3. Carga crítica ilustrativa de escenario
 
-`[ESTIMACIÓN]` con `[SUPUESTO]`; kVA = kW / 0,8 (`[SUPUESTO]`). Perfil P1 salvo indicación. Bajo · **medio** · alto.
+`[SUPUESTO]` **proxy preliminar de sensibilidad**. En la v1.0 se expresaba en kVA como porcentaje de un "pico" de planta; ese pico se retiró (no surge de kWh/ave) y el proxy se basa ahora en la **potencia media equivalente** de proceso y en la energía ilustrativa de cámaras. Bajo · **medio** · alto, kW.
 
-| Escala | Cargas críticas kVA (P1) | Cargas críticas kVA (P2, medio) | Planta completa kVA (≈ potencia pico) |
+| Escala | Carga crítica ilustrativa (P1) | Carga crítica ilustrativa P2 · P3 (medio) | Grupo electrógeno |
 |---|---|---|---|
-| 2.500 | 12 · **25** · 57 | 27 | 133 · **256** · 554 |
-| 5.000 | 24 · **49** · 115 | 55 | 265 · **512** · 1.107 |
-| 10.000 | 48 · **99** · 230 | 110 | 531 · **1.024** · 2.214 |
-| 20.000 | 95 · **198** · 460 | 219 | 1.061 · **2.049** · 4.428 |
+| 2.500 | 11 · **20** · 40 | 24 · 26 | **PENDIENTE** |
+| 5.000 | 22 · **40** · 81 | 48 · 51 | **PENDIENTE** |
+| 10.000 | 43 · **79** · 162 | 97 · 102 | **PENDIENTE** |
+| 20.000 | 86 · **158** · 323 | 193 · 205 | **PENDIENTE** |
 
-Desglose a 10.000 aves/día (medio, P1): cámaras 10 kW, efluentes 7 kW, control 16 kW, iluminación de emergencia 8 kW, bombeo de agua 23 kW, andén de aves 16 kW → **79 kW ≈ 99 kVA**.
+Desglose a 10.000 aves/día (medio, P1): cámaras 10 kW, efluentes 7 kW, control 16 kW, iluminación de emergencia 8 kW, bombeo de agua 23 kW, andén de aves 16 kW → ~79 kW.
+
+**No se concluye que un grupo de 25 / 49 / 99 / 198 kVA (cifras de la v1.0) sea el generador necesario.** El modelo deja `grupo_electrogeno_kva` vacío salvo que se cargue una lista de cargas críticas; nunca lo calcula como porcentaje fijo de la planta (test **U25**, mutación M18).
+
+**El dimensionamiento real deberá considerar:** listado de cargas críticas; kW y kVA; factor de potencia; corriente de arranque; motores y compresores (el mayor arranque suele mandar); secuencia de arranque; simultaneidad; autonomía; combustible; redundancia (N+1); posibilidad de **mantener el frío sin mantener la faena**; black-start cuando corresponda. Esa lista saldrá del catálogo de equipos de la sesión 09A (en `main`) y de las cotizaciones ([`demanda_energia.md` §6](demanda_energia.md)).
 
 **Lecturas:**
-1. **El respaldo de cargas críticas es un ~10 % de la potencia de la planta**; sostener toda la planta exige ~10 veces más. La decisión real es **qué se quiere seguir haciendo durante un corte** (DEC propuesta), no el tamaño del generador.
-2. Con más congelado (P2/P3) y más días de stock, crece la carga crítica de cámaras; con stock alto, el frío pasa a ser la mayor carga crítica.
-3. Las fracciones son supuestos: el cálculo real requiere el listado de cargas del proyecto eléctrico (fase de ingeniería).
+1. La decisión real es **qué se quiere seguir haciendo durante un corte** (DEC-09C-05 propuesta): solo cargas críticas, terminar el lote en proceso o planta completa.
+2. Con más congelado (P2/P3) y más días de stock crece la carga crítica de cámaras.
+3. Las fracciones son supuestos; el cálculo real requiere el listado de cargas del proyecto eléctrico.
 
 ## 4. Conceptos de generación y redundancia
 

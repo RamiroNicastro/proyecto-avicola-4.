@@ -1,23 +1,27 @@
 # Congelado y almacenamiento frigorífico: toneladas a enfriar, congelar y guardar
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 (sesión 09C) · Fase 0
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C) · Fase 0
 
-> **Alcance:** toneladas que habría que **congelar por día** y que habría que **almacenar** (refrigerado y congelado) por escala y perfil de destino, con las **dos bases temporales** corregidas en la auditoría v1.1 del modelo de escala (días de producción y días calendario de cobertura). **No** se calculan m² ni m³ de cámara, no se dimensionan túneles ni se eligen equipos.
-> **Fuente de verdad:** [`../23_plan_expansion/escenarios_escala.csv`](../23_plan_expansion/escenarios_escala.csv) (bloque `inventario`); el modelo de utilities lo reproduce fila por fila (test **U07**: 640/640 filas) y agrega la capacidad diaria de congelación y la energía. Perfiles P1–P3 ilustrativos (SUP-055): **no son demanda**; la exportación de la demanda sigue en 0 (SUP-022).
+> **Alcance:** toneladas que habría que **congelar por día** y que habría que **almacenar** (refrigerado y congelado) por escala y perfil de destino, con las **dos bases temporales** del modelo de escala v1.1 (días de producción y días calendario de cobertura). **No** se calculan m² ni m³ de cámara, no se dimensionan túneles ni se eligen equipos.
+> **Fuente de verdad:** [`../23_plan_expansion/escenarios_escala.csv`](../23_plan_expansion/escenarios_escala.csv) (bloque `inventario`); el modelo de utilities lo reproduce fila por fila (test **U07**: 640/640 filas) y agrega la capacidad diaria de congelación. Perfiles P1–P3 ilustrativos (SUP-055): **no son demanda**; la exportación de la demanda sigue en 0 (SUP-022).
 
 ---
 
-## 1. Capacidad diaria de congelación ≠ capacidad estática de almacenamiento
+## 1. Capacidad de congelación ≠ capacidad de almacenamiento
 
-| | Capacidad **diaria** de congelación | Capacidad **estática** de almacenamiento |
+- **CAPACIDAD DE CONGELACIÓN** = toneladas **nuevas** que deben **atravesar el proceso de congelación** por unidad de tiempo (t/día operativo; variable `capacidad_congelacion_t_dia`).
+- **CAPACIDAD DE ALMACENAMIENTO** = toneladas **ya congeladas** que **permanecen guardadas** (t; variable `capacidad_almacenamiento_congelado_t`).
+- **Una cámara capaz de guardar 300 t NO significa poder congelar 300 t/día.**
+
+| | Capacidad de congelación | Capacidad de almacenamiento |
 |---|---|---|
-| Qué es | Toneladas que los túneles/IQF deben llevar de +4 °C a −18 °C **cada día de faena** | Toneladas que las cámaras deben **guardar** al mismo tiempo |
-| Unidad | t/día operativo (y kW frigoríficos) | t (stock) |
+| Qué es | t nuevas que los túneles/IQF llevan de +4 °C a −18 °C **cada día de faena** | t ya congeladas que las cámaras **guardan** al mismo tiempo |
+| Unidad | **t/día** operativo | **t** (stock) |
 | Depende de | Escala × % que se congela | Escala × % que se congela × **días de stock** × base temporal |
-| Equipo | Túneles, IQF, placas (potencia frigorífica alta, baja temperatura) | Cámaras (aislamiento, volumen, racks; potencia menor, 24 h) |
+| Equipo | Túneles, IQF, placas (potencia frigorífica alta, baja temperatura, tiempo de congelación) | Cámaras (aislamiento, volumen, racks; potencia menor, 24 h) |
 | Error típico | Creer que una cámara grande congela: una cámara **mantiene**, no congela | Creer que un túnel grande almacena |
 
-Ejemplo (10.000 aves/día, perfil P3, medio): hay que **congelar 12 t por día de faena** (~64 kWf durante 20 h), pero con 14 días de producción en stock hay que **guardar 168 t**. Duplicar los días de stock duplica la cámara y **no cambia** el túnel (test **U09**).
+Ejemplo (10.000 aves/día, perfil P3, medio): hay que **congelar 12 t por día de faena**, pero con 14 días de producción en stock hay que **guardar 168 t**. Duplicar los días de stock duplica la cámara y **no cambia** el túnel. Test **U09**: son variables distintas, con unidades distintas, y la de congelación no cambia con los días de stock (mutaciones M06 y M17).
 
 ## 2. Toneladas por día (base de todo lo demás)
 
@@ -25,13 +29,13 @@ Producto comestible en **peso comercial** (masa biológica + agua retenida; conf
 
 ### 2.1 Capacidad diaria de congelación por perfil (t/día operativo)
 
-| Perfil | Refrig. / congelado / exportación | 2.500 | 5.000 | 10.000 | 20.000 | kWf medios de túnel (20 h/día) |
+| Perfil | Refrig. / congelado / exportación | 2.500 | 5.000 | 10.000 | 20.000 | Calor del producto repartido en 20 h (kWf) |
 |---|---|---|---|---|---|---|
-| **P1** Mercado interno fresco | 90 / 10 / 0 % | 0,6 | 1,2 | 2,4 | 4,8 | 3 / 6 / 13 / 26 |
-| **P2** Interno con congelado | 60 / 40 / 0 % | 2,4 | 4,8 | 9,6 | 19,2 | 13 / 26 / 51 / 103 |
-| **P3** Opción exportadora (prueba de diseño) | 50 / 30 / 20 % | 3,0 | 6,0 | 12,0 | 24,0 | 16 / 32 / 64 / 128 |
+| **P1** Mercado interno fresco | 90 / 10 / 0 % | 0,6 | 1,2 | 2,4 | 4,8 | 2 / 5 / 10 / 20 |
+| **P2** Interno con congelado | 60 / 40 / 0 % | 2,4 | 4,8 | 9,6 | 19,2 | 10 / 20 / 39 / 79 |
+| **P3** Opción exportadora (prueba de diseño) | 50 / 30 / 20 % | 3,0 | 6,0 | 12,0 | 24,0 | 12 / 25 / 49 / 99 |
 
-Calor a extraer: sensible de +4 a −1,5 °C (3,5 kJ/(kg·K)) + latente (74 % de agua × 334 kJ/kg ≈ 247 kJ/kg, método de ASHRAE, FTE-09C-14 `[PVDP]`) + sensible de −1,5 a −18 °C (1,8 kJ/(kg·K)) ≈ **296 kJ/kg**, × 1,3 por envases, ventiladores y pérdidas (`[SUPUESTO]` 1,2–1,5) ≈ **385 kJ/kg**. El **calor latente es ~83 %** del total: congelar es sobre todo congelar el agua del producto. Energía eléctrica de referencia: 120–260 kWh/t (FTE-09C-10 `[PVDP]`).
+Calor a extraer: sensible de +4 a −1,5 °C (3,5 kJ/(kg·K)) + latente (74 % de agua × 334 kJ/kg ≈ 247 kJ/kg, método de ASHRAE, FTE-09C-14 `[PVDP]`) + sensible de −1,5 a −18 °C (1,8 kJ/(kg·K)) ≈ **296 kJ/kg de producto**. El **calor latente es ~83 %** del total: congelar es sobre todo congelar el agua del producto. Los envases, ventiladores, desescarche y pérdidas del túnel **no se suman aquí**: pertenecen al balance frigorífico pendiente ([`sistema_frio.md` §2](sistema_frio.md)). La columna de kWf es solo el calor del producto repartido en 20 h; la **potencia instalada** del túnel depende del tiempo de congelación de cada lote (×2,5–5 si se congela en 4–8 h) y queda PENDIENTE. Conversión a kW eléctricos solo con COP declarado (`[SUPUESTO]` 1,4 medio). Energía eléctrica de referencia: 120–260 kWh/t (FTE-09C-10 `[PVDP]`).
 
 ## 3. Toneladas a almacenar — dos bases temporales
 
@@ -78,4 +82,4 @@ Garras y menudencias **ya están dentro del comestible** (clase B): el modelo la
 
 ## 5. Energía de almacenamiento
 
-`[SUPUESTO]` 1,0 kWh/(t·día) refrigerado y 3,0 kWh/(t·día) congelado (medio; 0,5–2 y 1,5–5). A 10.000 aves/día: P1 → 165 kWh/día calendario; P2 → 305; P3 → 369. Las cámaras funcionan **365 días**, aunque la planta faene 250 (test U18). Son las cargas que **no pueden cortarse** ([`respaldo_energia.md`](respaldo_energia.md)).
+`[SUPUESTO]` 1,0 kWh/(t·día) refrigerado y 3,0 kWh/(t·día) congelado (medio; 0,5–2 y 1,5–5). A 10.000 aves/día: P1 → 165 kWh/día calendario; P2 → 305; P3 → 369. Las cámaras funcionan **365 días**, aunque la planta faene 250 (test U18). Son energía **ilustrativa** (kWh), no potencia de cámara; son las cargas que **no pueden cortarse** ([`respaldo_energia.md`](respaldo_energia.md)).

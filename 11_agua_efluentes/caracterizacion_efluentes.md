@@ -1,9 +1,9 @@
 # Caracterización de efluentes de la planta de faena
 
-**Fecha:** 2026-09-30 · **Versión:** 1.0 (sesión 09C) · Fase 0
+**Fecha:** 2026-09-30 · **Versión:** 1.1 (auditoría conceptual, sesión 09C) · Fase 0
 
-> **Alcance:** corrientes que llegan al efluente, rangos de DBO, DQO, SST, grasas y aceites, nitrógeno y fósforo, carga orgánica por escala y cuánto material puede **evitar** llegar al efluente según el balance de masa. **Ningún valor es universal** ni medido en Argentina; todas las concentraciones externas son `[PVDP]`. No se diseña tratamiento (ver [`alternativas_tratamiento.md`](alternativas_tratamiento.md)).
-> **Modelo:** [`modelo_utilities.py`](modelo_utilities.py) (bloques `efluente`, `masa_evitable`). Masa: [`../23_plan_expansion/escenarios_escala.csv`](../23_plan_expansion/escenarios_escala.csv) (balance v1.1, config. B, 2,9 kg, inmersión).
+> **Alcance:** corrientes que llegan al efluente, rangos de DBO, DQO, SST, grasas y aceites, nitrógeno y fósforo, carga orgánica por escala con **dos métodos independientes** y masa **potencialmente segregable en origen** según el balance de masa (que **no** es SST del efluente). **Ningún valor es universal** ni medido en Argentina; todas las concentraciones externas son `[PVDP]`. No se diseña tratamiento (ver [`alternativas_tratamiento.md`](alternativas_tratamiento.md)).
+> **Modelo:** [`modelo_utilities.py`](modelo_utilities.py) v1.1 (bloques `efluente`, `masa_segregable`, `alertas`). Masa: [`../23_plan_expansion/escenarios_escala.csv`](../23_plan_expansion/escenarios_escala.csv) (balance v1.1, config. B, 2,9 kg, inmersión).
 
 ---
 
@@ -36,73 +36,85 @@ Todas `[PVDP]` (extractos de buscador; originales no leídos). **Rango amplio po
 | Fósforo total | ~18,5 mg/L (tamizado); −60 % al mejorar la recolección de sangre | FTE-09C-06 |
 | Relación DBO/DQO | ~0,4–0,6 en la mayoría; ~0,95 en un caso | Calculada de las anteriores `[ESTIMACIÓN]` |
 
-**No se adopta un valor único.** El modelo usa **carga específica por ave** (g/ave), que es físicamente más estable que la concentración: una planta que usa menos agua tiene el mismo kg de DQO pero más concentrado. La concentración es un **resultado** (carga / caudal).
+**No se adopta un valor único.** Desde la v1.1 el modelo estima la carga por **dos métodos independientes** y los compara; ninguno se calibra con el otro.
 
-## 3. Carga específica adoptada (efluente crudo, sangre recuperada al 85 %)
+## 3. Dos métodos independientes para estimar la carga
 
-`[ESTIMACIÓN]` = rangos de concentración × rangos de caudal (§2 y [`balance_agua.md`](balance_agua.md) §3), redondeados.
+| | **Método A — carga específica** | **Método B — caudal × concentración** |
+|---|---|---|
+| Fórmula | kg/día = aves/día × g/ave ÷ 1.000 | kg/día = m³ de efluente/día × mg/L ÷ 1.000 |
+| Parámetros | g DQO / DBO₅ / SST / GyA / NTK / PT por ave | mg/L de DQO / DBO₅ / SST (solo donde hay rangos citados) |
+| Depende del agua | **No** | **Sí** (del caudal descargado y de la fracción a efluente supuesta) |
+| Valores (bajo · medio · alto) | DQO 50 · **100** · 180; DBO₅ 25 · **50** · 90; SST 15 · **35** · 80; GyA 5 · 11 · 25; NTK 3 · 5 · 8; PT 0,3 · 0,5 · 1 g/ave | DQO 2.000 · **5.400** · 9.695; DBO₅ 970 · **1.600** · 2.900; SST 378 · **1.410** · 5.462 mg/L |
+| Estado | **Escenarios `[PVDP]`**, no mediciones | **Valores citados `[PVDP]`** (promedio, centro de un rango, extremo) |
+| Qué valida en campo | Masa de DQO por ave (DQO × caudal medido ÷ aves) | Concentración del efluente crudo compuesto |
 
-| Parámetro | Bajo | **Medio** | Alto | Concentración resultante con el caudal medio (22 L/ave descargados) |
-|---|---|---|---|---|
-| DQO | 50 | **100** | 180 g/ave | 4.545 mg/L (dentro del rango 1.223–9.695) |
-| DBO₅ | 25 | **50** | 90 g/ave | 2.273 mg/L |
-| SST | 15 | **35** | 80 g/ave | 1.591 mg/L |
-| Grasas y aceites | 5 | **11** | 25 g/ave | 500 mg/L |
-| NTK | 3 | **5** | 8 g/ave | 227 mg/L |
-| Fósforo total | 0,3 | **0,5** | 1,0 g/ave | 23 mg/L |
+**Regla de compatibilidad** (`[SUPUESTO]` editable: `TOLERANCIA_METODOS = 2` en el script): si la relación B/A cae fuera de [0,5; 2], el modelo emite la alerta **"DATOS DE EFLUENTE REQUIEREN VALIDACIÓN DE CAMPO"**. Test **U27**: cambiar la concentración no mueve el método A; cambiar la carga por ave no mueve el método B (mutación M20: calibrar B con A es detectada).
 
-Cautelas: (1) el "bajo" con caudal bajo o el "alto" con caudal alto no son combinaciones obligadas: la carga y el caudal se eligen por separado en el modelo (`--dqo-g-ave`, `--l-ave`); (2) el test U17 verifica que la DQO media resultante quede dentro del rango de fuentes; (3) la carga depende fuertemente de la **recuperación de sangre** (§5).
+## 4. Reconciliación DQO por ave vs concentración
 
-## 4. Carga orgánica por escala
+A 10.000 aves/día (lineal: las demás escalas escalan igual; las relaciones B/A no cambian con la escala):
 
-`[ESTIMACIÓN]` kg por día operativo (bajo · **medio** · alto). Remoción ilustrativa: con el límite de 250 mg/L de DQO para vuelco a conducto pluvial de la Res. ADA 336/2003 (PBA, `[PVDP]`, FTE-09C-08), el efluente medio exigiría **~94,5 %** de remoción de DQO. Otras provincias y cuerpos receptores: sin relevar (propuesta de DPV en [`actualizaciones_gestion_09C.md`](actualizaciones_gestion_09C.md)).
-
-| Escala (aves/día op.) | Efluente m³/día | DQO kg/día | DBO₅ kg/día | SST kg/día | GyA kg/día | NTK kg/día |
+| Parámetro | Nivel | Método A kg/día | Método B kg/día | B/A | Concentración implícita de A (mg/L) | ¿Compatibles? |
 |---|---|---|---|---|---|---|
-| 2.500 | 30 · **55** · 90 | 125 · **250** · 450 | 62 · **125** · 225 | 38 · **88** · 200 | 12 · **28** · 62 | 8 · **12** · 20 |
-| 5.000 | 60 · **110** · 180 | 250 · **500** · 900 | 125 · **250** · 450 | 75 · **175** · 400 | 25 · **55** · 125 | 15 · **25** · 40 |
-| 10.000 | 120 · **220** · 361 | 500 · **1.000** · 1.800 | 250 · **500** · 900 | 150 · **350** · 800 | 50 · **110** · 250 | 30 · **50** · 80 |
-| 20.000 | 240 · **440** · 722 | 1.000 · **2.000** · 3.600 | 500 · **1.000** · 1.800 | 300 · **700** · 1.600 | 100 · **220** · 500 | 60 · **100** · 160 |
+| DQO | bajo | 500 | 240 | 0,48 | 4.167 | **No → alerta** |
+| DQO | **medio** | **1.000** | **1.188** | **1,19** | 4.545 | Sí |
+| DQO | alto | 1.800 | 3.500 | 1,94 | 4.986 | Sí (en el límite) |
+| DBO₅ | bajo | 250 | 116 | 0,47 | 2.083 | **No → alerta** |
+| DBO₅ | **medio** | **500** | **352** | **0,70** | 2.273 | Sí |
+| DBO₅ | alto | 900 | 1.047 | 1,16 | 2.493 | Sí |
+| SST | bajo | 150 | 45 | 0,30 | 1.250 | **No → alerta** |
+| SST | **medio** | **350** | **310** | **0,89** | 1.591 | Sí |
+| SST | alto | 800 | 1.972 | 2,46 | 2.216 | **No → alerta** |
 
-**Lectura:** ~500 kg de DBO/día (10.000 aves/día, medio) es una carga del orden de la de una población de varios miles de habitantes (a razón de ~50–60 g DBO/hab·día, dato de ingeniería sanitaria no verificado en esta sesión). Es la razón por la que la planta de efluentes es un **sistema de primera línea**, no un accesorio, y por la que **los límites de vuelco del sitio** pueden decidir la escala o la localización.
+**Lectura:** en el escenario medio ambos métodos dan el **mismo orden de magnitud** (~1.000–1.200 kg DQO/día a 10.000 aves/día). En los extremos divergen porque combinan supuestos que no tienen por qué ir juntos: poca agua con baja concentración (bajo) o mucha agua con concentración máxima (alto). Una planta que ahorra agua **concentra** su efluente; por eso la concentración sola no alcanza para dimensionar. **La divergencia no se corrige ajustando parámetros: se resuelve midiendo** caudal y concentración en una planta real (DPV-067).
 
-## 5. Valor de recuperar sangre y sólidos (usa el balance de masa)
+Por escala (kg/día, método A · método B, medio): DQO 250 · 297 / 500 · 594 / 1.000 · 1.188 / 2.000 · 2.376; DBO₅ 125 · 88 / 250 · 176 / 500 · 352 / 1.000 · 704; SST 88 · 78 / 175 · 155 / 350 · 310 / 700 · 620 (2.500 / 5.000 / 10.000 / 20.000 aves/día). Grasas, NTK y PT solo por método A (medio, 10.000 aves/día: 110 / 50 / 5 kg/día).
 
-### 5.1 Masa que puede evitar llegar al efluente
+## 5. Límite de vuelco: solo ejemplo regulatorio
 
-Del balance v1.1 (config. B, 2,9 kg, medio), t por día operativo. **Son masas que se retiran en seco; no son reducciones medidas de DQO.**
+El modelo usa como **EJEMPLO REGULATORIO DE REFERENCIA** la Res. ADA 336/2003 de la Provincia de Buenos Aires para vuelco a **conducto pluvial** (DQO 250 mg/L, DBO 50 mg/L; FTE-09C-08 `[PVDP]`). Cada límite del modelo lleva jurisdicción, autoridad, norma y tipo de descarga; un límite sin esos datos detiene el modelo (test **U26**, mutación M19).
+
+> **Bajo el ejemplo de límite utilizado, el escenario medio exigiría aproximadamente 94,5 % (método A) a 95,4 % (método B) de remoción de DQO** (rango de todos los escenarios: 87,5–97,4 %).
+
+**No es un requisito del proyecto.** La remoción necesaria dependerá de la provincia, la autoridad hídrica, el cuerpo receptor, la red cloacal o pluvial cuando corresponda, las condiciones particulares del permiso y la normativa vigente al momento del proyecto. **La localización futura reemplazará este benchmark por el límite regulatorio real** (DPV-067).
+
+## 6. Subproductos del balance ≠ sólidos del efluente ≠ SST
+
+La v1.0 decía "se pueden retirar en seco 6,1 t/día". Se corrige: que un material no sea producto comercial **no** significa que esté presente como sólido suspendido en el efluente.
+
+| Concepto | Qué es | Cómo se obtiene | 10.000 aves/día |
+|---|---|---|---|
+| **A. Masa biológica potencialmente segregable en origen** | Materiales del balance que **deberían capturarse antes de llegar a los drenajes**: sangre recuperable, plumas, vísceras, cabezas, contenido GI, decomisos | Balance de masa v1.1 (clase C + decomisos + contenido GI) | **6,1 t/día** (0,61 kg/ave) |
+| **B. Sólidos que efectivamente entran al efluente** | Lo que se escapa al drenaje por diseño del proceso, pérdidas, lavado, tamizado, manejo de subproductos y disciplina operativa | **PENDIENTE** (medición en planta) | Sin valor |
+| **C. SST del efluente** | Sólidos suspendidos medidos en el agua | Método A (g/ave) o método B (mg/L), **independientes del balance** | 350 (A) · 310 (B) kg/día (medio) |
+
+Masa segregable en origen por escala (t/día, del balance; no son reducciones medidas ni SST):
 
 | Material | kg/ave | 2.500 | 5.000 | 10.000 | 20.000 |
 |---|---|---|---|---|---|
-| Sangre recuperada (85 % de la drenada, SUP-040) | 0,084 | 0,21 | 0,42 | 0,84 | 1,68 |
+| Sangre recuperable (85 % de la drenada, SUP-040) | 0,084 | 0,21 | 0,42 | 0,84 | 1,68 |
 | Plumas húmedas | 0,241 | 0,60 | 1,21 | 2,41 | 4,83 |
 | Vísceras no comestibles | 0,131 | 0,33 | 0,65 | 1,31 | 2,61 |
 | Cabezas | 0,073 | 0,18 | 0,36 | 0,73 | 1,45 |
-| **Total de sólidos a retirar** (clase C + decomisos + contenido GI; no sumar con las filas anteriores) | 0,608 | **1,52** | **3,04** | **6,08** | **12,17** |
-| Masa que el balance ya envía a efluente o pérdida (sangre no recuperada, cutícula, goteo, pérdidas no asignadas) | 0,108 | 0,27 | 0,54 | 1,08 | 2,16 |
+| **Masa biológica potencialmente segregable en origen** (no sumar con las filas anteriores) | 0,608 | **1,52** | **3,04** | **6,08** | **12,17** |
+| Masa que el balance asigna a efluente o pérdida (sangre no recuperada, cutícula, goteo, pérdidas no asignadas) — **no equivale a SST** | 0,108 | 0,27 | 0,54 | 1,08 | 2,16 |
 
-**Lectura:** por cada kg que el balance ya manda al efluente o a pérdida, hay ~5,6 kg de sólidos que **deben** retirarse en seco. Si esos sólidos se transportan con agua (canales de plumas y vísceras), parte de su materia orgánica se disuelve y ya no puede separarse con rejas: el diseño del **transporte** (seco vs hidráulico) es una decisión de efluentes, no solo de proceso (DEC propuesta).
+Test **U22**: triplicar la masa de subproductos del balance no cambia los SST de ningún método, y la variable "sólidos que entran efectivamente al efluente" queda vacía (mutación M12). Si esos materiales se transportan con agua (canales de plumas y vísceras), parte se disuelve y ya no puede separarse: el **transporte en seco vs hidráulico** es una decisión de efluentes (DEC-09C-02 propuesta).
 
-### 5.2 Orden de magnitud del efecto de la sangre
+## 7. Sangre: principio firme, magnitud como referencia
 
-`[ESTIMACIÓN]` con DQO de la sangre ~0,357 kg/kg (375.000 mg/L ÷ 1,05 kg/L; FTE-181 `[PVDP]`):
+- **Principio:** recuperar la sangre antes de que llegue al drenaje reduce fuertemente la carga orgánica, y su nitrógeno y fósforo solubles no se retiran con tamiz ni DAF (FTE-09C-06 `[PVDP]`).
+- **Magnitud (referencia `[PVDP]` de sensibilidad, no resultado de la planta):** con DQO de la sangre ~0,357 kg/kg (FTE-181), la sangre recuperada aportaría ~299 kg DQO/día a 10.000 aves/día (75 / 150 / 299 / 599 por escala), del orden de **30 % de la carga del método A medio**.
+- **Variable editable:** `fraccion_sangre_recuperada` (0,85 por defecto, SUP-040; `--frac-sangre`). El test U15 verifica que la DQO adicional sea exactamente sangre no recuperada × DQO de la sangre.
+- **Validación:** medir DQO del efluente **antes y después** de mejorar la recolección, o medir **masa recuperada por ave** y carga específica.
 
-| Escala | DQO de la sangre recuperada (si fuera al efluente) kg/día | Comparación con la DQO media del efluente |
-|---|---|---|
-| 2.500 | 75 | +30 % |
-| 5.000 | 150 | +30 % |
-| 10.000 | 299 | +30 % |
-| 20.000 | 599 | +30 % |
-
-- La sangre **no recuperada** (15 %) ya está dentro de la carga base: ~5,3 g DQO/ave (~5 % de la DQO media).
-- **No se afirma una reducción exacta:** la cifra depende de un único dato `[PVDP]` de DQO de la sangre y de que la carga base (100 g/ave) corresponda efectivamente a plantas con recuperación de sangre, lo que las fuentes no aclaran. Lo robusto es la **dirección y el orden de magnitud**: perder la sangre puede aumentar la carga de DQO del orden de un tercio, y su nitrógeno y fósforo solubles no se retiran con pretratamiento físico (FTE-09C-06). Coherente con [`../07_subproductos/mapa_subproductos.md`](../07_subproductos/mapa_subproductos.md) §4 (sangre al efluente ≈ 350 kg DQO/día a 10.000 aves/día).
-- El modelo permite cambiar la recuperación (`--frac-sangre`); el test U15 verifica que la DQO adicional sea exactamente sangre no recuperada × DQO de la sangre.
-
-## 6. Qué falta
+## 8. Qué falta
 
 | Dato | Registro |
 |---|---|
-| Caracterización medida (DBO, DQO, SST, GyA, NTK, PT, pH, T, sedimentables) de efluente de faena avícola **argentina**, por punto (crudo, post-tamiz, post-DAF) y por día (faena vs limpieza) | DPV-067 |
-| Límites de vuelco por provincia y cuerpo receptor en zonas candidatas (PBA, Santa Fe, Córdoba, Entre Ríos, Chaco) y canon/permiso | DPV-067; nueva DPV propuesta |
-| DQO/DBO/N de la sangre de pollo (original de FTE-181) | DPV-067 |
-| Productos de limpieza y sanitizantes admitidos y su efecto en el tratamiento | Nueva DPV propuesta |
+| Caudal y caracterización medida (DBO, DQO, SST, GyA, NTK, PT, pH, T) de efluente de faena avícola **argentina**, por punto y por período (faena vs limpieza): resuelve la divergencia entre métodos | DPV-067 |
+| Límite regulatorio real del sitio (provincia, autoridad, cuerpo receptor, permiso) | DPV-067 |
+| DQO/DBO/N de la sangre de pollo (original de FTE-181) y masa de sangre recuperada por ave | DPV-067, DPV-080 |
+| Sólidos que efectivamente llegan al drenaje en plantas con y sin transporte en seco | Nueva DPV propuesta |
+| Productos de limpieza y sanitizantes admitidos y su efecto en el tratamiento | DPV-09C-05 propuesta |

@@ -1,23 +1,41 @@
 #!/usr/bin/env python3
 """
-MODELO PRELIMINAR DE UTILITIES — versión 1.0 (2026-09-30, sesión 09C)
-=====================================================================
+MODELO PRELIMINAR DE UTILITIES — versión 1.1 (2026-09-30, sesión 09C, auditoría conceptual)
+==========================================================================================
 
 AGUA INDUSTRIAL -> EFLUENTES -> ENERGÍA ELÉCTRICA -> AGUA CALIENTE/VAPOR -> FRÍO INDUSTRIAL
 -> CONGELADO -> RESPALDO, para 2.500 / 5.000 / 10.000 / 20.000 aves faenadas por día operativo
 (o cualquier valor con --aves-dia).
 
-ESTADO: órdenes de magnitud de PREFACTIBILIDAD. NO selecciona equipos, NO calcula CAPEX ni OPEX,
-NO asigna precios, NO elige tecnología de tratamiento, refrigerante ni fuente térmica, NO elige
-ubicación. Ninguna cifra es un dato de campo argentino.
+ESTADO: modelo TOP-DOWN de SENSIBILIDAD para prefactibilidad. Los rangos bajo/medio/alto NO son el
+consumo esperado de la futura planta ni especificaciones de diseño. NO selecciona equipos, NO calcula
+CAPEX ni OPEX, NO asigna precios, NO elige tecnología de tratamiento, refrigerante, fuente térmica ni
+generador, NO elige ubicación. Ninguna cifra es un dato de campo argentino.
 
-FUENTE DE VERDAD DE LA MASA: 23_plan_expansion/escenarios_escala.csv (modelo de escala v1.1, que a
-su vez integra el balance de masa v1.1 y subproductos v1.0). Este modelo LEE ese CSV y NO lo
-modifica ni recalcula el balance: toma kg/ave (valor / escala, lineal por el test T01 del modelo de
-escala) de: comestible (peso comercial), masa biológica comestible, agua retenida en producto, agua
-incorporada, sangre recuperada y drenada, plumas, vísceras, cabezas, garras, menudencias,
-sólidos a retirar y masa a efluente o pérdida. El inventario reproduce exactamente las filas del
-bloque `inventario` de ese CSV (test U07).
+v1.1 (auditoría conceptual):
+  * Agua: cinco conceptos (captada, utilizada, incorporada al producto/subproductos, evaporada o
+    arrastrada, descargada); fracción a efluente = SUPUESTO editable; segunda unidad m³/t de producto.
+  * Efluentes: dos métodos INDEPENDIENTES (A carga específica g/ave; B caudal × concentración); nunca se
+    calibra uno con el otro; si divergen más que la tolerancia, alerta "DATOS DE EFLUENTE REQUIEREN
+    VALIDACIÓN DE CAMPO".
+  * Límites de vuelco: solo EJEMPLOS REGULATORIOS con jurisdicción, autoridad, norma y tipo de descarga.
+  * Subproductos del balance = masa potencialmente segregable en origen; NO son SST del efluente. Los
+    sólidos que efectivamente entran al efluente quedan PENDIENTES (dependen del diseño y la operación).
+  * Lodos: PENDIENTE DE DIMENSIONAMIENTO salvo que se carguen explícitamente SST removidos, químicos,
+    biomasa y % de sólidos de torta (escenario ilustrativo con cada supuesto visible).
+  * Energía: kWh/ave -> energía diaria -> POTENCIA MEDIA EQUIVALENTE bajo X horas. La POTENCIA PICO, la
+    potencia contratada, el transformador y el generador NO se calculan desde kWh: quedan PENDIENTES
+    hasta tener una lista de cargas (kW nominal, factor de carga, simultaneidad, arranque, cos φ).
+  * Calor: MJ/día y potencia térmica media equivalente; el pico térmico queda PENDIENTE (perfil horario).
+  * Frío: "carga sensible preliminar asociada al enfriamiento del producto" (no es la capacidad
+    frigorífica de planta); la carga frigorífica total queda PENDIENTE (balance frigorífico). kW
+    eléctricos aproximados = kW frigoríficos / COP supuesto, con el COP declarado en el CSV.
+  * Respaldo: "carga crítica ilustrativa de escenario" (proxy); el grupo electrógeno queda PENDIENTE.
+  * Contraste futuro TOP-DOWN (este modelo) vs BOTTOM-UP (equipos de 09A cotizados): función
+    `contraste_bottom_up`; las diferencias generan alerta.
+
+FUENTE DE VERDAD DE LA MASA: 23_plan_expansion/escenarios_escala.csv (modelo de escala v1.1 <- balance
+de masa v1.1 <- subproductos v1.0). Este modelo solo LEE ese CSV (kg/ave = valor / escala).
 
 Uso
 ---
@@ -26,54 +44,53 @@ Uso
     python3 11_agua_efluentes/modelo_utilities.py --mutaciones     # prueba de mutación de los tests
     python3 11_agua_efluentes/modelo_utilities.py --tablas         # tablas resumen para los .md
     python3 11_agua_efluentes/modelo_utilities.py --escenario --aves-dia 7500 --nivel medio \
-        --l-ave 22 --frac-efluente 0.9 --dqo-g-ave 90 --perfil 0.6,0.4,0 --dias-refrigerado 3 \
-        --dias-congelado 14 --base-inventario dias_calendario --dias-anio 250
-                                                                 # sensibilidad (no escribe CSV)
+        --l-ave 22 --frac-efluente 0.9 --dqo-g-ave 90 --dqo-mg-l 4000 --frac-sangre 0.9 \
+        --perfil 0.6,0.4,0 --dias-refrigerado 3 --dias-congelado 14 --base-inventario dias_calendario
 
 El script se DETIENE (código 1) si falla cualquier prueba.
 
 ------------------------------------------------------------------------------
-TRES AGUAS QUE NUNCA SE MEZCLAN
+AGUA — CINCO CONCEPTOS QUE NO SE MEZCLAN
 ------------------------------------------------------------------------------
-  AGUA UTILIZADA   [m³/día operativo] = Σ etapas L/ave × aves / 1.000      (consumo industrial)
-  AGUA DESCARGADA  [m³/día operativo] = agua utilizada × fracción a efluente
-  AGUA RETENIDA en producto y subproductos [t/día] = kg/ave del balance v1.1 × aves / 1.000
-  El agua retenida (0,09 kg/ave en producto; 0,21 kg/ave incorporada con plumas) sale con la masa;
-  NUNCA se usa para calcular el consumo industrial (test U03: cambiarla no mueve el agua utilizada).
-  Cierre: utilizada = descargada + no descargada (evaporación, retenida, salida con subproductos,
-  pérdidas); retenida ≤ no descargada (test U04).
+  CAPTADA/COMPRADA   = utilizada / (1 − fracción de rechazo de potabilización)   [SUPUESTO: 0 si no hay
+                       potabilización con rechazo; dato de sitio]
+  UTILIZADA en proceso = Σ etapas L/ave × aves / 1.000          (RANGO DE SENSIBILIDAD 15/25/38 L/ave)
+  INCORPORADA al producto y subproductos = kg/ave del balance v1.1 (retenida en producto, goteo del
+                       producto y adherida a plumas). NUNCA calcula el consumo.
+  DESCARGADA (efluente) = utilizada × fracción a efluente       [SUPUESTO editable; la relación no es fija]
+  EVAPORADA o ARRASTRADA = utilizada − descargada − incorporada  (por diferencia; si es < 0, alerta)
+  Segunda unidad: m³ de agua utilizada / t de producto comestible (peso comercial), contrastada con el
+  rango de fuentes (3,8–17,9 m³/t de carcasa, FTE-09C-04 [PVDP]; base distinta: solo contraste).
 
 ------------------------------------------------------------------------------
-FÓRMULAS
+EFLUENTES — DOS MÉTODOS INDEPENDIENTES
 ------------------------------------------------------------------------------
-  Agua [m³/día op.]           = L/ave × aves / 1.000;   caudal medio [m³/h] = m³/día / horas con uso
-  Carga [kg/día op.]          = g/ave × aves / 1.000    (carga ESPECÍFICA por ave: el parámetro)
-  Concentración [mg/L]        = g/ave / L efluente por ave × 1.000  (resultado, no parámetro)
-  DQO extra si se pierde sangre = (f_ref − f) × sangre drenada [kg/ave] × DQO de la sangre [kg/kg]
-  Remoción requerida          = 1 − límite de vuelco / concentración cruda  (ilustrativa)
-  Electricidad proceso [kWh]  = kWh/t de peso vivo × t vivas/día op.  (indicador de referencia;
-                                incluye enfriado de producto fresco; NO incluye congelado, almacenamiento
-                                prolongado ni tratamiento aeróbico, que se suman aparte)
-  Congelado [kWh]             = kWh/t congelada × t/día congeladas
-  Almacenamiento [kWh/día cal.] = kWh/(t·día) × t almacenadas     (las cámaras funcionan 365 días)
-  Aireación [kWh/día op.]     = DBO que llega al biológico × remoción × kWh/kg DBO
-  Potencia media [kW]         = kWh / horas en que se consume;  pico [kW] = media × factor de pico
-  Calor útil [kJ/ave]         = Σ L/ave × 4,186 kJ/(kg·K) × ΔT (× pérdidas)  (escaldado, limpieza,
-                                sanitización);  combustible = útil / rendimiento
-  Frío de enfriado [kJ/ave]   = kg comestible × cp_fresco × (T_entrada − T_salida)
-                                + L/ave de reposición del chiller × 4,186 × (T_red − T_agua_chiller)
-                                × (1 + cargas adicionales de salas, docks, infiltración)
-  kW frigoríficos             = kJ/día / (horas × 3.600);  kW eléctricos = kW frigoríficos / COP
-  TR (tonelada de refrigeración) = kW frigoríficos / 3,517
-  Congelación [kJ/kg]         = cp_f × (T_ent − T_cong) + x_agua × 334 + cp_c × (T_cong − T_final)
-  Capacidad DIARIA de congelación [t/día op.] = comestible × (congelado + exportación) del perfil
-  Capacidad ESTÁTICA de almacenamiento [t]    = flujo × días de inventario (dos bases temporales)
-     días de producción: flujo = producción por día operativo
-     días calendario:    flujo = producción por día operativo × días op./año / 365
+  MÉTODO A (carga específica):     kg/día = aves/día × g/ave / 1.000
+  MÉTODO B (caudal × concentración): kg/día = m³ efluente/día × mg/L / 1.000
+  Relación B/A; si B/A > tolerancia o < 1/tolerancia (tolerancia = 2, SUPUESTO editable) -> alerta.
+  Remoción bajo EJEMPLO de límite = 1 − límite / concentración (con jurisdicción y tipo de descarga).
+
+------------------------------------------------------------------------------
+ENERGÍA, CALOR, FRÍO, RESPALDO
+------------------------------------------------------------------------------
+  Energía eléctrica de proceso [kWh/día] = kWh/t de peso vivo × t vivas/día (≡ aves × kWh/ave)
+  Potencia media equivalente [kW] = kWh/día / horas consideradas   (el nombre incluye "_bajo_<h>h")
+  Potencia pico / demanda máxima = Σ (kW nominal × factor de carga × simultaneidad) + arranque del mayor
+     motor; kVA = kW / cos φ  -> SOLO desde una lista de cargas; si no existe: PENDIENTE.
+  Calor útil [MJ/día] = Σ L × 4,186 × ΔT (× pérdidas) × aves / 1.000; potencia térmica media equivalente
+     = MJ/día / (horas × 3,6); pico térmico: PENDIENTE (perfil horario y simultaneidad).
+  Carga sensible preliminar del producto [kJ/ave] = kg comestible × cp × (T_entrada − T_salida)
+     (enfriamiento del agua de reposición del chiller y cargas adicionales: filas separadas, no sumadas
+     como capacidad total; la carga frigorífica total queda PENDIENTE: balance frigorífico)
+  Calor de congelación del producto [kJ/kg] = cp_f × (T_ent − T_cong) + x_agua × 334 + cp_c × (T_cong − T_fin)
+  kW eléctricos aproximados = kW frigoríficos / COP supuesto (fila cop_supuesto_* en el CSV)
+  CAPACIDAD DE CONGELACIÓN [t/día op.] = t NUEVAS que deben atravesar la congelación por día
+  CAPACIDAD DE ALMACENAMIENTO [t]      = t YA congeladas que permanecen guardadas
+     días de producción: flujo = producción/día operativo; días calendario: × días op./365
+  Carga crítica ilustrativa [kW] = proxy de sensibilidad; generador: PENDIENTE (lista de cargas críticas)
 
 Unidades: aves; L; m³; kg; t; kWh; kW; kJ; MJ; TR; mg/L; h. Separador decimal del CSV: punto.
-Columna `origen` del CSV: FUENTE (valor tomado de una fuente, siempre [PVDP] en esta sesión),
-ESTIMACIÓN (cálculo propio) o SUPUESTO (hipótesis de trabajo).
+Columna `origen`: FUENTE ([PVDP] en esta sesión) / ESTIMACIÓN / SUPUESTO / PENDIENTE (valor vacío).
 """
 
 from __future__ import annotations
@@ -87,7 +104,7 @@ import sys
 
 sys.dont_write_bytecode = True
 
-VERSION = "1.0"
+VERSION = "1.1"
 FECHA = "2026-09-30"
 AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(AQUI)
@@ -101,7 +118,8 @@ NIVELES = ("bajo", "medio", "alto")                 # nivel de DEMANDA de servic
 I = {n: i for i, n in enumerate(NIVELES)}
 CP_AGUA = 4.186                                     # kJ/(kg·K)
 KW_POR_TR = 3.517                                   # 1 TR = 3,517 kW frigoríficos (definición)
-KJ_POR_KWH = 3600.0
+PENDIENTE = None                                    # valor aún no calculable (se escribe vacío en el CSV)
+ALERTA_EFLUENTE = "DATOS DE EFLUENTE REQUIEREN VALIDACIÓN DE CAMPO"
 
 _MUT: set = set()                                   # mutaciones activas (solo --mutaciones)
 
@@ -112,16 +130,16 @@ class ErrorUtilities(Exception):
 
 # ---------------------------------------------------------------------------
 # 1. PARÁMETROS  (valor bajo / medio / alto; origen; referencia)
-#    "bajo/medio/alto" = nivel de DEMANDA del servicio (bajo = planta más eficiente)
+#    "bajo/medio/alto" = nivel de DEMANDA del servicio (bajo = planta más eficiente).
+#    Son RANGOS DE SENSIBILIDAD PRELIMINAR, no consumos esperados ni especificaciones.
 #    Referencias FTE-09C-xx: 11_agua_efluentes/fuentes_09C.csv (todas [PVDP])
 # ---------------------------------------------------------------------------
-# 1.1 Agua industrial por etapa [L/ave faenada]. Totales calibrados a rangos de fuentes
-#     (13,2–37,8 L/ave; 22–30 L/ave; 26 L/ave; FTE-09C-01 a 04); reparto por etapa: SUPUESTO guiado
-#     por el desglose de EE.UU. (evisceración 7,6; lavado 4,3; chiller 2,1; despiece 3,0 L/ave).
+# 1.1 Agua utilizada en proceso por etapa [L/ave faenada]. Totales 15/25/38 calibrados a rangos de fuentes
+#     (13,2–37,8 L/ave; 22–30 L/ave; 26 L/ave; FTE-09C-01 a 04); reparto por etapa: SUPUESTO.
 AGUA_ETAPAS = [
     # clave, etiqueta, (bajo, medio, alto), origen, referencia
     ("recepcion", "Recepción: lavado de jaulas/módulos, camiones y andén", (0.5, 1.0, 2.0), "SUPUESTO",
-     "sin fuente por ave; DPV propuesto"),
+     "sin fuente por ave"),
     ("escaldado", "Escaldado: llenado, reposición y desborde", (0.9, 1.2, 2.0), "FUENTE",
      "mín. ~1 cuarto de galón (0,95 L)/ave (FTE-09C-11, FTE-09C-18)"),
     ("desplumado", "Desplumado: duchas y transporte de plumas", (1.0, 2.0, 3.5), "SUPUESTO",
@@ -139,87 +157,92 @@ AGUA_ETAPAS = [
     ("auxiliares", "Servicios auxiliares: caldera, condensadores evaporativos, vestuarios, comedor",
      (1.0, 2.0, 2.5), "SUPUESTO", "sin fuente separada"),
 ]
+RANGO_L_AVE_FUENTES = (13.2, 37.8)                  # FTE-09C-02 [PVDP]
+RANGO_M3_T_FUENTES = (3.8, 17.9)                    # m³/t de CARCASA, FTE-09C-04 [PVDP] (base distinta)
 FRAC_EFLUENTE = ((0.80, 0.88, 0.95), "SUPUESTO",
-                 "fracción del agua utilizada que se descarga; el resto se evapora (escaldado, caldera, "
-                 "condensadores), sale con producto/subproductos o se pierde")
-FACTOR_PICO_AGUA = ((1.5, 1.8, 2.2), "SUPUESTO", "caudal horario máximo / medio")
+                 "fracción del agua utilizada que se descarga; SUPUESTO editable: la relación NO es fija "
+                 "(depende de evaporación, arrastre con subproductos y lodos, reúso y fugas)")
+FRAC_RECHAZO_POTABILIZACION = 0.0                   # SUPUESTO editable: dato de sitio (p. ej. ósmosis)
+FACTOR_MAXIMO_HORARIO_AGUA = ((1.5, 1.8, 2.2), "SUPUESTO", "caudal horario máximo / medio (ilustrativo)")
 HORAS_NETAS = 8                                     # SUP-053 (sensibilidad en el modelo de escala)
 HORAS_LIMPIEZA = 4                                  # SUPUESTO: ventana de limpieza diaria
 HORAS_ARRANQUE_CIERRE = 2                           # SUPUESTO
 
-# 1.2 Carga contaminante específica del efluente CRUDO [g/ave], con sangre recuperada al 85 %
-#     (SUP-040) y sólidos gruesos retirados en seco. ESTIMACIÓN = concentraciones de fuentes
-#     (DQO 1.223–9.695 mg/L; DBO 1.341–2.900 mg/L; SST 378–5.462 mg/L; G y A ~500 mg/L tamizado;
-#     NTK 150–296 mg/L; PT ~18,5 mg/L; FTE-181, FTE-09C-05, 06) × caudales de 1.1.
+# 1.2 Efluentes. MÉTODO A: carga específica [g/ave] (escenarios [PVDP], con sangre recuperada al 85 %,
+#     SUP-040). MÉTODO B: concentración [mg/L] (valores citados en fuentes [PVDP]). Independientes:
+#     ninguno se calibra con el otro.
 CARGA_G_AVE = {
-    "DQO": ((50.0, 100.0, 180.0), "FTE-181; FTE-09C-05"),
-    "DBO5": ((25.0, 50.0, 90.0), "FTE-181; FTE-09C-05 (DBO/DQO ~0,4–0,6)"),
-    "SST": ((15.0, 35.0, 80.0), "FTE-181; FTE-09C-05"),
-    "GyA": ((5.0, 11.0, 25.0), "FTE-09C-06 (~500 mg/L tamizado)"),
-    "NTK": ((3.0, 5.0, 8.0), "FTE-09C-06 (150–296 mg/L)"),
-    "PT": ((0.3, 0.5, 1.0), "FTE-09C-06 (~18,5 mg/L)"),
+    "DQO": ((50.0, 100.0, 180.0), "escenario [PVDP] (FTE-181; FTE-09C-05)"),
+    "DBO5": ((25.0, 50.0, 90.0), "escenario [PVDP] (FTE-181; FTE-09C-05)"),
+    "SST": ((15.0, 35.0, 80.0), "escenario [PVDP] (FTE-181; FTE-09C-05)"),
+    "GyA": ((5.0, 11.0, 25.0), "escenario [PVDP] (FTE-09C-06)"),
+    "NTK": ((3.0, 5.0, 8.0), "escenario [PVDP] (FTE-09C-06)"),
+    "PT": ((0.3, 0.5, 1.0), "escenario [PVDP] (FTE-09C-06)"),
+}
+CONC_MG_L = {  # MÉTODO B: solo parámetros con rangos de concentración citados
+    "DQO": ((2000.0, 5400.0, 9695.0), "promedio ~2.000; centro de 3.154–7.719; máx. 9.695 mg/L (FTE-09C-05)"),
+    "DBO5": ((970.0, 1600.0, 2900.0), "~970–2.900; centro de 1.341–1.821 mg/L (FTE-181; FTE-09C-05)"),
+    "SST": ((378.0, 1410.0, 5462.0), "378–5.462 mg/L; caso 1.410 mg/L (FTE-09C-05; FTE-09C-07)"),
 }
 RANGO_DQO_FUENTES_MG_L = (1223.0, 9695.0)           # FTE-09C-05 [PVDP]
+TOLERANCIA_METODOS = 2.0                            # SUPUESTO editable: B/A fuera de [1/2, 2] -> alerta
 DQO_SANGRE_KG_KG = 375.0 / 1.05 / 1000             # 375.000 mg/L = 375 g/L ÷ 1,05 kg/L = 0,357 kg/kg (FTE-181)
-LIMITE_DQO_ILUSTRATIVO = (250.0, "FUENTE", "Res. ADA 336/2003 (PBA), vuelco a conducto pluvial, [PVDP] "
-                          "FTE-09C-08; otras jurisdicciones y cuerpos receptores sin relevar")
-LIMITE_DBO_ILUSTRATIVO = (50.0, "FUENTE", "idem")
+# Ejemplos regulatorios de referencia (NO requisitos del proyecto): la localización los reemplazará.
+LIMITES_EJEMPLO = [
+    {"parametro": "DQO", "mg_l": 250.0, "jurisdiccion": "Provincia de Buenos Aires", "autoridad": "ADA",
+     "norma": "Res. ADA 336/2003", "tipo_descarga": "conducto pluvial", "ref": "FTE-09C-08 [PVDP]"},
+    {"parametro": "DBO5", "mg_l": 50.0, "jurisdiccion": "Provincia de Buenos Aires", "autoridad": "ADA",
+     "norma": "Res. ADA 336/2003", "tipo_descarga": "conducto pluvial", "ref": "FTE-09C-08 [PVDP]"},
+]
+CAMPOS_LIMITE = ("parametro", "mg_l", "jurisdiccion", "autoridad", "norma", "tipo_descarga")
 
-# 1.3 Pretratamiento y lodos
-REM_DAF = {  # fracción removida por DAF (FTE-09C-05: DBO 30–90 %, SST 38–70 %, grasas 63–95 %)
-    "DBO5": ((0.60, 0.45, 0.30), "FUENTE"),         # bajo = más remoción = menos carga al biológico
-    "SST": ((0.70, 0.54, 0.38), "FUENTE"),
-    "GyA": ((0.95, 0.80, 0.63), "FUENTE"),
+# 1.3 Lodos: escenario ILUSTRATIVO (cada supuesto visible y editable). Por defecto el modelo NO calcula
+#     lodos (PENDIENTE DE DIMENSIONAMIENTO).
+LODOS_ILUSTRATIVO = {  # clave: ((bajo, medio, alto), unidad, origen, referencia)
+    "rem_sst_separacion_mecanica_y_daf": ((0.70, 0.54, 0.38), "fracción", "FUENTE",
+                                          "DAF 38–70 % SST (FTE-09C-05 [PVDP])"),
+    "rem_grasas_daf": ((0.95, 0.80, 0.63), "fracción", "FUENTE", "DAF 63–95 % grasas (FTE-09C-05 [PVDP])"),
+    "dosis_quimicos_g_m3": ((50.0, 100.0, 200.0), "g/m³", "SUPUESTO", "coagulante + floculante; sin fuente"),
+    "rem_dbo_daf": ((0.60, 0.45, 0.30), "fracción", "FUENTE", "DAF 30–90 % DBO (FTE-09C-05 [PVDP])"),
+    "remocion_dbo_biologico": ((0.95, 0.95, 0.95), "fracción", "SUPUESTO", ""),
+    "rendimiento_biomasa_kg_ms_kg_dbo": ((0.30, 0.40, 0.50), "kg MS/kg DBO", "SUPUESTO",
+                                         "tecnología aerobia; anaerobia genera mucho menos"),
+    "fraccion_solidos_torta": ((0.20, 0.18, 0.15), "fracción", "SUPUESTO", "tras deshidratación"),
 }
-FRAC_QUIMICOS_LODO_DAF = ((0.10, 0.15, 0.25), "SUPUESTO", "coagulante/floculante sobre MS removida")
-MS_LODO_DAF = ((0.15, 0.12, 0.10), "FUENTE", "5–30 %, habitual 10–15 % de sólidos (FTE-09C-13)")
-REMOCION_DBO_BIOLOGICO = 0.95                       # SUPUESTO (para aireación y lodo)
-RENDIMIENTO_LODO_AEROBIO = ((0.30, 0.40, 0.50), "SUPUESTO", "kg MS / kg DBO removida (aerobio)")
-MS_LODO_DESHIDRATADO = ((0.20, 0.18, 0.15), "SUPUESTO", "fracción de sólidos tras deshidratar")
-KWH_KG_DBO = ((0.7, 1.2, 2.0), "SUPUESTO", "kWh eléctricos por kg de DBO removida en tratamiento aerobio")
+KWH_KG_DBO = ((0.7, 1.2, 2.0), "SUPUESTO", "kWh eléctricos por kg de DBO removida (tratamiento aerobio)")
+REM_DBO_PRETRAT_ENERGIA = ((0.60, 0.45, 0.30), "FUENTE", "DAF 30–90 % DBO (FTE-09C-05 [PVDP])")
 
-# 1.4 Electricidad
+# 1.4 Electricidad (indicadores TOP-DOWN)
 KWH_T_PV = ((150.0, 250.0, 450.0), "FUENTE",
             "UE 152–860 kWh/t faenada; Brasil 165 kWh/t; 1,19 MJ/kg = 330 kWh/t (FTE-09C-09, FTE-09C-03)")
 KWH_T_CONGELADA = ((120.0, 190.0, 260.0), "FUENTE", "120–260 kWh/t de ave congelada; 133 kWh/t (FTE-09C-10)")
 KWH_T_DIA_REFRIGERADO = ((0.5, 1.0, 2.0), "SUPUESTO", "cámara 0–4 °C, por t almacenada y día; sin fuente")
 KWH_T_DIA_CONGELADO = ((1.5, 3.0, 5.0), "SUPUESTO", "cámara −18/−25 °C, por t almacenada y día; sin fuente")
-FACTOR_PICO_ELECTRICO = ((1.3, 1.5, 1.8), "SUPUESTO", "potencia máxima / potencia media de proceso")
-# Reparto ilustrativo del consumo de proceso (medio). SUPUESTO guiado por FTE-09C-09 ("agua helada y
-# aire comprimido, el mayor uso eléctrico"). Solo didáctico: no se usa en otros cálculos.
 REPARTO_ELECTRICO = {"frio_de_proceso_agua_helada_hielo": 0.35, "motores_de_linea_y_transportadores": 0.20,
                      "aire_comprimido": 0.10, "bombas_agua_y_efluentes": 0.10, "climatizacion_salas": 0.08,
-                     "iluminacion": 0.07, "oficinas_vestuarios_servicios": 0.05, "otros": 0.05}
+                     "iluminacion": 0.07, "oficinas_vestuarios_servicios": 0.05, "otros": 0.05}  # SUPUESTO didáctico
 
-# 1.5 Agua caliente / vapor (física; SUPUESTOS de temperatura salvo rangos de fuentes)
-T_RED = 18.0                                        # SUPUESTO: agua de red/perforación (varía 10–25 °C)
+# 1.5 Agua caliente / vapor
+T_RED = 18.0                                        # SUPUESTO
 T_ESCALDADO = ((54.0, 58.0, 62.0), "FUENTE", "suave 51–54 °C; fuerte 60–66 °C (FTE-09C-11)")
-FACTOR_PERDIDAS_ESCALDADO = ((1.5, 2.0, 3.0), "SUPUESTO",
-                             "calor a las aves, evaporación y pérdidas de la escaldadora sobre el calentamiento "
-                             "del agua de reposición")
+FACTOR_PERDIDAS_ESCALDADO = ((1.5, 2.0, 3.0), "SUPUESTO", "calor a las aves, evaporación y pérdidas")
 T_LIMPIEZA = ((50.0, 55.0, 60.0), "FUENTE", "lavado 49–71 °C (FTE-09C-11)")
-FRAC_LIMPIEZA_CALIENTE = ((0.5, 0.6, 0.7), "SUPUESTO", "fracción del agua de limpieza que se calienta")
+FRAC_LIMPIEZA_CALIENTE = ((0.5, 0.6, 0.7), "SUPUESTO", "")
 T_ESTERILIZACION = 82.0                             # FUENTE: 82–93 °C (FTE-09C-11) [PVDP]
-FRAC_SANITIZACION_CALIENTE = ((0.3, 0.5, 0.7), "SUPUESTO", "fracción del agua de sanitización a 82 °C")
+FRAC_SANITIZACION_CALIENTE = ((0.3, 0.5, 0.7), "SUPUESTO", "")
 RENDIMIENTO_TERMICO = ((0.85, 0.75, 0.65), "SUPUESTO", "generación + distribución de calor")
 PCI_MJ = {"gas_natural_m3": (38.9, "SUPUESTO", "~9.300 kcal/m³ (a verificar con distribuidora)"),
           "glp_kg": (46.0, "SUPUESTO", "~11.000 kcal/kg"),
           "biomasa_chip_kg": (14.0, "SUPUESTO", "chip de madera ~20–25 % humedad; muy variable")}
 
-# 1.6 Frío
-T_ENTRADA_CARCASA = 38.0                            # SUPUESTO: carcasa post-evisceración
-T_SALIDA_CARCASA = 4.0                              # SUPUESTO: objetivo de enfriado (norma a verificar)
-T_AGUA_CHILLER = 1.0                                # SUPUESTO
-CP_FRESCO = 3.5                                     # kJ/(kg·K) SUPUESTO típico de carne (ASHRAE, FTE-09C-14)
-CP_CONGELADO = 1.8                                  # kJ/(kg·K) SUPUESTO típico
-T_CONGELACION_INICIAL = -1.5                        # °C SUPUESTO
-T_FINAL_CONGELADO = -18.0                           # °C (exigencia usual de exportación, FTE-135 [PVDP])
-FRAC_AGUA_PRODUCTO = 0.74                           # SUPUESTO; latente = x_agua × 334 kJ/kg (FTE-09C-14)
-CALOR_LATENTE_AGUA = 334.0                          # kJ/kg (propiedad física)
+# 1.6 Frío (propiedades y temperaturas: SUPUESTOS salvo lo indicado)
+T_ENTRADA_CARCASA, T_SALIDA_CARCASA, T_AGUA_CHILLER = 38.0, 4.0, 1.0
+CP_FRESCO, CP_CONGELADO = 3.5, 1.8                  # kJ/(kg·K) típicos (ASHRAE, FTE-09C-14 [PVDP])
+T_CONGELACION_INICIAL, T_FINAL_CONGELADO = -1.5, -18.0
+FRAC_AGUA_PRODUCTO, CALOR_LATENTE_AGUA = 0.74, 334.0  # latente = x_agua × 334 kJ/kg (FTE-09C-14)
 FRAC_CARGAS_ADICIONALES = ((0.25, 0.40, 0.60), "SUPUESTO",
-                           "salas climatizadas, docks, infiltración, motores e iluminación en recintos fríos")
-FACTOR_TUNEL = ((1.2, 1.3, 1.5), "SUPUESTO", "envases, ventiladores, deshielo y pérdidas del túnel")
-HORAS_TUNEL = 20                                    # SUPUESTO: horas/día de congelación efectiva
+                           "ilustrativo: salas, docks, infiltración, motores e iluminación; NO es balance")
+HORAS_TUNEL = 20                                    # SUPUESTO: horas/día de congelación (media)
 COP_ENFRIADO = ((4.0, 3.0, 2.3), "SUPUESTO", "agua helada / hielo, evaporación ~−5/0 °C")
 COP_CONGELADO = ((1.8, 1.4, 1.1), "SUPUESTO", "túnel, evaporación ~−35/−40 °C")
 
@@ -228,23 +251,23 @@ PERFILES = {"P1": {"refrigerado": 0.90, "congelado": 0.10, "exportacion": 0.00},
             "P2": {"refrigerado": 0.60, "congelado": 0.40, "exportacion": 0.00},
             "P3": {"refrigerado": 0.50, "congelado": 0.30, "exportacion": 0.20}}
 DIAS_INVENTARIO = (1, 3, 7, 14)
-DIAS_REFRIGERADO_DEF, DIAS_CONGELADO_DEF = 3, 14    # especificación del simulador (SUP-056)
-FRAC_GARRAS_CONGELADAS = ((0.0, 1.0, 1.0), "SUPUESTO", "garras para exportación: siempre congeladas")
+DIAS_REFRIGERADO_DEF, DIAS_CONGELADO_DEF = 3, 14
+FRAC_GARRAS_CONGELADAS = ((0.0, 1.0, 1.0), "SUPUESTO", "")
 FRAC_MENUDENCIAS_CONGELADAS = ((0.0, 0.5, 1.0), "SUPUESTO", "")
 
-# 1.8 Respaldo
+# 1.8 Respaldo: PROXY ILUSTRATIVO (fracciones de la potencia MEDIA equivalente de proceso)
 FACTOR_REARRANQUE = ((1.3, 1.5, 2.0), "SUPUESTO", "recuperación de temperatura tras un corte")
-FRAC_RESPALDO = {"control_it_seguridad": 0.02, "iluminacion_emergencia": 0.01, "bombeo_agua_minimo": 0.03,
-                 "anden_aves_ventilacion": 0.02}     # SUPUESTO: fracción de la potencia pico de proceso
-FRAC_EFLUENTE_MINIMO = 0.5                          # SUPUESTO: aireación/bombas mínimas en corte
-FACTOR_POTENCIA = 0.8                               # SUPUESTO: kVA = kW / 0,8
+FRAC_CRITICA_ILUSTRATIVA = {"control_it_seguridad": 0.03, "iluminacion_emergencia": 0.015,
+                            "bombeo_agua_minimo": 0.045, "anden_aves_ventilacion": 0.03}  # SUPUESTO
+FRAC_EFLUENTE_MINIMO = 0.5                          # SUPUESTO
+TOLERANCIA_BOTTOM_UP = 1.5                          # SUPUESTO editable: top-down vs bottom-up
 
 PALABRAS_ECONOMICAS = re.compile(r"\b(usd|ars|precio|costo|capex|opex|ebitda|van|tir|payback|margen|"
                                  r"ingreso|ingresos|rentabilidad)\b|\$", re.IGNORECASE)
 
 
 def nv(param, nivel):
-    """Valor de un parámetro (tupla de 3 o (tupla, origen, ref)) para el nivel."""
+    """Valor de un parámetro (tupla de 3 o (tupla, ...)) para el nivel."""
     t = param[0] if isinstance(param[0], tuple) else param
     return t[I[nivel]]
 
@@ -300,21 +323,112 @@ def kg_por_ave(E=10000, ds=5):
 
 
 # ---------------------------------------------------------------------------
-# 3. CÁLCULO
+# 3. FUNCIONES AUXILIARES: límites, lodos, lista de cargas, contraste bottom-up
+# ---------------------------------------------------------------------------
+def validar_limite(lim):
+    """Un límite regulatorio solo se usa si declara jurisdicción, autoridad, norma y tipo de descarga."""
+    for c in CAMPOS_LIMITE:
+        if lim.get(c) in (None, "") and "M19" not in _MUT:
+            raise ErrorUtilities(f"Límite sin '{c}': todo límite debe asociarse a jurisdicción y tipo de descarga")
+    return lim
+
+
+def remocion_bajo_ejemplo(conc_mg_l, lim):
+    validar_limite(lim)
+    return max(0.0, 1 - lim["mg_l"] / conc_mg_l) if conc_mg_l else 0.0
+
+
+def lodos(sst_kg, gya_kg, dbo_kg, m3_efluente, prm):
+    """Cadena explícita: SST removidos + grasas flotadas + químicos + biomasa -> kg sólidos secos ->
+    % sólidos de torta -> t húmedas. Cualquier eslabón sin parámetro -> PENDIENTE (None)."""
+    prm = prm or {}
+    g = prm.get
+    sst_rem = sst_kg * g("rem_sst_separacion_mecanica_y_daf") if g("rem_sst_separacion_mecanica_y_daf") is not None \
+        else PENDIENTE
+    gya_rem = gya_kg * g("rem_grasas_daf") if g("rem_grasas_daf") is not None else PENDIENTE
+    quim = m3_efluente * g("dosis_quimicos_g_m3") / 1000 if g("dosis_quimicos_g_m3") is not None else PENDIENTE
+    if None not in (g("rem_dbo_daf"), g("remocion_dbo_biologico"), g("rendimiento_biomasa_kg_ms_kg_dbo")):
+        biomasa = dbo_kg * (1 - g("rem_dbo_daf")) * g("remocion_dbo_biologico") * g("rendimiento_biomasa_kg_ms_kg_dbo")
+    else:
+        biomasa = PENDIENTE
+    comps = (sst_rem, gya_rem, quim, biomasa)
+    if "M14" in _MUT:
+        seco = 2400.0 * 0.18                                  # M14: lodo seco fijo sin modelo
+    else:
+        seco = sum(comps) if None not in comps else PENDIENTE
+    pct = g("fraccion_solidos_torta")
+    if "M13" in _MUT and pct is None:
+        pct = 0.18                                            # M13: % de sólidos por defecto
+    humedo = seco / pct / 1000 if (seco is not None and pct) else PENDIENTE
+    return {"sst_removidos_kg_dia": sst_rem, "grasas_flotadas_kg_dia": gya_rem, "solidos_quimicos_kg_dia": quim,
+            "biomasa_kg_ms_dia": biomasa, "lodo_solidos_secos_kg_dia": seco, "lodo_humedo_t_dia": humedo}
+
+
+CAMPOS_CARGA = ("equipo", "kw_nominal", "factor_carga", "simultaneidad", "cos_phi")
+
+
+def demanda_maxima(lista):
+    """Potencia pico / demanda máxima desde una LISTA DE CARGAS (única vía admitida).
+    Cada carga: equipo, kw_nominal, factor_carga, simultaneidad, cos_phi y opcional factor_arranque."""
+    if not lista:
+        return PENDIENTE, PENDIENTE
+    kw = kva = 0.0
+    arranque_extra = 0.0
+    for c in lista:
+        for campo in CAMPOS_CARGA:
+            if c.get(campo) in (None, ""):
+                raise ErrorUtilities(f"Carga sin '{campo}': {c}")
+        if not (0 < c["cos_phi"] <= 1 and 0 <= c["factor_carga"] <= 1 and 0 <= c["simultaneidad"] <= 1):
+            raise ErrorUtilities(f"Carga con factores fuera de rango: {c}")
+        p = c["kw_nominal"] * c["factor_carga"] * c["simultaneidad"]
+        kw += p
+        kva += p / c["cos_phi"]
+        arranque_extra = max(arranque_extra, c["kw_nominal"] * (c.get("factor_arranque", 1.0) - 1))
+    return kw + arranque_extra, kva + arranque_extra / 0.8
+
+
+def contraste_bottom_up(r, equipos, tolerancia=TOLERANCIA_BOTTOM_UP):
+    """Compara el modelo TOP-DOWN (r) con la suma BOTTOM-UP de equipos (futuro: matriz de equipos de 09A
+    + cotizaciones). Cada equipo puede declarar kw_nominal, factor_carga, horas_dia, agua_m3_dia,
+    calor_util_mj_dia y frio_kwf. Devuelve filas de contraste y alertas (no ajusta ningún valor)."""
+    bu = {"kwh_proceso_dia": sum(e.get("kw_nominal", 0) * e.get("factor_carga", 1) * e.get("horas_dia", 0)
+                                 for e in equipos),
+          "agua_utilizada_m3_dia": sum(e.get("agua_m3_dia", 0) for e in equipos),
+          "calor_util_mj_dia": sum(e.get("calor_util_mj_dia", 0) for e in equipos),
+          "carga_sensible_preliminar_producto_kwf_bajo_8h": sum(e.get("frio_kwf", 0) for e in equipos)}
+    filas, alertas = [], []
+    for k, v_bu in bu.items():
+        v_td = r[k]
+        if not v_bu or v_td is None:
+            continue
+        ratio = v_bu / v_td
+        filas.append((k, v_td, v_bu, ratio))
+        if not 1 / tolerancia <= ratio <= tolerancia:
+            alertas.append(f"TOP-DOWN vs BOTTOM-UP: {k} difiere ×{ratio:.2f} (tolerancia ×{tolerancia:g})")
+    return filas, alertas
+
+
+# ---------------------------------------------------------------------------
+# 4. CÁLCULO
 # ---------------------------------------------------------------------------
 class R:
-    """Resultados con metadatos (una fila del CSV por variable)."""
+    """Resultados con metadatos (una fila del CSV por variable) y alertas."""
 
     def __init__(self):
-        self.filas, self.v = [], {}
+        self.filas, self.v, self.alertas = [], {}, []
 
     def add(self, bloque, var, val, unidad, periodo, base, origen, clasif, ref="", nota="", parametro=""):
         if var in self.v:
             raise ErrorUtilities(f"Variable duplicada: {var}")
+        if val is None:
+            origen, clasif = "PENDIENTE", "[PENDIENTE DE DIMENSIONAMIENTO]"
         self.v[var] = val
         self.filas.append({"bloque": bloque, "parametro": parametro, "variable": var, "valor": val,
                            "unidad": unidad, "periodo": periodo, "base": base, "origen": origen,
                            "clasificacion": clasif, "referencia": ref, "nota": nota})
+
+    def alerta(self, codigo, mensaje):
+        self.alertas.append((codigo, mensaje))
 
     def __getitem__(self, k):
         return self.v[k]
@@ -327,14 +441,20 @@ def parametros(nivel="medio", **ov):
     p = {"nivel": nivel,
          "l_ave_etapas": {c: nv(v, nivel) for c, _, v, _, _ in AGUA_ETAPAS},
          "frac_efluente": nv(FRAC_EFLUENTE, nivel),
-         "factor_pico_agua": nv(FACTOR_PICO_AGUA, nivel),
+         "frac_rechazo_potabilizacion": FRAC_RECHAZO_POTABILIZACION,
+         "factor_maximo_horario_agua": nv(FACTOR_MAXIMO_HORARIO_AGUA, nivel),
          "carga_g_ave": {k: nv(v, nivel) for k, v in CARGA_G_AVE.items()},
-         "frac_sangre_recuperada": None,           # None = la del balance (SUP-040, 85 %)
+         "conc_mg_l": {k: nv(v, nivel) for k, v in CONC_MG_L.items()},
+         "tolerancia_metodos": TOLERANCIA_METODOS,
+         "fraccion_sangre_recuperada": None,       # None = la del balance (SUP-040, 85 %)
+         "limites": [dict(x) for x in LIMITES_EJEMPLO],
+         "lodos": None,                            # None = PENDIENTE DE DIMENSIONAMIENTO
+         "lista_cargas": None,                     # None = potencia pico PENDIENTE
+         "lista_cargas_criticas": None,            # None = generador PENDIENTE
          "perfil": dict(PERFILES["P1"]), "perfil_id": "P1",
          "dias_refrigerado": DIAS_REFRIGERADO_DEF, "dias_congelado": DIAS_CONGELADO_DEF,
          "base_inventario": "dias_produccion",
-         "horas_netas": HORAS_NETAS, "horas_limpieza": HORAS_LIMPIEZA,
-         "limite_dqo_mg_l": LIMITE_DQO_ILUSTRATIVO[0]}
+         "horas_netas": HORAS_NETAS, "horas_limpieza": HORAS_LIMPIEZA}
     l_total = ov.pop("l_ave_total", None)
     p.update(ov)
     if l_total is not None:                           # escala todas las etapas en proporción
@@ -344,6 +464,10 @@ def parametros(nivel="medio", **ov):
     return p
 
 
+def lodos_ilustrativo(nivel):
+    return {k: nv(v, nivel) for k, v in LODOS_ILUSTRATIVO.items()}
+
+
 def validar(p):
     if any(v < 0 or not math.isfinite(v) for v in p["l_ave_etapas"].values()):
         raise ErrorUtilities("L/ave negativo o no finito")
@@ -351,11 +475,17 @@ def validar(p):
         raise ErrorUtilities("L/ave > 200: fuera de todo rango de faena avícola (revisar unidades: ¿m³?)")
     if not 0 < p["frac_efluente"] <= 1:
         raise ErrorUtilities("La fracción de agua a efluente debe estar en (0, 1]: no se descarga más de lo usado")
-    if any(v < 0 for v in p["carga_g_ave"].values()):
-        raise ErrorUtilities("Carga específica negativa")
-    fs = p["frac_sangre_recuperada"]
+    if not 0 <= p["frac_rechazo_potabilizacion"] < 1:
+        raise ErrorUtilities("Fracción de rechazo de potabilización fuera de [0, 1)")
+    if any(v < 0 for v in p["carga_g_ave"].values()) or any(v <= 0 for v in p["conc_mg_l"].values()):
+        raise ErrorUtilities("Carga específica negativa o concentración no positiva")
+    if p["tolerancia_metodos"] < 1:
+        raise ErrorUtilities("La tolerancia entre métodos debe ser ≥ 1")
+    fs = p["fraccion_sangre_recuperada"]
     if fs is not None and not 0 <= fs <= 1:
         raise ErrorUtilities("Fracción de sangre recuperada fuera de [0, 1]")
+    for lim in p["limites"]:
+        validar_limite(lim)
     if abs(sum(p["perfil"].values()) - 1) > 1e-9 or any(v < 0 for v in p["perfil"].values()):
         raise ErrorUtilities("El perfil refrigerado/congelado/exportación debe sumar 100 % sin negativos")
     if p["base_inventario"] not in ("dias_produccion", "dias_calendario"):
@@ -375,137 +505,189 @@ def calcular(aves, dias_anio=250, nivel="medio", masas=None, p=None):
         raise ErrorUtilities(f"días/año {dias_anio} fuera de rango (máx. 6 días/semana)")
     p = p or parametros(nivel)
     k = dict(masas or kg_por_ave())
-    if p["frac_sangre_recuperada"] is None:
-        p = dict(p, frac_sangre_recuperada=k["sangre_recuperada"] / k["sangre_drenada"])
+    f_ref = k["sangre_recuperada"] / k["sangre_drenada"]
+    f_sangre = f_ref if p["fraccion_sangre_recuperada"] is None else p["fraccion_sangre_recuperada"]
     n = nivel
+    pn = f"nivel={n}"
     A = aves ** 1.01 if "M02" in _MUT else aves          # M02: escalado no lineal
     r = R()
     f_cal = dias_anio / DIAS_CALENDARIO
     h_op = p["horas_netas"] + p["horas_limpieza"]
     h_planta = h_op + HORAS_ARRANQUE_CIERRE
     t_vivas = k["peso_vivo"] * A / 1000
+    com = k["comestible"] * A / 1000                     # t comerciales por día OPERATIVO
     r.add("entrada", "aves_faenadas_dia_operativo", A, "aves", "dia_operativo", "aves", "SUPUESTO", "[SUPUESTO]",
           "SUP-052", "escala = capacidad operativa")
     r.add("entrada", "t_vivas_dia_operativo", t_vivas, "t", "dia_operativo", "vivo", "ESTIMACIÓN", "[ESTIMACIÓN]",
           "escenarios_escala.csv")
+    r.add("entrada", "t_producto_comestible_dia_operativo", com, "t", "dia_operativo", "comercial", "ESTIMACIÓN",
+          "[ESTIMACIÓN]", "escenarios_escala.csv", "peso comercial (masa biológica + agua retenida)")
 
-    # --- 1. AGUA INDUSTRIAL -------------------------------------------------------
+    # --- 1. AGUA: cinco conceptos -------------------------------------------------------
+    sens = "RANGO DE SENSIBILIDAD PRELIMINAR; no es el consumo esperado de la planta"
     conv = 1.0 if "M08" in _MUT else 1000.0             # M08: L confundidos con m³
     l_ave = sum(p["l_ave_etapas"].values())
-    ret_prod = k["agua_retenida_producto"]
     if "M01" in _MUT:                                   # M01: agua retenida sumada al consumo
-        l_ave += ret_prod
+        l_ave += k["agua_retenida_producto"]
     for c, etq, _, org, ref in AGUA_ETAPAS:
         v = p["l_ave_etapas"][c]
         r.add("agua", f"agua_{c}_l_ave", v, "L/ave", "por_ave", "agua_utilizada", org,
-              f"[{org}]" + (" [PVDP]" if org == "FUENTE" else ""), ref, etq, parametro=f"nivel={n}")
+              f"[{org}]" + (" [PVDP]" if org == "FUENTE" else ""), ref, f"{etq}; {sens}", parametro=pn)
         r.add("agua", f"agua_{c}_m3_dia", v * A / conv, "m³", "dia_operativo", "agua_utilizada", "ESTIMACIÓN",
-              "[ESTIMACIÓN]", "", etq, parametro=f"nivel={n}")
+              "[ESTIMACIÓN]", "", etq, parametro=pn)
     m3_uso = l_ave * A / conv
+    m3_capt = m3_uso / (1 - p["frac_rechazo_potabilizacion"])
     r.add("agua", "agua_utilizada_l_ave", l_ave, "L/ave", "por_ave", "agua_utilizada", "ESTIMACIÓN",
-          "[ESTIMACIÓN] con rangos [PVDP]", "FTE-09C-01 a 04", "consumo industrial; NO incluye agua retenida",
-          parametro=f"nivel={n}")
+          "[ESTIMACIÓN] con rangos [PVDP]", "FTE-09C-01 a 04", sens, parametro=pn)
     r.add("agua", "agua_utilizada_m3_dia", m3_uso, "m³", "dia_operativo", "agua_utilizada", "ESTIMACIÓN",
-          "[ESTIMACIÓN]", "", parametro=f"nivel={n}")
+          "[ESTIMACIÓN]", "", sens, parametro=pn)
     r.add("agua", "agua_utilizada_m3_anio", m3_uso * dias_anio, "m³", "anio", "agua_utilizada", "ESTIMACIÓN",
-          "[ESTIMACIÓN]", "", parametro=f"nivel={n}")
-    r.add("agua", "agua_utilizada_m3_h_medio", m3_uso / h_op, "m³/h", "hora", "agua_utilizada", "ESTIMACIÓN",
-          "[ESTIMACIÓN]", "", f"sobre {h_op} h (faena + limpieza)", parametro=f"nivel={n}")
-    r.add("agua", "agua_utilizada_m3_h_pico", m3_uso / h_op * p["factor_pico_agua"], "m³/h", "hora",
-          "agua_utilizada", "SUPUESTO", "[SUPUESTO] factor de pico", "", "dimensiona captación, bombeo y reserva",
-          parametro=f"nivel={n}")
-    r.add("agua", "reserva_agua_1_dia_m3", m3_uso, "m³", "stock", "agua_utilizada", "ESTIMACIÓN", "[ESTIMACIÓN]",
-          "", "volumen equivalente a un día de uso (referencia conceptual, no diseño)", parametro=f"nivel={n}")
+          "[ESTIMACIÓN]", "", parametro=pn)
+    r.add("agua", "agua_captada_m3_dia", m3_capt, "m³", "dia_operativo", "agua_captada", "SUPUESTO",
+          "[ESTIMACIÓN] con rechazo [SUPUESTO]", "", f"rechazo de potabilización = "
+          f"{p['frac_rechazo_potabilizacion']:.2f} (dato de sitio)", parametro=pn)
+    r.add("agua", "agua_utilizada_m3_por_t_producto", m3_uso / com, "m³/t", "adimensional", "agua_utilizada",
+          "ESTIMACIÓN", "[ESTIMACIÓN]", "", "segunda unidad: m³ por t de producto comestible (peso comercial)",
+          parametro=pn)
+    r.add("agua", "agua_utilizada_m3_por_t_vivo", m3_uso / t_vivas, "m³/t", "adimensional", "agua_utilizada",
+          "ESTIMACIÓN", "[ESTIMACIÓN]", "", "por t de peso vivo faenado", parametro=pn)
+    m3t = m3_uso / com
+    if not RANGO_M3_T_FUENTES[0] <= m3t <= RANGO_M3_T_FUENTES[1]:
+        r.alerta("AGUA_M3_T", f"m³/t de producto ({m3t:.1f}) fuera del rango de contraste {RANGO_M3_T_FUENTES} "
+                              f"m³/t (base carcasa, [PVDP]): revisar L/ave")
+    if not RANGO_L_AVE_FUENTES[0] <= l_ave <= RANGO_L_AVE_FUENTES[1]:
+        r.alerta("AGUA_L_AVE", f"L/ave ({l_ave:.1f}) fuera del rango citado {RANGO_L_AVE_FUENTES} ([PVDP])")
+    r.add("agua", f"caudal_horario_medio_m3_h_bajo_{h_op:g}h", m3_uso / h_op, "m³/h", "hora", "agua_utilizada",
+          "ESTIMACIÓN", "[ESTIMACIÓN]", "", f"sobre {h_op:g} h (faena + limpieza)", parametro=pn)
+    r.add("agua", "caudal_horario_maximo_ilustrativo_m3_h", m3_uso / h_op * p["factor_maximo_horario_agua"],
+          "m³/h", "hora", "agua_utilizada", "SUPUESTO", "[SUPUESTO] factor ilustrativo", "",
+          "orden de magnitud; el caudal de diseño surgirá del perfil horario", parametro=pn)
     fe = p["frac_efluente"]
     m3_desc = m3_uso * (1.1 if "M03" in _MUT else fe)     # M03: se descarga más de lo usado
+    t_incorp = k["agua_incorporada"] * A / 1000
+    m3_evap = m3_uso - m3_desc - t_incorp
+    if "M09" in _MUT:
+        m3_evap = max(0.0, m3_evap) + 1.0                 # M09: cierre forzado
+    r.add("agua", "fraccion_agua_a_efluente_supuesta", fe, "fracción", "adimensional", "agua_descargada",
+          "SUPUESTO", "[SUPUESTO] editable", "", FRAC_EFLUENTE[2], parametro=pn)
     r.add("agua", "agua_descargada_m3_dia", m3_desc, "m³", "dia_operativo", "agua_descargada", "SUPUESTO",
-          "[ESTIMACIÓN] con fracción [SUPUESTO]", "", f"fracción a efluente = {fe:.2f}", parametro=f"nivel={n}")
-    r.add("agua", "agua_descargada_l_ave", m3_desc * 1000 / A if conv == 1000 else m3_desc / A * 1000, "L/ave",
-          "por_ave", "agua_descargada", "ESTIMACIÓN", "[ESTIMACIÓN]", "", parametro=f"nivel={n}")
-    r.add("agua", "agua_no_descargada_m3_dia", m3_uso - m3_desc, "m³", "dia_operativo", "agua_no_descargada",
-          "ESTIMACIÓN", "[ESTIMACIÓN]", "", "evaporación + retenida + sale con subproductos + pérdidas",
-          parametro=f"nivel={n}")
-    r.add("agua_retenida", "agua_retenida_en_producto_t_dia", ret_prod * A / 1000, "t", "dia_operativo",
-          "agua_retenida", "ESTIMACIÓN", "[ESTIMACIÓN] del balance v1.1", "escenarios_escala.csv",
-          "sale vendida con el producto; NO es consumo industrial ni efluente")
-    r.add("agua_retenida", "agua_incorporada_producto_y_subproductos_t_dia", k["agua_incorporada"] * A / 1000,
-          "t", "dia_operativo", "agua_retenida", "ESTIMACIÓN", "[ESTIMACIÓN] del balance v1.1",
-          "escenarios_escala.csv", "absorbida en chiller + adherida a plumas (incluye goteo posterior)")
-    r.add("agua_retenida", "agua_retenida_sobre_agua_utilizada_pct",
-          100 * ret_prod / (m3_uso / A * 1000 if conv == 1000 else m3_uso / A), "%", "adimensional", "agua",
-          "ESTIMACIÓN", "[ESTIMACIÓN]", "", "cuánto del agua usada termina dentro del producto")
-
-    # --- 2. EFLUENTES Y CARGA ORGÁNICA -----------------------------------------------
+          "[ESTIMACIÓN] con fracción [SUPUESTO]", "", f"= utilizada × {fe:.2f}", parametro=pn)
     l_desc_ave = m3_desc / A * (1000 if conv == 1000 else 1)
-    f_ref = k["sangre_recuperada"] / k["sangre_drenada"]
-    extra_dqo = 0.0 if "M07" in _MUT else (f_ref - p["frac_sangre_recuperada"]) * k["sangre_drenada"] \
-        * DQO_SANGRE_KG_KG * 1000
+    r.add("agua", "agua_descargada_l_ave", l_desc_ave, "L/ave", "por_ave", "agua_descargada", "ESTIMACIÓN",
+          "[ESTIMACIÓN]", "", parametro=pn)
+    r.add("agua", "agua_evaporada_o_arrastrada_m3_dia", m3_evap, "m³", "dia_operativo", "agua_evaporada",
+          "ESTIMACIÓN", "[ESTIMACIÓN] por diferencia", "", "utilizada − descargada − incorporada", parametro=pn)
+    if m3_evap < 0:
+        r.alerta("AGUA_CIERRE", "Agua evaporada/arrastrada negativa: la fracción a efluente supuesta es "
+                                "incompatible con el agua incorporada al producto")
+    r.add("agua_incorporada", "agua_retenida_en_producto_t_dia", k["agua_retenida_producto"] * A / 1000, "t",
+          "dia_operativo", "agua_incorporada", "ESTIMACIÓN", "[ESTIMACIÓN] del balance v1.1", "escenarios_escala.csv",
+          "sale vendida con el producto; NO es consumo industrial ni efluente")
+    r.add("agua_incorporada", "agua_incorporada_producto_y_subproductos_t_dia", t_incorp, "t", "dia_operativo",
+          "agua_incorporada", "ESTIMACIÓN", "[ESTIMACIÓN] del balance v1.1", "escenarios_escala.csv",
+          "retenida + goteo del producto + adherida a plumas")
+    r.add("agua_incorporada", "agua_retenida_sobre_agua_utilizada_pct",
+          100 * k["agua_retenida_producto"] * A / 1000 / m3_uso, "%", "adimensional", "agua", "ESTIMACIÓN",
+          "[ESTIMACIÓN]", "", "cuánto del agua usada termina dentro del producto", parametro=pn)
+
+    # --- 2. EFLUENTES: MÉTODO A y MÉTODO B (independientes) -------------------------------
+    extra_dqo = 0.0 if "M07" in _MUT else (f_ref - f_sangre) * k["sangre_drenada"] * DQO_SANGRE_KG_KG * 1000
+    r.add("efluente", "fraccion_sangre_recuperada", f_sangre, "fracción", "adimensional", "sangre", "SUPUESTO",
+          "[SUPUESTO] editable", "SUP-040", f"referencia del balance {f_ref:.2f}; validar con masa recuperada")
     for par, (vals, ref) in CARGA_G_AVE.items():
         g = p["carga_g_ave"][par] + (extra_dqo if par == "DQO" else 0.0)
-        r.add("efluente", f"carga_{par}_g_ave", g, "g/ave", "por_ave", "efluente_crudo", "ESTIMACIÓN",
-              "[ESTIMACIÓN] con rangos [PVDP]", ref, "efluente crudo tras retirar sangre y sólidos gruesos",
-              parametro=f"nivel={n}")
-        r.add("efluente", f"carga_{par}_kg_dia", g * A / 1000, "kg", "dia_operativo", "efluente_crudo",
-              "ESTIMACIÓN", "[ESTIMACIÓN]", "", parametro=f"nivel={n}")
-        r.add("efluente", f"concentracion_{par}_mg_l", g / l_desc_ave * 1000, "mg/L", "adimensional",
-              "efluente_crudo", "ESTIMACIÓN", "[ESTIMACIÓN]", "", "resultado (carga / caudal), no parámetro",
-              parametro=f"nivel={n}")
-    r.add("efluente", "dqo_extra_por_sangre_no_recuperada_g_ave", extra_dqo, "g/ave", "por_ave", "efluente_crudo",
-          "ESTIMACIÓN", "[ESTIMACIÓN] con DQO de sangre [PVDP]", "FTE-181",
-          f"recuperación {p['frac_sangre_recuperada']:.2f} vs referencia {f_ref:.2f}")
-    dqo_sangre_evitada = k["sangre_recuperada"] * DQO_SANGRE_KG_KG
-    r.add("efluente", "dqo_evitada_por_recuperar_sangre_kg_dia", dqo_sangre_evitada * A, "kg", "dia_operativo",
-          "efluente_crudo", "ESTIMACIÓN", "[ESTIMACIÓN] con DQO de sangre [PVDP]", "FTE-181",
-          "orden de magnitud; no es una reducción medida")
-    r.add("efluente", "caudal_efluente_m3_h_pico", m3_desc / h_op * p["factor_pico_agua"], "m³/h", "hora",
-          "agua_descargada", "SUPUESTO", "[SUPUESTO] factor de pico", "", "dimensiona ecualización",
-          parametro=f"nivel={n}")
-    c_dqo = r[f"concentracion_DQO_mg_l"]
-    r.add("efluente", "remocion_dqo_requerida_ilustrativa_pct", 100 * max(0.0, 1 - p["limite_dqo_mg_l"] / c_dqo),
-          "%", "adimensional", "efluente_crudo", "ESTIMACIÓN", "[ESTIMACIÓN] con límite [PVDP]",
-          "FTE-09C-08", f"límite ilustrativo {p['limite_dqo_mg_l']:g} mg/L (ADA 336/03, pluvial; a confirmar "
-          "según sitio y cuerpo receptor)", parametro=f"nivel={n}")
-    # masa que puede evitar llegar al efluente (del balance; no son reducciones medidas)
-    for clave, nota in (("sangre_recuperada", "sangre recuperada por separado (85 %, SUP-040)"),
-                        ("plumas", "plumas húmedas retiradas"), ("visceras", "vísceras no comestibles"),
-                        ("cabeza", "cabezas"), ("solidos_a_retirar", "total sólidos a retirar en seco "
-                                                                   "(C + decomisos + contenido GI; NO sumar)"),
-                        ("masa_a_efluente_o_perdida", "masa que el balance ya envía a efluente o pérdida "
-                                                      "(sangre no recuperada, cutícula, goteo, pérdidas)")):
-        r.add("masa_evitable", f"{clave}_t_dia", k[clave] * A / 1000, "t", "dia_operativo", "biologica+agua",
-              "ESTIMACIÓN", "[ESTIMACIÓN] del balance v1.1", "escenarios_escala.csv", nota)
+        r.add("efluente", f"metodoA_carga_{par}_g_ave", g, "g/ave", "por_ave", "efluente_crudo", "FUENTE",
+              "[PVDP] escenario", ref, "carga específica; no calibrada con el método B", parametro=pn)
+        r.add("efluente", f"metodoA_carga_{par}_kg_dia", g * A / 1000, "kg", "dia_operativo", "efluente_crudo",
+              "ESTIMACIÓN", "[ESTIMACIÓN] método A", "", "aves/día × g/ave / 1.000", parametro=pn)
+        r.add("efluente", f"metodoA_concentracion_implicita_{par}_mg_l", g / l_desc_ave * 1000, "mg/L",
+              "adimensional", "efluente_crudo", "ESTIMACIÓN", "[ESTIMACIÓN]", "", "carga A / caudal (no es dato)",
+              parametro=pn)
+    for par, (vals, ref) in CONC_MG_L.items():
+        c = p["conc_mg_l"][par]
+        if "M20" in _MUT:                                 # M20: B calibrado para cerrar con A
+            c = r[f"metodoA_concentracion_implicita_{par}_mg_l"]
+        kg_b = m3_desc * c / 1000
+        r.add("efluente", f"metodoB_concentracion_{par}_mg_l", c, "mg/L", "adimensional", "efluente_crudo",
+              "FUENTE", "[PVDP] valor citado", ref, "concentración; no calibrada con el método A", parametro=pn)
+        r.add("efluente", f"metodoB_carga_{par}_kg_dia", kg_b, "kg", "dia_operativo", "efluente_crudo",
+              "ESTIMACIÓN", "[ESTIMACIÓN] método B", "", "m³ efluente/día × mg/L / 1.000", parametro=pn)
+        kg_a = r[f"metodoA_carga_{par}_kg_dia"]
+        ratio = kg_b / kg_a if kg_a else math.inf
+        r.add("efluente", f"relacion_B_sobre_A_{par}", ratio, "ratio", "adimensional", "efluente_crudo",
+              "ESTIMACIÓN", "[ESTIMACIÓN]", "", f"compatible si está entre 1/{p['tolerancia_metodos']:g} y "
+              f"{p['tolerancia_metodos']:g}", parametro=pn)
+        compatible = 1 / p["tolerancia_metodos"] <= ratio <= p["tolerancia_metodos"]
+        r.add("efluente", f"metodos_compatibles_{par}", 1.0 if compatible else 0.0, "índice", "adimensional",
+              "efluente_crudo", "ESTIMACIÓN", "[ESTIMACIÓN]", "", "1 = mismo orden de magnitud; 0 = alerta",
+              parametro=pn)
+        if not compatible:
+            r.alerta(f"EFLUENTE_{par}", f"{ALERTA_EFLUENTE}: {par} método B/A = {ratio:.2f}")
+    r.add("efluente", "dqo_potencial_sangre_recuperada_referencia_kg_dia",
+          k["sangre_recuperada"] * DQO_SANGRE_KG_KG * A, "kg", "dia_operativo", "efluente_crudo", "FUENTE",
+          "[PVDP] referencia de sensibilidad", "FTE-181",
+          "DQO que aportaría la sangre recuperada si llegara al drenaje; validar midiendo DQO antes/después "
+          "o masa recuperada y carga específica")
+    r.add("efluente", "sensibilidad_dqo_si_no_se_recuperara_sangre_pct",
+          100 * k["sangre_recuperada"] * DQO_SANGRE_KG_KG * 1000 / p["carga_g_ave"]["DQO"], "%", "adimensional",
+          "efluente_crudo", "FUENTE", "[PVDP] sensibilidad", "FTE-181",
+          "respecto del método A; NO es un resultado de la planta", parametro=pn)
+    r.add("efluente", "caudal_efluente_horario_maximo_ilustrativo_m3_h", m3_desc / h_op * p["factor_maximo_horario_agua"],
+          "m³/h", "hora", "agua_descargada", "SUPUESTO", "[SUPUESTO] factor ilustrativo", "", parametro=pn)
+    for lim in p["limites"]:
+        par = lim["parametro"]
+        txt = (f"EJEMPLO REGULATORIO DE REFERENCIA ({lim['jurisdiccion']}, {lim['norma']}, {lim['tipo_descarga']}, "
+               f"{par} {lim['mg_l']:g} mg/L): bajo el ejemplo de límite utilizado, el escenario exigiría "
+               f"aproximadamente este % de remoción. NO es requisito del proyecto: la localización lo reemplazará "
+               f"por el límite real (provincia, autoridad, cuerpo receptor, red, permiso, normativa vigente)")
+        for met, conc in (("metodoA", r[f"metodoA_concentracion_implicita_{par}_mg_l"]),
+                          ("metodoB", r[f"metodoB_concentracion_{par}_mg_l"])):
+            r.add("efluente", f"remocion_{par}_bajo_ejemplo_limite_{met}_pct",
+                  100 * remocion_bajo_ejemplo(conc, lim), "%", "adimensional", "efluente_crudo", "ESTIMACIÓN",
+                  "[ESTIMACIÓN] con límite de ejemplo [PVDP]", lim.get("ref", ""), txt,
+                  parametro=f"{pn}; jurisdiccion={lim.get('jurisdiccion', '')}; "
+                            f"tipo_descarga={lim.get('tipo_descarga', '')}")
 
-    # --- 3. PRETRATAMIENTO Y LODOS (orden de magnitud) --------------------------------
-    sst, gya, dbo = (r[f"carga_{x}_kg_dia"] for x in ("SST", "GyA", "DBO5"))
-    ms_daf = (sst * nv(REM_DAF["SST"], n) + gya * nv(REM_DAF["GyA"], n)) * (1 + nv(FRAC_QUIMICOS_LODO_DAF, n))
-    r.add("lodos", "lodo_daf_kg_ms_dia", ms_daf, "kg", "dia_operativo", "materia_seca", "ESTIMACIÓN",
-          "[ESTIMACIÓN] con remociones [PVDP]", "FTE-09C-05, FTE-09C-13", "sólidos + grasas flotados + químicos",
-          parametro=f"nivel={n}")
-    r.add("lodos", "lodo_daf_t_humedo_dia", ms_daf / nv(MS_LODO_DAF, n) / 1000, "t", "dia_operativo",
-          "lodo_humedo", "ESTIMACIÓN", "[ESTIMACIÓN] con % sólidos [PVDP]", "FTE-09C-13", parametro=f"nivel={n}")
-    dbo_bio = dbo * (1 - nv(REM_DAF["DBO5"], n))
-    r.add("lodos", "dbo_al_tratamiento_biologico_kg_dia", dbo_bio, "kg", "dia_operativo", "efluente_pretratado",
-          "ESTIMACIÓN", "[ESTIMACIÓN]", "", "después de DAF", parametro=f"nivel={n}")
-    ms_bio = dbo_bio * REMOCION_DBO_BIOLOGICO * nv(RENDIMIENTO_LODO_AEROBIO, n)
-    r.add("lodos", "lodo_biologico_aerobio_kg_ms_dia", ms_bio, "kg", "dia_operativo", "materia_seca", "SUPUESTO",
-          "[ESTIMACIÓN] con rendimiento [SUPUESTO]", "", "si el tratamiento fuera aerobio completo; "
-          "anaerobio genera mucho menos lodo", parametro=f"nivel={n}")
-    r.add("lodos", "lodos_deshidratados_t_dia", (ms_daf + ms_bio) / nv(MS_LODO_DESHIDRATADO, n) / 1000, "t",
-          "dia_operativo", "lodo_humedo", "SUPUESTO", "[ESTIMACIÓN] con [SUPUESTO]", "",
-          "DAF + biológico deshidratados; disposición/valorización a definir", parametro=f"nivel={n}")
+    # --- 3. MASA SEGREGABLE EN ORIGEN (del balance) ≠ SÓLIDOS DEL EFLUENTE ≠ SST ------------
+    for clave, nota in (("sangre_recuperada", "sangre recuperable por separado (85 %, SUP-040)"),
+                        ("plumas", "plumas húmedas"), ("visceras", "vísceras no comestibles"),
+                        ("cabeza", "cabezas"),
+                        ("solidos_a_retirar", "total (C + decomisos + contenido GI); no sumar con las anteriores"),
+                        ("masa_a_efluente_o_perdida", "masa que el balance asigna a efluente o pérdida; NO equivale "
+                                                      "a SST")):
+        var = ("masa_biologica_potencialmente_segregable_en_origen_t_dia" if clave == "solidos_a_retirar"
+               else f"segregable_{clave}_t_dia")
+        r.add("masa_segregable", var, k[clave] * A / 1000, "t", "dia_operativo", "biologica+agua", "ESTIMACIÓN",
+              "[ESTIMACIÓN] del balance v1.1", "escenarios_escala.csv", nota)
+    r.add("masa_segregable", "solidos_que_entran_efectivamente_al_efluente_t_dia", PENDIENTE, "t", "dia_operativo",
+          "biologica+agua", "PENDIENTE", "", "", "depende de diseño, pérdidas, lavado, tamizado, manejo de "
+          "subproductos y disciplina operativa; medir")
+    if "M12" in _MUT:                                     # M12: SST = subproductos del balance
+        r.v["metodoA_carga_SST_kg_dia"] = k["solidos_a_retirar"] * A
 
-    # --- 4. ELECTRICIDAD ---------------------------------------------------------------
+    # --- 4. LODOS ---------------------------------------------------------------------------
+    lo = lodos(r["metodoA_carga_SST_kg_dia"], r["metodoA_carga_GyA_kg_dia"], r["metodoA_carga_DBO5_kg_dia"],
+               m3_desc, p["lodos"])
+    ilus = p["lodos"] is not None
+    for var, v in lo.items():
+        r.add("lodos", var, v, "t" if var.endswith("_t_dia") else "kg", "dia_operativo", "materia_seca"
+              if "humedo" not in var else "lodo_humedo", "SUPUESTO", "[ESTIMACIÓN ILUSTRATIVA] con [SUPUESTO] visibles"
+              if ilus else "", "", "escenario ilustrativo: cada supuesto en el bloque lodos_ilustrativo" if ilus
+              else "LODO = PENDIENTE DE DIMENSIONAMIENTO", parametro=pn)
+
+    # --- 5. ELECTRICIDAD: energía -> potencia MEDIA equivalente; pico PENDIENTE --------------
     kwh_proc = nv(KWH_T_PV, n) * t_vivas
     r.add("electricidad", "kwh_proceso_dia", kwh_proc, "kWh", "dia_operativo", "energia_electrica", "FUENTE",
-          "[ESTIMACIÓN] con indicador [PVDP]", KWH_T_PV[2], "faena, proceso, enfriado fresco, aire, agua, "
-          "servicios", parametro=f"nivel={n}")
+          "[ESTIMACIÓN] con indicador [PVDP]", KWH_T_PV[2], "top-down; faena, proceso, enfriado fresco, aire, agua, "
+          "servicios", parametro=pn)
+    r.add("electricidad", "kwh_proceso_por_ave", kwh_proc / A, "kWh/ave", "por_ave", "energia_electrica", "FUENTE",
+          "[PVDP] sensibilidad", KWH_T_PV[2], "kWh/día = aves/día × kWh/ave", parametro=pn)
     for c, f in REPARTO_ELECTRICO.items():
         r.add("electricidad", f"kwh_proceso_{c}_dia", kwh_proc * f, "kWh", "dia_operativo", "energia_electrica",
-              "SUPUESTO", "[SUPUESTO] reparto ilustrativo", "FTE-09C-09 (cualitativo)", "didáctico; no sumar "
-              "con kwh_proceso_dia", parametro=f"nivel={n}")
+              "SUPUESTO", "[SUPUESTO] reparto ilustrativo", "FTE-09C-09 (cualitativo)", "didáctico; no sumar",
+              parametro=pn)
 
-    # --- 5. INVENTARIO (reproduce el modelo de escala) -----------------------------------
-    com = k["comestible"] * A / 1000                     # t comerciales por día OPERATIVO
+    # --- 6. INVENTARIO (reproduce el modelo de escala) ---------------------------------------
     flujo_inv = com * (1 if ("M05" in _MUT or p["base_inventario"] == "dias_produccion") else f_cal)
     sh = p["perfil"]
     d_ref, d_cong = p["dias_refrigerado"], p["dias_congelado"]
@@ -513,89 +695,115 @@ def calcular(aves, dias_anio=250, nivel="medio", masas=None, p=None):
     t_cong = flujo_inv * (sh["congelado"] + sh["exportacion"]) * (1 if "M06" in _MUT else d_cong)
     r.add("inventario", "stock_refrigerado_t", t_refr, "t", "stock", "comercial", "ESTIMACIÓN", "[ESTIMACIÓN]",
           "SUP-055, SUP-056", f"base={p['base_inventario']}; días={d_ref}; perfil={p['perfil_id']}")
-    r.add("inventario", "stock_congelado_t", t_cong, "t", "stock", "comercial", "ESTIMACIÓN", "[ESTIMACIÓN]",
-          "SUP-055, SUP-056", f"base={p['base_inventario']}; días={d_cong}; incluye exportación")
 
-    # --- 6. CONGELADO: capacidad DIARIA vs ESTÁTICA -----------------------------------
+    # --- 7. CONGELACIÓN (t nuevas/día) ≠ ALMACENAMIENTO (t guardadas) ------------------------
     t_cong_dia = com * (sh["congelado"] + sh["exportacion"])
-    r.add("congelado", "capacidad_congelacion_t_dia", t_cong_dia, "t", "dia_operativo", "comercial", "ESTIMACIÓN",
-          "[ESTIMACIÓN]", "SUP-055", "t que hay que congelar cada día de faena (túneles/IQF)")
-    r.add("congelado", "capacidad_almacenamiento_congelado_t", t_cong, "t", "stock", "comercial", "ESTIMACIÓN",
-          "[ESTIMACIÓN]", "", "t que hay que guardar (cámaras); NO es capacidad de congelación")
-    garras_c = k["garras"] * A / 1000 * nv(FRAC_GARRAS_CONGELADAS, n)
-    menud_c = k["menudencias"] * A / 1000 * nv(FRAC_MENUDENCIAS_CONGELADAS, n)
-    r.add("congelado", "garras_a_congelar_t_dia_informativo", garras_c, "t", "dia_operativo", "comercial",
-          "SUPUESTO", "[SUPUESTO]", "", "ya incluidas dentro del comestible: NO sumar al perfil",
-          parametro=f"nivel={n}")
-    r.add("congelado", "menudencias_a_congelar_t_dia_informativo", menud_c, "t", "dia_operativo", "comercial",
-          "SUPUESTO", "[SUPUESTO]", "", "ya incluidas dentro del comestible: NO sumar al perfil",
-          parametro=f"nivel={n}")
-    kj_kg_cong = (CP_FRESCO * (T_SALIDA_CARCASA - T_CONGELACION_INICIAL) + FRAC_AGUA_PRODUCTO * CALOR_LATENTE_AGUA
-                  + CP_CONGELADO * (T_CONGELACION_INICIAL - T_FINAL_CONGELADO)) * nv(FACTOR_TUNEL, n)
-    r.add("congelado", "calor_a_extraer_congelacion_kj_kg", kj_kg_cong, "kJ/kg", "adimensional", "producto",
-          "ESTIMACIÓN", "[ESTIMACIÓN] con propiedades [PVDP]", "FTE-09C-14", "de +4 °C a −18 °C, con pérdidas",
-          parametro=f"nivel={n}")
+    r.add("congelado", "capacidad_congelacion_t_dia", t_cong_dia, "t/día", "dia_operativo", "comercial",
+          "ESTIMACIÓN", "[ESTIMACIÓN]", "SUP-055", "t NUEVAS que deben atravesar la congelación por día de faena "
+          "(túneles/IQF)")
+    var_alm = "capacidad_congelacion_t_dia_x" if "M17" in _MUT else "capacidad_almacenamiento_congelado_t"
+    r.add("congelado", var_alm, t_cong, "t/día" if "M17" in _MUT else "t", "stock", "comercial", "ESTIMACIÓN",
+          "[ESTIMACIÓN]", "", f"t YA congeladas que permanecen guardadas (cámaras); base={p['base_inventario']}; "
+          f"días={d_cong}. Guardar 300 t NO es poder congelar 300 t/día")
+    for var, kg, fr in (("garras", k["garras"], FRAC_GARRAS_CONGELADAS),
+                        ("menudencias", k["menudencias"], FRAC_MENUDENCIAS_CONGELADAS)):
+        r.add("congelado", f"{var}_a_congelar_t_dia_informativo", kg * A / 1000 * nv(fr, n), "t/día",
+              "dia_operativo", "comercial", "SUPUESTO", "[SUPUESTO]", "", "ya incluidas en el comestible: NO sumar",
+              parametro=pn)
+    kj_sens1 = CP_FRESCO * (T_SALIDA_CARCASA - T_CONGELACION_INICIAL)
+    kj_lat = FRAC_AGUA_PRODUCTO * CALOR_LATENTE_AGUA
+    kj_sens2 = CP_CONGELADO * (T_CONGELACION_INICIAL - T_FINAL_CONGELADO)
+    kj_kg_cong = kj_sens1 + kj_lat + kj_sens2
+    for var, v in (("calor_congelacion_sensible_sobre_cero_kj_kg", kj_sens1),
+                   ("calor_congelacion_latente_kj_kg", kj_lat),
+                   ("calor_congelacion_sensible_bajo_cero_kj_kg", kj_sens2),
+                   ("calor_congelacion_producto_total_kj_kg", kj_kg_cong)):
+        r.add("congelado", var, v, "kJ/kg", "adimensional", "producto", "ESTIMACIÓN",
+              "[ESTIMACIÓN] con propiedades [PVDP]/[SUPUESTO]", "FTE-09C-14", "solo producto; sin envases, "
+              "ventiladores, desescarche ni pérdidas del túnel")
     kwf_cong = t_cong_dia * 1000 * kj_kg_cong / (HORAS_TUNEL * 3600)
 
-    # --- 7. FRÍO ------------------------------------------------------------------------
-    kj_ave_enf = (k["comestible"] * CP_FRESCO * (T_ENTRADA_CARCASA - T_SALIDA_CARCASA)
-                  + p["l_ave_etapas"]["chiller"] * CP_AGUA * (T_RED - T_AGUA_CHILLER)) \
-        * (1 + nv(FRAC_CARGAS_ADICIONALES, n))
-    kwf_enf = kj_ave_enf * A / (p["horas_netas"] * 3600)
+    # --- 8. FRÍO: carga sensible del producto ≠ carga frigorífica total -----------------------
+    kj_prod = k["comestible"] * CP_FRESCO * (T_ENTRADA_CARCASA - T_SALIDA_CARCASA)
+    kj_agua_ch = p["l_ave_etapas"]["chiller"] * CP_AGUA * (T_RED - T_AGUA_CHILLER)
+    hn = p["horas_netas"]
+    kwf_prod = kj_prod * A / (hn * 3600)
+    kwf_agua = kj_agua_ch * A / (hn * 3600)
+    kwf_adic = (kwf_prod + kwf_agua) * nv(FRAC_CARGAS_ADICIONALES, n)
+    var_sens = "capacidad_frigorifica_total_kwf" if "M15" in _MUT else "carga_sensible_preliminar_producto_kwf_bajo_8h"
+    r.add("frio", var_sens, kwf_prod, "kW frigoríficos", "potencia", "frio", "ESTIMACIÓN",
+          "[ESTIMACIÓN] con [SUPUESTO]", "FTE-09C-14", "carga sensible preliminar asociada al enfriamiento del "
+          f"producto (38 → 4 °C) durante {hn:g} h; NO es la capacidad frigorífica de planta", parametro=pn)
+    r.add("frio", "carga_sensible_preliminar_producto_tr", kwf_prod / KW_POR_TR, "TR", "potencia", "frio",
+          "ESTIMACIÓN", "[ESTIMACIÓN]", "", "1 TR = 3,517 kW frigoríficos", parametro=pn)
+    r.add("frio", "carga_enfriamiento_agua_reposicion_chiller_kwf_bajo_8h", kwf_agua, "kW frigoríficos", "potencia",
+          "frio", "ESTIMACIÓN", "[ESTIMACIÓN] con [SUPUESTO]", "", "agua de reposición de 18 a 1 °C; fila separada",
+          parametro=pn)
+    r.add("frio", "cargas_adicionales_ilustrativas_kwf", kwf_adic, "kW frigoríficos", "potencia", "frio",
+          "SUPUESTO", "[SUPUESTO] ilustrativo", "", FRAC_CARGAS_ADICIONALES[2], parametro=pn)
+    r.add("frio", "carga_media_congelacion_producto_kwf_bajo_20h", kwf_cong, "kW frigoríficos", "potencia", "frio",
+          "ESTIMACIÓN", "[ESTIMACIÓN] con [SUPUESTO]", "", "solo calor del producto repartido en 20 h; la potencia "
+          "instalada de túneles depende del tiempo de congelación (lotes)", parametro=pn)
+    r.add("frio", "carga_frigorifica_total_kwf", PENDIENTE, "kW frigoríficos", "potencia", "frio", "PENDIENTE", "",
+          "", "balance frigorífico: producto (sensible y latente), transmisión, infiltración, puertas, personas, "
+          "iluminación, motores, docks, salas, cámaras, túneles, desescarche, otras")
     cop_e, cop_c = nv(COP_ENFRIADO, n), nv(COP_CONGELADO, n)
-    if "M04" in _MUT:
-        cop_e = cop_c = 1.0                                 # M04: kW eléctrico = kW frigorífico
-    kwh_alm_refr = t_refr * nv(KWH_T_DIA_REFRIGERADO, n)
-    kwh_alm_cong = t_cong * nv(KWH_T_DIA_CONGELADO, n)
-    kwe_alm = (kwh_alm_refr + kwh_alm_cong) / 24
-    kwf_alm = kwh_alm_refr / 24 * cop_e + kwh_alm_cong / 24 * cop_c
-    for var, kwf, cop, nota in (("enfriado_producto_fresco", kwf_enf, cop_e,
-                                 f"chiller + menudencias + salas/docks; durante {p['horas_netas']} h netas"),
-                                ("congelacion_tuneles", kwf_cong, cop_c, f"durante {HORAS_TUNEL} h/día"),
-                                ("camaras_almacenamiento", kwf_alm, None, "24 h, 365 días; desde kWh/(t·día)")):
-        r.add("frio", f"kw_frigorificos_{var}", kwf, "kW frigoríficos", "potencia", "frio", "ESTIMACIÓN",
-              "[ESTIMACIÓN] con [SUPUESTO]", "", nota, parametro=f"nivel={n}")
-        r.add("frio", f"tr_{var}", kwf / KW_POR_TR, "TR", "potencia", "frio", "ESTIMACIÓN", "[ESTIMACIÓN]", "",
-              "1 TR = 3,517 kW frigoríficos", parametro=f"nivel={n}")
-        kwe = kwf / cop if cop else kwe_alm
-        r.add("frio", f"kw_electricos_{var}", kwe, "kW eléctricos", "potencia", "energia_electrica", "SUPUESTO",
-              "[ESTIMACIÓN] con COP [SUPUESTO]", "", "kW eléctricos = kW frigoríficos / COP",
-              parametro=f"nivel={n}")
-    r.add("frio", "kj_frio_enfriado_por_ave", kj_ave_enf, "kJ/ave", "por_ave", "frio", "ESTIMACIÓN",
-          "[ESTIMACIÓN] con [SUPUESTO]", "FTE-09C-14", parametro=f"nivel={n}")
-    kwh_cong = nv(KWH_T_CONGELADA, n) * t_cong_dia
-    r.add("electricidad", "kwh_congelacion_dia", kwh_cong, "kWh", "dia_operativo", "energia_electrica", "FUENTE",
-          "[ESTIMACIÓN] con indicador [PVDP]", KWH_T_CONGELADA[2], parametro=f"nivel={n}")
-    r.add("electricidad", "kwh_almacenamiento_frio_dia_calendario", kwh_alm_refr + kwh_alm_cong, "kWh",
-          "dia_calendario", "energia_electrica", "SUPUESTO", "[ESTIMACIÓN] con [SUPUESTO]", "",
-          "las cámaras funcionan también sin faena", parametro=f"nivel={n}")
-    kwh_efl = dbo_bio * REMOCION_DBO_BIOLOGICO * nv(KWH_KG_DBO, n)
-    r.add("electricidad", "kwh_tratamiento_aerobio_dia", kwh_efl, "kWh", "dia_operativo", "energia_electrica",
-          "SUPUESTO", "[ESTIMACIÓN] con [SUPUESTO]", "", "cota: si todo el biológico fuera aerobio",
-          parametro=f"nivel={n}")
-    kwh_op = kwh_proc + kwh_cong + kwh_efl
-    kwh_anio = kwh_op * dias_anio + (kwh_alm_refr + kwh_alm_cong) * DIAS_CALENDARIO
-    r.add("electricidad", "kwh_total_dia_operativo", kwh_op + kwh_alm_refr + kwh_alm_cong, "kWh", "dia_operativo",
-          "energia_electrica", "ESTIMACIÓN", "[ESTIMACIÓN]", "", "proceso + congelado + aerobio + cámaras",
-          parametro=f"nivel={n}")
-    r.add("electricidad", "kwh_total_anio", kwh_anio, "kWh", "anio", "energia_electrica", "ESTIMACIÓN",
-          "[ESTIMACIÓN]", "", "cámaras × 365 días; resto × días de faena", parametro=f"nivel={n}")
-    r.add("electricidad", "kwh_por_ave_promedio_anual", kwh_anio / (A * dias_anio), "kWh/ave", "por_ave",
-          "energia_electrica", "ESTIMACIÓN", "[ESTIMACIÓN]", "", parametro=f"nivel={n}")
-    kw_media_proc = kwh_proc / h_planta
-    kw_pico_proc = kw_media_proc * nv(FACTOR_PICO_ELECTRICO, n)
-    kw_media_total = kw_media_proc + kwh_cong / HORAS_TUNEL + kwe_alm + kwh_efl / 24
-    kw_pico = kw_pico_proc + kwh_cong / HORAS_TUNEL + kwe_alm + kwh_efl / 24
-    if "M09" in _MUT:
-        kw_pico = kw_media_total * 0.9                      # M09: pico menor que la media
-    r.add("electricidad", "kw_potencia_media_operacion", kw_media_total, "kW", "potencia", "energia_electrica",
-          "ESTIMACIÓN", "[ESTIMACIÓN]", "", f"proceso sobre {h_planta} h + túneles + cámaras + efluentes",
-          parametro=f"nivel={n}")
-    r.add("electricidad", "kw_potencia_pico_estimada", kw_pico, "kW", "potencia", "energia_electrica", "SUPUESTO",
-          "[ESTIMACIÓN] con factor de pico [SUPUESTO]", "", "orden de magnitud para pedir potencia; no es diseño",
-          parametro=f"nivel={n}")
+    for var, kwf, cop, ref in (("producto", kwf_prod, cop_e, COP_ENFRIADO[2]),
+                               ("agua_chiller", kwf_agua, cop_e, COP_ENFRIADO[2]),
+                               ("congelacion_producto", kwf_cong, cop_c, COP_CONGELADO[2])):
+        if "M16" not in _MUT:
+            r.add("frio", f"cop_supuesto_{var}", cop, "COP", "adimensional", "frio", "SUPUESTO", "[SUPUESTO]", ref,
+                  "kW frigoríficos / kW eléctricos", parametro=pn)
+        r.add("frio", f"kw_electricos_aprox_{var}", kwf / (1.0 if "M04" in _MUT else cop), "kW eléctricos",
+              "potencia", "energia_electrica", "SUPUESTO", "[ESTIMACIÓN] con COP [SUPUESTO]", "",
+              f"= kW frigoríficos / COP supuesto ({cop:g}); no es consumo garantizado", parametro=pn)
+    kwh_frio_bu = (r["kw_electricos_aprox_producto"] + r["kw_electricos_aprox_agua_chiller"]) * hn
+    kwh_frio_td = kwh_proc * REPARTO_ELECTRICO["frio_de_proceso_agua_helada_hielo"]
+    r.add("frio", "brecha_frio_fisico_vs_reparto_indicador_ratio", kwh_frio_td / kwh_frio_bu, "ratio",
+          "adimensional", "energia_electrica", "ESTIMACIÓN", "[ESTIMACIÓN]", "",
+          f"reparto top-down ({kwh_frio_td:.0f} kWh) / cálculo físico producto + agua de chiller "
+          f"({kwh_frio_bu:.0f} kWh); brecha NO cerrada", parametro=pn)
 
-    # --- 8. AGUA CALIENTE / VAPOR -----------------------------------------------------
+    kwh_cong = nv(KWH_T_CONGELADA, n) * t_cong_dia
+    kwh_alm = t_refr * nv(KWH_T_DIA_REFRIGERADO, n) + t_cong * nv(KWH_T_DIA_CONGELADO, n)
+    dbo_bio = r["metodoA_carga_DBO5_kg_dia"] * (1 - nv(REM_DBO_PRETRAT_ENERGIA, n))
+    kwh_efl = dbo_bio * 0.95 * nv(KWH_KG_DBO, n)
+    r.add("electricidad", "kwh_congelacion_dia", kwh_cong, "kWh", "dia_operativo", "energia_electrica", "FUENTE",
+          "[ESTIMACIÓN] con indicador [PVDP]", KWH_T_CONGELADA[2], parametro=pn)
+    r.add("electricidad", "kwh_almacenamiento_frio_dia_calendario", kwh_alm, "kWh", "dia_calendario",
+          "energia_electrica", "SUPUESTO", "[ESTIMACIÓN] con [SUPUESTO]", "", "cámaras 365 días; ilustrativo",
+          parametro=pn)
+    r.add("electricidad", "kwh_tratamiento_aerobio_dia", kwh_efl, "kWh", "dia_operativo", "energia_electrica",
+          "SUPUESTO", "[ESTIMACIÓN] con [SUPUESTO]", "", "cota si todo el biológico fuera aerobio", parametro=pn)
+    kwh_dia = kwh_proc + kwh_cong + kwh_efl + kwh_alm
+    kwh_anio = (kwh_proc + kwh_cong + kwh_efl) * dias_anio + kwh_alm * DIAS_CALENDARIO
+    r.add("electricidad", "kwh_total_dia_operativo", kwh_dia, "kWh", "dia_operativo", "energia_electrica",
+          "ESTIMACIÓN", "[ESTIMACIÓN]", "", "proceso + congelado + aerobio + cámaras", parametro=pn)
+    r.add("electricidad", "kwh_total_anio", kwh_anio, "kWh", "anio", "energia_electrica", "ESTIMACIÓN",
+          "[ESTIMACIÓN]", "", "cámaras × 365 días; resto × días de faena", parametro=pn)
+    r.add("electricidad", "kwh_por_ave_promedio_anual", kwh_anio / (A * dias_anio), "kWh/ave", "por_ave",
+          "energia_electrica", "ESTIMACIÓN", "[ESTIMACIÓN]", "", parametro=pn)
+    pm_proc = kwh_proc / h_planta
+    if "M11" in _MUT:
+        r.add("electricidad", "potencia_media_proceso_kw", pm_proc, "kW", "potencia", "energia_electrica",
+              "ESTIMACIÓN", "[ESTIMACIÓN]", "", "", parametro=pn)
+    else:
+        r.add("electricidad", f"potencia_media_equivalente_proceso_kw_bajo_{h_planta:g}h", pm_proc, "kW",
+              "potencia", "energia_electrica", "ESTIMACIÓN", "[ESTIMACIÓN]", "",
+              f"= kWh de proceso / {h_planta:g} h; NO es potencia pico", parametro=pn)
+    r.add("electricidad", "potencia_media_equivalente_total_kw_bajo_24h", kwh_dia / 24, "kW", "potencia",
+          "energia_electrica", "ESTIMACIÓN", "[ESTIMACIÓN]", "", "= kWh totales del día / 24 h; NO es potencia pico",
+          parametro=pn)
+    pico_kw, pico_kva = demanda_maxima(p["lista_cargas"])
+    if "M10" in _MUT:
+        pico_kw = pm_proc * 1.5                           # M10: pico derivado de kWh/ave
+    r.add("electricidad", "potencia_pico_demanda_maxima_kw", pico_kw, "kW", "potencia", "energia_electrica",
+          "ESTIMACIÓN", "[ESTIMACIÓN] desde lista de cargas", "", "solo desde lista de cargas (kW nominal, factor de "
+          "carga, simultaneidad, arranque, cos φ); también potencia contratada y transformador", parametro=pn)
+    r.add("electricidad", "potencia_pico_demanda_maxima_kva", pico_kva, "kVA", "potencia", "energia_electrica",
+          "ESTIMACIÓN", "[ESTIMACIÓN] desde lista de cargas", "", "", parametro=pn)
+
+    # --- 9. AGUA CALIENTE / VAPOR: MJ/día y potencia térmica MEDIA; pico PENDIENTE -------------
     le = p["l_ave_etapas"]
     kj_esc = le["escaldado"] * CP_AGUA * (nv(T_ESCALDADO, n) - T_RED) * nv(FACTOR_PERDIDAS_ESCALDADO, n)
     kj_lim = le["limpieza"] * nv(FRAC_LIMPIEZA_CALIENTE, n) * CP_AGUA * (nv(T_LIMPIEZA, n) - T_RED)
@@ -605,45 +813,50 @@ def calcular(aves, dias_anio=250, nivel="medio", masas=None, p=None):
     for var, kj, h in (("escaldado", kj_esc, p["horas_netas"]), ("limpieza", kj_lim, p["horas_limpieza"]),
                        ("sanitizacion", kj_san, h_op)):
         r.add("termico", f"calor_util_{var}_mj_dia", kj * A / 1000, "MJ", "dia_operativo", "energia_termica",
-              "ESTIMACIÓN", "[ESTIMACIÓN] con temperaturas [PVDP]/[SUPUESTO]", "FTE-09C-11", parametro=f"nivel={n}")
-        r.add("termico", f"kw_termicos_{var}", kj * A / (h * 3600) if h else 0.0, "kW térmicos", "potencia",
-              "energia_termica", "ESTIMACIÓN", "[ESTIMACIÓN]", "", f"durante {h} h", parametro=f"nivel={n}")
+              "ESTIMACIÓN", "[ESTIMACIÓN] con temperaturas [PVDP]/[SUPUESTO]", "FTE-09C-11", parametro=pn)
+        r.add("termico", f"potencia_termica_media_equivalente_{var}_kw_bajo_{h:g}h",
+              kj * A / (h * 3600) if h else 0.0, "kW térmicos", "potencia", "energia_termica", "ESTIMACIÓN",
+              "[ESTIMACIÓN]", "", f"= MJ/día / {h:g} h; no es pico", parametro=pn)
     r.add("termico", "calor_util_mj_ave", util_mj_ave, "MJ/ave", "por_ave", "energia_termica", "ESTIMACIÓN",
-          "[ESTIMACIÓN]", "", parametro=f"nivel={n}")
+          "[ESTIMACIÓN] sensibilidad preliminar", "", parametro=pn)
+    r.add("termico", "calor_util_mj_dia", util_mj_ave * A, "MJ", "dia_operativo", "energia_termica", "ESTIMACIÓN",
+          "[ESTIMACIÓN]", "", parametro=pn)
     r.add("termico", "energia_combustible_mj_dia", comb_mj_ave * A, "MJ", "dia_operativo", "energia_termica",
-          "ESTIMACIÓN", "[ESTIMACIÓN] con rendimiento [SUPUESTO]", "", parametro=f"nivel={n}")
-    r.add("termico", "energia_combustible_kwh_dia", comb_mj_ave * A / 3.6, "kWh", "dia_operativo",
-          "energia_termica", "ESTIMACIÓN", "[ESTIMACIÓN]", "", "kWh TÉRMICOS (no eléctricos)", parametro=f"nivel={n}")
+          "ESTIMACIÓN", "[ESTIMACIÓN] con rendimiento [SUPUESTO]", "", parametro=pn)
+    r.add("termico", "energia_combustible_kwh_termicos_dia", comb_mj_ave * A / 3.6, "kWh", "dia_operativo",
+          "energia_termica", "ESTIMACIÓN", "[ESTIMACIÓN]", "", "kWh TÉRMICOS (no eléctricos)", parametro=pn)
     for comb, (pci, org, ref) in PCI_MJ.items():
         r.add("termico", f"equivalente_{comb}_dia", comb_mj_ave * A / pci, comb.split("_")[-1], "dia_operativo",
-              "energia_termica", "SUPUESTO", "[ESTIMACIÓN] con PCI [SUPUESTO]", ref, "equivalencia, no elección",
-              parametro=f"nivel={n}")
+              "energia_termica", "SUPUESTO", "[ESTIMACIÓN] con PCI [SUPUESTO]", ref, "equivalencia, no elección; "
+              "el consumo diario no define capacidad de caldera", parametro=pn)
     r.add("termico", "equivalente_electricidad_resistiva_kwh_dia", util_mj_ave * A / 3.6 / 0.98, "kWh",
-          "dia_operativo", "energia_termica", "SUPUESTO", "[ESTIMACIÓN]", "", "rendimiento 98 %; bomba de calor "
-          "dividiría por su COP (limitada a ~60–70 °C)", parametro=f"nivel={n}")
+          "dia_operativo", "energia_termica", "SUPUESTO", "[ESTIMACIÓN]", "", "rendimiento 98 %", parametro=pn)
+    r.add("termico", "potencia_termica_pico_kw", PENDIENTE, "kW térmicos", "potencia", "energia_termica",
+          "PENDIENTE", "", "", "requiere perfil horario y simultaneidad de escaldado, limpieza, sanitización y "
+          "otros usos; define la caldera", parametro=pn)
 
-    # --- 9. RESPALDO ------------------------------------------------------------------
-    crit = {"camaras_frio": kwe_alm * nv(FACTOR_REARRANQUE, n),
-            "efluentes_minimo": kwh_efl / 24 * FRAC_EFLUENTE_MINIMO}
-    crit.update({c: f * kw_pico_proc for c, f in FRAC_RESPALDO.items()})
+    # --- 10. RESPALDO: carga crítica ILUSTRATIVA; generador PENDIENTE -------------------------
+    kwe_alm = kwh_alm / 24
+    crit = {"camaras_frio": kwe_alm * nv(FACTOR_REARRANQUE, n), "efluentes_minimo": kwh_efl / 24 * FRAC_EFLUENTE_MINIMO}
+    crit.update({c: f * pm_proc for c, f in FRAC_CRITICA_ILUSTRATIVA.items()})
     for c, v in crit.items():
-        r.add("respaldo", f"kw_critico_{c}", v, "kW", "potencia", "energia_electrica", "SUPUESTO",
-              "[ESTIMACIÓN] con [SUPUESTO]", "", parametro=f"nivel={n}")
-    kw_crit = sum(crit.values())
-    r.add("respaldo", "kw_respaldo_cargas_criticas", kw_crit, "kW", "potencia", "energia_electrica", "SUPUESTO",
-          "[ESTIMACIÓN] con [SUPUESTO]", "", "cámaras + control + emergencia + efluentes + agua + andén",
-          parametro=f"nivel={n}")
-    r.add("respaldo", "kva_respaldo_cargas_criticas", kw_crit / FACTOR_POTENCIA, "kVA", "potencia",
-          "energia_electrica", "SUPUESTO", "[ESTIMACIÓN]", "", "fp 0,8", parametro=f"nivel={n}")
-    r.add("respaldo", "kva_respaldo_planta_completa", kw_pico / FACTOR_POTENCIA, "kVA", "potencia",
-          "energia_electrica", "SUPUESTO", "[ESTIMACIÓN]", "", "si se quisiera sostener también la línea",
-          parametro=f"nivel={n}")
+        r.add("respaldo", f"carga_critica_ilustrativa_{c}_kw", v, "kW", "potencia", "energia_electrica", "SUPUESTO",
+              "[SUPUESTO] proxy", "", "carga crítica ilustrativa de escenario", parametro=pn)
+    r.add("respaldo", "carga_critica_ilustrativa_escenario_kw", sum(crit.values()), "kW", "potencia",
+          "energia_electrica", "SUPUESTO", "[SUPUESTO] proxy preliminar de sensibilidad", "",
+          "NO es el generador necesario", parametro=pn)
+    gen_kw, gen_kva = demanda_maxima(p["lista_cargas_criticas"])
+    if "M18" in _MUT:
+        gen_kva = 0.10 * pm_proc / 0.8                    # M18: generador como % fijo de la planta
+    r.add("respaldo", "grupo_electrogeno_kva", gen_kva, "kVA", "potencia", "energia_electrica", "ESTIMACIÓN",
+          "[ESTIMACIÓN] desde lista de cargas críticas", "", "requiere lista de cargas críticas, kW/kVA, cos φ, "
+          "arranque de motores/compresores, secuencia, simultaneidad, autonomía, combustible, redundancia, "
+          "black-start", parametro=pn)
     return r
 
 
 def inventario_escala(E, dias_anio):
-    """Filas equivalentes al bloque `inventario` del modelo de escala, recalculadas desde el
-    comestible por día operativo (test U07). Devuelve {(base, dias, perfil, cat): t}."""
+    """Filas equivalentes al bloque `inventario` del modelo de escala, recalculadas (test U07)."""
     com = kg_por_ave()["comestible"] * E / 1000
     out = {}
     for base in ("dias_produccion", "dias_calendario"):
@@ -657,10 +870,16 @@ def inventario_escala(E, dias_anio):
 
 
 # ---------------------------------------------------------------------------
-# 4. TESTS
+# 5. TESTS
 # ---------------------------------------------------------------------------
 def _cerca(a, b, tol=1e-9):
     return abs(a - b) <= tol * max(1.0, abs(a), abs(b))
+
+
+CARGAS_DEMO = [  # lista sintética SOLO para probar la función (no es un listado del proyecto)
+    {"equipo": "compresor", "kw_nominal": 100.0, "factor_carga": 0.8, "simultaneidad": 1.0, "cos_phi": 0.85,
+     "factor_arranque": 3.0},
+    {"equipo": "bomba", "kw_nominal": 20.0, "factor_carga": 0.7, "simultaneidad": 0.5, "cos_phi": 0.8}]
 
 
 def tests():
@@ -670,109 +889,110 @@ def tests():
         res.append((nombre, bool(cond), msg))
 
     k = kg_por_ave()
-    # U00 fuente de masa: kg/ave idénticos en las 4 escalas y 2 calendarios (linealidad del CSV de escala)
     ok = all(_cerca(kg_por_ave(E, ds)[x], k[x], 1e-6) for E in ESCALAS for ds in CALENDARIOS for x in MASAS)
     t("U00 masas del CSV de escala lineales y coherentes", ok)
-    # U01 escalabilidad: duplicar aves duplica todo flujo (no los por-ave ni %)
+    # U01 escalabilidad
     ok, n_var = True, 0
     for niv in NIVELES:
         a, b = calcular(5000, 250, niv), calcular(10000, 250, niv)
         for f in a.filas:
             v1, v2 = f["valor"], b[f["variable"]]
-            if f["periodo"] in ("por_ave", "adimensional") or f["unidad"] in ("kJ/kg",):
+            if v1 is None or v2 is None:
+                ok &= v1 is None and v2 is None
+            elif f["periodo"] in ("por_ave", "adimensional") or f["unidad"] in ("kJ/kg", "COP"):
                 ok &= _cerca(v1, v2, 1e-9)
             else:
                 ok &= _cerca(2 * v1, v2, 1e-9)
             n_var += 1
     t("U01 escalabilidad lineal (duplicar aves duplica flujos; intensivos constantes)", ok, f"{n_var} variables")
-    # U02 unidades
     r = calcular(10000, 250, "medio")
     ok = _cerca(r["agua_utilizada_m3_dia"], r["agua_utilizada_l_ave"] * 10000 / 1000)
     ok &= _cerca(r["agua_utilizada_m3_anio"], r["agua_utilizada_m3_dia"] * 250)
-    ok &= _cerca(r["tr_enfriado_producto_fresco"] * KW_POR_TR, r["kw_frigorificos_enfriado_producto_fresco"])
-    ok &= _cerca(r["energia_combustible_kwh_dia"] * 3.6, r["energia_combustible_mj_dia"])
-    ok &= _cerca(r["carga_DQO_kg_dia"], r["carga_DQO_g_ave"] * 10000 / 1000)
-    ok &= _cerca(r["concentracion_DQO_mg_l"], r["carga_DQO_g_ave"] / r["agua_descargada_l_ave"] * 1000)
-    ok &= 5 <= r["agua_utilizada_l_ave"] <= 60      # rango físico plausible de faena avícola
-    t("U02 unidades (L↔m³, día↔año, kW↔TR, MJ↔kWh, g/ave↔kg/día, mg/L)", ok)
-    # U03 el agua retenida nunca calcula el consumo
+    ok &= _cerca(r["carga_sensible_preliminar_producto_tr"] * KW_POR_TR, r["carga_sensible_preliminar_producto_kwf_bajo_8h"])
+    ok &= _cerca(r["energia_combustible_kwh_termicos_dia"] * 3.6, r["energia_combustible_mj_dia"])
+    ok &= _cerca(r["metodoA_carga_DQO_kg_dia"], r["metodoA_carga_DQO_g_ave"] * 10000 / 1000)
+    ok &= _cerca(r["metodoB_carga_DQO_kg_dia"], r["agua_descargada_m3_dia"] * r["metodoB_concentracion_DQO_mg_l"] / 1000)
+    ok &= 5 <= r["agua_utilizada_l_ave"] <= 60
+    t("U02 unidades (L↔m³, día↔año, kW↔TR, MJ↔kWh, g/ave↔kg/día, m³×mg/L↔kg/día)", ok)
     m2 = dict(k, agua_retenida_producto=k["agua_retenida_producto"] * 3, agua_incorporada=k["agua_incorporada"] * 3)
     r2 = calcular(10000, 250, "medio", masas=m2)
     ok = _cerca(r2["agua_utilizada_m3_dia"], r["agua_utilizada_m3_dia"]) and \
         _cerca(r2["agua_descargada_m3_dia"], r["agua_descargada_m3_dia"])
-    ok &= not _cerca(r2["agua_retenida_en_producto_t_dia"], r["agua_retenida_en_producto_t_dia"])
     ok &= _cerca(r["agua_utilizada_l_ave"], sum(nv(v, "medio") for _, _, v, _, _ in AGUA_ETAPAS))
-    t("U03 agua retenida separada: triplicarla no cambia agua utilizada ni descargada", ok)
-    # U04 cierre del agua
+    t("U03 agua incorporada separada: triplicarla no cambia agua utilizada ni descargada", ok)
     ok = True
     for niv in NIVELES:
         x = calcular(10000, 250, niv)
-        ok &= _cerca(x["agua_utilizada_m3_dia"], x["agua_descargada_m3_dia"] + x["agua_no_descargada_m3_dia"])
+        ok &= _cerca(x["agua_utilizada_m3_dia"], x["agua_descargada_m3_dia"] + x["agua_incorporada_producto_y_subproductos_t_dia"]
+                     + x["agua_evaporada_o_arrastrada_m3_dia"])
+        ok &= x["agua_evaporada_o_arrastrada_m3_dia"] >= 0 and x["agua_captada_m3_dia"] >= x["agua_utilizada_m3_dia"]
         ok &= 0 < x["agua_descargada_m3_dia"] <= x["agua_utilizada_m3_dia"]
-        ok &= x["agua_retenida_en_producto_t_dia"] <= x["agua_no_descargada_m3_dia"]
-    t("U04 cierre: utilizada = descargada + no descargada; retenida ≤ no descargada", ok)
-    # U05 orden bajo < medio < alto en demandas
+    xc = calcular(10000, 250, p=parametros("medio", frac_rechazo_potabilizacion=0.25))
+    ok &= _cerca(xc["agua_captada_m3_dia"], r["agua_utilizada_m3_dia"] / 0.75)
+    xe = calcular(10000, 250, p=parametros("medio", frac_efluente=0.999))
+    ok &= any(a[0] == "AGUA_CIERRE" for a in xe.alertas)
+    t("U04 cierre: captada ≥ utilizada = descargada + incorporada + evaporada (≥ 0); fracción editable", ok)
     rs = [calcular(10000, 250, niv) for niv in NIVELES]
-    claves = ("agua_utilizada_m3_dia", "agua_descargada_m3_dia", "carga_DQO_kg_dia", "carga_DBO5_kg_dia",
-              "kwh_total_dia_operativo", "kw_potencia_pico_estimada", "energia_combustible_mj_dia",
-              "kw_frigorificos_enfriado_producto_fresco", "kw_electricos_enfriado_producto_fresco",
-              "lodos_deshidratados_t_dia")
+    claves = ("agua_utilizada_m3_dia", "agua_descargada_m3_dia", "metodoA_carga_DQO_kg_dia", "metodoB_carga_DQO_kg_dia",
+              "kwh_total_dia_operativo", "energia_combustible_mj_dia", "kw_electricos_aprox_producto")
     t("U05 bajo < medio < alto", all(rs[0][c] < rs[1][c] < rs[2][c] for c in claves))
-    # U06 etapas suman el total
     ok = all(_cerca(sum(x[f"agua_{c}_m3_dia"] for c, *_ in AGUA_ETAPAS), x["agua_utilizada_m3_dia"]) for x in rs)
     t("U06 Σ etapas = agua utilizada", ok)
-    # U07 inventario reproduce el modelo de escala (todas las filas)
     n_ok = n_tot = 0
     for f in leer_escala():
         if f["bloque"] != "inventario" or f["variable"] == "subproductos_perecederos_frio_t":
             continue
         E, da = int(f["escala_aves_dia"]), int(f["dias_anio"])
         par = dict(x.split("=") for x in f["parametro"].split("; "))
-        inv = inventario_escala(E, da)
         cat = f["variable"][:-2] if f["variable"] != "comestible_total_t" else "comestible_total"
-        v = inv[(par["base_temporal"], int(par["dias"]), par.get("perfil_destino", ""), cat)]
+        v = inventario_escala(E, da)[(par["base_temporal"], int(par["dias"]), par.get("perfil_destino", ""), cat)]
         n_tot += 1
         n_ok += _cerca(v, float(f["valor"]), 1e-6)
     t("U07 inventario = escenarios_escala.csv", n_ok == n_tot and n_tot > 0, f"{n_ok}/{n_tot} filas")
-    # U08 días calendario < días de producción; y el cálculo principal respeta la base
     pc = parametros("medio", base_inventario="dias_calendario", perfil=dict(PERFILES["P2"]), perfil_id="P2")
     pp = parametros("medio", perfil=dict(PERFILES["P2"]), perfil_id="P2")
     rc, rp = calcular(10000, 250, p=pc), calcular(10000, 250, p=pp)
-    ok = rc["stock_congelado_t"] < rp["stock_congelado_t"]
-    ok &= _cerca(rc["stock_congelado_t"], rp["stock_congelado_t"] * 250 / 365)
-    ok &= _cerca(rp["stock_congelado_t"], valor_escala(10000, 5, "inventario", "congelado_t", "stock",
-                                                        "base_temporal=dias_produccion; dias=14; perfil_destino=P2"), 1e-6)
+    ok = _cerca(rc["capacidad_almacenamiento_congelado_t"], rp["capacidad_almacenamiento_congelado_t"] * 250 / 365)
+    ok &= _cerca(rp["capacidad_almacenamiento_congelado_t"], valor_escala(
+        10000, 5, "inventario", "congelado_t", "stock", "base_temporal=dias_produccion; dias=14; perfil_destino=P2"), 1e-6)
     t("U08 días calendario = días de producción × días op./365 < días de producción", ok)
-    # U09 congelación diaria ≠ almacenamiento
+    # U09 congelación ≠ almacenamiento (variables, unidades e independencia)
     p1 = parametros("medio", perfil=dict(PERFILES["P3"]), perfil_id="P3", dias_congelado=1)
-    p14 = parametros("medio", perfil=dict(PERFILES["P3"]), perfil_id="P3", dias_congelado=28)
-    a, b = calcular(10000, 250, p=p1), calcular(10000, 250, p=p14)
-    ok = _cerca(a["capacidad_congelacion_t_dia"], b["capacidad_congelacion_t_dia"])
-    ok &= _cerca(b["capacidad_almacenamiento_congelado_t"], 28 * a["capacidad_almacenamiento_congelado_t"])
-    ok &= _cerca(a["capacidad_almacenamiento_congelado_t"], a["capacidad_congelacion_t_dia"])
-    t("U09 capacidad diaria de congelación independiente de los días de stock", ok)
-    # U10 kW frigoríficos vs eléctricos; potencia vs energía
+    p28 = parametros("medio", perfil=dict(PERFILES["P3"]), perfil_id="P3", dias_congelado=28)
+    a, b = calcular(10000, 250, p=p1), calcular(10000, 250, p=p28)
+    ok = "capacidad_almacenamiento_congelado_t" in b.v and "capacidad_congelacion_t_dia" in b.v
+    ok = ok and _cerca(a["capacidad_congelacion_t_dia"], b["capacidad_congelacion_t_dia"])
+    ok = ok and _cerca(b["capacidad_almacenamiento_congelado_t"], 28 * a["capacidad_almacenamiento_congelado_t"])
+    uni = {f["variable"]: f["unidad"] for f in b.filas}
+    ok = ok and uni.get("capacidad_congelacion_t_dia") == "t/día" and uni.get("capacidad_almacenamiento_congelado_t") == "t"
+    t("U09 congelación (t/día nuevas) y almacenamiento (t guardadas) son variables distintas e independientes", ok)
+    # U10 COP declarado para toda conversión frigorífico -> eléctrico
     ok = True
     for x in rs:
-        for v in ("enfriado_producto_fresco", "congelacion_tuneles", "camaras_almacenamiento"):
-            ok &= x[f"kw_electricos_{v}"] < x[f"kw_frigorificos_{v}"]
-    t("U10 kW eléctricos = kW frigoríficos / COP (COP > 1)", ok)
-    # U11 potencia pico ≥ media; kWh ≠ kW
-    ok = all(x["kw_potencia_pico_estimada"] >= x["kw_potencia_media_operacion"] for x in rs)
-    ok &= all(x["kwh_total_dia_operativo"] > x["kw_potencia_media_operacion"] for x in rs)
-    t("U11 pico ≥ media y energía diaria > potencia", ok)
-    # U12 finitos y no negativos en todo el CSV
+        for f in x.filas:
+            if f["variable"].startswith("kw_electricos_aprox_"):
+                suf = f["variable"][len("kw_electricos_aprox_"):]
+                cop = x.v.get(f"cop_supuesto_{suf}")
+                ok &= cop is not None and cop > 1 and "COP" in f["nota"]
+                kwf = {"producto": "carga_sensible_preliminar_producto_kwf_bajo_8h",
+                       "agua_chiller": "carga_enfriamiento_agua_reposicion_chiller_kwf_bajo_8h",
+                       "congelacion_producto": "carga_media_congelacion_producto_kwf_bajo_20h"}[suf]
+                ok &= _cerca(f["valor"], x[kwf] / cop)
+    t("U10 kW eléctricos aprox = kW frigoríficos / COP supuesto declarado (fila cop_supuesto_*)", ok)
+    # U11 energía diaria = aves × kWh/ave
+    ok = _cerca(r["kwh_proceso_dia"], 10000 * r["kwh_proceso_por_ave"])
+    t("U11 kWh/día = aves/día × kWh/ave", ok)
     filas = construir()
-    ok = all(isinstance(f["valor"], (int, float)) and math.isfinite(f["valor"]) and f["valor"] >= 0 for f in filas)
-    t("U12 ningún valor negativo ni no finito", ok, f"{len(filas)} valores")
-    # U13 sin cifras económicas
+    ok = all(f["valor"] == "" or (isinstance(f["valor"], (int, float)) and math.isfinite(f["valor"]) and f["valor"] >= 0)
+             for f in filas)
+    t("U12 ningún valor negativo ni no finito (PENDIENTE = vacío)", ok, f"{len(filas)} filas")
     ok = not any(PALABRAS_ECONOMICAS.search(f"{f['variable']} {f['unidad']}") for f in filas)
     t("U13 ninguna variable económica", ok)
-    # U14 entradas inválidas detienen el modelo
     malos = 0
     for kw in ({"frac_efluente": 1.2}, {"frac_efluente": 0}, {"l_ave_total": -5}, {"l_ave_total": 25000},
-               {"frac_sangre_recuperada": 1.5}, {"perfil": {"refrigerado": 0.7, "congelado": 0.4, "exportacion": 0}},
-               {"base_inventario": "semanas"}, {"dias_congelado": -1}):
+               {"fraccion_sangre_recuperada": 1.5}, {"perfil": {"refrigerado": 0.7, "congelado": 0.4, "exportacion": 0}},
+               {"base_inventario": "semanas"}, {"dias_congelado": -1}, {"frac_rechazo_potabilizacion": 1.0},
+               {"tolerancia_metodos": 0.5}):
         try:
             parametros("medio", **kw)
         except ErrorUtilities:
@@ -782,35 +1002,106 @@ def tests():
             calcular(*args)
         except ErrorUtilities:
             malos += 1
-    t("U14 entradas inválidas rechazadas", malos == 11, f"{malos}/11")
-    # U15 sangre: menos recuperación = más DQO; recuperación de referencia = balance
-    r0 = calcular(10000, 250, p=parametros("medio", frac_sangre_recuperada=0.0))
-    ok = r0["carga_DQO_kg_dia"] > r["carga_DQO_kg_dia"]
-    ok &= _cerca(r0["carga_DQO_kg_dia"] - r["carga_DQO_kg_dia"], r["dqo_evitada_por_recuperar_sangre_kg_dia"], 1e-9)
-    ok &= _cerca(r["dqo_extra_por_sangre_no_recuperada_g_ave"], 0.0)
-    ok &= _cerca(k["sangre_recuperada"] / k["sangre_drenada"], 0.85, 1e-6)
-    t("U15 DQO extra = sangre no recuperada × DQO de la sangre; referencia 85 % (SUP-040)", ok)
-    # U16 masa evitable = CSV de escala
-    ok = all(_cerca(calcular(E, 250)[f"{c}_t_dia"], valor_escala(E, 5, "subproductos", v), 1e-6)
-             for E in ESCALAS for c, v in (("sangre_recuperada", "sangre_t"),
-                                           ("solidos_a_retirar", "solidos_a_retirar_t")))
-    t("U16 masa que evita el efluente = balance/escala", ok)
-    # U17 perfiles suman 1; concentraciones medias dentro del rango de fuentes
+    t("U14 entradas inválidas rechazadas", malos == 13, f"{malos}/13")
+    r0 = calcular(10000, 250, p=parametros("medio", fraccion_sangre_recuperada=0.0))
+    ok = r0["metodoA_carga_DQO_kg_dia"] > r["metodoA_carga_DQO_kg_dia"]
+    ok &= _cerca(r0["metodoA_carga_DQO_kg_dia"] - r["metodoA_carga_DQO_kg_dia"],
+                 r["dqo_potencial_sangre_recuperada_referencia_kg_dia"], 1e-9)
+    ok &= _cerca(r["fraccion_sangre_recuperada"], 0.85, 1e-6)
+    cls = {f["variable"]: f["clasificacion"] for f in r.filas}
+    ok &= "PVDP" in cls["sensibilidad_dqo_si_no_se_recuperara_sangre_pct"]
+    t("U15 fracción de sangre recuperada editable; efecto como referencia [PVDP]", ok)
+    ok = all(_cerca(calcular(E, 250)[v], valor_escala(E, 5, "subproductos", c), 1e-6)
+             for E in ESCALAS for v, c in (("segregable_sangre_recuperada_t_dia", "sangre_t"),
+                                           ("masa_biologica_potencialmente_segregable_en_origen_t_dia",
+                                            "solidos_a_retirar_t")))
+    t("U16 masa segregable en origen = balance/escala", ok)
     ok = all(_cerca(sum(s.values()), 1.0) for s in PERFILES.values())
-    ok &= RANGO_DQO_FUENTES_MG_L[0] <= r["concentracion_DQO_mg_l"] <= RANGO_DQO_FUENTES_MG_L[1]
-    t("U17 perfiles = 100 %; DQO media resultante dentro del rango de fuentes", ok,
-      f"{r['concentracion_DQO_mg_l']:.0f} mg/L")
-    # U18 energía anual: cámaras 365 días, proceso días de faena
+    ok &= all(RANGO_DQO_FUENTES_MG_L[0] <= x["metodoB_concentracion_DQO_mg_l"] <= RANGO_DQO_FUENTES_MG_L[1] for x in rs)
+    t("U17 perfiles = 100 %; concentraciones del método B dentro del rango de fuentes", ok)
     r3 = calcular(10000, 300, "medio")
     ok = _cerca(r3["kwh_total_anio"] - r["kwh_total_anio"],
                 (r["kwh_total_dia_operativo"] - r["kwh_almacenamiento_frio_dia_calendario"]) * 50)
     t("U18 sexto día: +50 días de proceso; cámaras sin cambio (365 días)", ok)
-    # U19 l_ave_total escala las etapas en proporción
-    pl = parametros("medio", l_ave_total=50)
-    x = calcular(10000, 250, p=pl)
+    x = calcular(10000, 250, p=parametros("medio", l_ave_total=50))
     ok = _cerca(x["agua_utilizada_l_ave"], 50) and _cerca(x["agua_evisceracion_l_ave"] / 50,
                                                            r["agua_evisceracion_l_ave"] / r["agua_utilizada_l_ave"])
     t("U19 cambiar L/ave total mantiene el reparto por etapa", ok)
+    # ---- auditoría v1.1 ------------------------------------------------------------------------
+    # U20 kWh/ave nunca produce "pico"; pico solo desde lista de cargas
+    ok = all(v is None for x in rs for kk, v in x.v.items() if "pico" in kk)
+    import copy
+    global KWH_T_PV
+    xl = calcular(10000, 250, p=parametros("medio", lista_cargas=copy.deepcopy(CARGAS_DEMO)))
+    guard = KWH_T_PV
+    KWH_T_PV = ((1.0, 1.0, 1.0),) + KWH_T_PV[1:]
+    try:
+        xl2 = calcular(10000, 250, p=parametros("medio", lista_cargas=copy.deepcopy(CARGAS_DEMO)))
+    finally:
+        KWH_T_PV = guard
+    esperado = 100 * 0.8 + 20 * 0.7 * 0.5 + 100 * 2.0
+    ok &= _cerca(xl["potencia_pico_demanda_maxima_kw"], esperado) and \
+        _cerca(xl2["potencia_pico_demanda_maxima_kw"], xl["potencia_pico_demanda_maxima_kw"])
+    t("U20 potencia pico: PENDIENTE sin lista de cargas; con lista, independiente de kWh/ave", ok)
+    ok = all(re.search(r"_bajo_\d+(\.\d+)?h$", kk) for x in rs for kk in x.v
+             if kk.startswith("potencia_media") or kk.startswith("potencia_termica_media"))
+    ok &= any(kk.startswith("potencia_media_equivalente") for kk in r.v)
+    ok &= not any(kk.startswith("potencia_media") and not re.search(r"_bajo_\d", kk) for kk in r.v)
+    t("U21 toda potencia media declara las horas usadas (_bajo_<h>h)", ok)
+    m3 = dict(k, solidos_a_retirar=k["solidos_a_retirar"] * 3, plumas=k["plumas"] * 3, visceras=k["visceras"] * 3)
+    r4 = calcular(10000, 250, "medio", masas=m3)
+    ok = all(_cerca(r4[f"metodo{m}_carga_SST_kg_dia"], r[f"metodo{m}_carga_SST_kg_dia"]) for m in "AB")
+    ok &= r["solidos_que_entran_efectivamente_al_efluente_t_dia"] is None
+    ok &= not any("solidos_secos_retirados" in kk or "retirados_del_efluente" in kk for kk in r.v)
+    t("U22 subproductos del balance no se contabilizan como SST ni como sólidos del efluente", ok)
+    ok = r["lodo_solidos_secos_kg_dia"] is None and r["lodo_humedo_t_dia"] is None
+    pl = lodos_ilustrativo("medio")
+    sin_pct = dict(pl, fraccion_solidos_torta=None)
+    sin_bio = dict(pl, rendimiento_biomasa_kg_ms_kg_dbo=None)
+    l1 = lodos(350, 110, 500, 220, sin_pct)
+    l2 = lodos(350, 110, 500, 220, sin_bio)
+    l3 = lodos(350, 110, 500, 220, pl)
+    ok &= l1["lodo_humedo_t_dia"] is None and l1["lodo_solidos_secos_kg_dia"] is not None
+    ok &= l2["lodo_solidos_secos_kg_dia"] is None and l2["lodo_humedo_t_dia"] is None
+    ok &= _cerca(l3["lodo_humedo_t_dia"], l3["lodo_solidos_secos_kg_dia"] / pl["fraccion_solidos_torta"] / 1000)
+    ok &= _cerca(l3["lodo_solidos_secos_kg_dia"], l3["sst_removidos_kg_dia"] + l3["grasas_flotadas_kg_dia"]
+                 + l3["solidos_quimicos_kg_dia"] + l3["biomasa_kg_ms_dia"])
+    t("U23 lodos: PENDIENTE por defecto; sin % sólidos no hay lodo húmedo; sin modelo no hay lodo seco", ok)
+    ok = all(v is None for kk, v in r.v.items() if kk.startswith("capacidad_frigorifica") or kk == "carga_frigorifica_total_kwf")
+    ok &= "carga_frigorifica_total_kwf" in r.v and "carga_sensible_preliminar_producto_kwf_bajo_8h" in r.v
+    notas = {f["variable"]: f["nota"] for f in r.filas}
+    ok &= "NO es la capacidad frigorífica" in notas["carga_sensible_preliminar_producto_kwf_bajo_8h"]
+    t("U24 carga sensible del producto no se denomina capacidad frigorífica; total PENDIENTE", ok)
+    ok = r["grupo_electrogeno_kva"] is None
+    xg = calcular(10000, 250, p=parametros("medio", lista_cargas_criticas=copy.deepcopy(CARGAS_DEMO[:1])))
+    xg2 = calcular(20000, 250, p=parametros("medio", lista_cargas_criticas=copy.deepcopy(CARGAS_DEMO[:1])))
+    ok &= xg["grupo_electrogeno_kva"] is not None and _cerca(xg["grupo_electrogeno_kva"], xg2["grupo_electrogeno_kva"])
+    t("U25 grupo electrógeno: PENDIENTE sin lista de cargas críticas; nunca % fijo de la planta", ok)
+    ok = all(all(lim.get(c) not in (None, "") for c in CAMPOS_LIMITE) for lim in LIMITES_EJEMPLO)
+    try:
+        parametros("medio", limites=[{"parametro": "DQO", "mg_l": 250.0}])
+        ok = False
+    except ErrorUtilities:
+        pass
+    ok &= all("jurisdiccion=" in f["parametro"] and "tipo_descarga=" in f["parametro"] and "EJEMPLO" in f["nota"]
+              for f in r.filas if f["variable"].startswith("remocion_"))
+    t("U26 límites regulatorios asociados a jurisdicción y tipo de descarga (solo ejemplo)", ok)
+    rA = calcular(10000, 250, p=parametros("medio", conc_mg_l={"DQO": 9000.0, "DBO5": 1600.0, "SST": 1410.0}))
+    rB = calcular(10000, 250, p=parametros("medio", carga_g_ave=dict(parametros("medio")["carga_g_ave"], DQO=300.0)))
+    ok = _cerca(rA["metodoA_carga_DQO_kg_dia"], r["metodoA_carga_DQO_kg_dia"])
+    ok &= _cerca(rB["metodoB_carga_DQO_kg_dia"], r["metodoB_carga_DQO_kg_dia"])
+    ok &= not any(a[0] == "EFLUENTE_DQO" for a in r.alertas) and any(a[0] == "EFLUENTE_DQO" for a in rB.alertas)
+    ok &= any(ALERTA_EFLUENTE in a[1] for a in rB.alertas)
+    t("U27 métodos A y B independientes (sin calibración cruzada); divergencia -> alerta de validación", ok)
+    ok = _cerca(r["agua_utilizada_m3_por_t_producto"], r["agua_utilizada_m3_dia"] / r["t_producto_comestible_dia_operativo"])
+    xa = calcular(10000, 250, p=parametros("medio", l_ave_total=60))
+    ok &= any(a[0] == "AGUA_M3_T" for a in xa.alertas) and not any(a[0] == "AGUA_M3_T" for a in r.alertas)
+    t("U28 m³/t de producto coherente con L/ave; contraste fuera de rango -> alerta", ok)
+    fil, al = contraste_bottom_up(r, [{"kw_nominal": 100.0, "factor_carga": 1.0, "horas_dia": 10.0}])
+    ok = len(fil) == 1 and len(al) == 1
+    fil2, al2 = contraste_bottom_up(r, [{"kw_nominal": r["kwh_proceso_dia"] / 10, "factor_carga": 1.0, "horas_dia": 10.0}])
+    ok &= len(al2) == 0 and _cerca(fil2[0][3], 1.0)
+    t("U29 contraste TOP-DOWN vs BOTTOM-UP (equipos 09A futuros): diferencias -> alerta, sin ajuste", ok)
     return res
 
 
@@ -831,7 +1122,18 @@ MUTACIONES = {
     "M06": "almacenamiento congelado = capacidad diaria (ignora días)",
     "M07": "sangre no recuperada no suma DQO",
     "M08": "L/ave interpretados como m³/ave",
-    "M09": "potencia pico menor que la media",
+    "M09": "cierre del agua forzado (evaporada inventada)",
+    "M10": "potencia pico derivada de kWh/ave",
+    "M11": "potencia media sin horas en el nombre",
+    "M12": "SST = subproductos segregables del balance",
+    "M13": "lodo húmedo con % de sólidos por defecto",
+    "M14": "lodo seco fijo sin modelo de generación",
+    "M15": "carga sensible del producto llamada capacidad frigorífica total",
+    "M16": "kW eléctricos sin COP declarado",
+    "M17": "congelación y almacenamiento en la misma variable/unidad",
+    "M18": "grupo electrógeno = % fijo de la planta",
+    "M19": "límite regulatorio sin jurisdicción ni tipo de descarga",
+    "M20": "método B calibrado para cerrar con el método A",
 }
 
 
@@ -843,9 +1145,9 @@ def mutaciones():
         _MUT.add(m)
         try:
             _, res = correr_tests(verbose=False)
-            fallan = [n.split()[0] for n, ok, _ in res if not ok]
-        except (ErrorUtilities, ZeroDivisionError, KeyError) as e:
-            fallan = [f"detiene: {e}"]
+            fallan = [nn.split()[0] for nn, ok, _ in res if not ok]
+        except (ErrorUtilities, ZeroDivisionError, KeyError, TypeError) as e:
+            fallan = [f"detiene: {type(e).__name__}: {e}"[:90]]
         _MUT.clear()
         print(f"  {m} {desc}: {'DETECTADA por ' + ', '.join(fallan) if fallan else 'NO DETECTADA'}")
         todas &= bool(fallan)
@@ -853,10 +1155,17 @@ def mutaciones():
 
 
 # ---------------------------------------------------------------------------
-# 5. CSV
+# 6. CSV
 # ---------------------------------------------------------------------------
 CAMPOS = ["bloque", "escala_aves_dia", "dias_semana", "dias_anio", "nivel", "parametro", "variable", "valor",
           "unidad", "periodo", "base", "origen", "clasificacion", "referencia", "nota"]
+
+
+def _fila_param(var, val, uni, org, ref, nota="", niv="-", bloque="parametros", E=0, ds=0, da=0, parametro=""):
+    return {"bloque": bloque, "escala_aves_dia": E, "dias_semana": ds, "dias_anio": da, "nivel": niv,
+            "parametro": parametro, "variable": var, "valor": val, "unidad": uni, "periodo": "parametro",
+            "base": "-", "origen": org, "clasificacion": f"[{org}]" + (" [PVDP]" if org == "FUENTE" else ""),
+            "referencia": ref, "nota": nota}
 
 
 def construir():
@@ -864,17 +1173,27 @@ def construir():
     for E in ESCALAS:
         for ds, da in CALENDARIOS.items():
             for niv in NIVELES:
-                for f in calcular(E, da, niv).filas:
+                r = calcular(E, da, niv)
+                for f in r.filas:
                     filas.append(dict(f, escala_aves_dia=E, dias_semana=ds, dias_anio=da, nivel=niv))
-                for pid in ("P2", "P3"):          # perfil de frío (P1 ya está en el bloque principal)
-                    p = parametros(niv, perfil=dict(PERFILES[pid]), perfil_id=pid)
-                    r = calcular(E, da, niv, p=p)
+                for cod, msg in r.alertas:
+                    filas.append({"bloque": "alertas", "escala_aves_dia": E, "dias_semana": ds, "dias_anio": da,
+                                  "nivel": niv, "parametro": "", "variable": f"alerta_{cod}", "valor": 1,
+                                  "unidad": "índice", "periodo": "adimensional", "base": "-", "origen": "ESTIMACIÓN",
+                                  "clasificacion": "[ALERTA]", "referencia": "", "nota": msg})
+                pl = lodos_ilustrativo(niv)
+                ri = calcular(E, da, niv, p=parametros(niv, lodos=pl))
+                for f in ri.filas:
+                    if f["bloque"] == "lodos":
+                        filas.append(dict(f, bloque="lodos_ilustrativo", escala_aves_dia=E, dias_semana=ds,
+                                          dias_anio=da, nivel=niv))
+                for pid in ("P2", "P3"):
+                    rp = calcular(E, da, niv, p=parametros(niv, perfil=dict(PERFILES[pid]), perfil_id=pid))
                     for var in ("capacidad_congelacion_t_dia", "capacidad_almacenamiento_congelado_t",
-                                "stock_refrigerado_t", "kw_frigorificos_congelacion_tuneles",
-                                "kw_electricos_congelacion_tuneles", "kw_frigorificos_camaras_almacenamiento",
-                                "kwh_congelacion_dia", "kwh_almacenamiento_frio_dia_calendario",
-                                "kw_respaldo_cargas_criticas"):
-                        f = next(x for x in r.filas if x["variable"] == var)
+                                "stock_refrigerado_t", "carga_media_congelacion_producto_kwf_bajo_20h",
+                                "kw_electricos_aprox_congelacion_producto", "kwh_congelacion_dia",
+                                "kwh_almacenamiento_frio_dia_calendario", "carga_critica_ilustrativa_escenario_kw"):
+                        f = next(x for x in rp.filas if x["variable"] == var)
                         filas.append(dict(f, bloque="perfil_frio", escala_aves_dia=E, dias_semana=ds, dias_anio=da,
                                           nivel=niv, parametro=f"perfil={pid}"))
             for (base, d, pid, cat), v in inventario_escala(E, da).items():
@@ -886,22 +1205,33 @@ def construir():
                               "referencia": "SUP-055, SUP-056; = escenarios_escala.csv",
                               "nota": "días de producción" if base == "dias_produccion" else
                               "días calendario de cobertura (× días op./365)"})
-    # tabla de parámetros
-    for c, etq, vals, org, ref in AGUA_ETAPAS:
-        for niv in NIVELES:
-            filas.append({"bloque": "parametros", "escala_aves_dia": 0, "dias_semana": 0, "dias_anio": 0,
-                          "nivel": niv, "parametro": "", "variable": f"param_agua_{c}_l_ave", "valor": nv(vals, niv),
-                          "unidad": "L/ave", "periodo": "por_ave", "base": "agua_utilizada", "origen": org,
-                          "clasificacion": f"[{org}]" + (" [PVDP]" if org == "FUENTE" else ""),
-                          "referencia": ref, "nota": etq})
-    for par, (vals, ref) in CARGA_G_AVE.items():
-        for niv in NIVELES:
-            filas.append({"bloque": "parametros", "escala_aves_dia": 0, "dias_semana": 0, "dias_anio": 0,
-                          "nivel": niv, "parametro": "", "variable": f"param_carga_{par}_g_ave", "valor": nv(vals, niv),
-                          "unidad": "g/ave", "periodo": "por_ave", "base": "efluente_crudo", "origen": "ESTIMACIÓN",
-                          "clasificacion": "[ESTIMACIÓN] con rangos [PVDP]", "referencia": ref, "nota": ""})
+    for niv in NIVELES:
+        for c, etq, vals, org, ref in AGUA_ETAPAS:
+            filas.append(_fila_param(f"param_agua_{c}_l_ave", nv(vals, niv), "L/ave", org, ref,
+                                     f"{etq}; rango de sensibilidad", niv))
+        filas.append(_fila_param("param_fraccion_agua_a_efluente", nv(FRAC_EFLUENTE, niv), "fracción", "SUPUESTO",
+                                 "", "editable (--frac-efluente)", niv))
+        for par, (vals, ref) in CARGA_G_AVE.items():
+            filas.append(_fila_param(f"param_metodoA_{par}_g_ave", nv(vals, niv), "g/ave", "FUENTE", ref,
+                                     "escenario", niv))
+        for par, (vals, ref) in CONC_MG_L.items():
+            filas.append(_fila_param(f"param_metodoB_{par}_mg_l", nv(vals, niv), "mg/L", "FUENTE", ref, "", niv))
+        for kk, (vals, uni, org, ref) in LODOS_ILUSTRATIVO.items():
+            filas.append(_fila_param(f"param_lodos_ilustrativo_{kk}", nv(vals, niv), uni, org, ref,
+                                     "solo escenario ilustrativo", niv))
+        for var, prm in (("cop_enfriado", COP_ENFRIADO), ("cop_congelado", COP_CONGELADO)):
+            filas.append(_fila_param(f"param_{var}", nv(prm, niv), "COP", "SUPUESTO", prm[2], "", niv))
+    filas.append(_fila_param("param_tolerancia_metodos_efluente", TOLERANCIA_METODOS, "ratio", "SUPUESTO", "",
+                             "B/A fuera de [1/t, t] -> alerta"))
+    filas.append(_fila_param("param_fraccion_rechazo_potabilizacion", FRAC_RECHAZO_POTABILIZACION, "fracción",
+                             "SUPUESTO", "", "dato de sitio"))
+    for lim in LIMITES_EJEMPLO:
+        filas.append(_fila_param(f"limite_ejemplo_{lim['parametro']}_mg_l", lim["mg_l"], "mg/L", "FUENTE", lim["ref"],
+                                 "EJEMPLO REGULATORIO DE REFERENCIA; no es requisito del proyecto",
+                                 parametro=f"jurisdiccion={lim['jurisdiccion']}; autoridad={lim['autoridad']}; "
+                                           f"norma={lim['norma']}; tipo_descarga={lim['tipo_descarga']}"))
     for f in filas:
-        f["valor"] = round(float(f["valor"]), 6)
+        f["valor"] = "" if f["valor"] is None else round(float(f["valor"]), 6)
     return filas
 
 
@@ -913,63 +1243,56 @@ def escribir_csv(filas):
 
 
 # ---------------------------------------------------------------------------
-# 6. TABLAS Y CLI
+# 7. TABLAS Y CLI
 # ---------------------------------------------------------------------------
 def fmt(x, d=1):
+    if x is None:
+        return "PENDIENTE"
     s = f"{x:,.{d}f}"
     return s.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
 def tablas():
     rs = {(E, n): calcular(E, 250, n) for E in ESCALAS for n in NIVELES}
-    filas = [
-        ("Agua utilizada m³/día (bajo · medio · alto)", "agua_utilizada_m3_dia", 0),
-        ("Agua descargada m³/día", "agua_descargada_m3_dia", 0),
-        ("Caudal medio / pico m³/h (medio)", None, 0),
-        ("Agua retenida en producto t/día", "agua_retenida_en_producto_t_dia", 2),
-        ("DQO kg/día", "carga_DQO_kg_dia", 0), ("DBO5 kg/día", "carga_DBO5_kg_dia", 0),
-        ("SST kg/día", "carga_SST_kg_dia", 0), ("GyA kg/día", "carga_GyA_kg_dia", 0),
-        ("NTK kg/día", "carga_NTK_kg_dia", 0),
-        ("DQO evitada por recuperar sangre kg/día", "dqo_evitada_por_recuperar_sangre_kg_dia", 0),
-        ("Sólidos a retirar en seco t/día", "solidos_a_retirar_t_dia", 1),
-        ("Lodos deshidratados t/día", "lodos_deshidratados_t_dia", 1),
-        ("Electricidad kWh/día operativo (total)", "kwh_total_dia_operativo", 0),
-        ("Electricidad MWh/año", None, 0),
-        ("kWh/ave (promedio anual)", "kwh_por_ave_promedio_anual", 2),
-        ("Potencia media / pico kW", None, 0),
-        ("Calor combustible GJ/día", None, 1),
-        ("Gas natural equivalente m³/día", "equivalente_gas_natural_m3_dia", 0),
-        ("Frío enfriado fresco kW frig (TR)", None, 0),
-        ("Congelación P1 t/día · kW frig", None, 1),
-        ("Stock refrigerado 3 d prod. P1 t", "stock_refrigerado_t", 0),
-        ("Stock congelado 14 d prod. P1 t", "stock_congelado_t", 0),
-        ("Respaldo crítico kVA", "kva_respaldo_cargas_criticas", 0),
-        ("Respaldo planta completa kVA", "kva_respaldo_planta_completa", 0),
-    ]
+    ri = {(E, n): calcular(E, 250, n, p=parametros(n, lodos=lodos_ilustrativo(n))) for E in ESCALAS for n in NIVELES}
+    filas = [("Agua utilizada m³/día", "agua_utilizada_m3_dia", 0), ("Agua captada m³/día", "agua_captada_m3_dia", 0),
+             ("Agua descargada m³/día", "agua_descargada_m3_dia", 0),
+             ("Agua incorporada t/día", "agua_incorporada_producto_y_subproductos_t_dia", 2),
+             ("Agua evaporada/arrastrada m³/día", "agua_evaporada_o_arrastrada_m3_dia", 1),
+             ("m³/t producto", "agua_utilizada_m3_por_t_producto", 1),
+             ("DQO A kg/día", "metodoA_carga_DQO_kg_dia", 0), ("DQO B kg/día", "metodoB_carga_DQO_kg_dia", 0),
+             ("B/A DQO", "relacion_B_sobre_A_DQO", 2), ("DBO A kg/día", "metodoA_carga_DBO5_kg_dia", 0),
+             ("DBO B kg/día", "metodoB_carga_DBO5_kg_dia", 0), ("B/A DBO", "relacion_B_sobre_A_DBO5", 2),
+             ("SST A kg/día", "metodoA_carga_SST_kg_dia", 0), ("SST B kg/día", "metodoB_carga_SST_kg_dia", 0),
+             ("B/A SST", "relacion_B_sobre_A_SST", 2),
+             ("Conc. implícita A DQO mg/L", "metodoA_concentracion_implicita_DQO_mg_l", 0),
+             ("Remoción DQO ejemplo A %", "remocion_DQO_bajo_ejemplo_limite_metodoA_pct", 1),
+             ("Remoción DQO ejemplo B %", "remocion_DQO_bajo_ejemplo_limite_metodoB_pct", 1),
+             ("Segregable en origen t/día", "masa_biologica_potencialmente_segregable_en_origen_t_dia", 1),
+             ("kWh/día operativo", "kwh_total_dia_operativo", 0),
+             ("P media proceso kW (14 h)", "potencia_media_equivalente_proceso_kw_bajo_14h", 0),
+             ("P media total kW (24 h)", "potencia_media_equivalente_total_kw_bajo_24h", 0),
+             ("Calor útil MJ/día", "calor_util_mj_dia", 0),
+             ("P térmica media limpieza kW (4 h)", "potencia_termica_media_equivalente_limpieza_kw_bajo_4h", 0),
+             ("P térmica media escaldado kW (8 h)", "potencia_termica_media_equivalente_escaldado_kw_bajo_8h", 0),
+             ("Carga sensible producto kWf (8 h)", "carga_sensible_preliminar_producto_kwf_bajo_8h", 0),
+             ("Agua chiller kWf (8 h)", "carga_enfriamiento_agua_reposicion_chiller_kwf_bajo_8h", 0),
+             ("Adicionales ilustrativas kWf", "cargas_adicionales_ilustrativas_kwf", 0),
+             ("kWe aprox producto", "kw_electricos_aprox_producto", 0),
+             ("Brecha top-down/físico", "brecha_frio_fisico_vs_reparto_indicador_ratio", 1),
+             ("Carga crítica ilustrativa kW", "carga_critica_ilustrativa_escenario_kw", 0)]
     print("| Variable | " + " | ".join(fmt(E, 0) for E in ESCALAS) + " |")
     print("|---|" + "---|" * len(ESCALAS))
     for etq, var, d in filas:
-        celdas = []
-        for E in ESCALAS:
-            b, m, a = (rs[(E, n)] for n in NIVELES)
-            if var:
-                celdas.append(" · ".join(fmt(x[var], d) for x in (b, m, a)))
-            elif etq.startswith("Caudal"):
-                celdas.append(f"{fmt(m['agua_utilizada_m3_h_medio'])} / {fmt(m['agua_utilizada_m3_h_pico'])}")
-            elif etq.startswith("Electricidad MWh"):
-                celdas.append(" · ".join(fmt(x["kwh_total_anio"] / 1000, 0) for x in (b, m, a)))
-            elif etq.startswith("Potencia"):
-                celdas.append(" · ".join(f"{fmt(x['kw_potencia_media_operacion'], 0)}/{fmt(x['kw_potencia_pico_estimada'], 0)}"
-                                         for x in (b, m, a)))
-            elif etq.startswith("Calor"):
-                celdas.append(" · ".join(fmt(x["energia_combustible_mj_dia"] / 1000, 1) for x in (b, m, a)))
-            elif etq.startswith("Frío"):
-                celdas.append(" · ".join(f"{fmt(x['kw_frigorificos_enfriado_producto_fresco'], 0)} "
-                                         f"({fmt(x['tr_enfriado_producto_fresco'], 0)})" for x in (b, m, a)))
-            elif etq.startswith("Congelación"):
-                celdas.append(f"{fmt(m['capacidad_congelacion_t_dia'], 1)} · "
-                              + " / ".join(fmt(x["kw_frigorificos_congelacion_tuneles"], 0) for x in (b, m, a)))
-        print(f"| {etq} | " + " | ".join(celdas) + " |")
+        print(f"| {etq} | " + " | ".join(" · ".join(fmt(rs[(E, n)][var], d) for n in NIVELES) for E in ESCALAS) + " |")
+    for var in ("sst_removidos_kg_dia", "grasas_flotadas_kg_dia", "solidos_quimicos_kg_dia", "biomasa_kg_ms_dia",
+                "lodo_solidos_secos_kg_dia", "lodo_humedo_t_dia"):
+        print(f"| ILUSTRATIVO {var} | " + " | ".join(" · ".join(fmt(ri[(E, n)][var], 1) for n in NIVELES)
+                                                   for E in ESCALAS) + " |")
+    print("\nAlertas (10.000 aves/día):")
+    for n in NIVELES:
+        for cod, msg in rs[(10000, n)].alertas:
+            print(f"  {n}: {cod} — {msg}")
 
 
 def escenario_cli(a):
@@ -981,20 +1304,28 @@ def escenario_cli(a):
     if a.dqo_g_ave is not None:
         c = {k: nv(v, a.nivel) for k, v in CARGA_G_AVE.items()}
         f = a.dqo_g_ave / c["DQO"]
-        ov["carga_g_ave"] = {k: v * f for k, v in c.items()}   # todos los parámetros en proporción a la DQO
+        ov["carga_g_ave"] = {k: v * f for k, v in c.items()}   # método A en proporción a la DQO
+    if a.dqo_mg_l is not None:
+        c = {k: nv(v, a.nivel) for k, v in CONC_MG_L.items()}
+        f = a.dqo_mg_l / c["DQO"]
+        ov["conc_mg_l"] = {k: v * f for k, v in c.items()}     # método B en proporción a la DQO
     if a.frac_sangre is not None:
-        ov["frac_sangre_recuperada"] = a.frac_sangre
+        ov["fraccion_sangre_recuperada"] = a.frac_sangre
     if a.perfil:
         x = [float(v) for v in a.perfil.split(",")]
         ov["perfil"] = dict(zip(("refrigerado", "congelado", "exportacion"), x))
         ov["perfil_id"] = "manual"
+    if a.lodos_ilustrativo:
+        ov["lodos"] = lodos_ilustrativo(a.nivel)
     for k in ("dias_refrigerado", "dias_congelado", "base_inventario", "horas_netas"):
         if getattr(a, k) is not None:
             ov[k] = getattr(a, k)
     r = calcular(a.aves_dia, a.dias_anio, a.nivel, p=parametros(a.nivel, **ov))
     print(f"Escenario: {fmt(a.aves_dia, 0)} aves/día · {a.dias_anio} días/año · nivel {a.nivel}")
     for f in r.filas:
-        print(f"  {f['bloque']:<14} {f['variable']:<52} {fmt(f['valor'], 2):>14} {f['unidad']:<16} {f['clasificacion']}")
+        print(f"  {f['bloque']:<16} {f['variable']:<58} {fmt(f['valor'], 2):>14} {f['unidad']:<16} {f['clasificacion']}")
+    for cod, msg in r.alertas:
+        print(f"  ALERTA {cod}: {msg}")
 
 
 def main():
@@ -1007,10 +1338,12 @@ def main():
     ap.add_argument("--dias-anio", type=int, default=250)
     ap.add_argument("--nivel", choices=NIVELES, default="medio")
     ap.add_argument("--l-ave", type=float, help="agua utilizada total L/ave (reparte por etapa en proporción)")
-    ap.add_argument("--frac-efluente", type=float)
-    ap.add_argument("--dqo-g-ave", type=float, help="carga DQO g/ave (DBO, SST, GyA, NTK, PT en proporción)")
+    ap.add_argument("--frac-efluente", type=float, help="SUPUESTO editable: fracción del agua utilizada a efluente")
+    ap.add_argument("--dqo-g-ave", type=float, help="método A: g DQO/ave (DBO, SST, GyA, NTK, PT en proporción)")
+    ap.add_argument("--dqo-mg-l", type=float, help="método B: mg/L DQO (DBO y SST en proporción)")
     ap.add_argument("--frac-sangre", type=float, help="fracción de sangre recuperada (0–1)")
     ap.add_argument("--perfil", help="refrigerado,congelado,exportacion (fracciones que suman 1)")
+    ap.add_argument("--lodos-ilustrativo", action="store_true", help="calcula lodos con los supuestos ilustrativos")
     ap.add_argument("--dias-refrigerado", type=float)
     ap.add_argument("--dias-congelado", type=float)
     ap.add_argument("--base-inventario", choices=("dias_produccion", "dias_calendario"))
