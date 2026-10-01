@@ -1,15 +1,17 @@
 # Conclusiones — layout y obra civil (sesión 12C)
 
-**Fecha:** 2026-10-01 · **Versión:** 1.0 · Fase 0 (prefactibilidad) · En paralelo con 12A (localización) y 12B (logística)
+**Fecha:** 2026-10-01 · **Versión:** 1.0.1 (corrección final de interpretación) · Fase 0 (prefactibilidad) · En paralelo con 12A (localización) y 12B (logística)
 
 > **Pregunta central:** ¿qué áreas necesita la planta, cómo deben relacionarse y cómo puede crecer?
-> **Respuesta corta:** necesita **54 áreas** en **nueve zonas** que se ordenan en una sola secuencia (sucia → transición → limpia → fría → despacho) con subproductos, utilities y personal **a los costados**; ocupa del orden de **1.800 / 2.600 / 4.300 / 7.500 m² construidos** (medio) para 2.500 / 5.000 / 10.000 / 20.000 aves/día, con rangos de ~2–3 veces; y el **terreno** — no el edificio — es lo que hay que decidir primero: **~2 / 2,3 / 3,1 / 4,4 ha** medio sin escala objetivo, o **~3,3 ha** en cualquier etapa si se reserva para 20.000. Todo es orden de magnitud: **23 de 54 áreas son PROXY**, ningún factor está validado y **no hay planos, CAPEX, terreno ni escala elegidos**.
+> **Respuesta corta:** necesita **54 áreas** en **nueve zonas** que se ordenan en una sola secuencia (sucia → transición → limpia → fría → despacho) con subproductos, utilities y personal **a los costados**; ocupa del orden de **1.800 / 2.600 / 4.300 / 7.500 m² construidos** (medio) para 2.500 / 5.000 / 10.000 / 20.000 aves/día, con rangos de ~2–3 veces; y el **terreno** del modelo resulta **~2 / 2,3 / 3,1 / 4,4 ha** medio sin escala objetivo, o **~3,3 ha** si desde el inicio se supone reservada toda la superficie para 20.000 aves/día. Todo es orden de magnitud: **23 de 54 áreas son PROXY**, ningún factor está validado y **no hay planos, CAPEX, terreno ni escala elegidos**.
+
+> ⚠️ **Advertencia de uso.** Las superficies obtenidas sirven para comparar escalas y reservar órdenes de magnitud. No constituyen un anteproyecto arquitectónico ni una superficie habilitable. Deben recalcularse cuando existan footprints de proveedores, dotación, logística, normativa municipal y solución de efluentes.
 
 ---
 
 ## 1. Programa de áreas
 
-54 áreas + reserva, cada una con zona, categoría, método, driver y dato faltante: [`programa_areas.md`](programa_areas.md). Categorías: proceso, frío, servicios, personal/admin (= **construidos**); + exteriores y efluentes (= **operativos**); + reserva, retiros y buffers (= **terreno**). Método: huella de equipos × envolvente cuando exista; driver físico + densidad (cámaras, andenes, vestuarios, tratamiento); proxy de intensidad con alerta cuando falta la huella; `NO_APLICA` explícito; modo estricto que deja `None` en lugar de inventar.
+54 áreas + reserva, cada una con zona, categoría, método, driver, dato faltante y **tipo de origen** (A derivada de modelo existente · B factor de diseño · C proxy preliminar · D footprint pendiente de proveedor · E requisito regulatorio pendiente; por código principal: 14 A, 16 B, 24 C): [`programa_areas.md` §2 bis](programa_areas.md). Categorías: proceso, frío, servicios, personal/admin (= **construidos**); + exteriores y efluentes (= **operativos**); + reserva, retiros y buffers (= **terreno**). Método: huella de equipos × envolvente cuando exista; driver físico + densidad (cámaras, andenes, vestuarios, tratamiento); proxy de intensidad con alerta cuando falta la huella; `NO_APLICA` explícito; modo estricto que deja `None` en lugar de inventar.
 
 ## 2. Zonificación
 
@@ -47,15 +49,15 @@ TERRENO = (huella de edificios + circulación + estacionamiento + playas + trata
 | Reservando para 20.000 | 1,4 / 3,3 / 8,2 | 1,4 / 3,3 / 8,2 | 1,4 / 3,3 / 8,2 | 1,4 / 3,3 / 8,2 |
 | Con lagunas (medio, sin objetivo) | 2,6 | 3,5 | 5,2 | 8,2 |
 
-- **El edificio ocupa ~10–17 % del terreno medio**; los retiros y buffers supuestos (10 m + 20 m), ~55 %. Por eso los datos del sitio (retiros, FOS, distancias a vecinos; DPV-12C-05) mueven el terreno más que cualquier factor de proceso.
-- **Las lagunas** cambian el orden de magnitud del terreno y exigen distancia a viviendas: la tecnología de efluentes (DEC-043) y el terreno (DEC-003) se deciden juntos.
+- **El edificio ocupa ~10–17 % del terreno medio.** En el escenario medio del modelo actual, los factores reservados para retiros, buffers y franjas representan aproximadamente **57 % del terreno conceptual a 10.000 aves/día** (50–68 % según la escala; 56 % reservando para 20.000). No es una exigencia conocida: hay que separar el **retiro reglamentario real** (municipio, DPV-12C-05; hoy 5 / 10 / 15 m supuestos), el **buffer de diseño** (supuesto/proxy 10 / 20 / 40 m, SUP-12C-15) y la **reserva sanitaria o ambiental** (supuesto o requisito según jurisdicción, DPV-106). Son variables: sin márgenes el terreno medio a 10.000 sería ~1,3 ha; con 10 m de retiro y sin buffer, ~1,8 ha (test T21). Por eso los datos del sitio pueden mover el terreno más que cualquier factor de proceso.
+- **Lagunas:** en el escenario de superficies actual, el biológico con lagunas ocupa ~35–40 veces el compacto — **resultado del escenario actual / proxy, no relación general de ingeniería**; la relación real depende de tecnología, carga, clima, tiempo de retención, profundidad, calidad de efluente, terreno y normativa. Aun así, la dirección es clara: la tecnología de efluentes (DEC-043) y el terreno (DEC-003) deben evaluarse juntos.
 - Insumo para 12A (localización): buscar terrenos con **capacidad de alojar la escala objetivo**, no la de arranque.
 
 ## 6. Estrategia de expansión
 
-[`estrategia_expansion.md`](estrategia_expansion.md): con la misma escala final, **las trayectorias 2.500→20.000, 5.000→20.000 y 10.000→20.000 necesitan el mismo terreno** (test T18); difieren en cuánto se construye y cuándo (1.780 → 7.450 m² en la trayectoria A). **Sobredimensionar** terreno, accesos, traza de circulación, orden de zonas, colector y troncales, permiso de vuelco; **dejar preparado** largo o ancho de nave, espacio junto al chiller, sala de máquinas, subestación, fachadas de docks y cámaras, terreno de efluentes y rendering; **modular/duplicar** línea, salas de corte, cámaras, túneles, compresores, calderas, docks, módulos de tratamiento. Regla de layout: **crecer a lo ancho, nunca intercalar**.
+[`estrategia_expansion.md`](estrategia_expansion.md): dentro del modelo actual, **si se supone que desde el inicio se adquiere y reserva toda la superficie necesaria para la escala final de 20.000 aves/día**, las trayectorias 2.500→20.000, 5.000→20.000 y 10.000→20.000 convergen al mismo requerimiento conceptual de terreno (test T18) y difieren en cuánto se construye y cuándo (1.780 → 7.450 m² en la trayectoria A). Esto **no** implica que todas las estrategias de inversión requieran comprar el mismo terreno desde el día 1, ni que no pueda adquirirse superficie adicional, ni que no puedan tercerizarse funciones, ni que el terreno no cambie con la tecnología de efluentes, el congelado, el rendering, los accesos o la normativa. **Sobredimensionar** terreno, accesos, traza de circulación, orden de zonas, colector y troncales, permiso de vuelco; **dejar preparado** largo o ancho de nave, espacio junto al chiller, sala de máquinas, subestación, fachadas de docks y cámaras, terreno de efluentes y rendering; **modular/duplicar** línea, salas de corte, cámaras, túneles, compresores, calderas, docks, módulos de tratamiento. Principio de diseño preliminar (no regla arquitectónica universal): **preferir expansiones que prolonguen o dupliquen secuencias funcionales sin introducir cruces ni romper la zonificación higiénica**.
 
-**Una línea vs dos:** dos líneas ocupan ~21 % más en las salas de línea, dan redundancia parcial, permiten mantener y limpiar por sectores y crecer ocupando una franja reservada; una línea es más compacta pero sin redundancia y exige prever el largo final. **No se elige** (DEC-038).
+**Una línea vs dos:** en la parametrización actual del modelo, dos líneas ocupan ~21–22 % más en las salas de línea (resultado que puede cambiar con proveedor, footprint, buffers, mantenimiento, automatización y disposición física); dan redundancia parcial, permiten mantener y limpiar por sectores y crecer ocupando una franja reservada; una línea es más compacta pero sin redundancia y exige prever el largo final. **No se elige** (DEC-038).
 
 ## 7. Puntos difíciles de modificar
 
@@ -69,11 +71,12 @@ Variables que el simulador debería recibir de `modelo_superficies.salida_interf
 |---|---|---|
 | `m2_construidos` | Proceso + frío + servicios + personal/admin | Nunca rotularlo "terreno" |
 | `m2_operativos` | Construidos + exteriores + efluentes | — |
-| `m2_terreno` | Terreno conceptual con retiros y buffers | Mostrar siempre junto a los supuestos de retiro, buffer y FOS |
+| `m2_terreno` | Terreno conceptual con retiros y buffers | Mostrar siempre junto a `supuestos_terreno` (retiro, buffer, FOS y si son INPUT, SUPUESTO o PROXY) |
+| `supuestos_terreno` | Retiro, buffer, FOS y su origen | Rotular "terreno variable con retiro, buffer y FOS" |
 | `m2_por_categoria` | Siete categorías | Barra apilada por categoría |
 | `m2_reserva_expansion` | Reserva hacia la escala objetivo + rendering | Input: escala objetivo (vacío = alerta) |
 | `camaras` | Cámaras refrigeradas, congeladas, túnel, cámara de subproductos (m²) | Junto a `t_stock_refrigerado` / `t_stock_congelado` de 09C; **congelar ≠ almacenar** |
-| `areas_por_funcion` | 54 áreas con nombre, zona, categoría, estado y rango | Etiqueta visible: PROXY / ESTIMACION / FOOTPRINT / NO_APLICA / PENDIENTE |
+| `areas_por_funcion` | 54 áreas con nombre, zona, categoría, estado, **origen A–E** y rango | Etiquetas visibles: estado (PROXY / ESTIMACION / FOOTPRINT / NO_APLICA / PENDIENTE) y origen (A modelo existente · B factor de diseño · C proxy · D footprint pendiente · E requisito regulatorio pendiente) |
 | `efluentes_por_tecnologia` | m² de efluentes con cloaca, compacto, anaerobio+aerobio, lagunas | Comparador; **sin ganador** |
 | `alertas` | Códigos de alerta | Mostrar todas; nunca ocultarlas |
 | `estado_global` | `RANGO` o `INCOMPLETO` (modo estricto) | Si `INCOMPLETO`, no mostrar totales |
@@ -96,7 +99,7 @@ Registro completo con IDs provisionales: [`actualizaciones_gestion_12C.md`](actu
 
 ## 10. Tests del modelo
 
-`python3 09_layout_obra_civil/modelo_superficies.py` → **19/19 tests OK**; `--mutaciones` → **7/7 mutaciones detectadas**.
+`python3 09_layout_obra_civil/modelo_superficies.py` → **22/22 tests OK** (los 19 originales + 3 de integridad agregados en v1.0.1); `--mutaciones` → **7/7 mutaciones detectadas**. La v1.0.1 no cambia ninguna cifra: agrega el tipo de origen A–E por área, la columna `origen_superficie` del CSV, `supuestos_terreno` en la salida de interfaz y la fila `margen_perimetral_m`.
 
 | Test | Qué prueba |
 |---|---|
@@ -118,7 +121,10 @@ Registro completo con IDs provisionales: [`actualizaciones_gestion_12C.md`](actu
 | T15 | CSV sin variables económicas y finito |
 | T16 | Entradas inválidas rechazadas |
 | T17 | Enfriamiento sin decidir reserva el mayor |
-| T18 | En cada trayectoria, construido ≤ final y terreno = terreno final |
+| T18 | En cada trayectoria con reserva total para la escala final, construido ≤ final y terreno = terreno final (propiedad aritmética del supuesto de reserva) |
+| T19 | Ninguna superficie ni fila del CSV se etiqueta como verificada; toda área PROXY lleva origen C |
+| T20 | Las salidas de terreno indican que retiro y buffer son variables (supuesto/proxy o input) |
+| T21 | Cambiar retiro o buffer cambia el terreno y no los m² construidos |
 
 ## 11. Límites y advertencias
 

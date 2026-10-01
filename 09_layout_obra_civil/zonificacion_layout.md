@@ -73,7 +73,7 @@ Lectura: el producto recorre **una sola dirección** (izquierda → derecha); lo
 ## 4. Reglas de ubicación que surgen de la zonificación (conceptuales)
 
 1. **Orden lineal fijo:** SUCIA → TRANSICIÓN → LIMPIA → FRÍA → DESPACHO. Puede plegarse (forma de U o L), pero **no** invertirse ni saltear zonas.
-2. **La expansión ocurre a lo ancho** (líneas en paralelo, salas de corte agregadas al costado de la limpia, cámaras agregadas al costado de la fría), **nunca intercalando** una zona nueva dentro de la secuencia ([`estrategia_expansion.md`](estrategia_expansion.md), SUP-12C-17).
+2. **Principio de diseño preliminar (no regla arquitectónica universal):** preferir expansiones que prolonguen o dupliquen secuencias funcionales (líneas en paralelo, salas de corte contiguas a la limpia, cámaras contiguas a la fría) sin introducir cruces ni romper la zonificación higiénica ([`estrategia_expansion.md` §3](estrategia_expansion.md), SUP-12C-17).
 3. **Tres frentes de acceso distintos:** vivo (zona 1), producto (zona 5), subproductos (zona 6); personal y visitas por un cuarto acceso (zonas 8–9). Con dos porterías como mínimo en el modelo (SUP-12C-10); el número real depende de seguridad y del sitio.
 4. **Zona de personal "en bisagra":** con vestuarios de zona sucia y de zona limpia que desembocan cada uno en su zona. El comedor no debe ser un atajo entre zonas.
 5. **Servicio oficial con acceso propio** a la línea de inspección, a la sala de decomisos y a su oficina, sin cruzar la zona limpia con ropa de zona sucia (09A §1, principio 8).

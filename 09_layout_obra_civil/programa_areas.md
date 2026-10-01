@@ -42,6 +42,79 @@ Por qué tres totales distintos: [`guia_ramiro.md` §6](guia_ramiro.md).
 
 **Exponente 0,8 (SUP-12C-01):** expresa que al duplicar el ritmo una sala crece menos del doble (pasillos, puestos fijos y mínimos se comparten). Es un supuesto de orden de magnitud; la curva real sale de layouts de proveedores (DPV-12C-01) y de plantas existentes (DPV-12C-07).
 
+## 2 bis. Calidad de las superficies: tipo de origen (A–E)
+
+**Por qué importa:** en el escenario de referencia **23 de 54 áreas están en estado PROXY**. Para no leer todas las cifras con la misma confianza, cada área lleva un **tipo de origen** (columna `origen_superficie` del CSV y campo `origen` en `salida_interfaz()`; metadato agregado en v1.0.1 sin cambiar ningún cálculo):
+
+| Código | Tipo de origen | Qué significa | Áreas que lo incluyen |
+|---|---|---|---|
+| **A** | DERIVADA DE MODELO EXISTENTE | El driver sale de 09A/09C (t de stock, t/día, kg/h, caudales, residencias); la conversión a m² igual usa factores | 14 |
+| **B** | CALCULADA CON FACTOR DE DISEÑO | Densidad, m²/persona, m²/bahía, fracción de circulación: `[SUPUESTO]` explícito | 37 |
+| **C** | PROXY PRELIMINAR | Sustituto de un dato faltante (huella, dotación, camión, lodos, potencia); genera alerta | 25 |
+| **D** | FOOTPRINT PENDIENTE DE PROVEEDOR | La sala depende de la huella de equipos aún no recibida (RFQ, §4) | 16 |
+| **E** | REQUISITO REGULATORIO PENDIENTE | Hay una exigencia normativa no leída en original o dependiente de la jurisdicción | 11 |
+
+El **primer código** es el que domina la calidad del resultado: por código principal, **14 áreas A, 16 B y 24 C** (las 23 en estado PROXY + deshuese y CMS, que no aplican en config. B pero son proxy en C). **Ninguna superficie es `[VERIFICADO]`** (test T19).
+
+| Grupo | Área | Origen | Estado (referencia 10.000) |
+|---|---|---|---|
+| Proceso | Recepción, andén de espera ventilado y descarga | **C·B·E** | PROXY |
+| Proceso | Colgado y aturdido | **C·D** | PROXY |
+| Proceso | Sangrado, escaldado, desplumado, patas y cabeza | **C·D·E** | PROXY |
+| Proceso | Evisceración, inspección oficial post mortem, menudencias en línea | **C·D·E** | PROXY |
+| Proceso | Enfriamiento (inmersión, aire o mixto) y escurrido | **A·B·D** | ESTIMACION |
+| Proceso | Clasificación por peso y calidad | **C·D** | PROXY |
+| Proceso | Trozado (incluye sala mínima en config. A) | **C·D** | PROXY |
+| Proceso | Deshuese, fileteado y trimming | **C·D** | NO_APLICA en A/B; PROXY en C |
+| Proceso | Sala de CMS (carne separada mecánicamente) | **C·D·E** | NO_APLICA en A/B; PROXY en C |
+| Proceso | Coproductos comestibles: garras y menudencias | **C·D** | PROXY |
+| Proceso | Envasado primario, control, encajonado y paletizado | **C·D** | PROXY |
+| Proceso | Lavado de cajones/módulos de aves vivas | **C·D** | PROXY |
+| Proceso | Circulación interna de proceso, esclusas y barreras sanitarias | **B·E** | ESTIMACION |
+| Frío | Cámaras de producto refrigerado | **A·B** | ESTIMACION |
+| Frío | Cámaras de producto congelado (incluye lotes de exportación) | **A·B** | ESTIMACION |
+| Frío | Congelado (túnel/espiral/placas) | **A·C·D** | PROXY |
+| Frío | Antecámaras, pasillo frío y preparación de pedidos | **B** | ESTIMACION |
+| Frío | Expedición: andenes refrigerados con sello | **C·B** | PROXY |
+| Frío | Cámara de subproductos perecederos (separada del producto) | **A·B** | ESTIMACION |
+| Frío | Sala/cámara de decomisos bajo control oficial | **B·E** | ESTIMACION |
+| Servicios | Subproductos no comestibles: sangre, plumas, vísceras, cabezas (tanques, tolvas, contenedores, báscula) | **A·B** | ESTIMACION |
+| Servicios | Residuos, cartón y compactación | **B** | ESTIMACION |
+| Servicios | Depósito de envases, cartón e insumos secos (fuera de salas de proceso) | **A·B** | ESTIMACION |
+| Servicios | Sala de máquinas de frío (compresores, condensadores) | **C·D** | PROXY |
+| Servicios | Caldera / agua caliente / vapor | **C·D** | PROXY |
+| Servicios | Compresores de aire comprimido | **C·D** | PROXY |
+| Servicios | Grupo electrógeno de respaldo | **C·D** | PROXY |
+| Servicios | Sala eléctrica, tableros y transformador | **C** | PROXY |
+| Servicios | Tratamiento de agua potable (cloración, filtros, bombeo) | **A·B** | ESTIMACION |
+| Servicios | Mantenimiento y taller | **B** | ESTIMACION |
+| Servicios | Pañol de repuestos | **B** | ESTIMACION |
+| Servicios | Depósito de químicos (bajo llave) | **B** | ESTIMACION |
+| Servicios | Laboratorio de autocontrol / calidad | **B** | ESTIMACION |
+| Servicios | Lavandería / ropería de indumentaria por color de zona | **C·B** | PROXY |
+| Personal / admin | Vestuarios y sanitarios separados por zona (sucia / limpia) y por sexo | **C·B·E** | PROXY |
+| Personal / admin | Comedor y office | **C·B** | PROXY |
+| Personal / admin | Oficinas de administración | **B** | ESTIMACION |
+| Personal / admin | Oficina del servicio de inspección oficial (SENASA) con sanitario propio | **B·E** | ESTIMACION |
+| Personal / admin | Enfermería, sala de capacitación | **B** | ESTIMACION |
+| Personal / admin | Porterías y seguridad (accesos separados) | **B** | ESTIMACION |
+| Personal / admin | Circulación de personal y filtros sanitarios | **B** | ESTIMACION |
+| Exteriores | Playa de camiones de aves vivas (espera exterior y maniobra) | **C·B** | PROXY |
+| Exteriores | Lavado y desinfección de camiones de vivo | **B·E** | ESTIMACION |
+| Exteriores | Playa de maniobra de despacho (frente a docks) | **C·B** | PROXY |
+| Exteriores | Playa de contenedores y retiro de subproductos | **A·B** | ESTIMACION |
+| Exteriores | Estacionamiento de personal y visitas | **C·B** | PROXY |
+| Exteriores | Tanques de reserva de agua (incluye incendio a definir) | **A·B·E** | ESTIMACION |
+| Exteriores | Circulación pesada interna (vivo / producto / subproductos separados) | **B** | ESTIMACION |
+| Efluentes | Pretratamiento: rejas, tamiz, desengrasador, bombeo | **A·B** | ESTIMACION |
+| Efluentes | Ecualización | **A·B** | ESTIMACION |
+| Efluentes | DAF (flotación por aire disuelto) y química | **A·B** | ESTIMACION |
+| Efluentes | Tratamiento biológico (anaerobio_aerobio) | **A·B·E** | ESTIMACION |
+| Efluentes | Manejo de lodos y flotados (espesado, deshidratación, acopio) | **C** | PROXY |
+| Efluentes | Circulación, laboratorio y operación de efluentes | **B** | ESTIMACION |
+| Reserva | Reserva de terreno para expansión (incluye rendering futuro si se pide) | **B·C** | PROXY |
+
+
 ## 3. Programa de áreas
 
 Columnas: **Zona** (1 sucia · 2 transición · 3 limpia · 3b apoyo seco · 4 fría · 5 despacho · 6 subproductos · 7 utilities · 8 personal · 9 administrativa · EXT) · **Cat.** (P proceso · F frío · S servicios · PA personal/admin · E exteriores · EF efluentes · R reserva) · **Método** (§2) · **Driver** (variable que la hace crecer) · **Dato faltante**.
@@ -143,9 +216,9 @@ Columnas: **Zona** (1 sucia · 2 transición · 3 limpia · 3b apoyo seco · 4 f
 | **Vuelco a colectora (cloaca)** | Solo pretratamiento + ecualización + DAF; biológico y lodos `NO_APLICA` | Mínimo terreno, **solo si el prestador lo acepta** (no se supone) |
 | **Aerobio compacto** (lodos activados/SBR) | Volumen = DBO tras DAF ÷ 0,3–0,8 kg/(m³·d); profundidad 4–5 m; ×1,4–1,9 | Poco terreno, más energía y lodos |
 | **Anaerobio + aerobio** | Reactor: DQO tras DAF ÷ 3–8 kg/(m³·d) (FTE-263: 7–11 en ensayos); pulido aerobio del 20–40 % | Terreno intermedio; biogás |
-| **Lagunas** | Anaerobia: DBO ÷ 0,15–0,35 kg/(m³·d), 3–5 m; facultativa: 150–350 kg DBO/(ha·d); taludes ×1,2–1,5 | **~35–40 veces** la superficie del biológico compacto en el modelo; más distancia a vecinos |
+| **Lagunas** | Anaerobia: DBO ÷ 0,15–0,35 kg/(m³·d), 3–5 m; facultativa: 150–350 kg DBO/(ha·d); taludes ×1,2–1,5 | ~35–40 veces la superficie del biológico compacto — **RESULTADO DEL ESCENARIO DE SUPERFICIES ACTUAL / PROXY**, no relación general de ingeniería; más distancia a vecinos |
 
-Las cargas de diseño de §3.8.1 son reglas de manual de ingeniería sanitaria **no leídas en esta sesión** (FTE-12C-006, `[PVDP]`); sirven para el **orden de magnitud** del terreno, no para diseñar.
+La relación real entre tecnologías **depende de tecnología, carga, clima, tiempo de retención, profundidad, calidad de efluente, terreno y normativa**. Las cargas de diseño de §3.8.1 son reglas de manual de ingeniería sanitaria **no leídas en esta sesión** (FTE-12C-006, `[PVDP]`); sirven para el **orden de magnitud** del terreno, no para diseñar.
 
 ### 3.9 Personal y administración
 

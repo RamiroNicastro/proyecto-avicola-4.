@@ -29,7 +29,7 @@
 | SUP-12C-14 | **Factor de envolvente** de sala sobre huella de equipos: 2,2 / 2,8 / 3,5 | Layout | Vigente |
 | SUP-12C-15 | **Terreno:** rectángulo de relación 1,5; margen perimetral = retiro (5 / 10 / 15 m, supuesto) + buffer (10 / 20 / 40 m, proxy); si se conoce el FOS, terreno ≥ huella ÷ FOS | Layout / localización | Vigente (revisar con 12A) |
 | SUP-12C-16 | Las **nueve zonas de layout** (sucia, transición, limpia, fría, despacho, subproductos, utilities, personal, administrativa) son **categorías de trabajo**, no categorías regulatorias | Layout / normativa | Vigente |
-| SUP-12C-17 | **Expansión "a lo ancho":** las ampliaciones se ubican en paralelo o lateralmente a cada zona, nunca intercaladas en la secuencia sucia → limpia → fría → despacho; clasificación S/P/M/D de [`estrategia_expansion.md` §2](estrategia_expansion.md) como hipótesis | Layout / expansión | Vigente |
+| SUP-12C-17 | **[PRINCIPIO DE DISEÑO PRELIMINAR — no regla arquitectónica universal]** Preferir expansiones que prolonguen o dupliquen secuencias funcionales sin introducir cruces ni romper la zonificación higiénica (sucia → transición → limpia → fría → despacho); clasificación S/P/M/D de [`estrategia_expansion.md` §2](estrategia_expansion.md) como hipótesis | Layout / expansión | Vigente |
 
 **Notas a supuestos existentes:**
 
@@ -44,10 +44,10 @@
 | DPV-12C-02 | **Dotación por turno, por zona (sucia/limpia) y por sexo** | Vestuarios, comedor, lavandería, estacionamiento | `18_recursos_humanos`; visitas a plantas | N2 |
 | DPV-12C-03 | **Modo de transporte del personal** (colectivo propio, transporte público, autos, motos) en zonas candidatas | Estacionamiento (hasta ~2.000 m² medio a 20.000 aves/día) | Encuestas locales; 12B | N3 |
 | DPV-12C-04 | **Requisitos edilicios del servicio oficial** (oficina, vestuario, sanitario, sala de decomisos, puestos de inspección, iluminación) | Áreas obligatorias de la zona administrativa y de transición | SENASA; Decreto 4238/68 original (complementa DPV-090) | N2 |
-| DPV-12C-05 | **Retiros, FOS, FOT, alturas máximas y distancias a viviendas** por sitio candidato | Retiros y buffers son ~55 % del terreno medio en el modelo | Municipios (código de planeamiento); ficha de terreno (complementa DPV-106, DPV-087; **posible solapamiento con 12A**) | N2 (antes de comprar terreno) |
+| DPV-12C-05 | **Retiros, FOS, FOT, alturas máximas y distancias a viviendas** por sitio candidato | En el escenario medio del modelo actual, los factores reservados para retiros, buffers y franjas representan ~57 % del terreno conceptual a 10.000 aves/día (50–68 % según escala). Separar: retiro reglamentario real (este DPV), buffer de diseño (SUP-12C-15) y reserva sanitaria/ambiental (supuesto o requisito según jurisdicción, DPV-106) | Municipios (código de planeamiento); ficha de terreno (complementa DPV-106, DPV-087; **posible solapamiento con 12A**) | N2 (antes de comprar terreno) |
 | DPV-12C-06 | **Densidad de estiba, sistema de racks y altura útil** de cámaras para el formato de caja/pallet del proyecto | Convierte t en m² de cámara | Proveedores de frío y racks (complementa DPV-109) | N3 |
 | DPV-12C-07 | **Superficie cubierta y de terreno real de plantas argentinas** por escala, con qué incluye cada m² | Calibrar o descartar los proxies; leer en original FTE-12C-001 a 003 y 009 | Visitas (`05_proceso_industrial/guia_visita_planta.md`); documentos originales | N2 |
-| DPV-12C-08 | **Superficie y geometría del tratamiento de efluentes** propuesto por proveedores para cada tecnología y escala | El terreno de efluentes varía ~35–40 veces entre compacto y lagunas | Proveedores (RFQ de tratamiento); complementa DPV-114 y DEC-043 | N2 |
+| DPV-12C-08 | **Superficie y geometría del tratamiento de efluentes** propuesto por proveedores para cada tecnología y escala | En el escenario de superficies actual (proxy), el biológico con lagunas resulta ~35–40 veces el compacto; la relación real depende de tecnología, carga, clima, tiempo de retención, profundidad, calidad de efluente, terreno y normativa | Proveedores (RFQ de tratamiento); complementa DPV-114 y DEC-043 | N2 |
 | DPV-12C-09 | **Requisitos de bomberos e higiene y seguridad**: reserva de incendio, sectorización, salidas, materiales de paneles | Tanques, muros cortafuego, superficies | Bomberos y normativa provincial (complementa DPV-106) | N3 |
 | DPV-12C-10 | **Requisitos de layout para exportación (UE) y Halal**: segregación de lotes, salas dedicadas, aturdido | Espacio adicional a reservar | SENASA; auditorías de destino (complementa DPV-034, DEC-012) | N4 |
 | DPV-12C-11 | **Requisitos de lavado y desinfección de camiones** de aves vivas (Res. SENASA 723/2025, `[PVDP]`) | Plataforma de lavado y su efluente | Texto original de la resolución | N3 |
@@ -55,7 +55,7 @@
 **Notas a datos existentes:**
 
 - **DPV-084** (capacidades de vehículos): agregar "12C: aves por camión y t por camión definen bahías de recepción, docks y playas; hoy proxies (alertas `AVES_POR_CAMION`, `T_POR_CAMION`)".
-- **DPV-087** (terreno y servicios): agregar "12C: terreno conceptual 0,8–5,3 / 0,9–6,5 / 1,2–8,7 / 1,7–12,8 ha (2.500 / 5.000 / 10.000 / 20.000 aves/día, sin objetivo); ~1,4 / 3,3 / 8,2 ha si se reserva para 20.000 desde cualquier etapa; lagunas: hasta ~45 ha (rango alto a 20.000)".
+- **DPV-087** (terreno y servicios): agregar "12C: terreno conceptual 0,8–5,3 / 0,9–6,5 / 1,2–8,7 / 1,7–12,8 ha (2.500 / 5.000 / 10.000 / 20.000 aves/día, sin objetivo); ~1,4 / 3,3 / 8,2 ha si se supone reservada desde el inicio toda la superficie para 20.000 (en cualquier etapa); márgenes perimetrales supuestos ≈ 50–68 % del terreno medio; lagunas: hasta ~45 ha (rango alto a 20.000)".
 - **DPV-090** (Decreto 4238/68): agregar "12C: lista de requisitos edilicios a leer en `09_layout_obra_civil/requerimientos_obra_civil.md` §1–§3".
 - **DPV-109** (balance frigorífico): agregar "12C: la sala de máquinas de frío es proxy hasta tener carga y equipos".
 - **DPV-114** (lodos): agregar "12C: área de lodos y flotados en proxy (`efl_lodos`)".
@@ -67,7 +67,7 @@
 | ID provisional | Decisión | Prioridad | Depende de | Carpeta | Nota |
 |---|---|---|---|---|---|
 | DEC-12C-01 | Definir la **forma conceptual de la nave** (lineal, U, L, peine) y el lado de cada frente de ampliación | Media | DEC-033, DEC-038, terreno (DEC-003) | `09_layout_obra_civil` | Solo con escala y terreno; no en Fase 0 |
-| DEC-12C-02 | Definir la **escala objetivo para la que se reserva el terreno** (independiente de la escala de arranque) | **Alta** (antes de comprar terreno) | DEC-033, DEC-035, DPV-083, DPV-087 | `09_layout_obra_civil` / `23_plan_expansion` | Con objetivo 20.000, el terreno es ~3,3 ha medio en todas las trayectorias |
+| DEC-12C-02 | Definir **cuánto terreno asegurar y para qué escala objetivo** (reserva total, parcial, con opción sobre lotes vecinos o con funciones tercerizadas), independiente de la escala de arranque | **Alta** (antes de comprar terreno) | DEC-033, DEC-035, DPV-083, DPV-087 | `09_layout_obra_civil` / `23_plan_expansion` | Si se supone reserva total para 20.000 desde el inicio, el modelo converge a ~3,3 ha medio en todas las trayectorias; no implica que esa sea la única estrategia |
 | DEC-12C-03 | Definir si el **congelado** de la etapa inicial es **propio o tercerizado** | Media | Perfil de destino (SUP-055, DPV-085), DEC-046 | `12_energia_frio` / `09_layout_obra_civil` | Si es tercerizado, reservar espacio para internalizarlo |
 | DEC-12C-04 | Definir **laboratorio de autocontrol propio o tercerizado** | Baja | DEC-009, exigencias de clientes | `09_layout_obra_civil` / `16_normativa_senasa` | Cambia poco la superficie |
 | DEC-12C-05 | Definir si se **reserva terreno para rendering** futuro y dónde | Media | DEC-027, DPV-065, distancias a vecinos | `09_layout_obra_civil` / `07_subproductos` | Reservar es barato; sin reserva la opción desaparece |
@@ -76,8 +76,8 @@
 
 - **DEC-003** (localización): agregar "12C: el terreno necesario es criterio de localización: ver rangos en `09_layout_obra_civil/layouts_por_escala.md` §1 y §4".
 - **DEC-035** (sobredimensionar vs modular): agregar "12C: traducción espacial en `estrategia_expansion.md` §2 (S/P/M/D) y lista de 12 puntos difíciles de modificar (§5)".
-- **DEC-038** (líneas): agregar "12C: comparación espacial una vs dos líneas (+~21 % en salas de línea) en `layouts_por_escala.md` §6; sin recomendación".
-- **DEC-043** (efluentes): agregar "12C: el tren de tratamiento cambia el terreno hasta ~35–40 veces en el biológico (lagunas vs compacto); no puede decidirse separado del terreno".
+- **DEC-038** (líneas): agregar "12C: comparación espacial una vs dos líneas en `layouts_por_escala.md` §6: +21–22 % en salas de línea **en la parametrización actual del modelo** (cambia con proveedor, footprint, buffers, mantenimiento, automatización y disposición); sin recomendación".
+- **DEC-043** (efluentes): agregar "12C: en el escenario de superficies actual (proxy), el biológico con lagunas ocupa ~35–40 veces el compacto; no es relación general de ingeniería; tecnología y terreno deben evaluarse juntos".
 - **DEC-026** (enfriamiento): agregar "12C: mientras no se decida, el layout reserva el espacio del método más extenso (aire)".
 
 ## 4. Glosario → `00_gestion_proyecto/glosario.md`
@@ -94,4 +94,4 @@
 
 ## 5. Estado del proyecto → `00_gestion_proyecto/estado_proyecto.md`
 
-Propuesta de fila del tablero: **Layout y obra civil (`09`)** — Modelo preliminar **completado** v1.0 (programa de 54 áreas, nueve zonas, nueve flujos, superficies en rango para cuatro escalas, terreno conceptual, estrategia de expansión; `modelo_superficies.py` con 19 tests y 7/7 mutaciones detectadas) · Evidencia de campo **pendiente** (huellas, dotación, retiros, plantas reales) · Síntesis: [`../09_layout_obra_civil/conclusiones_layout.md`](conclusiones_layout.md). **Sin planos, sin CAPEX, sin terreno ni escala elegidos.**
+Propuesta de fila del tablero: **Layout y obra civil (`09`)** — Modelo preliminar **completado** v1.0 (programa de 54 áreas con tipo de origen A–E, nueve zonas, nueve flujos, superficies en rango para cuatro escalas, terreno conceptual, estrategia de expansión; `modelo_superficies.py` v1.0.1 con 22 tests y 7/7 mutaciones detectadas; superficies para comparar escalas y reservar órdenes de magnitud, no anteproyecto ni superficie habilitable) · Evidencia de campo **pendiente** (huellas, dotación, retiros, plantas reales) · Síntesis: [`../09_layout_obra_civil/conclusiones_layout.md`](conclusiones_layout.md). **Sin planos, sin CAPEX, sin terreno ni escala elegidos.**

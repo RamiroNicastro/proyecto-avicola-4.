@@ -41,10 +41,10 @@ Para 10.000 aves/día el modelo da, en el escenario medio, ~**4.300 m² construi
 | Playas de camiones, lavado, caminos internos, estacionamiento, tanques | 3.900 |
 | Tratamiento de efluentes (reserva anaerobio + aerobio) | 300 |
 | Reserva para crecer y para un rendering futuro | 4.600 |
-| Retiros municipales y franja de buffer alrededor | 17.600 |
+| Márgenes perimetrales supuestos (retiro 10 m + franja de buffer 20 m, ambos a confirmar) | 17.600 |
 | **Terreno** | **~31.000** |
 
-Los camiones no giran en una baldosa, el municipio exige retiros, los vecinos necesitan distancia y el futuro necesita lugar. Con lagunas para el efluente, el terreno puede duplicarse. Y estas cifras tienen un rango enorme (1,2 a 8,7 ha) porque retiros, buffers y reserva son datos del sitio que todavía no existen. **Al mirar un terreno, la pregunta no es "¿entra el galpón?", sino "¿entra todo lo de la tabla, para la escala final?"**
+Los camiones no giran en una baldosa, el municipio puede exigir retiros, los vecinos necesitan distancia y el futuro necesita lugar. Ojo con la última fila: **no es lo que exige el municipio**, es lo que el modelo reservó con supuestos (≈57 % del terreno en este ejemplo). El retiro real lo fija cada municipio; la franja de buffer es una decisión de diseño; la distancia sanitaria o ambiental puede ser un requisito según la jurisdicción. Sin márgenes el mismo ejemplo daría ~1,3 ha; con solo 10 m de retiro, ~1,8 ha. Con lagunas para el efluente, el terreno puede duplicarse. Y estas cifras tienen un rango enorme (1,2 a 8,7 ha) porque retiros, buffers y reserva son datos del sitio que todavía no existen. **Al mirar un terreno, la pregunta no es "¿entra el galpón?", sino "¿entra todo lo de la tabla, para la escala final?"**
 
 ## 7. Por qué agregar una máquina después puede requerir romper media planta
 
@@ -60,18 +60,20 @@ Por eso el principio aprobado es **anticipar lo barato de prever y caro de corre
 
 ## 8. Expansión modular
 
-Es diseñar la planta como un conjunto de **bloques que se agregan** sin desarmar los existentes: una segunda línea al lado de la primera, más cámaras al costado de las cámaras, más docks a lo largo de la fachada, otro módulo de tratamiento de efluentes. La regla del layout es **crecer a lo ancho, nunca intercalar**: una sala nueva no puede quedar en el medio de la secuencia sucia → limpia → fría ([`estrategia_expansion.md`](estrategia_expansion.md)).
+Es diseñar la planta como un conjunto de **bloques que se agregan** sin desarmar los existentes: una segunda línea al lado de la primera, más cámaras al costado de las cámaras, más docks a lo largo de la fachada, otro módulo de tratamiento de efluentes. El principio que usamos (preliminar, no una ley de la arquitectura) es **preferir ampliaciones que prolonguen o dupliquen lo que ya funciona, sin crear cruces ni romper la separación sucia/limpia**. Meter una sala nueva en el medio de la secuencia sucia → limpia → fría no es imposible, pero casi siempre obliga a parar la planta ([`estrategia_expansion.md` §3](estrategia_expansion.md)).
 
 ## 9. Planificar la expansión no significa construir todo hoy
 
-El modelo muestra algo útil: si la meta final fueran 20.000 aves/día, **el terreno necesario es el mismo (~3,3 ha medio) arrancando con 2.500, con 5.000 o con 10.000**. Lo que cambia es cuánto se construye en cada etapa: ~1.800 m² en la primera etapa de la trayectoria chica contra ~7.500 m² al final.
+El modelo muestra algo útil, **con una condición**: si se decidiera comprar y reservar desde el inicio todo el terreno que necesitaría una planta de 20.000 aves/día, ese terreno sería el mismo (~3,3 ha medio) arrancando con 2.500, con 5.000 o con 10.000; lo que cambiaría es cuánto se construye en cada etapa (~1.800 m² al principio de la trayectoria chica contra ~7.500 m² al final).
+
+Eso **no** quiere decir que haya que comprar todo ese terreno el día 1: se puede comprar menos y aceptar un techo, negociar una opción sobre el lote vecino, o tercerizar funciones (congelado, rendering, tratamiento de efluentes por cloaca) que achican el terreno propio. Y el número cambia con la tecnología de efluentes, los accesos y lo que exija el municipio.
 
 Es decir:
 
-- **Hoy** se decide (y se paga) el **terreno**, la **traza** de accesos y caminos, los **desagües y cañerías principales**, la **dirección del flujo** y **dónde va a crecer** cada zona.
+- **Antes de comprar** se decide **cuánto terreno asegurar** (todo, parte o con opción), la **traza** de accesos y caminos, los **desagües y cañerías principales**, la **dirección del flujo** y **dónde va a crecer** cada zona.
 - **Después**, y solo si la demanda lo justifica (los gates de [`../23_plan_expansion/gates_expansion.md`](../23_plan_expansion/gates_expansion.md)), se construyen las salas, se compran las máquinas y se agregan cámaras.
 
-Construir hoy el edificio de 20.000 para operar 2.500 inmovilizaría ~4 veces más obra que la necesaria. Comprar hoy un terreno que solo sirve para 2.500 pone un techo que después no se puede romper.
+Construir hoy el edificio de 20.000 para operar 2.500 inmovilizaría ~4 veces más obra que la necesaria. Comprar hoy un terreno que solo sirve para 2.500 puede poner un techo difícil de romper, salvo que se consiga más superficie después o se tercericen funciones: es un riesgo a evaluar, no una certeza.
 
 ## 10. Qué preguntar (y qué no prometer)
 

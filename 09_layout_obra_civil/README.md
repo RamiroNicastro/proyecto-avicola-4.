@@ -26,7 +26,7 @@
 ## Modelo de superficies
 
 ```
-python3 09_layout_obra_civil/modelo_superficies.py               # 19 tests + regenera el CSV
+python3 09_layout_obra_civil/modelo_superficies.py               # 22 tests + regenera el CSV
 python3 09_layout_obra_civil/modelo_superficies.py --mutaciones  # 7/7 errores sembrados detectados
 python3 09_layout_obra_civil/modelo_superficies.py --tablas      # tablas de los .md
 python3 09_layout_obra_civil/modelo_superficies.py --escenario --aves-dia 7500 --config C --perfil P3 \
@@ -37,4 +37,6 @@ python3 09_layout_obra_civil/modelo_superficies.py --escenario --aves-dia 7500 -
 - **Insumos importados (no recalculados):** `05_proceso_industrial/modelo_capacidad_proceso.py` (kg/ave por configuración, residencias de enfriamiento) y `11_agua_efluentes/modelo_utilities.py` (stock refrigerado y congelado, congelación t/día, caudales y cargas de efluente).
 - **Outputs:** rango bajo/medio/alto por área; m² por categoría; m² construidos, operativos y de reserva; terreno conceptual; alertas; `salida_interfaz()` para el futuro HTML.
 - **Unidades:** m², t, m³, h, ha; separador decimal del CSV: punto. Fórmulas y supuestos en el encabezado del script y en `programa_areas.md` §2.
+- **Calidad de cada superficie:** tipo de origen A (modelo existente) · B (factor de diseño) · C (proxy) · D (footprint pendiente) · E (requisito regulatorio pendiente), en `programa_areas.md` §2 bis y en la columna `origen_superficie` del CSV. El terreno depende de retiro y buffer **variables** (supuesto/proxy hasta tener datos del sitio).
+- **Uso:** las superficies sirven para comparar escalas y reservar órdenes de magnitud; no son anteproyecto ni superficie habilitable.
 - **Factores no validados:** todos (SUP-12C-01 a 17). Los que sustituyen datos faltantes se marcan **PROXY** y generan alertas; una huella desconocida **nunca** se convierte en cero.

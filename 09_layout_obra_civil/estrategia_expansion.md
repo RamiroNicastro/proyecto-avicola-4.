@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Lo que muestra el modelo: el terreno se decide en la etapa 1
+## 1. Lo que muestra el modelo si se reserva desde el inicio la superficie de la escala final
 
 Con escala objetivo 20.000 aves/día, el modelo reserva en cada etapa la diferencia entre lo que necesita la escala final y lo que ya está construido (por categoría), más la reserva de rendering. Resultado (medio; [`escenarios_superficies.csv`](escenarios_superficies.csv), bloque `expansion`; test T18):
 
@@ -23,9 +23,14 @@ Rango del terreno con objetivo 20.000: **~1,4 / 3,3 / 8,2 ha** (bajo / medio / a
 
 **Lecturas:**
 
-1. **Las tres trayectorias necesitan el mismo terreno** si apuntan a la misma escala final. Lo que cambia entre ellas es **cuánto se construye y cuándo**, no cuánto suelo hay que asegurar.
-2. **Arrancar chico no ahorra terreno; ahorra obra.** En la trayectoria A, en la etapa 1 el ~72 % de los m² operativos que la planta final necesitará (sin contar retiros, buffers ni rendering) está todavía como reserva: 3.640 m² de proceso, 4.120 m² de exteriores, 1.090 de servicios, 490 de personal, 460 de frío, 370 de efluentes y 640 de rendering.
-3. **Sin escala objetivo, la reserva es una fracción arbitraria** (25–100 % de lo operativo, SUP-12C-13, alerta `OBJETIVO_EXPANSION_NO_DEFINIDO`). Definir **para qué escala final se reserva el terreno** es una decisión nueva (DEC-12C-02) que debe tomarse **antes** de comprar terreno (ruta crítica R1 de [`../16_normativa_senasa/ruta_critica_habilitacion.md`](../16_normativa_senasa/ruta_critica_habilitacion.md)), aunque la escala inicial siga abierta.
+1. **Convergencia condicionada al supuesto de reserva total.** Dentro del modelo actual, **si se supone que desde el inicio se adquiere y reserva toda la superficie necesaria para la escala final de 20.000 aves/día**, las distintas trayectorias convergen al mismo requerimiento conceptual de terreno. Lo que cambia entre ellas, bajo ese supuesto, es **cuánto se construye y cuándo**. El test T18 verifica esa propiedad aritmética del modelo, no una conclusión de inversión.
+2. **Lo que esto NO implica:**
+   - que todas las estrategias de inversión requieran comprar el mismo terreno desde el día 1 (una estrategia puede comprar menos y asumir el riesgo de techo, o comprar con opción sobre lotes vecinos);
+   - que no pueda adquirirse superficie adicional más adelante (puede ser posible o no según el sitio; es un dato a relevar, no un imposible);
+   - que no puedan tercerizarse funciones (congelado, almacenamiento, rendering, tratamiento de efluentes por vuelco a colectora, lavado de camiones) que reducirían el terreno propio;
+   - que el terreno no cambie con la tecnología de efluentes, el congelado propio o tercerizado, la reserva de rendering, el diseño de accesos o la normativa del sitio (retiros, FOS, distancias): todos lo mueven y ninguno está decidido.
+3. **Bajo el supuesto de reserva total, arrancar chico no ahorra terreno; ahorra obra.** En la trayectoria A, en la etapa 1 el ~72 % de los m² operativos que la planta final necesitará (sin contar retiros, buffers ni rendering) está todavía como reserva: 3.640 m² de proceso, 4.120 m² de exteriores, 1.090 de servicios, 490 de personal, 460 de frío, 370 de efluentes y 640 de rendering.
+4. **Sin escala objetivo, la reserva es una fracción arbitraria** (25–100 % de lo operativo, SUP-12C-13, alerta `OBJETIVO_EXPANSION_NO_DEFINIDO`). Definir **para qué escala final se reserva el terreno** es una decisión nueva (DEC-12C-02) que debe tomarse **antes** de comprar terreno (ruta crítica R1 de [`../16_normativa_senasa/ruta_critica_habilitacion.md`](../16_normativa_senasa/ruta_critica_habilitacion.md)), aunque la escala inicial siga abierta.
 
 ## 2. Qué hacer con cada elemento físico
 
@@ -60,7 +65,7 @@ Clasificación (hipótesis de trabajo, SUP-12C-17; complementa la de 23 y 09A):
 | **Calderas, compresores de aire, generador** | **D** | Se agregan unidades | Espacio en la sala para la unidad siguiente |
 | **Rendering** | **P** (solo terreno) | No decidido (DEC-027); sin espacio la opción desaparece | Reserva contigua a subproductos, lejos de la limpia y de vecinos (DEC-12C-05) |
 
-## 3. Dirección del crecimiento (regla de layout)
+## 3. Dirección del crecimiento (principio de diseño preliminar)
 
 ```mermaid
 flowchart LR
@@ -75,8 +80,10 @@ flowchart LR
     RU["Reserva: utilities y efluentes"] -.-> U["UTILITIES"]
 ```
 
-1. **Nunca intercalar:** una ampliación no puede quedar **entre** dos zonas existentes (p. ej., una sala de corte nueva entre evisceración y chiller), porque obliga a romper la secuencia y a cerrar la planta.
-2. **Crecer a lo ancho o hacia afuera de cada zona:** líneas en paralelo, salas limpias al costado de la limpia, cámaras al costado de la fría, docks a lo largo de la fachada.
+> **Principio de diseño preliminar (SUP-12C-17), no regla arquitectónica universal:** *preferir expansiones que prolonguen o dupliquen secuencias funcionales sin introducir cruces ni romper la zonificación higiénica.* Un proyectista puede encontrar otras soluciones válidas (por ejemplo, una ampliación intercalada ejecutada en una parada programada con aprobación previa); el principio indica qué conviene preferir cuando el layout todavía es flexible.
+
+1. **Prolongar o duplicar secuencias:** líneas en paralelo, salas limpias contiguas a la zona limpia, cámaras contiguas a la zona fría, docks a lo largo de la fachada de despacho.
+2. **Evitar, en lo posible, ampliaciones que corten la secuencia** existente (p. ej., una sala nueva entre evisceración y chiller): suelen exigir parar la planta, romper barreras sanitarias y volver a presentar planos (DPV-115).
 3. **Muros de ampliación livianos** (paneles) del lado de la reserva; **muros fijos** del lado de las fronteras higiénicas.
 4. **No poner nada caro de mover del lado de la reserva:** sala de máquinas, subestación, tanques, tratamiento de efluentes y vestuarios van en los lados que **no** van a crecer.
 5. **Obra durante la operación:** cada frente de ampliación necesita un **acceso de obra** que no cruce flujos de producto ni de vivo (§ [`flujos_layout.md` §7](flujos_layout.md)).
@@ -89,7 +96,7 @@ flowchart LR
 | **5.000 → 10.000** (A, B) | Evisceración automática (reemplazo), salas dedicadas, congelado continuo, 2.º dock, efluentes ampliados | Ancho para salas dedicadas; sala de máquinas ampliable; módulos de tratamiento | Salas limpias encerradas; efluente que limita la producción |
 | **10.000 → 20.000** (A, B, C) | 2.ª línea **o** 2.º turno (09A: ecuación de 24 h en alerta) **o** línea de mayor ritmo; 3.er dock; más cámaras; posiblemente rendering | Franja paralela o largo final; potencia; permiso de vuelco | Techo físico definitivo: la única salida es otra planta |
 
-**Arquitectura E** de 23 ("obra grande, equipos por etapas") es el extremo en que se construye hoy la **envolvente** final; el modelo muestra que construir 7.450 m² para operar 1.780 (A en etapa 1) inmoviliza ~4 veces la obra necesaria. **Arquitectura D** (validación comercial previa) no cambia el terreno a asegurar, pero puede postergar su compra hasta tener demanda A/B (DEC-018).
+**Arquitectura E** de 23 ("obra grande, equipos por etapas") es el extremo en que se construye hoy la **envolvente** final; el modelo muestra que construir 7.450 m² para operar 1.780 (A en etapa 1) inmoviliza ~4 veces la obra necesaria. **Arquitectura D** (validación comercial previa) puede postergar la compra de terreno hasta tener demanda A/B (DEC-018) y, con faena o congelado tercerizados, cambiar también cuánto terreno propio hace falta.
 
 ## 5. Puntos difíciles de modificar después (lista de control)
 
@@ -112,4 +119,4 @@ flowchart LR
 
 - La variable **V17 "servicios y terreno"** de [`../23_plan_expansion/gates_expansion.md`](../23_plan_expansion/gates_expansion.md) puede medirse con este modelo: m² de terreno y de reserva disponibles vs necesarios para la etapa siguiente.
 - Decisiones nuevas propuestas: escala objetivo del terreno (DEC-12C-02), forma de la nave (DEC-12C-01), reserva de rendering (DEC-12C-05). Notas a DEC-035, DEC-038 y DEC-043 en [`actualizaciones_gestion_12C.md`](actualizaciones_gestion_12C.md).
-- **Planificar la expansión no es construirla:** se compra el terreno y se trazan accesos, troncales y frentes; los equipos, cámaras, salas y docks se agregan cuando un gate lo justifique.
+- **Planificar la expansión no es construirla:** se asegura el terreno que la estrategia elegida considere necesario (total, parcial o con opciones) y se trazan accesos, troncales y frentes; los equipos, cámaras, salas y docks se agregan cuando un gate lo justifique.

@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 """
-MODELO CONCEPTUAL DE SUPERFICIES — versión 1.0 (2026-10-01, sesión 12C: layout y obra civil)
+MODELO CONCEPTUAL DE SUPERFICIES — versión 1.0.1 (2026-10-01, sesión 12C: layout y obra civil)
 =========================================================================================
 
 ¿QUÉ ÁREAS NECESITA LA PLANTA, CUÁNTO MIDEN (EN RANGO) Y CUÁNTO TERRENO EXIGEN?
+
+v1.0.1 (corrección de interpretación): sin cambios de cálculo; agrega el tipo de ORIGEN A–E de cada área
+(ORIGEN_AREA, columna `origen_superficie`), `supuestos_terreno` en salida_interfaz(), la fila margen_perimetral_m
+y los tests T19–T21 (nada etiquetado como verificado; retiro/buffer variables y con efecto sobre el terreno).
+Las superficies sirven para comparar escalas y reservar órdenes de magnitud; NO son anteproyecto ni
+superficie habilitable.
 
 ESTADO: modelo de ORDEN DE MAGNITUD para prefactibilidad. NO es un programa arquitectónico, NO es un
 plano, NO dimensiona equipos, NO calcula CAPEX ni OPEX, NO elige terreno, tecnología de efluentes,
@@ -79,7 +85,7 @@ for _d in ("05_proceso_industrial", "23_plan_expansion", "11_agua_efluentes"):
 import modelo_capacidad_proceso as mc   # noqa: E402  (09A; importa 23 → 04 → 03)
 import modelo_utilities as mu           # noqa: E402  (09C)
 
-VERSION = "1.0"
+VERSION = "1.0.1"
 FECHA = "2026-10-01"
 CSV_SALIDA = os.path.join(AQUI, "escenarios_superficies.csv")
 ESCALAS = (2500, 5000, 10000, 20000)
@@ -275,6 +281,36 @@ EQUIPOS_POR_AREA = {  # documental: qué huellas pedir en el RFQ (08_maquinaria/
 }
 
 
+# Tipo de ORIGEN de cada superficie (v1.0.1, corrección de interpretación 12C). Metadato: no cambia ningún cálculo.
+#   A = derivada de un modelo existente (09A/09C: t, kg/h, caudales, residencias)
+#   B = calculada con factor de diseño [SUPUESTO] (densidades, m²/persona, fracciones de circulación)
+#   C = proxy preliminar (sustituto de un dato faltante; genera alerta)
+#   D = footprint pendiente de proveedor (la sala depende de la huella de equipos aún no recibida)
+#   E = requisito regulatorio pendiente (norma no leída en original o dependiente de jurisdicción)
+# El primer código es el que domina la calidad del resultado. NINGUNA superficie es [VERIFICADO].
+TIPOS_ORIGEN = {"A": "DERIVADA DE MODELO EXISTENTE", "B": "CALCULADA CON FACTOR DE DISEÑO",
+                "C": "PROXY PRELIMINAR", "D": "FOOTPRINT PENDIENTE DE PROVEEDOR",
+                "E": "REQUISITO REGULATORIO PENDIENTE"}
+ORIGEN_AREA = {
+    "recepcion_espera": "C·B·E", "colgado_aturdido": "C·D", "sangrado_escaldado_desplumado": "C·D·E",
+    "evisceracion_inspeccion": "C·D·E", "enfriamiento": "A·B·D", "clasificacion": "C·D", "trozado": "C·D",
+    "deshuese": "C·D", "cms": "C·D·E", "coproductos": "C·D", "empaque": "C·D", "lavado_cajones": "C·D",
+    "circulacion_proceso": "B·E", "camaras_refrigeradas": "A·B", "camaras_congeladas": "A·B",
+    "tunel_congelado": "A·C·D", "antecamaras_preparacion": "B", "expedicion_docks": "C·B",
+    "camara_subproductos": "A·B", "camara_decomisos": "B·E", "sala_subproductos": "A·B", "residuos_carton": "B",
+    "deposito_envases": "A·B", "sala_maquinas_frio": "C·D", "caldera_agua_caliente": "C·D",
+    "aire_comprimido": "C·D", "generador": "C·D", "sala_electrica": "C", "tratamiento_agua": "A·B",
+    "mantenimiento_taller": "B", "repuestos": "B", "quimicos": "B", "laboratorio_calidad": "B",
+    "vestuarios": "C·B·E", "comedor": "C·B", "lavanderia": "C·B", "oficinas": "B", "oficina_senasa": "B·E",
+    "enfermeria_capacitacion": "B", "porterias_seguridad": "B", "circulacion_personal": "B",
+    "playa_aves_vivas": "C·B", "lavado_camiones": "B·E", "playa_despacho": "C·B", "playa_subproductos": "A·B",
+    "estacionamiento": "C·B", "tanques_agua": "A·B·E", "circulacion_pesada": "B",
+    "efl_pretratamiento": "A·B", "efl_ecualizacion": "A·B", "efl_daf": "A·B", "efl_biologico": "A·B·E",
+    "efl_lodos": "C", "efl_circulacion": "B", "reserva_expansion": "B·C",
+}
+ORIGEN_TERRENO = "B·C·E — retiro y buffer VARIABLES (retiro reglamentario: DPV-12C-05; buffer de diseño: SUP-12C-15)"
+
+
 def entradas_por_defecto():
     """Escenario de referencia (no es decisión): config. B, P1 con 3/14 días, semi, 1 línea."""
     return {
@@ -422,7 +458,8 @@ class Resultado:
             cubierta = cat in CUBIERTAS
         self.areas[aid] = {"id": aid, "nombre": nombre, "categoria": cat, "zona": zona, "metodo": metodo,
                            "valores": dict(zip(NIVELES, vals)), "estado": estado, "clasificacion": clasif,
-                           "referencia": ref, "nota": nota, "cubierta": cubierta}
+                           "referencia": ref, "nota": nota, "cubierta": cubierta,
+                           "origen": ORIGEN_AREA.get(aid, "C")}
 
     def total(self, cats, nivel):
         xs = [a["valores"][nivel] for a in self.areas.values() if a["categoria"] in cats]
@@ -989,7 +1026,13 @@ def salida_interfaz(R):
         "t_stock_refrigerado": tr({n: R.ctx["utilities"][n]["stock_refrigerado_t"] for n in NIVELES}),
         "t_stock_congelado": tr({n: R.ctx["utilities"][n]["stock_congelado_t"] for n in NIVELES}),
         "areas_por_funcion": {a: {"nombre": x["nombre"], "zona": x["zona"], "categoria": x["categoria"],
-                                  "estado": x["estado"], **x["valores"]} for a, x in R.areas.items()},
+                                  "estado": x["estado"], "origen": x["origen"], **x["valores"]}
+                              for a, x in R.areas.items()},
+        "supuestos_terreno": {"retiro_m": R.e["retiro_m"] if R.e["retiro_m"] is not None else P["retiro_m"]["v"],
+                              "retiro_origen": "INPUT" if R.e["retiro_m"] is not None else "SUPUESTO (DPV-12C-05)",
+                              "buffer_m": R.e["buffer_m"] if R.e["buffer_m"] is not None else P["buffer_proxy_m"]["v"],
+                              "buffer_origen": "INPUT" if R.e["buffer_m"] is not None else "PROXY (SUP-12C-15)",
+                              "fos": R.e["fos"], "nota": "terreno VARIABLE con retiro, buffer y FOS"},
         "efluentes_por_tecnologia": R.ctx["efluentes_por_tecnologia"],
         "alertas": [c for c, _ in R.alertas],
         "estado_global": "INCOMPLETO" if any(x["estado"] == "PENDIENTE" for x in R.areas.values()) else "RANGO",
@@ -1003,10 +1046,10 @@ PALABRAS_ECONOMICAS = re.compile(r"\b(usd|ars|precio|costo|capex|opex|ebitda|van
 CAMPOS = ["bloque", "escenario", "escala_aves_dia", "horas_netas", "config", "perfil", "dias_refrigerado",
           "dias_congelado", "automatizacion", "lineas", "enfriamiento", "tecnologia_efluentes", "escala_objetivo",
           "variable", "nombre", "categoria", "zona", "bajo", "medio", "alto", "unidad", "metodo", "estado",
-          "clasificacion", "referencia"]
+          "clasificacion", "referencia", "origen_superficie"]
 
 
-def _fila(bloque, esc, e, var, nombre, cat, zona, vals, unidad, metodo, estado, clasif, ref):
+def _fila(bloque, esc, e, var, nombre, cat, zona, vals, unidad, metodo, estado, clasif, ref, origen=""):
     def f(x):
         return "" if x is None else round(x, 3)
     return {"bloque": bloque, "escenario": esc, "escala_aves_dia": e["aves_dia"], "horas_netas": e["horas_netas"],
@@ -1015,20 +1058,28 @@ def _fila(bloque, esc, e, var, nombre, cat, zona, vals, unidad, metodo, estado, 
             "enfriamiento": e["enfriamiento"], "tecnologia_efluentes": e["tecnologia_efluentes"],
             "escala_objetivo": e["escala_objetivo"] or "", "variable": var, "nombre": nombre, "categoria": cat,
             "zona": zona, "bajo": f(vals[0]), "medio": f(vals[1]), "alto": f(vals[2]), "unidad": unidad,
-            "metodo": metodo, "estado": estado, "clasificacion": clasif, "referencia": ref}
+            "metodo": metodo, "estado": estado, "clasificacion": clasif, "referencia": ref,
+            "origen_superficie": origen}
+
+
+def _margen_txt(R):
+    e = R.e
+    r = f"retiro {e['retiro_m']:g} m informado" if e["retiro_m"] is not None else "retiro 5/10/15 m SUPUESTO"
+    b = f"buffer {e['buffer_m']:g} m informado" if e["buffer_m"] is not None else "buffer 10/20/40 m PROXY"
+    return f"{r}; {b}"
 
 
 def filas_totales(bloque, esc, R):
     out = []
     for c in CATEGORIAS + ("construido", "operativo", "reserva"):
         out.append(_fila(bloque, esc, R.e, f"m2_{c}", f"Total {c}", c, "", [R.totales[n].get(c) for n in NIVELES],
-                         "m²", "suma de áreas", "ESTIMACION", "[ESTIMACIÓN]", ""))
+                         "m²", "suma de áreas", "ESTIMACION", "[ESTIMACIÓN]", "", "suma (hereda el peor origen)"))
     for k, u in (("terreno_total", "m²"), ("terreno_ha", "ha"), ("huella_edificios", "m²"),
-                 ("retiros_buffers", "m²"), ("ocupacion_huella_pct", "%")):
+                 ("retiros_buffers", "m²"), ("ocupacion_huella_pct", "%"), ("margen_perimetral_m", "m")):
         out.append(_fila(bloque, esc, R.e, k, k, "terreno", "", [None if R.terreno[n] is None else R.terreno[n][k]
                                                                 for n in NIVELES], u,
-                         "fórmula de terreno (README §4)", "ESTIMACION", "[ESTIMACIÓN] con [SUPUESTO]",
-                         "SUP-12C-15"))
+                         "fórmula de terreno; RETIRO Y BUFFER VARIABLES (" + _margen_txt(R) + ")", "ESTIMACION",
+                         "[ESTIMACIÓN] con [SUPUESTO]/[PROXY]", "SUP-12C-15; DPV-12C-05", ORIGEN_TERRENO))
     out.append(_fila(bloque, esc, R.e, "m2_cubiertos_por_ave_dia", "Contraste con benchmarks [PVDP]", "contraste", "",
                      R.ctx["m2_cubiertos_por_ave_dia"], "m²/(ave/día)", "construido ÷ aves/día", "ESTIMACION",
                      "[ESTIMACIÓN]", "FTE-12C-001; 002; 003; 009"))
@@ -1084,7 +1135,7 @@ def construir_csv(ruta=CSV_SALIDA):
             for a in R.areas.values():
                 filas.append(_fila("detalle", esc, R.e, a["id"], a["nombre"], a["categoria"], a["zona"],
                                    [a["valores"][n] for n in NIVELES], "m²", a["metodo"], a["estado"],
-                                   a["clasificacion"], a["referencia"]))
+                                   a["clasificacion"], a["referencia"], a["origen"]))
             filas += filas_totales("detalle", esc, R)
     for esc, e in escenarios_sensibilidad():               # sensibilidad (totales)
         filas += filas_totales("sensibilidad", esc, calcular(e))
@@ -1345,6 +1396,33 @@ def ejecutar_tests(verbose=True):
                 ok &= abs(R.terreno[n]["terreno_total"] - fin.terreno[n]["terreno_total"]) < 1e-6 * fin.terreno[n]["terreno_total"]
                 ok &= R.totales[n]["construido"] <= fin.totales[n]["construido"] + 1e-9
     chk("T18", "Expansión: en cada etapa de A/B/C, construido ≤ final y terreno = terreno de la escala final", ok)
+
+    # T19 ninguna salida proxy etiquetada como verificada; toda área tiene tipo de origen A–E
+    Rr = calcular(base)
+    ok = all("VERIFICADO" not in (a["clasificacion"] + a["estado"]).upper() for a in Rr.areas.values())
+    ok &= all(("SUPUESTO" in a["clasificacion"] or "PROXY" in a["clasificacion"]) for a in Rr.areas.values()
+              if a["estado"] == "PROXY")
+    ok &= all(a["origen"] and set(a["origen"].replace("·", "")) <= set(TIPOS_ORIGEN) for a in Rr.areas.values())
+    ok &= all(a["id"] in ORIGEN_AREA for a in Rr.areas.values())
+    ok &= all("C" in a["origen"] for a in Rr.areas.values() if a["estado"] == "PROXY")
+    ok &= not any("VERIFICADO" in f["clasificacion"].upper() for f in filas)
+    chk("T19", "Ninguna superficie (ni fila del CSV) se etiqueta como verificada; toda área PROXY lleva origen C", ok)
+
+    # T20 el terreno declara que retiro y buffer son variables
+    ft = [f for f in filas if f["categoria"] == "terreno"]
+    si = salida_interfaz(Rr)["supuestos_terreno"]
+    ok = (len(ft) > 0 and all("VARIABLES" in f["metodo"] and "VARIABLES" in f["origen_superficie"] for f in ft)
+          and si["retiro_origen"].startswith("SUPUESTO") and si["buffer_origen"].startswith("PROXY")
+          and salida_interfaz(calcular(dict(base, retiro_m=12, buffer_m=0)))["supuestos_terreno"]["retiro_origen"]
+          == "INPUT")
+    chk("T20", "Las salidas de terreno indican que retiro y buffer son variables (supuesto/proxy o input)", ok)
+
+    # T21 modificar retiro o buffer cambia el terreno (y no el edificio)
+    ts = [calcular(dict(base, retiro_m=r, buffer_m=b)) for r, b in ((0, 0), (10, 0), (10, 20), (20, 40))]
+    tt = [x.terreno["medio"]["terreno_total"] for x in ts]
+    ok = all(tt[i] < tt[i + 1] for i in range(3))
+    ok &= len({round(x.totales["medio"]["construido"], 6) for x in ts}) == 1
+    chk("T21", "Cambiar retiro o buffer cambia el terreno y no los m² construidos", ok, str(tt))
 
     if verbose:
         for cod, desc, ok, det in res:
