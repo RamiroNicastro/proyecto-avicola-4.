@@ -1,6 +1,6 @@
 # Demanda de alimento balanceado por escala
 
-**Fecha:** 2026-10-01 · **Versión:** 1.0 · Sesión 14B · Modelo: [`modelo_upstream.py`](modelo_upstream.py) (bloques `4_alimento` y `5_materias_primas` de [`escenarios_upstream.csv`](escenarios_upstream.csv))
+**Fecha:** 2026-10-01 · **Versión:** 1.1 · Sesión 14B · Modelo: [`modelo_upstream.py`](modelo_upstream.py) (bloques `4_alimento` y `5_materias_primas` de [`escenarios_upstream.csv`](escenarios_upstream.csv))
 
 > El tonelaje sale de `03` (alimento = aves cargadas × peso vivo × FCR de campo; [`../03_produccion_primaria/alimentacion.md`](../03_produccion_primaria/alimentacion.md) §1–2), **importado sin recalcular** (test U09). Aquí se lo reexpresa en t/día, t/semana y t/año para dimensionar compra, façon o planta, y se separan las categorías de materias primas. **No es una fórmula** y no contiene precios. Base: alimento terminado **entregado a granja** (la base del FCR de campo). Perfil medio (47 d, 2,9 kg vivo).
 
@@ -52,7 +52,7 @@ Perfil medio: inicio ~5 %, crecimiento ~27 %, terminación ~68 % del tonelaje ([
 ## 4. Implicancias para compra vs fabricación
 
 - **Compra de alimento:** la empresa compra ~3.100–24.700 t/año (medio) de alimento terminado en 3–4 fórmulas; su capacidad física propia es solo la de **recepción en granja** (silos de granja, propios o del integrado).
-- **Façon:** la empresa compra **materias primas** (~2.800–22.250 t/año de maíz + harina de soja en el punto ilustrativo, más el 10 % restante) y las entrega a un elaborador: aparece **logística y stock de granos** propios.
+- **Façon:** un elaborador fabrica la fórmula de la empresa. Si la empresa compra las **materias primas** (variante B1: ~2.800–22.250 t/año de maíz + harina de soja en el punto ilustrativo, más el 10 % restante), aparecen **logística y stock propio de granos** (ubicado en el elaborador o en un acopio); si las compra el elaborador (B2), no ([`almacenamiento_silos.md` §5](almacenamiento_silos.md)).
 - **Planta propia:** aparecen recepción y almacenamiento de granos, molienda, dosificación, mezclado, pellet y despacho ([`planta_alimento_conceptual.md`](planta_alimento_conceptual.md)).
 
 Comparación: [`compra_vs_fabricacion.md`](compra_vs_fabricacion.md). Almacenamiento: [`almacenamiento_silos.md`](almacenamiento_silos.md).
