@@ -1,6 +1,6 @@
 # Mapa de flujos logísticos — cadena avícola completa
 
-**Fecha:** 2026-10-01 · **Versión:** 1.0 · Fase 0 (prefactibilidad) · Sesión **12B** (en paralelo con 12A Localización y 12C Layout/Obra civil)
+**Fecha:** 2026-10-01 · **Versión:** 1.1 (auditoría de interpretación) · Fase 0 (prefactibilidad) · Sesión **12B** (en paralelo con 12A Localización y 12C Layout/Obra civil)
 
 > **Pregunta:** ¿qué se mueve, cuánto, desde dónde, hacia dónde, con qué frecuencia y bajo qué restricciones?
 > **No responde** cuánto cuesta: no hay fletes, tarifas, CAPEX ni OPEX (fase posterior). **No** se elige escala, localización, radio, transportista ni flota.
@@ -20,7 +20,7 @@
                                    ▼                                                          ▼
                           GRANJAS (N, radio R) ══ AVES VIVAS (camión jaula, noche) ══► PLANTA DE FAENA
                                    │  ▲                                                       │
-       aves muertas en granja,     │  └── camión vacío + lavado y desinfección ◄──────────────┤
+       aves muertas en granja,     │  └── camión con jaulas vacías + lavado ◄────────────────┤
        cama usada (salen de granja)▼                                                          │
                                                                                               │
      ┌────────────────────────────── PRODUCTO TERMINADO ──────────────────────────────────────┤
@@ -55,11 +55,11 @@
 | I7 | Insumos de limpieza y sanitizantes | Proveedor → planta | PENDIENTE | | | | Semanal | Almacenamiento de químicos (12C) | Carga general / peligrosa | DPV-112 (químicos admitidos) |
 | I8 | Repuestos | Proveedores → planta | Masa baja | | | | Bajo demanda | **Tiempo de reposición** de críticos (cuchillas, motores, compresores) | Courier / flete | Stock crítico (08) |
 | I9 | Combustible y gas | Distribuidor → planta, granjas, flota | PENDIENTE | | | | Según consumo | Disponibilidad de gas natural (DPV-052) | Cisterna | Consumo L/km por vehículo (DPV-12B-06) |
-| V1 | **Aves vivas** (t vivas cargadas/día) | Granjas → planta | 7,3 | 14,5 | 29,1 | 58,2 | Cada noche/mañana de faena | **Ayuno 8–12 h, bienestar, calor, DOA** | Camión jaula (cajones o módulos) | Aves/camión (SUP-033, DPV-084), radio real (DPV-054) |
-| V2 | Camiones vacíos + cajones | Planta → granjas | = V1 en viajes | | | | Tras cada descarga | **Lavado y desinfección antes de nueva carga** (Res. SENASA 723/2025, FTE-234 `[PVDP]`) | Ídem | Tiempo de lavado (DPV-12B-01) |
+| V1 | **Aves vivas** (t vivas cargadas/día) | Granjas → planta | 7,3 | 14,5 | 29,1 | 58,2 | Cada noche/mañana de faena | **Ventana prefaena de escenario** (8–12 h citadas, FTE-156 `[PVDP]`; no normativa), bienestar, calor, DOA | Camión jaula (cajones o módulos) | Aves/camión: capacidad de escenario, no validada (SUP-033, DPV-084), radio real (DPV-054) |
+| V2 | Retorno de camiones con jaulas/cajones vacíos (sin carga comercial) | Planta → granjas | = V1 en viajes | | | | Tras cada descarga | **Lavado y desinfección de superficies externas e internas a cada viaje** (Res. SENASA 723/2025, FTE-234, confirmada en revisión externa) | Ídem | Tiempo de lavado (DPV-12B-01) |
 | P1 | **Producto refrigerado** | Planta → CD / cross-dock / tiendas / mayorista / gastronomía | Según perfil P1–P3: 3,0–5,4 | 6,0–10,8 | 12,0–21,6 | 24,0–43,1 | 5–7 despachos/semana | **Vida útil corta**, ventanas de recepción, temperatura | Furgón refrigerado (troncal o reparto) | Capacidad (DPV-084), ventanas (DPV-036) |
 | P2 | **Producto congelado** | Planta → mayorista / industria / depósito | 0,6–2,4 | 1,2–4,8 | 2,4–9,6 | 4,8–19,2 | **Acumulable**: 1–6 despachos/semana | Llenar camión vs stock en cámara | Furgón de congelado | Proporción por canal (DPV-085) |
-| P3 | **Exportación** (congelado; P3 = 20 %) | Planta → consolidación → puerto → reefer | 1,2 | 2,4 | 4,8 | 9,6 | 1 / 2 / 4 / 8 contenedores/mes | Lote = contenedor de ~25 t `[PVDP]`; habilitación por destino | Portacontenedor + reefer con genset | Todo el costo y tránsito (DPV-027) |
+| P3 | **Exportación** (congelado; P3 = 20 %) | Planta → consolidación → puerto → reefer | 1,2 | 2,4 | 4,8 | 9,6 | **Sensibilidad** (20 % exportado, payload 25 t): 1 / 2 / 4 / 8 contenedores/mes | Lote = contenedor de ~25 t `[PVDP]`; habilitación por destino | Portacontenedor + reefer con genset | Todo el costo y tránsito (DPV-027) |
 | S1 | **Plumas húmedas** (G1) | Planta → rendering / receptor | 0,60 | 1,21 | 2,41 | 4,83 | **Diaria** (cada día de faena) | Se deteriora en horas a 1 día `[PVDP]` | Contenedor estanco / volcador | Receptor y distancia (DPV-065) |
 | S2 | **Sangre recuperada** (G2) | Planta → rendering | 0,21 | 0,42 | 0,84 | 1,68 | Diaria o refrigerada | Líquido; coagula y fermenta en horas `[PVDP]` | Cisterna | Receptor (DPV-065) |
 | S3 | **Vísceras + cabezas + otros C** (G3) | Planta → rendering | 0,52 | 1,04 | 2,08 | 4,17 | Diaria | Horas `[PVDP]`; olores; categoría sanitaria | Contenedor estanco | DPV-065/066 |
@@ -76,22 +76,22 @@
 
 | Indicador físico (referencia: radio 100 km, 5.500 aves/camión, P1, capacidades de barrido) | 2.500 | 5.000 | 10.000 | 20.000 |
 |---|---|---|---|---|
-| Viajes de aves vivas/día (normal · verano −15 % de carga) | 1 · 1 | 1 · 2 | 2 · 3 | 4 · 5 |
+| Viajes de aves vivas/día con camión de escenario de 5.500 aves (normal · verano −15 % de carga) | 1 · 1 | 1 · 2 | 2 · 3 | 4 · 5 |
 | Ocupación de esos viajes (normal) | **46 %** | 91 % | 91 % | 91 % |
 | Entregas de alimento/semana (granelero ~28 t) | 3 | 5 | 9 | 18 |
-| Viajes troncales refrigerados/día de despacho (12 t, barrido; 6 d) | 1 (37 %) | 1 (75 %) | 2 (75 %) | 3 (100 %) |
-| Contenedores de exportación/mes (si 20 % se exportara) | 1,0 | 2,0 | 4,0 | 8,0 |
-| Ocupación de un retiro diario de plumas en vehículo de 10 t (barrido) | **6 %** | 12 % | 24 % | 48 % |
+| Viajes troncales refrigerados/día de despacho (camión de escenario de 12 t; 6 d) | 1 (37 %) | 1 (75 %) | 2 (75 %) | 3 (100 %) |
+| Contenedores de exportación/mes — SENSIBILIDAD: 20 % exportado, 25 t por contenedor | 1,0 | 2,0 | 4,0 | 8,0 |
+| Plumas con retiro diario: % de la capacidad MÁSICA de un vehículo de escenario de 10 t (volumétrica PENDIENTE) | **6 %** | 12 % | 24 % | 48 % |
 
-**Lectura:** a escala chica, el problema logístico no es la cantidad de toneladas sino la **falta de densidad**: camiones de aves, de producto y de subproductos salen con poca carga porque los flujos son pequeños pero su frecuencia está fijada por restricciones biológicas (ayuno, vida útil, degradación). A escala grande aparecen otros problemas: coordinación de 3–5 camiones de aves por día con la línea, 18 entregas semanales de alimento y la gestión de una red de 16–64 granjas.
+**Lectura (con las capacidades de escenario indicadas):** a escala chica, el problema logístico no es la cantidad de toneladas sino la **falta de densidad**: camiones de aves, de producto y de subproductos salen con poca carga en relación con su capacidad másica supuesta porque los flujos son pequeños pero su frecuencia está fijada por restricciones biológicas (ayuno, vida útil, degradación). A escala grande aparecen otros problemas: coordinación de 3–5 camiones de aves por día con la línea, 18 entregas semanales de alimento y la gestión de una red de 16–64 granjas.
 
 ## 4. Restricciones transversales
 
 | Restricción | Afecta a | Estado |
 |---|---|---|
-| Ayuno total 8–12 h (granja + captura + viaje + espera) | V1 | `[PVDP]` FTE-156; define el viaje admisible (≈ 4,5 h con los supuestos SUP-12B-05) |
-| Lavado y desinfección del camión antes de cada nueva carga de animales | V1, V2 | Res. SENASA 723/2025 (FTE-234 `[PVDP]`); texto original no leído (DPV-058, DPV-12B-11) |
-| Habilitación sanitaria del vehículo por tipo de carga (animales vivos, carnes, subproductos) | V1, P1–P3, S1–S5 | Res. 723/2025 y Decreto 4238/68 cap. XXVIII (FTE-192 `[PVDP]`); categorías A (equipo de frío) y B (isotérmico) según extracto |
+| Ventana prefaena (retiro de alimento + captura/carga + esperas + transporte + espera en planta + descarga) | V1 | 8–12 h citadas como práctica (FTE-156 `[PVDP]`); el modelo usa 10 h como **parámetro de escenario**, no como norma. Con los tramos supuestos (SUP-12B-05) quedan ≈ 4,5 h de transporte disponible: resultado del escenario, no límite sanitario ([`logistica_aves_vivas.md` §3](logistica_aves_vivas.md)) |
+| Lavado y desinfección de superficies externas e internas del vehículo a cada viaje | V1, V2 | Res. SENASA 723/2025 (FTE-234): texto oficial **confirmado en revisión externa** del proyecto; la sesión 12B no pudo abrirlo directamente. No fija duración del lavado ni tiempos de viaje |
+| Habilitación sanitaria del vehículo por tipo de carga (animales vivos, carnes, subproductos) | V1, P1–P3, S1–S5 | Res. SENASA 723/2025 (FTE-234, confirmada en revisión externa): habilitación sanitaria de los vehículos alcanzados, requisitos de bienestar animal, ventilación/protección para aves, facilidad de lavado y desinfección, documentación sanitaria. Decreto 4238/68 cap. XXVIII (FTE-192 `[PVDP]`): categorías A (equipo de frío) y B (isotérmico) según extracto |
 | Temperaturas de transporte refrigerado y congelado | P1–P3 | **No verificadas** (DPV-098); reefer de congelados ≤ −18 °C `[PVDP · débil]` (FTE-135) |
 | Pesos y dimensiones de vehículos | Todos | Ley 24.449 art. 53 y Dec. 779/95 Anexo R; Dec. 32/2018 (configuraciones > 45 t) — FTE-12B-003 `[PVDP]` |
 | Tiempos de conducción y descanso | P1 (troncal largo), P3 | CCT 40/89: 8 h urbano, 10 h media y larga distancia según extracto (FTE-12B-002 `[PVDP]`) |

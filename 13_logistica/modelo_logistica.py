@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
 """
-MODELO LOGÍSTICO FÍSICO — versión 1.0 (2026-10-01, sesión 12B)
-==============================================================
+MODELO LOGÍSTICO FÍSICO — versión 1.1 (2026-10-01, sesión 12B; auditoría final de interpretación)
+=================================================================================================
+
+v1.1: ventana prefaena desagregada (retiro de alimento, captura/carga, espera en granja, transporte,
+espera en planta, descarga) con alerta; tiempo de transporte disponible y alcance = RESULTADOS DE
+ESCENARIO, nunca límites reglamentarios; retorno sin carga comercial (con jaulas) ≠ vacío y backhaul de
+aves deshabilitado por defecto (no prohibido); tiempo de ciclo explícito y utilización derivada de él;
+capacidad de ESCENARIO declarada en cada fila (sin capacidad elegida = PENDIENTE); capacidad másica vs
+volumétrica en subproductos; acumulación en cinco dimensiones; exportación como sensibilidad;
+sensibilidad directo/CD/cross-dock. Tests L21-L28.
 
 Pregunta: ¿QUÉ se mueve, CUÁNTO, DESDE DÓNDE, HACIA DÓNDE, con qué FRECUENCIA y bajo qué
 RESTRICCIONES en toda la cadena avícola (insumos → granjas → planta → clientes / puerto /
@@ -32,7 +40,7 @@ Uso
         --ancla B --kg-local-dia 100 --modo crossdock --dist-mercado-km 300
                                                              # sensibilidad (no escribe CSV)
 
-El script se DETIENE (código 1) si falla cualquier prueba propia (L01-L20) o el modelo de escala.
+El script se DETIENE (código 1) si falla cualquier prueba propia (L01-L28) o el modelo de escala.
 
 ------------------------------------------------------------------------------
 REGLAS DE DATOS (CLAUDE.md reglas 3, 4, 15, 16)
@@ -42,16 +50,20 @@ REGLAS DE DATOS (CLAUDE.md reglas 3, 4, 15, 16)
     registra en `faltantes`. NUNCA se reemplaza por 0 ni por un valor por defecto (test L13).
   * Los valores de BARRIDO (sensibilidad) se declaran como tales en la columna `parametros`:
     no son capacidades estándar ni recomendaciones.
-  * Única capacidad con registro previo: camión de aves vivas 4.000-7.000 aves (SUP-033, sin
-    fuente). Granelero ~28 t: `[ESTIMACIÓN]` de 03_produccion_primaria/alimentacion.md, sin fuente.
-    Contenedor reefer 40' 25 t: `[PVDP · débil]` (FTE-135).
+  * CAPACIDAD DE ESCENARIO ≠ CAPACIDAD VALIDADA / COTIZADA. Ninguna capacidad está validada. Las de
+    escenario (camión de aves 4.000-7.000, SUP-033; granelero ~28 t, [ESTIMACIÓN] de 03; contenedor
+    25 t, [PVDP · débil] FTE-135; barridos de refrigerado, reparto y subproductos) solo se usan si se
+    pasan EXPLÍCITAMENTE; cada fila del CSV declara `capacidad_vehiculo` y `tipo_capacidad` (L25).
+  * La ventana prefaena (10 h) es un parámetro de ESCENARIO (8-12 h citadas como práctica, FTE-156
+    [PVDP]); no existe fuente primaria que fije un máximo normativo. El tiempo de transporte
+    disponible y el alcance en km son resultados, no límites (L21).
 
 ------------------------------------------------------------------------------
 FÓRMULAS
 ------------------------------------------------------------------------------
 Aves vivas (por día operativo de faena):
   aves cargadas            = aves faenadas / (1 - DOA)                  (mp.calcular, sin copiar)
-  merma de viaje [frac]    = tasa de merma [1/h] × (h de viaje medio + h de espera y descarga)
+  merma de viaje [frac]    = tasa de merma [1/h] × (h de transporte medio + espera en planta + descarga)
   peso en granja           = peso en planta / (1 - merma)   (peso en planta = 2,9 kg: ancla del balance)
   kg cargados              = aves cargadas × peso en granja
                            = kg faenables (aves faenadas × peso planta) + kg DOA + kg merma  (L01)
@@ -61,12 +73,20 @@ Aves vivas (por día operativo de faena):
   distancia geográfica media = radio × factor de distribución (2/3 = media de puntos uniformes
                              en un disco; SUP-12B-03)
   distancia por ruta       = distancia geográfica × factor de ruta (≥ 1; SUP-12B-02) (L18)
-  km/día                   = viajes × (ida cargado + vuelta vacía)   (sin backhaul: L15)
-  tiempo de ciclo [h]      = carga + 2 × viaje + espera/descarga + lavado y desinfección
+  km/día                   = viajes × (ida cargado + retorno sin carga comercial, con jaulas)  (L15, L23)
+  tiempo de ciclo [h]      = ida + captura/carga + espera en granja + espera en planta + descarga
+                             + regreso + lavado/desinfección                                   (L24)
+  ciclos posibles/jornada  = piso(horas útiles / ciclo)
   camión-horas/día         = viajes × ciclo ;  camión-día = camión-horas / horas útiles por camión
   intervalo entre arribos  = aves faenadas por camión / (aves faenadas / horas netas de faena)
   flota mínima             = max(techo(camión-horas / horas útiles), min(viajes, techo(ciclo / intervalo)))
-  viaje máximo admisible   = ayuno total máx - ayuno previo en granja - carga - espera  (bienestar)
+  utilización diaria       = camión-horas / (flota × horas útiles); semanal × días de faena / 7
+  total prefaena           = retiro de alimento + captura/carga + espera en granja + transporte
+                             + espera en planta + descarga ; alerta si > ventana configurada  (L20)
+  transporte disponible    = ventana − (todos los tramos que no son transporte)   [ESCENARIO]  (L22)
+  alcance de escenario     = transporte disponible × velocidad (÷ factor de ruta = geográfico)
+  alerta de cosecha        = días de faena para retirar un lote > referencia de 03 (1-2 noches):
+                             incompatibilidad POTENCIAL bajo la cadencia modelada
 Insumos:
   alimento t/día (7 d)     = alimento t/semana plena / 7 ; viajes = techo(t/semana / capacidad)
   pollitos/semana plena    = mp.calcular ; viajes = PENDIENTE sin capacidad validada
@@ -91,10 +111,15 @@ Inventario (dos bases, SUP-056 de 23):
 Exportación:
   días de faena para llenar un contenedor = carga / t exportadas por día operativo
   contenedores/mes = t exportadas/año / 12 / carga ; 1 contenedor por camión portacontenedor
+  SENSIBILIDAD: % exportado y payload explícitos; utilización = t/año / (contenedores enteros × carga) (L27)
   etapas: consolidación (d) + terrestre (h) + espera en terminal (PENDIENTE) + marítimo (PVDP)
 Subproductos (sólidos y líquidos a retirar = clase C + decomisos + contenido GI; L04):
   E1 retiro diario | E2 cada 2 días de faena | E3 acumulación refrigerada N días | E4 salida conjunta
-  t por retiro = t/día operativo × días acumulados ; ocupación = t por retiro / capacidad
+  t por retiro = t/día operativo × días acumulados ; ocupación MÁSICA = t / (viajes × t de capacidad)
+  m³ = Σ t / densidad aparente (PENDIENTE) ; ocupación VOLUMÉTRICA = m³ / (viajes × m³ útiles)  (L26)
+  viajes vinculantes = max(por masa, por volumen) — PENDIENTE si falta densidad o m³
+  acumulación: físicamente posible / sanitariamente permitida / aceptada por receptor / frío /
+  olores — evaluadas por separado, PENDIENTES sin evidencia (L28)
 
 Unidades: aves; kg; t = 1.000 kg; km; h; d. Separador decimal del CSV: punto.
 Bases (regla 14): "vivo", "comercial" (masa biológica + agua retenida), "biologica+agua".
@@ -116,7 +141,7 @@ sys.path.insert(0, os.path.join(RAIZ, "23_plan_expansion"))
 import modelo_escala as me  # noqa: E402  (escala v1.1; importa producción, balance y subproductos)
 
 mp = me.mp
-VERSION = "1.0"
+VERSION = "1.1"
 FECHA = "2026-10-01"
 FUENTE = "13_logistica/modelo_logistica.py"
 TOL = 1e-9
@@ -139,7 +164,7 @@ CONFIGS = tuple(me.CONFIG_VARIANTE)                 # A / B / C
 
 # Aves vivas
 AVES_CAMION = (4000, 5500, 7000)      # SUP-033 (sin fuente); 5.500 = punto medio de barrido
-AVES_CAMION_BASE = 5500
+AVES_CAMION_BASE = 5500                       # punto medio de barrido; se usa SOLO si se elige explícitamente
 ESTACIONES = {"normal": 0.0, "verano": 0.15}   # SUP-12B-07: reducción de carga en verano (barrido 0,10-0,25)
 DOA_BARRIDO = (0.002, 0.003, 0.005, 0.010, 0.0163)   # SUP-026 + condiciones adversas FTE-156 [PVDP]
 RADIOS_KM = (25, 50, 100, 150, 200, 300)      # SUP-12B-01: radios de SENSIBILIDAD, no óptimos
@@ -147,18 +172,24 @@ FACTOR_RUTA = (1.2, 1.3, 1.4)                 # SUP-12B-02 (FTE-12B-001 [PVDP]);
 FACTOR_RUTA_BASE = 1.3
 FACTOR_DISTRIBUCION = 2.0 / 3.0               # SUP-12B-03: media de puntos uniformes en un disco
 VEL_VIVO = 60.0                               # km/h; 03 transporte_aves.md [ESTIMACIÓN] 60-70 (barrido 50-70)
-T_CARGA_VIVO_H = 1.5                          # SUP-12B-05 (barrido 1,0-2,5), sin fuente
-T_DESCARGA_ESPERA_H = 1.0                     # SUP-12B-05 (barrido 0,5-2,0), sin fuente
+# Ventana prefaena DESAGREGADA (SUP-12B-05). Todos son parámetros de escenario, no normas.
+T_RETIRO_ALIMENTO_H = 3.0                     # retiro de alimento → inicio de captura (barrido 2-4), sin fuente
+T_CAPTURA_CARGA_H = 1.5                       # captura y carga por camión (barrido 1,0-2,5), sin fuente
+T_ESPERA_GRANJA_H = 0.0                       # espera adicional en granja tras cargar (barrido 0-1), sin fuente
+T_ESPERA_PLANTA_H = 0.75                      # espera en planta hasta descargar (barrido 0,5-2,0), sin fuente
+T_DESCARGA_H = 0.25                           # descarga / colgado (barrido 0,25-0,5), sin fuente
 T_LAVADO_H = 0.75                             # SUP-12B-05 (barrido 0,5-1,0); Res. SENASA 723/2025 (FTE-234) [PVDP]
-AYUNO_MAX_H = 10.0                            # FTE-156 [PVDP] 8-12 h (punto medio)
-AYUNO_PREVIO_H = 3.0                          # SUP-12B-05: ayuno en granja antes de cargar (2-4), sin fuente
+VENTANA_PREFAENA_H = 10.0                     # VENTANA DE ESCENARIO: 8-12 h citadas como práctica (FTE-156 [PVDP]);
+                                              # NO es un máximo normativo (no hay fuente primaria que lo fije)
+DIAS_COSECHA_REFERENCIA = 2                   # 03 transporte_aves.md: una granja "se vacía en 1-2 noches" [ESTIMACIÓN]
 HORAS_CAMION_DIA = 12.0                       # SUP-12B-08: horas útiles por camión-día (barrido)
 HORAS_NETAS = 8                               # 23/05: referencia de sensibilidad (DEC-036)
 MERMA_H_BARRIDO = (0.0, 0.002, 0.005)         # 03 [ESTIMACIÓN] 0,2-0,5 %/h; 0 = SUP-058 (base)
 PLAZAS_GRANJA = (15000, 30000, 60000)         # 03 [ESTIMACIÓN] 15-30 mil; 60 mil = barrido
 
 # Insumos
-CAP_GRANELERO_T = 28.0                        # 03 alimentacion.md [ESTIMACIÓN] sin fuente; DPV-084
+CAP_GRANELERO_T = 28.0                        # 03 alimentacion.md [ESTIMACIÓN] sin fuente; DPV-084. Capacidad de
+                                              # ESCENARIO: se usa solo si se pasa explícitamente (por defecto PENDIENTE)
 DIST_FABRICA_KM = (25, 75, 150)               # SUP-12B-01 (sin ubicación)
 CAP_POLLITOS = None                           # PENDIENTE (DPV-047, DPV-084)
 CAP_POLLITOS_BARRIDO = (20000, 40000, 80000)  # barrido ilustrativo, NO capacidad estándar
@@ -202,17 +233,38 @@ CAP_SUBPROD_BARRIDO = (5, 10, 20)             # t; barrido, NO capacidad estánd
 CAP_SUBPROD = None                            # PENDIENTE (DPV-084)
 DIST_RECEPTOR_KM = (10, 50, 150)              # SUP-12B-01 (receptor no identificado, DPV-065)
 DIAS_MAX_REFRIGERADO_SUBPROD = None           # PENDIENTE [PVDP] (SUP-12B-12)
+CAP_SUBPROD_M3 = None                         # capacidad VOLUMÉTRICA útil del vehículo/contenedor: PENDIENTE (DPV-12B-16)
+# Densidad aparente (t/m³) por corriente, en el estado y acondicionamiento en que se transporta: SIN EVIDENCIA.
+# Sin densidad NO se calcula ocupación volumétrica (las plumas pueden saturar volumen antes que peso).
+DENSIDAD_APARENTE_T_M3 = {"plumas": None, "sangre": None, "visceras": None, "cabeza": None, "huesos": None,
+                          "otros_c": None, "decomisos_gi": None}
 
 # Backhaul (retorno con carga). Estado por flujo; NO se aplica sin evidencia (L15).
 BACKHAUL_POSIBLE = {
     "pollitos_bb": ("REQUIERE_EVIDENCIA", "Vehículo climatizado de la incubadora; retorno con cajas/bandejas vacías propias. Carga de terceros: bioseguridad"),
     "alimento_granel": ("REQUIERE_EVIDENCIA", "Retorno con granos hacia la fábrica de alimento si el origen coincide; bioseguridad de granja"),
-    "aves_vivas": ("NO", "Camión jaula: lavado y desinfección antes de una nueva carga (Res. SENASA 723/2025, FTE-234 [PVDP]); puente sanitario entre granjas (03 transporte_aves.md §7)"),
+    "aves_vivas": ("DESHABILITADO_POR_DEFECTO", "Supuesto conservador (BACKHAUL_AVES = false): el modelo considera el retorno sin carga comercial para no asumir compatibilidades sanitarias o logísticas no verificadas. Otra utilización requiere validar habilitación, lavado/desinfección (Res. SENASA 723/2025 exige lavado y desinfección de superficies a cada viaje, FTE-234), tiempos de ciclo, tipo de vehículo y compatibilidad sanitaria. No es una prohibición normativa general"),
     "refrigerado_troncal": ("REQUIERE_EVIDENCIA", "Carga refrigerada de terceros o insumos (envases, cajas) en sentido inverso; habilitación SENASA del vehículo"),
     "refrigerado_reparto": ("REQUIERE_EVIDENCIA", "Logística inversa: cajas, pallets vacíos, devoluciones (no es carga paga)"),
     "congelado": ("REQUIERE_EVIDENCIA", "Igual que refrigerado; compatibilidad de temperatura y de mercadería"),
     "exportacion_reefer": ("REQUIERE_EVIDENCIA", "Retorno del contenedor vacío o de otra carga: gestión de naviera/operador"),
-    "subproductos": ("NO", "Vehículo habilitado para subproductos no aptos para consumo humano (Res. SENASA 723/2025, FTE-234 [PVDP]); usarlo para alimentos no se considera admisible sin verificación (DPV-066)"),
+    "subproductos": ("DESHABILITADO_POR_DEFECTO", "Supuesto conservador: vehículo de subproductos no aptos para consumo humano; otra carga requiere verificar habilitación y compatibilidad sanitaria (DPV-066). No se afirma prohibición normativa sin fuente específica"),
+}
+BACKHAUL_AVES = False                         # SUP-12B-14: deshabilitado por defecto (no es prohibición)
+ESTADOS_BACKHAUL = ("NO", "DESHABILITADO_POR_DEFECTO", "REQUIERE_EVIDENCIA", "SI_CON_EVIDENCIA")
+# "NO" se reserva para flujos con prohibición respaldada por fuente normativa específica (hoy: ninguno)
+
+# Tres tipos de retorno que NO se confunden: sin carga comercial · con envases/jaulas · backhaul comercial.
+# Un camión que vuelve con jaulas o cajones vacíos NO está físicamente vacío aunque no lleve carga comercial.
+TIPO_RETORNO = {
+    "aves_vivas": "con envases (jaulas/cajones/módulos vacíos), sin carga comercial",
+    "pollitos_bb": "con envases (cajas de pollitos), sin carga comercial",
+    "alimento_granel": "sin carga comercial",
+    "refrigerado_troncal": "sin carga comercial o con envases/pallets (logística inversa)",
+    "refrigerado_reparto": "con envases/pallets y devoluciones (logística inversa)",
+    "congelado": "sin carga comercial o con pallets",
+    "exportacion_reefer": "con contenedor vacío",
+    "subproductos": "con contenedores vacíos (rotativos), sin carga comercial",
 }
 
 # Corrientes de subproductos a retirar (partición exacta de `solidos_a_retirar`; L04)
@@ -234,7 +286,7 @@ ESTRATEGIAS = {
 UNIDADES_VALIDAS = {"aves", "aves/h", "pollitos", "t", "kg", "kg/ave", "km", "km/ave", "km/t", "h", "d",
                     "viajes", "camiones", "camión-h", "camión-día", "%", "ratio", "paradas", "kg/parada",
                     "granjas", "cosechas", "contenedores", "pallets", "t·d", "t·km", "ave·h", "índice",
-                    "retiros", "km/h", "aves/viaje", "t/viaje", "flag", "rutas"}
+                    "retiros", "km/h", "aves/viaje", "t/viaje", "flag", "rutas", "m³", "t/m³"}
 
 
 # ---------------------------------------------------------------------------
@@ -313,9 +365,12 @@ def mul(*xs):
 
 
 def km_retorno(km_ida, flujo, evidencia=False, fraccion_retorno_cargado=0.0):
-    """km de retorno VACÍO. Sin evidencia el retorno es 100 % vacío; con estado "NO" no se admite
-    backhaul aunque se declare evidencia (bioseguridad / normativa)."""
+    """km de retorno SIN CARGA COMERCIAL (puede llevar envases/jaulas: TIPO_RETORNO). Sin evidencia no se
+    aplica backhaul comercial. "DESHABILITADO_POR_DEFECTO" y "REQUIERE_EVIDENCIA" admiten backhaul solo
+    con evidencia explícita; "NO" (reservado a prohibición con fuente normativa) nunca lo admite."""
     estado = BACKHAUL_POSIBLE[flujo][0]
+    if estado not in ESTADOS_BACKHAUL:
+        raise ErrorLogistica(f"Estado de backhaul desconocido: {estado}")
     if not evidencia:
         if fraccion_retorno_cargado:
             raise ErrorLogistica(f"Backhaul en {flujo} sin evidencia: no se aplica")
@@ -328,11 +383,16 @@ def km_retorno(km_ida, flujo, evidencia=False, fraccion_retorno_cargado=0.0):
 # ---------------------------------------------------------------------------
 # 3. AVES VIVAS (granja → planta)
 # ---------------------------------------------------------------------------
-def aves_vivas(E, dias_semana=5, doa=DOA_BASE, aves_camion=AVES_CAMION_BASE, reduccion=0.0,
+def aves_vivas(E, dias_semana=5, doa=DOA_BASE, aves_camion=None, reduccion=0.0,
                radio_km=100, factor_ruta=FACTOR_RUTA_BASE, factor_distribucion=FACTOR_DISTRIBUCION,
-               vel=VEL_VIVO, t_carga=T_CARGA_VIVO_H, t_espera=T_DESCARGA_ESPERA_H, t_lavado=T_LAVADO_H,
-               ayuno_max=AYUNO_MAX_H, ayuno_previo=AYUNO_PREVIO_H, horas_camion_dia=HORAS_CAMION_DIA,
-               horas_netas=HORAS_NETAS, merma_h=0.0, plazas_granja=30000):
+               vel=VEL_VIVO, t_retiro_alimento=T_RETIRO_ALIMENTO_H, t_captura_carga=T_CAPTURA_CARGA_H,
+               t_espera_granja=T_ESPERA_GRANJA_H, t_espera_planta=T_ESPERA_PLANTA_H, t_descarga=T_DESCARGA_H,
+               t_lavado=T_LAVADO_H, ventana_prefaena=VENTANA_PREFAENA_H, horas_camion_dia=HORAS_CAMION_DIA,
+               horas_netas=HORAS_NETAS, merma_h=0.0, plazas_granja=30000, dias_cosecha_ref=DIAS_COSECHA_REFERENCIA):
+    """Aves vivas granja → planta. `aves_camion` = CAPACIDAD DE ESCENARIO elegida explícitamente; si es
+    None, todo resultado que depende del camión queda PENDIENTE. La ventana prefaena es un PARÁMETRO
+    DE ESCENARIO (no una norma): el tiempo disponible para transporte y el alcance en km que de ella
+    resultan son consecuencias de los supuestos, no límites sanitarios ni reglamentarios."""
     faltantes = set()
     _pos(E, "aves_dia")
     _frac(doa, "doa", 0.2)
@@ -343,11 +403,16 @@ def aves_vivas(E, dias_semana=5, doa=DOA_BASE, aves_camion=AVES_CAMION_BASE, red
         raise ErrorLogistica("Factor de ruta < 1: la distancia por ruta no puede ser menor que la geográfica")
     _frac(factor_distribucion, "factor_distribucion")
     for n, v in (("vel", vel), ("horas_camion_dia", horas_camion_dia), ("horas_netas", horas_netas),
-                 ("plazas_granja", plazas_granja), ("ayuno_max", ayuno_max)):
+                 ("plazas_granja", plazas_granja), ("dias_cosecha_ref", dias_cosecha_ref)):
         _pos(v, n)
-    for n, v in (("t_carga", t_carga), ("t_espera", t_espera), ("t_lavado", t_lavado),
-                 ("ayuno_previo", ayuno_previo), ("merma_h", merma_h)):
+    for n, v in (("t_retiro_alimento", t_retiro_alimento), ("t_captura_carga", t_captura_carga),
+                 ("t_espera_granja", t_espera_granja), ("t_espera_planta", t_espera_planta),
+                 ("t_descarga", t_descarga), ("t_lavado", t_lavado), ("merma_h", merma_h)):
         _pos(v, n, cero=True)
+    if ventana_prefaena is None:
+        faltantes.add("ventana_prefaena_h")
+    else:
+        _pos(ventana_prefaena, "ventana_prefaena")
 
     par = me.parametros_produccion()
     par["doa"] = doa
@@ -360,7 +425,7 @@ def aves_vivas(E, dias_semana=5, doa=DOA_BASE, aves_camion=AVES_CAMION_BASE, red
     d_ruta_max = radio * factor_ruta
     h_viaje = d_ruta_media / vel
     h_viaje_max = d_ruta_max / vel
-    merma = merma_h * (h_viaje + t_espera)
+    merma = merma_h * (h_viaje + t_espera_planta + t_descarga)
     if merma >= 0.2:
         raise ErrorLogistica(f"Merma de viaje {merma:.1%} implausible: revisar tasa y horas")
     peso_granja = PESO / (1 - merma)
@@ -369,58 +434,90 @@ def aves_vivas(E, dias_semana=5, doa=DOA_BASE, aves_camion=AVES_CAMION_BASE, red
     kg_doa = aves_doa * peso_granja
     kg_merma = E * (peso_granja - PESO)
 
-    cap_ef = cap * (1 - reduccion)
-    equiv = cargadas / cap_ef
-    viajes = viajes_enteros(equiv)
-    km_ida = viajes * d_ruta_media
-    km_vuelta = km_retorno(km_ida, "aves_vivas")
-    km_total = km_ida + km_vuelta
-    ciclo = t_carga + 2 * h_viaje + t_espera + t_lavado
-    camion_h = viajes * ciclo
-    aves_h = E / horas_netas
-    intervalo = cap_ef * (1 - doa) / aves_h
-    flota_horas = viajes_enteros(camion_h / horas_camion_dia)
-    flota_continuo = min(viajes, viajes_enteros(ciclo / intervalo))
-    flota = max(flota_horas, flota_continuo)
-    viaje_admisible = ayuno_max - ayuno_previo - t_carga - t_espera
+    # --- ventana prefaena (secuencia: retiro de alimento → captura y carga → espera en granja →
+    #     transporte → espera en planta → descarga/colgado). Ningún tramo es una norma.
+    no_transporte = t_retiro_alimento + t_captura_carga + t_espera_granja + t_espera_planta + t_descarga
+    total_medio = no_transporte + h_viaje
+    total_max = no_transporte + h_viaje_max
+    if ventana_prefaena is None:
+        disponible = alcance_ruta = alcance_geo = alerta_medio = alerta_max = None
+    else:
+        disponible = ventana_prefaena - no_transporte
+        alcance_ruta = max(disponible, 0.0) * vel
+        alcance_geo = alcance_ruta / factor_ruta
+        alerta_medio = 1.0 if total_medio > ventana_prefaena + TOL else 0.0
+        alerta_max = 1.0 if total_max > ventana_prefaena + TOL else 0.0
 
-    mort = par["mort"]
-    aves_por_cosecha = plazas_granja * (1 - mort)
-    return {
+    # --- ciclo del camión = ida + captura/carga + espera en granja + espera en planta + descarga
+    #     + regreso + lavado/desinfección (independiente de la capacidad)
+    ciclo = h_viaje + t_captura_carga + t_espera_granja + t_espera_planta + t_descarga + h_viaje + t_lavado
+    aves_h = E / horas_netas
+    out = {
         "faltantes": faltantes,
         "aves_faenadas_dia": E, "aves_cargadas_dia": cargadas, "aves_doa_dia": aves_doa,
         "aves_doa_anio": aves_doa * CALENDARIOS[dias_semana],
         "kg_vivo_cargado_dia": kg_cargado, "kg_vivo_faenable_dia": kg_faenable,
         "kg_doa_dia": kg_doa, "kg_merma_viaje_dia": kg_merma, "merma_viaje_frac": merma,
-        "t_vivo_cargado_dia": kg_cargado / 1000,
-        "capacidad_efectiva_aves": cap_ef, "viajes_equivalentes_dia": equiv, "viajes_dia": viajes,
-        "ocupacion": ocupacion(cargadas, viajes, cap_ef), "t_por_viaje": kg_cargado / 1000 / viajes,
+        "t_vivo_cargado_dia": kg_cargado / 1000, "aves_por_hora_neta": aves_h,
         "distancia_geo_media_km": d_geo_media, "distancia_ruta_media_km": d_ruta_media,
         "distancia_ruta_max_km": d_ruta_max, "h_viaje_medio": h_viaje, "h_viaje_max": h_viaje_max,
-        "km_cargado_dia": km_ida, "km_vacio_dia": km_vuelta, "km_total_dia": km_total,
-        "pct_km_vacio": km_vuelta / km_total if km_total else None,
-        "t_km_dia": kg_cargado / 1000 * d_ruta_media,
-        "km_por_ave": km_total / E, "km_por_t_vivo": km_total / (kg_cargado / 1000),
-        "tiempo_ciclo_h": ciclo, "camion_horas_dia": camion_h, "camion_dia": camion_h / horas_camion_dia,
-        "flota_minima": flota, "utilizacion_flota": camion_h / (flota * horas_camion_dia),
-        "aves_por_hora_neta": aves_h, "intervalo_arribos_h": intervalo,
-        "viaje_admisible_h": viaje_admisible,
-        "dentro_ventana_ayuno_medio": 1.0 if h_viaje <= viaje_admisible + TOL else 0.0,
-        "dentro_ventana_ayuno_max": 1.0 if h_viaje_max <= viaje_admisible + TOL else 0.0,
+        "t_retiro_alimento_h": t_retiro_alimento, "t_captura_carga_h": t_captura_carga,
+        "t_espera_granja_h": t_espera_granja, "t_transporte_medio_h": h_viaje, "t_transporte_max_h": h_viaje_max,
+        "t_espera_planta_h": t_espera_planta, "t_descarga_h": t_descarga,
+        "t_total_prefaena_medio_h": total_medio, "t_total_prefaena_max_h": total_max,
+        "ventana_prefaena_escenario_h": ventana_prefaena,
+        "t_transporte_disponible_escenario_h": disponible,
+        "alcance_ruta_escenario_km": alcance_ruta, "alcance_geo_escenario_km": alcance_geo,
+        "alerta_prefaena_excede_ventana_medio": alerta_medio, "alerta_prefaena_excede_ventana_max": alerta_max,
         "ave_horas_transito_dia": cargadas * h_viaje,
+        "t_ida_h": h_viaje, "t_regreso_h": h_viaje, "t_lavado_h": t_lavado, "tiempo_ciclo_h": ciclo,
+        "ciclos_posibles_por_camion_jornada": float(math.floor(horas_camion_dia / ciclo + 1e-9)),
         "granjas_equivalentes": pr["capacidad_alojamiento_pollitos"] / plazas_granja,
-        "aves_cargadas_por_cosecha": aves_por_cosecha,
-        "cosechas_semana": cargadas * dias_semana / aves_por_cosecha,
-        "dias_faena_por_cosecha": aves_por_cosecha / cargadas,
-        "viajes_por_cosecha": viajes_enteros(aves_por_cosecha / cap_ef),
+        "aves_cargadas_por_cosecha": plazas_granja * (1 - par["mort"]),
         "ciclos_anio_por_granja": pr["ciclos_anio"],
     }
+    por_cosecha = out["aves_cargadas_por_cosecha"]
+    out.update({"cosechas_semana": cargadas * dias_semana / por_cosecha,
+                "dias_faena_por_cosecha": por_cosecha / cargadas,
+                "alerta_cosecha_prolongada_potencial": 1.0 if por_cosecha / cargadas > dias_cosecha_ref + TOL else 0.0})
+    if cap is None:                       # capacidad no elegida: resultados de camión PENDIENTES
+        for k_ in ("capacidad_efectiva_aves", "viajes_equivalentes_dia", "viajes_dia", "ocupacion", "t_por_viaje",
+                   "km_cargado_dia", "km_retorno_sin_carga_comercial_dia", "km_total_dia",
+                   "pct_km_sin_carga_comercial", "t_km_dia", "km_por_ave", "km_por_t_vivo", "camion_horas_dia",
+                   "camion_dia", "flota_minima", "utilizacion_flota", "utilizacion_semanal_flota",
+                   "intervalo_arribos_h", "viajes_por_cosecha"):
+            out[k_] = None
+        return out
+    cap_ef = cap * (1 - reduccion)
+    equiv = cargadas / cap_ef
+    viajes = viajes_enteros(equiv)
+    km_ida = viajes * d_ruta_media
+    km_vuelta = km_retorno(km_ida, "aves_vivas")          # retorno sin carga comercial (con jaulas)
+    km_total = km_ida + km_vuelta
+    camion_h = viajes * ciclo
+    intervalo = cap_ef * (1 - doa) / aves_h
+    flota_horas = viajes_enteros(camion_h / horas_camion_dia)
+    flota_continuo = min(viajes, viajes_enteros(ciclo / intervalo))
+    flota = max(flota_horas, flota_continuo)
+    out.update({
+        "capacidad_efectiva_aves": cap_ef, "viajes_equivalentes_dia": equiv, "viajes_dia": viajes,
+        "ocupacion": ocupacion(cargadas, viajes, cap_ef), "t_por_viaje": kg_cargado / 1000 / viajes,
+        "km_cargado_dia": km_ida, "km_retorno_sin_carga_comercial_dia": km_vuelta, "km_total_dia": km_total,
+        "pct_km_sin_carga_comercial": km_vuelta / km_total if km_total else None,
+        "t_km_dia": kg_cargado / 1000 * d_ruta_media,
+        "km_por_ave": km_total / E, "km_por_t_vivo": km_total / (kg_cargado / 1000),
+        "camion_horas_dia": camion_h, "camion_dia": camion_h / horas_camion_dia,
+        "flota_minima": flota, "utilizacion_flota": camion_h / (flota * horas_camion_dia),
+        "utilizacion_semanal_flota": camion_h * dias_semana / (flota * horas_camion_dia * 7),
+        "intervalo_arribos_h": intervalo, "viajes_por_cosecha": viajes_enteros(por_cosecha / cap_ef),
+    })
+    return out
 
 
 # ---------------------------------------------------------------------------
 # 4. INSUMOS (hacia granjas y planta)
 # ---------------------------------------------------------------------------
-def insumos(E, dias_semana=5, cap_granelero=CAP_GRANELERO_T, dist_fabrica=75, cap_pollitos=CAP_POLLITOS,
+def insumos(E, dias_semana=5, cap_granelero=None, dist_fabrica=75, cap_pollitos=CAP_POLLITOS,
             dist_incubadora=150, kg_cama_m2=KG_CAMA_M2, kg_envase_por_kg=KG_ENVASE_POR_KG,
             kg_pallet=KG_POR_PALLET, consumo_l_km=CONSUMO_L_KM, config=me.CONFIG_REF):
     faltantes = set()
@@ -714,7 +811,10 @@ def exportacion(E, dias_semana=5, config=me.CONFIG_REF, cuota=0.20, carga_t=CONT
     conocido = None
     if d_op is not None and espera_terminal_d is not None and transito_d is not None:
         conocido = d_op * 365 / dias_anio + h_terr / 24 + espera_terminal_d + max(transito_d)
-    return {"faltantes": faltantes, "export_t_dia_op": t_op, "export_t_anio": t_anio,
+    cont_ent = viajes_enteros(cont_anio)
+    return {"faltantes": faltantes, "cuota_exportacion": cuota, "carga_contenedor_t": c,
+            "export_t_dia_op": t_op, "export_t_anio": t_anio,
+            "utilizacion_carga_contenedores": None if not cont_ent else t_anio / (cont_ent * c),
             "dias_faena_llenar_contenedor": d_op,
             "dias_calendario_llenar_contenedor": None if d_op is None else d_op * 365 / dias_anio,
             "contenedores_mes": None if cont_anio is None else cont_anio / 12,
@@ -741,12 +841,17 @@ def corrientes_subproductos(E, config=me.CONFIG_REF):
 
 
 def subproductos(E, dias_semana=5, config=me.CONFIG_REF, estrategia="E1", cap=CAP_SUBPROD,
-                 dist_receptor_km=50, corriente=None, dias_max_refrigerado=DIAS_MAX_REFRIGERADO_SUBPROD):
-    """Una corriente (o un grupo de salida conjunta si `corriente` empieza con 'G')."""
+                 dist_receptor_km=50, corriente=None, dias_max_refrigerado=DIAS_MAX_REFRIGERADO_SUBPROD,
+                 cap_m3=CAP_SUBPROD_M3, densidades=None):
+    """Una corriente (o un grupo de salida conjunta si `corriente` empieza con 'G').
+    `cap` = capacidad MÁSICA de escenario (t); `cap_m3` = capacidad VOLUMÉTRICA útil (m³); `densidades` =
+    densidad aparente t/m³ por corriente. Ocupación másica y volumétrica son variables distintas; la
+    volumétrica queda PENDIENTE si falta la densidad de algún miembro o la capacidad en m³."""
     faltantes = set()
     if estrategia not in ESTRATEGIAS:
         raise ErrorLogistica(f"Estrategia {estrategia} inexistente")
     capx = _cap(cap, "cap_vehiculo_subproductos_t", faltantes)
+    capv = _cap(cap_m3, "cap_vehiculo_subproductos_m3", faltantes)
     d = _dist(dist_receptor_km, "dist_receptor_km")
     t, _, _ = corrientes_subproductos(E, config)
     if corriente is None:
@@ -754,33 +859,71 @@ def subproductos(E, dias_semana=5, config=me.CONFIG_REF, estrategia="E1", cap=CA
     miembros = [c for c in CORRIENTES if CORRIENTES[c][3] == corriente] if corriente.startswith("G") else [corriente]
     if not miembros or any(m not in CORRIENTES for m in miembros):
         raise ErrorLogistica(f"Corriente {corriente} inexistente")
+    dens = dict(DENSIDAD_APARENTE_T_M3, **(densidades or {}))
     t_dia = sum(t[m] for m in miembros)
+    activos = [m for m in miembros if t[m] > 0]
+    for m in activos:
+        if dens.get(m) is None:
+            faltantes.add(f"densidad_aparente_{m}")
+        elif dens[m] <= 0:
+            raise ErrorLogistica(f"Densidad aparente de {m} debe ser > 0")
+    m3_dia = None if any(dens.get(m) is None for m in activos) else sum(t[m] / dens[m] for m in activos)
     acum = ESTRATEGIAS[estrategia][1]
     retiros = viajes_enteros(dias_semana / acum)
     t_ret = t_dia * acum
-    v_ret = viajes_enteros(dividir(t_ret, capx))
-    if dias_max_refrigerado is None and acum > 1:
-        faltantes.add("dias_max_refrigerado_subproductos")
+    m3_ret = None if m3_dia is None else m3_dia * acum
+    v_masa = viajes_enteros(dividir(t_ret, capx))
+    v_vol = viajes_enteros(dividir(m3_ret, capv))
+    v_vinc = None if v_masa is None or v_vol is None else max(v_masa, v_vol)
+    if acum > 1:
+        faltantes.update({"dias_max_refrigerado_subproductos", "requisitos_receptor_acumulacion",
+                          "normativa_acumulacion_subproductos", "capacidad_almacenamiento_refrigerado_subproductos"})
+    else:
+        faltantes.update({"requisitos_receptor_acumulacion", "normativa_acumulacion_subproductos"})
     return {"faltantes": faltantes, "miembros": miembros, "t_dia_op": t_dia, "t_semana": t_dia * dias_semana,
-            "dias_acumulados": acum, "t_por_retiro": t_ret, "retiros_semana": retiros,
-            "viajes_por_retiro": v_ret, "viajes_semana": None if v_ret is None else v_ret * retiros,
-            "ocupacion": ocupacion(t_ret, v_ret, capx),
-            "km_semana": None if v_ret is None else 2 * v_ret * retiros * d,
+            "m3_dia_op": m3_dia, "dias_acumulados": acum, "t_por_retiro": t_ret, "m3_por_retiro": m3_ret,
+            "retiros_semana": retiros,
+            "viajes_por_retiro_criterio_masa": v_masa,
+            "viajes_semana_criterio_masa": None if v_masa is None else v_masa * retiros,
+            "ocupacion_masica": ocupacion(t_ret, v_masa, capx),
+            "viajes_por_retiro_criterio_volumen": v_vol,
+            "ocupacion_volumetrica": ocupacion(m3_ret, v_vol, capv),
+            "viajes_por_retiro_vinculante": v_vinc,
+            "km_semana_criterio_masa": None if v_masa is None else 2 * v_masa * retiros * d,
             "stock_refrigerado_max_t": t_dia * (acum - 1),
-            "requiere_frio": 1.0 if acum > 1 else 0.0,
-            "dias_faena_para_llenar": None if capx is None or t_dia == 0 else capx / t_dia,
-            "admisible_sanitario": (1.0 if acum == 1 else None)}   # >1 día: PVDP, no confirmado
+            "dias_faena_para_llenar_capacidad_masica": None if capx is None or t_dia == 0 else capx / t_dia,
+            # acumulación: cinco dimensiones separadas (SUP-12B-12); ninguna se da por cumplida sin evidencia
+            "fisicamente_posible": 1.0 if acum == 1 else None,          # >1 día: depende de cámara/recipientes (12C)
+            "sanitariamente_permitido": None,                            # normativa no leída (DPV-066, DPV-12B-03)
+            "aceptado_por_receptor": None,                               # DPV-065
+            "requiere_frio": 1.0 if acum > 1 else 0.0,                   # frío o recipiente específico si se acumula
+            "riesgo_olores_degradacion_aumentado": 1.0 if acum > 1 else 0.0}
 
 
 # ---------------------------------------------------------------------------
 # 11. CONSTRUCCIÓN DEL CSV
 # ---------------------------------------------------------------------------
 CAMPOS = ["bloque", "escala_aves_dia", "dias_semana", "dias_anio", "escenario", "parametros", "variable",
-          "valor", "unidad", "periodo", "base", "cadena", "clasificacion", "tipo_kpi", "sumable", "fuente", "nota"]
+          "valor", "unidad", "periodo", "base", "cadena", "clasificacion", "tipo_kpi", "sumable",
+          "capacidad_vehiculo", "tipo_capacidad", "fuente", "nota"]
+# Variables cuyo valor depende de la capacidad del vehículo: toda fila debe declarar la capacidad usada (L25)
+PATRON_DEPENDE_CAPACIDAD = ("viajes", "rutas", "flota", "ocupacion", "camion_dia", "camion_horas", "km_total",
+                            "km_cargado", "km_retorno", "km_por_", "km_dia_despacho", "km_semana", "km_reparto",
+                            "t_por_viaje", "pct_km", "utilizacion_flota", "utilizacion_semanal_flota", "intervalo",
+                            "capacidad_efectiva", "contenedores", "llenar", "paradas_planta", "t_km")
+TIPOS_CAPACIDAD = ("ESCENARIO", "ESCENARIO [ESTIMACIÓN 03]", "ESCENARIO [PVDP]", "PENDIENTE", "VALIDADA", "COTIZADA")
+NOTA_ALCANCE = ("Resultado del escenario (ventana prefaena, tiempos y velocidad supuestos: SUP-12B-04/05); "
+                "NO es límite sanitario, reglamentario ni radio óptimo")
+
+
+def depende_capacidad(var):
+    return any(p_ in var for p_ in PATRON_DEPENDE_CAPACIDAD)
 
 def _unidad(var):
     """Unidad por nombre de variable (reglas en orden; L16 verifica que toda unidad sea válida)."""
-    reglas = [("despachos_semana", "d"), ("inviable", "flag"), ("_frac", "ratio"), ("ocupacion", "%"), ("pct_", "%"), ("utilizacion", "%"), ("cobertura", "%"),
+    reglas = [("m3_", "m³"), ("cuota", "ratio"), ("alerta", "flag"), ("fisicamente", "flag"),
+              ("sanitariamente", "flag"), ("aceptado", "flag"), ("riesgo_", "flag"),
+              ("despachos_semana", "d"), ("inviable", "flag"), ("_frac", "ratio"), ("ocupacion", "%"), ("pct_", "%"), ("utilizacion", "%"), ("cobertura", "%"),
               ("participacion", "%"), ("km_por_ave", "km/ave"), ("km_por_t", "km/t"), ("t_km", "t·km"),
               ("t_dias", "t·d"), ("t_dia", "t"), ("t_vivo", "t"), ("_t_", "t"), ("t_por_retiro", "t"),
               ("t_por_viaje", "t/viaje"), ("t_semana", "t"), ("t_lote", "t"), ("t_anio", "t"),
@@ -791,7 +934,7 @@ def _unidad(var):
               ("capacidad_efectiva", "aves/viaje"), ("kg_", "kg"), ("aves_", "aves"), ("pollitos", "pollitos"),
               ("granjas", "granjas"), ("cosechas", "cosechas"), ("contenedores", "contenedores"),
               ("pallets", "pallets"), ("retiros", "retiros"), ("dias_", "d"), ("_d_", "d"), ("_d", "d"),
-              ("despachos_semana", "d"), ("dentro_", "flag"), ("excede", "flag"), ("inviable", "flag"), ("admisible", "flag"), ("requiere", "flag"),
+              ("despachos_semana", "d"), ("dentro_", "flag"), ("excede", "flag"), ("inviable", "flag"), ("requiere", "flag"),
               ("ciclos", "índice"), ("m2", "m²"), ("locales", "índice"), ("_t", "t"), ("stock", "t"),
               ("combustible", "índice")]
     for pat, u in reglas:
@@ -801,10 +944,15 @@ def _unidad(var):
 
 
 PERIODOS_VAR = [  # (patrón en el nombre, período) — se aplica antes del período del bloque
+    ("cuota", "-"), ("carga_contenedor", "embarque"), ("utilizacion_carga", "anio"), ("ventana_prefaena", "lote"),
+    ("t_retiro_alimento", "lote"), ("t_captura", "viaje"), ("t_espera", "viaje"), ("t_transporte", "viaje"),
+    ("t_descarga", "viaje"), ("t_total_prefaena", "lote"), ("alcance", "viaje"), ("alerta_prefaena", "lote"),
+    ("t_ida", "viaje"), ("t_regreso", "viaje"), ("t_lavado", "viaje"), ("ciclos_posibles", "dia_operativo"),
+    ("utilizacion_semanal", "semana"), ("m3_dia", "dia_operativo"), ("m3_por_retiro", "retiro"),
     ("stock", "stock"), ("t_dias_inmovilizadas", "semana"), ("_anio", "anio"), ("contenedores_mes", "mes"),
     ("_semana", "semana"), ("por_cosecha", "cosecha"), ("t_dia_cal", "dia_calendario"),
     ("t_dia_op", "dia_operativo"), ("t_dia_7d", "dia_calendario"), ("viajes_dia_7d", "dia_calendario"),
-    ("t_lote", "lote"), ("tiempo_ciclo", "viaje"), ("h_viaje", "viaje"), ("viaje_admisible", "viaje"),
+    ("t_lote", "lote"), ("tiempo_ciclo", "viaje"), ("h_viaje", "viaje"),
     ("t_por_viaje", "viaje"), ("capacidad_efectiva", "viaje"), ("distancia", "viaje"),
     ("h_terrestre", "viaje"), ("llenar", "lote"), ("transito", "embarque"), ("espera_terminal", "embarque"),
     ("lead_time", "embarque"), ("t_por_retiro", "retiro"), ("por_retiro", "retiro"), ("m2_galpon", "-"),
@@ -825,7 +973,7 @@ class Tabla:
         self.filas = []
 
     def add(self, bloque, E, ds, escenario, parametros, variable, valor, periodo, base="-", cadena="-",
-            clasif=None, tipo_kpi="fisico", sumable="no", nota="", unidad=None):
+            clasif=None, tipo_kpi="fisico", sumable="no", nota="", unidad=None, capacidad="-", tipo_capacidad="-"):
         if isinstance(valor, bool):
             valor = 1.0 if valor else 0.0
         if valor is NA:
@@ -841,18 +989,23 @@ class Tabla:
             "valor": "PENDIENTE" if pend else (round(valor, 6) if isinstance(valor, float) else valor),
             "unidad": unidad, "periodo": _periodo(variable, periodo), "base": base, "cadena": cadena,
             "clasificacion": "[PENDIENTE DE VALIDACIÓN]" if pend else (clasif or "[ESTIMACIÓN]"),
-            "tipo_kpi": tipo_kpi, "sumable": sumable, "fuente": FUENTE, "nota": nota})
+            "tipo_kpi": tipo_kpi, "sumable": sumable, "capacidad_vehiculo": capacidad,
+            "tipo_capacidad": tipo_capacidad, "fuente": FUENTE,
+            "nota": nota or (NOTA_ALCANCE if any(x in variable for x in ("alcance", "t_transporte_disponible",
+                                                                         "ventana_prefaena", "alerta_prefaena")) else "")})
 
     def volcar(self, bloque, E, ds, escenario, parametros, res, periodo, claves=None, cadena="-", base="-",
-               excluir=("faltantes",)):
-        falt = ";".join(sorted(res.get("faltantes", ()))) if isinstance(res, dict) else ""
+               excluir=("faltantes",), capacidad="-", tipo_capacidad="-"):
+        lista = sorted(res.get("faltantes", ())) if isinstance(res, dict) else []
+        falt = ";".join(lista[:3]) + (f";+{len(lista) - 3} (ver parametros)" if len(lista) > 3 else "")
         for k_, v in res.items():
             if k_ in excluir or isinstance(v, (str, list, set, tuple)):
                 continue
             if claves and k_ not in claves:
                 continue
+            cap_, tipo_ = (capacidad, tipo_capacidad) if depende_capacidad(k_) else ("-", "-")
             self.add(bloque, E, ds, escenario, parametros, k_, v, periodo, base=base, cadena=cadena,
-                     nota=(f"faltante: {falt}" if v is None and falt else ""))
+                     nota=(f"faltante: {falt}" if v is None and falt else ""), capacidad=cap_, tipo_capacidad=tipo_)
 
 
 PARAMETROS_TABLA = [  # (variable, valor, unidad, clasificación, referencia/nota)
@@ -860,17 +1013,20 @@ PARAMETROS_TABLA = [  # (variable, valor, unidad, clasificación, referencia/not
     ("calendarios", "5 d=250 d; 6 d=300 d", "d", "[SUPUESTO]", "SUP-025"),
     ("peso_vivo_planta_kg", PESO, "kg", "[SUPUESTO]", "Perfil medio 03 (SUP-026/058)"),
     ("doa_base", DOA_BASE, "ratio", "[SUPUESTO]", "SUP-026; barrido 0,2-1,63 % (FTE-156 [PVDP])"),
-    ("aves_por_camion_vivo", "4000/5500/7000", "aves/viaje", "[SUPUESTO]", "SUP-033 sin fuente; DPV-084; 5.500 = punto medio (SUP-12B-06)"),
+    ("aves_por_camion_vivo", "4000/5500/7000", "aves/viaje", "[SUPUESTO]", "Capacidad de ESCENARIO (SUP-033 sin fuente; DPV-084); sin elección explícita = PENDIENTE; ninguna validada ni cotizada"),
     ("reduccion_carga_verano", "0.15 (0.10-0.25)", "ratio", "[SUPUESTO]", "SUP-12B-07; 03: 1-2 aves menos por cajón"),
     ("radios_km", "25/50/100/150/200/300", "km", "[SUPUESTO]", "SUP-12B-01: sensibilidad, NO radio óptimo"),
     ("factor_ruta", "1.2/1.3/1.4 (base 1.3)", "ratio", "[SUPUESTO]", "SUP-12B-02; FTE-12B-001 [PVDP]"),
     ("factor_distribucion", round(FACTOR_DISTRIBUCION, 6), "ratio", "[ESTIMACIÓN]", "SUP-12B-03: media de puntos uniformes en un disco = 2R/3"),
     ("velocidad_aves_vivas_kmh", VEL_VIVO, "km/h", "[ESTIMACIÓN]", "03 transporte_aves.md §4 (60-70); sin fuente"),
-    ("t_carga_granja_h", T_CARGA_VIVO_H, "h", "[SUPUESTO]", "SUP-12B-05 sin fuente (DPV-12B-01)"),
-    ("t_espera_descarga_h", T_DESCARGA_ESPERA_H, "h", "[SUPUESTO]", "SUP-12B-05 sin fuente"),
-    ("t_lavado_desinfeccion_h", T_LAVADO_H, "h", "[SUPUESTO]", "SUP-12B-05; obligación de lavado: Res. SENASA 723/2025 (FTE-234) [PVDP]"),
-    ("ayuno_total_max_h", AYUNO_MAX_H, "h", "[PVDP]", "FTE-156: 8-12 h"),
-    ("ayuno_previo_granja_h", AYUNO_PREVIO_H, "h", "[SUPUESTO]", "SUP-12B-05 sin fuente"),
+    ("t_retiro_alimento_h", T_RETIRO_ALIMENTO_H, "h", "[SUPUESTO]", "SUP-12B-05: retiro de alimento → inicio de captura; sin fuente (DPV-12B-01)"),
+    ("t_captura_carga_h", T_CAPTURA_CARGA_H, "h", "[SUPUESTO]", "SUP-12B-05 sin fuente (DPV-12B-01)"),
+    ("t_espera_granja_h", T_ESPERA_GRANJA_H, "h", "[SUPUESTO]", "SUP-12B-05: sin espera adicional en granja (barrido 0-1 h)"),
+    ("t_espera_planta_h", T_ESPERA_PLANTA_H, "h", "[SUPUESTO]", "SUP-12B-05 sin fuente"),
+    ("t_descarga_h", T_DESCARGA_H, "h", "[SUPUESTO]", "SUP-12B-05: descarga/colgado; sin fuente"),
+    ("t_lavado_desinfeccion_h", T_LAVADO_H, "h", "[SUPUESTO]", "SUP-12B-05: duración sin fuente. La obligación de lavar y desinfectar superficies a cada viaje proviene de la Res. SENASA 723/2025 (FTE-234, confirmada en revisión externa); la resolución no fija duración"),
+    ("ventana_prefaena_escenario_h", VENTANA_PREFAENA_H, "h", "[SUPUESTO]", "SUP-12B-05: parámetro de ESCENARIO dentro del rango 8-12 h citado como práctica (FTE-156 [PVDP]); NO es un máximo normativo (sin fuente primaria que lo establezca)"),
+    ("dias_cosecha_referencia", DIAS_COSECHA_REFERENCIA, "d", "[ESTIMACIÓN]", "03 transporte_aves.md §5: granja de 15-30 mil aves se vacía en 1-2 noches; solo dispara una alerta POTENCIAL"),
     ("horas_utiles_camion_dia", HORAS_CAMION_DIA, "h", "[SUPUESTO]", "SUP-12B-08"),
     ("horas_netas_faena", HORAS_NETAS, "h", "[SUPUESTO]", "23 / 05 (DEC-036)"),
     ("merma_viaje_por_h", "0/0.002/0.005", "ratio", "[ESTIMACIÓN]", "03 transporte_aves.md §3; 0 = SUP-058"),
@@ -906,41 +1062,73 @@ PARAMETROS_TABLA = [  # (variable, valor, unidad, clasificación, referencia/not
     ("transito_maritimo_d", "20-45", "d", "[PVDP]", "17 logistica_exportacion.md §4 (débil)"),
     ("espera_terminal_d", None, "d", "[PENDIENTE DE VALIDACIÓN]", "DPV-027"),
     ("dias_max_refrigerado_subproductos", None, "d", "[PENDIENTE DE VALIDACIÓN]", "SUP-12B-12 / DPV-12B-03 [PVDP]"),
-    ("backhaul_aplicado", 0, "ratio", "[SUPUESTO]", "SUP-12B-14: 0 salvo evidencia (BACKHAUL_POSIBLE)"),
+    ("backhaul_aplicado", 0, "ratio", "[SUPUESTO]", "SUP-12B-14: 0 salvo evidencia; BACKHAUL_AVES = false como supuesto conservador, NO como prohibición normativa"),
+    ("cap_vehiculo_subproductos_m3", None, "m³", "[PENDIENTE DE VALIDACIÓN]", "DPV-12B-16: capacidad volumétrica útil"),
+    ("densidad_aparente_subproductos_t_m3", None, "t/m³", "[PENDIENTE DE VALIDACIÓN]", "DPV-12B-16: por corriente (plumas, sangre, vísceras, cabezas, decomisos); sin ella no se calcula ocupación volumétrica"),
 ]
 
 # Variables por bloque: las que NO dependen de la capacidad del vehículo se escriben una sola vez
 VIVO_FLUJO = ["aves_cargadas_dia", "aves_doa_dia", "aves_doa_anio", "t_vivo_cargado_dia", "kg_vivo_faenable_dia",
               "kg_doa_dia", "aves_por_hora_neta"]
 VIVO_CAMION = ["capacidad_efectiva_aves", "viajes_equivalentes_dia", "viajes_dia", "ocupacion", "t_por_viaje",
-               "km_cargado_dia", "km_vacio_dia", "km_total_dia", "pct_km_vacio", "t_km_dia", "km_por_ave",
-               "km_por_t_vivo", "tiempo_ciclo_h", "camion_horas_dia", "camion_dia", "flota_minima",
-               "utilizacion_flota", "intervalo_arribos_h", "ave_horas_transito_dia"]
-VIVO_RUTA = ["distancia_geo_media_km", "distancia_ruta_media_km", "distancia_ruta_max_km", "h_viaje_medio",
-             "h_viaje_max", "viaje_admisible_h", "dentro_ventana_ayuno_medio", "dentro_ventana_ayuno_max",
-             "tiempo_ciclo_h"]
+               "km_cargado_dia", "km_retorno_sin_carga_comercial_dia", "km_total_dia", "pct_km_sin_carga_comercial",
+               "t_km_dia", "km_por_ave", "km_por_t_vivo", "tiempo_ciclo_h", "ciclos_posibles_por_camion_jornada",
+               "camion_horas_dia", "camion_dia", "flota_minima", "utilizacion_flota", "utilizacion_semanal_flota",
+               "intervalo_arribos_h", "ave_horas_transito_dia"]
+VIVO_RUTA = ["distancia_geo_media_km", "distancia_ruta_media_km", "distancia_ruta_max_km",
+             "t_retiro_alimento_h", "t_captura_carga_h", "t_espera_granja_h", "t_transporte_medio_h",
+             "t_transporte_max_h", "t_espera_planta_h", "t_descarga_h", "t_total_prefaena_medio_h",
+             "t_total_prefaena_max_h", "ventana_prefaena_escenario_h", "alerta_prefaena_excede_ventana_medio",
+             "alerta_prefaena_excede_ventana_max", "t_ida_h", "t_regreso_h", "t_lavado_h", "tiempo_ciclo_h"]
+VIVO_ALCANCE = ["t_total_prefaena_max_h", "t_transporte_disponible_escenario_h", "alcance_ruta_escenario_km",
+                "alcance_geo_escenario_km", "alerta_prefaena_excede_ventana_max", "tiempo_ciclo_h"]
 PT_FLUJO = ["t_dia_op", "t_semana", "despachos_semana", "t_dia_despacho", "stock_ciclo_max_t", "tiempo_ciclo_h"]
 PT_CAMION = ["viajes_dia_despacho", "viajes_semana", "ocupacion", "km_dia_despacho", "km_por_t", "camion_dia"]
-SUB_FLUJO = ["t_dia_op", "t_semana", "dias_acumulados", "t_por_retiro", "retiros_semana",
-             "stock_refrigerado_max_t", "requiere_frio", "admisible_sanitario"]
-SUB_CAMION = ["viajes_por_retiro", "viajes_semana", "ocupacion", "km_semana", "dias_faena_para_llenar"]
+SUB_FLUJO = ["t_dia_op", "t_semana", "m3_dia_op", "dias_acumulados", "t_por_retiro", "m3_por_retiro",
+             "retiros_semana", "stock_refrigerado_max_t", "fisicamente_posible", "sanitariamente_permitido",
+             "aceptado_por_receptor", "requiere_frio", "riesgo_olores_degradacion_aumentado"]
+SUB_CAMION = ["viajes_por_retiro_criterio_masa", "viajes_semana_criterio_masa", "ocupacion_masica",
+              "km_semana_criterio_masa", "dias_faena_para_llenar_capacidad_masica",
+              "viajes_por_retiro_criterio_volumen", "ocupacion_volumetrica", "viajes_por_retiro_vinculante"]
 RED_VARS = ["locales", "demanda_red_t_dia_cal", "t_dia_despacho", "kg_por_parada_tienda", "paradas_tienda_semana",
             "paradas_planta_dia", "viajes_troncal_dia", "ocupacion_troncal", "rutas_min_por_paradas",
             "rutas_reparto_dia", "paradas_por_ruta", "paradas_max_por_jornada", "ocupacion_reparto",
             "h_conduccion_troncal", "h_conduccion_reparto", "h_ruta_reparto", "tramo_entregas_h",
             "excede_conduccion", "excede_jornada", "inviable_en_jornada", "excede_ventana",
             "km_dia_despacho", "km_por_t", "camion_horas_dia"]
+RED_SENS = ["t_dia_despacho", "kg_por_parada_tienda", "viajes_troncal_dia", "rutas_reparto_dia",
+            "paradas_max_por_jornada", "paradas_por_ruta", "inviable_en_jornada", "excede_jornada",
+            "km_dia_despacho", "km_por_t", "camion_horas_dia"]
 INV_CICLO = ["produccion_semana_t", "despacho_semana_t", "despacho_t_dia_despacho", "stock_ciclo_max_t",
              "stock_ciclo_medio_t", "viajes_dia_despacho", "viajes_semana", "ocupacion"]
 INV_SEG = ["stock_seguridad_t", "stock_total_max_t", "t_dias_inmovilizadas_semana"]
-EXP_FLUJO = ["export_t_dia_op", "export_t_anio", "dias_faena_llenar_contenedor", "dias_calendario_llenar_contenedor",
-             "contenedores_mes", "contenedores_anio_enteros", "viajes_terrestres_anio", "espera_terminal_d",
-             "transito_maritimo_d_min", "transito_maritimo_d_max", "stock_consolidacion_max_t", "lead_time_total_max_d"]
+EXP_FLUJO = ["cuota_exportacion", "carga_contenedor_t", "export_t_dia_op", "export_t_anio",
+             "dias_faena_llenar_contenedor", "dias_calendario_llenar_contenedor", "contenedores_mes",
+             "contenedores_anio_enteros", "utilizacion_carga_contenedores", "viajes_terrestres_anio",
+             "espera_terminal_d", "transito_maritimo_d_min", "transito_maritimo_d_max", "stock_consolidacion_max_t",
+             "lead_time_total_max_d"]
 EXP_RUTA = ["h_terrestre_planta_puerto", "km_terrestre_anio"]
+
+# Base de la sensibilidad directo / CD / cross-dock (SUP-12B-10/11): un parámetro por vez
+RED_BASE = {"escenario": "C", "kg_local_dia": 100, "entregas_semana": 3, "dist_mercado_km": 300,
+            "paradas_ruta_max": 10, "cap_reparto": 6, "cap_troncal": 20, "t_parada": T_PARADA_H,
+            "horas_camion_dia": HORAS_CAMION_DIA}
+RED_BARRIDOS = {"dist_mercado_km": (30, 100, 150, 300, 600), "paradas_ruta_max": (6, 10, 15),
+                "kg_local_dia": (25, 100, 300), "cap_reparto": (3, 6, 12), "t_parada": (0.5, 0.75, 1.0),
+                "horas_camion_dia": (10, 12, 14)}
+# Barrido de la ventana prefaena (un parámetro por vez; base = constantes SUP-12B-05)
+PREFAENA_BARRIDOS = {"ventana_prefaena": (8, 10, 12), "t_retiro_alimento": (2, 3, 4),
+                     "t_captura_carga": (1.0, 1.5, 2.5), "t_espera_granja": (0.0, 0.5, 1.0),
+                     "t_espera_planta": (0.5, 0.75, 2.0)}
 
 
 def _cap_txt(cap):
     return "PENDIENTE" if cap is None else f"{cap} (barrido)"
+
+
+def _cap_col(cap, unidad, tipo="ESCENARIO"):
+    """(capacidad_vehiculo, tipo_capacidad): capacidad de ESCENARIO elegida o PENDIENTE."""
+    return ("PENDIENTE", "PENDIENTE") if cap is None else (f"{cap} {unidad}", tipo)
 
 
 def construir():
@@ -953,31 +1141,40 @@ def construir():
             t.filas[-1]["valor"] = val
             t.filas[-1]["clasificacion"] = cla
     for flujo, (estado, motivo) in BACKHAUL_POSIBLE.items():
-        t.add("backhaul", None, None, flujo, f"BACKHAUL_POSIBLE={estado}", "fraccion_retorno_cargado_aplicada",
-              0.0, "viaje", clasif="[SUPUESTO]", unidad="ratio",
-              nota=f"{motivo}. Requiere evidencia (contrato/carga identificada) para aplicar")
+        t.add("backhaul", None, None, flujo, f"BACKHAUL_POSIBLE={estado}; retorno: {TIPO_RETORNO[flujo]}",
+              "fraccion_retorno_cargado_aplicada", 0.0, "viaje", clasif="[SUPUESTO]", unidad="ratio",
+              nota=f"{motivo}. Backhaul comercial solo con evidencia (carga identificada o contrato)")
 
     ds = 5
     for E in ESCALAS:
-        # --- aves vivas: flujo (no depende del camión), camión × radio × estación, ruta, DOA, merma
+        # --- aves vivas: flujo (no depende del camión)
         t.volcar("aves_vivas_flujo", E, ds, "-", f"doa={DOA_BASE}", aves_vivas(E, ds), "dia_operativo",
                  claves=VIVO_FLUJO, base="vivo")
+        # --- camión × radio × estación (capacidad de ESCENARIO explícita); sin capacidad elegida = PENDIENTE
         for R in RADIOS_KM:
-            for cap in AVES_CAMION:
+            for cap in ((None,) if R == 100 else ()) + tuple(AVES_CAMION):
                 for est, red in ESTACIONES.items():
+                    if cap is None and est == "verano":
+                        continue
                     r = aves_vivas(E, ds, aves_camion=cap, reduccion=red, radio_km=R)
-                    t.volcar("aves_vivas", E, ds, est, f"radio_km={R}; aves_por_camion={cap}", r, "dia_operativo", claves=VIVO_CAMION, base="vivo")
-        for fr in FACTOR_RUTA:
+                    capv, tipo = _cap_col(cap, "aves/camión")
+                    t.volcar("aves_vivas", E, ds, est, f"radio_km={R}; aves_por_camion={_cap_txt(cap)}", r,
+                             "dia_operativo", claves=VIVO_CAMION, base="vivo", capacidad=capv, tipo_capacidad=tipo)
+        # --- secuencia prefaena y ciclo por radio y factor de ruta (no dependen del camión ni de la escala:
+        #     se escriben una sola vez, en la fila de 10.000 aves/día)
+        for fr in (FACTOR_RUTA if E == 10000 else ()):
             for R in RADIOS_KM:
                 r = aves_vivas(E, ds, radio_km=R, factor_ruta=fr)
                 t.volcar("aves_vivas_ruta", E, ds, "-", f"factor_ruta={fr}; radio_km={R}", r, "viaje",
-                         claves=VIVO_RUTA + (["km_total_dia"] if fr == FACTOR_RUTA_BASE else []), base="vivo")
+                         claves=VIVO_RUTA, base="vivo")
         for doa in DOA_BARRIDO:
             for cap in (4000, 7000):
                 r = aves_vivas(E, ds, doa=doa, aves_camion=cap)
-                t.volcar("aves_vivas_doa", E, ds, "-", f"doa={doa}; aves_por_camion={cap}", r, "dia_operativo",
-                         claves=["aves_cargadas_dia", "aves_doa_dia", "aves_doa_anio", "kg_doa_dia",
-                                 "viajes_equivalentes_dia", "viajes_dia", "ocupacion"], base="vivo")
+                capv, tipo = _cap_col(cap, "aves/camión")
+                t.volcar("aves_vivas_doa", E, ds, "-", f"doa={doa}; aves_por_camion={cap} (barrido)", r,
+                         "dia_operativo", claves=["aves_cargadas_dia", "aves_doa_dia", "aves_doa_anio", "kg_doa_dia",
+                                                  "viajes_equivalentes_dia", "viajes_dia", "ocupacion"],
+                         base="vivo", capacidad=capv, tipo_capacidad=tipo)
         for m in MERMA_H_BARRIDO:
             for R in (50, 150, 300):
                 r = aves_vivas(E, ds, radio_km=R, merma_h=m)
@@ -985,23 +1182,37 @@ def construir():
                          claves=["merma_viaje_frac", "kg_merma_viaje_dia", "t_vivo_cargado_dia",
                                  "kg_vivo_faenable_dia"], base="vivo")
         for pg in PLAZAS_GRANJA:
-            t.volcar("granjas", E, ds, "-", f"plazas_por_granja={pg} (DPV-048)", aves_vivas(E, ds, plazas_granja=pg),
+            capv, tipo = _cap_col(AVES_CAMION_BASE, "aves/camión")
+            t.volcar("granjas", E, ds, "-", f"plazas_por_granja={pg} (DPV-048); aves_por_camion=5500 (barrido); "
+                     f"cadencia de retiro = ritmo de faena modelado", aves_vivas(E, ds, plazas_granja=pg,
+                                                                                aves_camion=AVES_CAMION_BASE),
                      "dia_operativo", claves=["granjas_equivalentes", "aves_cargadas_por_cosecha", "cosechas_semana",
-                                              "dias_faena_por_cosecha", "viajes_por_cosecha", "ciclos_anio_por_granja"])
-        # --- insumos
+                                              "dias_faena_por_cosecha", "alerta_cosecha_prolongada_potencial",
+                                              "viajes_por_cosecha", "ciclos_anio_por_granja"],
+                     capacidad=capv, tipo_capacidad=tipo)
+            for f in t.filas[-8:]:
+                if f["variable"] in ("alerta_cosecha_prolongada_potencial", "dias_faena_por_cosecha"):
+                    f["nota"] = ("Incompatibilidad operativa POTENCIAL si el lote se retira con la cadencia modelada; "
+                                 "validar retiros parciales, all-in/all-out, tamaño real de lote y programación "
+                                 "entre granjas (DPV-12B-10). Referencia 1-2 noches: 03 [ESTIMACIÓN]")
+        # --- insumos (granelero: capacidad de ESCENARIO de 03, pasada explícitamente)
         for dfab in DIST_FABRICA_KM:
+            capv, tipo = _cap_col(CAP_GRANELERO_T, "t (granelero)", "ESCENARIO [ESTIMACIÓN 03]")
             t.volcar("insumos_alimento", E, ds, "-", f"cap_granelero_t=28 ([ESTIMACIÓN] 03); dist_fabrica_km={dfab}",
-                     insumos(E, ds, dist_fabrica=dfab), "semana_plena", base="alimento",
+                     insumos(E, ds, cap_granelero=CAP_GRANELERO_T, dist_fabrica=dfab), "semana_plena", base="alimento",
                      claves=["alimento_t_semana_plena", "alimento_t_dia_7d", "alimento_viajes_semana",
-                             "alimento_viajes_dia_7d", "alimento_ocupacion", "alimento_km_semana"])
+                             "alimento_viajes_dia_7d", "alimento_ocupacion", "alimento_km_semana"],
+                     capacidad=capv, tipo_capacidad=tipo)
         t.volcar("insumos_otros", E, ds, "-", "capacidades y coeficientes sin dato = PENDIENTE", insumos(E, ds),
                  "semana_plena", claves=["pollitos_semana_plena", "pollitos_viajes_semana", "pollitos_km_semana",
                                          "m2_galpon", "ciclos_anio", "cama_t_lote", "envases_t_dia", "pallets_dia",
-                                         "combustible_l_semana"])
+                                         "combustible_l_semana"], capacidad="PENDIENTE", tipo_capacidad="PENDIENTE")
         for cp in CAP_POLLITOS_BARRIDO:
+            capv, tipo = _cap_col(cp, "pollitos/camión")
             t.volcar("insumos_pollitos_barrido", E, ds, "-", f"cap_pollitos={cp} (barrido ilustrativo, NO dato); "
                      f"dist_incubadora_km=150", insumos(E, ds, cap_pollitos=cp), "semana_plena",
-                     claves=["pollitos_viajes_semana", "pollitos_ocupacion", "pollitos_km_semana"])
+                     claves=["pollitos_viajes_semana", "pollitos_ocupacion", "pollitos_km_semana"],
+                     capacidad=capv, tipo_capacidad=tipo)
         for kp in KG_POR_PALLET_BARRIDO:
             t.volcar("insumos_pallets_barrido", E, ds, "-", f"kg_por_pallet={kp} (barrido ilustrativo)",
                      insumos(E, ds, kg_pallet=kp), "dia_operativo", claves=["pallets_dia"], base="comercial")
@@ -1018,8 +1229,10 @@ def construir():
                         if cap is None:
                             t.volcar("producto_terminado", E, ds, perfil, par, res, "dia_despacho", claves=PT_FLUJO,
                                      cadena=cad, base="comercial")
+                        capv, tipo = _cap_col(cap, "t/camión")
                         t.volcar("producto_terminado", E, ds, perfil, f"{par}; cap_t={_cap_txt(cap)}", res,
-                                 "dia_despacho", claves=PT_CAMION, cadena=cad, base="comercial")
+                                 "dia_despacho", claves=PT_CAMION, cadena=cad, base="comercial",
+                                 capacidad=capv, tipo_capacidad=tipo)
             t.add("producto_terminado", E, ds, perfil, "config=B", "exportacion_t_dia_op",
                   producto(E, ds, perfil=perfil)["exportacion_t_dia_op"], "dia_operativo", base="comercial",
                   cadena="exportacion", nota="ver bloque exportacion (contenedores)")
@@ -1039,20 +1252,24 @@ def construir():
         for dsf in CALENDARIOS:
             for dd in DIAS_DESPACHO:
                 r = inventario(com, dsf, dd, 0, cap=12)
+                capv, tipo = _cap_col(12, "t/camión")
                 t.volcar("inventario_ciclo", E, dsf, "-", f"dias_despacho={dd}; desfase=1 d; cap_t=12 (barrido)", r,
-                         "dia_despacho", claves=INV_CICLO, base="comercial")
+                         "dia_despacho", claves=INV_CICLO, base="comercial", capacidad=capv, tipo_capacidad=tipo)
             for seg in (1, 3, 7, 14):
                 for base in ("produccion", "calendario"):
                     r = inventario(com, dsf, 6, seg, base)
                     t.volcar("inventario_seguridad", E, dsf, base, f"dias_seguridad={seg}; dias_despacho=6", r, "stock",
                              claves=INV_SEG, base="comercial")
-        # --- exportación
+        # --- exportación: SENSIBILIDAD (no es estrategia comercial; demanda de exportación = 0, SUP-022)
         for q in CUOTAS_EXPORT:
-            t.volcar("exportacion", E, ds, "-", f"cuota={q}; carga_t=25 [PVDP]", exportacion(E, ds, cuota=q), "anio",
-                     claves=EXP_FLUJO, cadena="congelado", base="comercial")
+            capv, tipo = _cap_col(CONTENEDOR_T, "t/contenedor reefer 40'", "ESCENARIO [PVDP]")
+            t.volcar("exportacion", E, ds, "SENSIBILIDAD", f"cuota_exportada={q}; carga_t=25 [PVDP]",
+                     exportacion(E, ds, cuota=q), "anio", claves=EXP_FLUJO, cadena="congelado", base="comercial",
+                     capacidad=capv, tipo_capacidad=tipo)
             for dp in DIST_PUERTO_KM:
-                t.volcar("exportacion_ruta", E, ds, "-", f"cuota={q}; dist_puerto_km={dp}",
-                         exportacion(E, ds, cuota=q, dist_puerto_km=dp), "anio", claves=EXP_RUTA, cadena="congelado")
+                t.volcar("exportacion_ruta", E, ds, "SENSIBILIDAD", f"cuota_exportada={q}; dist_puerto_km={dp}",
+                         exportacion(E, ds, cuota=q, dist_puerto_km=dp), "anio", claves=EXP_RUTA, cadena="congelado",
+                         capacidad=capv, tipo_capacidad=tipo)
         # --- subproductos: corrientes, coproductos comestibles y estrategias de retiro
         for cfg in ("B", "C"):
             tt, tot, coprod = corrientes_subproductos(E, cfg)
@@ -1060,7 +1277,8 @@ def construir():
                 et, est, veh, grp, vida = CORRIENTES[c]
                 t.add("subproductos_corrientes", E, ds, cfg, f"corriente={c}; grupo={grp}", "t_dia_op", v,
                       "dia_operativo", base="biologica+agua", cadena="subproducto", sumable="si",
-                      nota=f"{et}; {est}; {veh}; vida sin frío: {vida}")
+                      nota=f"{et}; {est}; {veh}; vida sin frío: {vida}; densidad aparente, temperatura y "
+                           f"acondicionamiento PENDIENTES (DPV-12B-16)")
             t.add("subproductos_corrientes", E, ds, cfg, "total", "solidos_a_retirar_t_dia_op", tot, "dia_operativo",
                   base="biologica+agua", cadena="subproducto", nota="= suma de corrientes (L04); 23 §12")
             for c, v in coprod.items():
@@ -1080,11 +1298,19 @@ def construir():
                     caps = ((None,) if E == 10000 and cfg == "B" else ()) + CAP_SUBPROD_BARRIDO
                     for cap in caps:
                         r = subproductos(E, ds, cfg, est, cap=cap, corriente=c)
-                        t.volcar("subproductos_retiro", E, ds, esc, f"{base_par}; cap_t={_cap_txt(cap)}", r, "retiro",
-                                 claves=SUB_CAMION, cadena="subproducto", base="biologica+agua")
+                        capv = "PENDIENTE" if cap is None else f"{cap} t (másica); m³ PENDIENTE"
+                        t.volcar("subproductos_retiro", E, ds, esc, f"{base_par}; cap_t={_cap_txt(cap)}; cap_m3=PENDIENTE",
+                                 r, "retiro", claves=SUB_CAMION, cadena="subproducto", base="biologica+agua",
+                                 capacidad=capv, tipo_capacidad="PENDIENTE" if cap is None else "ESCENARIO")
         t.add("subproductos_corrientes", E, ds, "B", "corriente=DOA", "kg_doa_dia", aves_vivas(E, ds)["kg_doa_dia"],
               "dia_operativo", base="vivo", cadena="subproducto",
               nota="Aves muertas en transporte: fuera del balance (SUP-035); destino restringido (07 rendering.md §2)")
+    # --- ventana prefaena: sensibilidad del tiempo de transporte disponible y del alcance (escala-independiente)
+    for clave, valores in PREFAENA_BARRIDOS.items():
+        for v in valores:
+            r = aves_vivas(10000, 5, **{clave: v})
+            t.volcar("aves_vivas_prefaena_sens", None, None, "ESCENARIO", f"{clave}={v} (resto: base SUP-12B-05)", r,
+                     "lote", claves=VIVO_ALCANCE, base="vivo")
     # --- red ancla (no depende de la escala de la planta)
     for esc in ANCLA:
         kls = (100,) if esc == "A" else KG_LOCAL_DIA
@@ -1095,36 +1321,60 @@ def construir():
                     for dm in (30, 300, 600):
                         r = red_ancla(esc, kl, ent, modo, cap_reparto=6, cap_troncal=20, dist_mercado_km=dm)
                         t.volcar("red_ancla", None, None, esc, f"kg_local_dia={kl}; entregas_semana={ent}; modo={modo}; "
-                                 f"dist_mercado_km={dm}; cap_t=6/20 (barrido)",
-                                 r, "dia_despacho", claves=RED_VARS, cadena="refrigerado", base="comercial")
+                                 f"dist_mercado_km={dm} (resto: SUP-12B-10, ver parametros)",
+                                 r, "dia_despacho", claves=RED_VARS, cadena="refrigerado", base="comercial",
+                                 capacidad="reparto 6 t / troncal 20 t", tipo_capacidad="ESCENARIO")
+    # --- sensibilidad directo / CD / cross-dock: un parámetro por vez alrededor de RED_BASE
+    for clave, valores in RED_BARRIDOS.items():
+        for v in valores:
+            p_ = dict(RED_BASE, **{clave: v})
+            for modo in ("directo", "cd", "crossdock"):
+                r = red_ancla(p_["escenario"], p_["kg_local_dia"], p_["entregas_semana"], modo,
+                              paradas_ruta_max=p_["paradas_ruta_max"], cap_reparto=p_["cap_reparto"],
+                              cap_troncal=p_["cap_troncal"], dist_mercado_km=p_["dist_mercado_km"],
+                              t_parada=p_["t_parada"], horas_camion_dia=p_["horas_camion_dia"])
+                par = f"base RED_BASE (C; 100 kg; 3 ent/sem; 300 km; 10 paradas; 6/20 t; 0,75 h; 12 h)"
+                t.volcar("red_ancla_sensibilidad", None, None, f"{clave}={v}", f"modo={modo}; {par}", r,
+                         "dia_despacho", claves=RED_SENS, cadena="refrigerado", base="comercial",
+                         capacidad=f"reparto {p_['cap_reparto']} t / troncal {p_['cap_troncal']} t",
+                         tipo_capacidad="ESCENARIO")
     # --- KPI de resumen por escala (caso de referencia de sensibilidad)
     for E in ESCALAS:
-        for k_, v, per in kpis_escala(E):
-            t.add("kpi_resumen", E, 5, "referencia", "radio 100 km; 5.500 aves/camión; P1; refrigerado 6 y congelado 2 "
-                  "despachos/sem; cap 12 t (barrido); retiro diario cap 10 t (barrido)", k_, v, per, tipo_kpi="fisico",
-                  nota="Caso de sensibilidad, NO escenario recomendado")
+        for k_, v, per, capv in kpis_escala(E):
+            t.add("kpi_resumen", E, 5, "referencia", "radio 100 km; P1; refrigerado 6 y congelado 2 despachos/sem",
+                  k_, v, per, tipo_kpi="fisico", capacidad=capv,
+                  tipo_capacidad="ESCENARIO" if depende_capacidad(k_) else "-",
+                  nota="Caso de sensibilidad, NO escenario recomendado ni requerimiento de flota")
+            if not depende_capacidad(k_):
+                t.filas[-1]["capacidad_vehiculo"] = "-"
     return t
 
 
 def kpis_escala(E):
-    """KPI físicos de un caso de referencia de sensibilidad (no es escenario recomendado)."""
-    v = aves_vivas(E, 5, radio_km=100)
+    """KPI físicos de un caso de referencia de sensibilidad (no es escenario recomendado). Cada KPI lleva la
+    capacidad de ESCENARIO que lo produce."""
+    v = aves_vivas(E, 5, radio_km=100, aves_camion=AVES_CAMION_BASE)
     p = producto(E, 5, perfil="P1", dias_despacho=6, cap_refrigerado=12, cap_congelado=12, despachos_congelado=2)
     s = subproductos(E, 5, "B", "E1", cap=10, corriente="G3-visceras")
     sp = subproductos(E, 5, "B", "E1", cap=10, corriente="G1-plumas")
-    i = insumos(E, 5)
+    i = insumos(E, 5, cap_granelero=CAP_GRANELERO_T)
+    cv, ct, cg, cs = "5500 aves/camión", "12 t/camión", "28 t (granelero)", "10 t (másica); m³ PENDIENTE"
     return [
-        ("vivo_viajes_dia", v["viajes_dia"], "dia_operativo"), ("vivo_ocupacion", v["ocupacion"], "dia_operativo"),
-        ("vivo_km_por_ave", v["km_por_ave"], "dia_operativo"), ("vivo_km_por_t_vivo", v["km_por_t_vivo"], "dia_operativo"),
-        ("vivo_pct_km_vacio", v["pct_km_vacio"], "dia_operativo"), ("vivo_tiempo_ciclo_h", v["tiempo_ciclo_h"], "viaje"),
-        ("vivo_flota_minima", v["flota_minima"], "dia_operativo"), ("vivo_utilizacion_flota", v["utilizacion_flota"], "dia_operativo"),
-        ("refrigerado_viajes_dia_despacho", p["refrigerado_viajes_dia_despacho"], "dia_despacho"),
-        ("refrigerado_ocupacion", p["refrigerado_ocupacion"], "dia_despacho"),
-        ("congelado_viajes_dia_despacho", p["congelado_viajes_dia_despacho"], "dia_despacho"),
-        ("congelado_ocupacion", p["congelado_ocupacion"], "dia_despacho"),
-        ("alimento_viajes_semana", i["alimento_viajes_semana"], "semana"),
-        ("visceras_ocupacion_retiro_diario", s["ocupacion"], "retiro"),
-        ("plumas_ocupacion_retiro_diario", sp["ocupacion"], "retiro"),
+        ("vivo_viajes_dia", v["viajes_dia"], "dia_operativo", cv), ("vivo_ocupacion", v["ocupacion"], "dia_operativo", cv),
+        ("vivo_km_por_ave", v["km_por_ave"], "dia_operativo", cv), ("vivo_km_por_t_vivo", v["km_por_t_vivo"], "dia_operativo", cv),
+        ("vivo_pct_km_sin_carga_comercial", v["pct_km_sin_carga_comercial"], "dia_operativo", cv),
+        ("vivo_tiempo_ciclo_h", v["tiempo_ciclo_h"], "viaje", "-"),
+        ("vivo_flota_minima", v["flota_minima"], "dia_operativo", cv),
+        ("vivo_utilizacion_flota", v["utilizacion_flota"], "dia_operativo", cv),
+        ("vivo_utilizacion_semanal_flota", v["utilizacion_semanal_flota"], "semana", cv),
+        ("refrigerado_viajes_dia_despacho", p["refrigerado_viajes_dia_despacho"], "dia_despacho", ct),
+        ("refrigerado_ocupacion", p["refrigerado_ocupacion"], "dia_despacho", ct),
+        ("congelado_viajes_dia_despacho", p["congelado_viajes_dia_despacho"], "dia_despacho", ct),
+        ("congelado_ocupacion", p["congelado_ocupacion"], "dia_despacho", ct),
+        ("alimento_viajes_semana", i["alimento_viajes_semana"], "semana", cg),
+        ("visceras_ocupacion_masica_retiro_diario", s["ocupacion_masica"], "retiro", cs),
+        ("plumas_ocupacion_masica_retiro_diario", sp["ocupacion_masica"], "retiro", cs),
+        ("plumas_ocupacion_volumetrica_retiro_diario", sp["ocupacion_volumetrica"], "retiro", cs),
     ]
 
 
@@ -1136,7 +1386,7 @@ def escribir_csv(t, ruta):
 
 
 # ---------------------------------------------------------------------------
-# 12. PRUEBAS (L01-L20)
+# 12. PRUEBAS (L01-L20 originales; L21-L28 auditoría de interpretación)
 # ---------------------------------------------------------------------------
 def _cerca(a, b, tol=1e-9):
     return abs(a - b) <= tol * max(1.0, abs(a), abs(b))
@@ -1257,8 +1507,8 @@ def ejecutar_tests(verbose=True, tabla=None):
         for c in CAP_SUBPROD_BARRIDO:
             for cor in CORRIENTES:
                 for est in ESTRATEGIAS:
-                    occ.append(subproductos(E, 5, "C", est, cap=c, corriente=cor)["ocupacion"])
-        occ.append(insumos(E)["alimento_ocupacion"])
+                    occ.append(subproductos(E, 5, "C", est, cap=c, corriente=cor)["ocupacion_masica"])
+        occ.append(insumos(E, cap_granelero=CAP_GRANELERO_T)["alimento_ocupacion"])
     for esc in ("B", "C"):
         for modo in ("directo", "crossdock", "cd"):
             r = red_ancla(esc, 300, 3, modo, cap_reparto=3, cap_troncal=12)
@@ -1271,7 +1521,7 @@ def ejecutar_tests(verbose=True, tabla=None):
              lambda: producto(10000, dist_km=-1), lambda: red_ancla("B", 100, dist_mercado_km=-3),
              lambda: exportacion(10000, dist_puerto_km=-10), lambda: subproductos(10000, corriente="sangre", dist_receptor_km=-1),
              lambda: red_ancla("B", 100, km_entre_paradas=-1)]
-    vals = [aves_vivas(E, radio_km=R)[k_] for E in ESCALAS for R in RADIOS_KM
+    vals = [aves_vivas(E, radio_km=R, aves_camion=AVES_CAMION_BASE)[k_] for E in ESCALAS for R in RADIOS_KM
             for k_ in ("distancia_geo_media_km", "distancia_ruta_media_km", "km_total_dia")]
     ok("L09 distancia negativa → error; distancias y km ≥ 0", all(lanza(f) for f in casos) and min(vals) >= 0)
 
@@ -1332,10 +1582,12 @@ def ejecutar_tests(verbose=True, tabla=None):
     cond = p["refrigerado_viajes_dia_despacho"] is None and "cap_camion_refrigerado_t" in p["faltantes"] \
         and i["pollitos_viajes_semana"] is None and "cap_camion_pollitos" in i["faltantes"] \
         and i["pallets_dia"] is None and i["cama_t_lote"] is None and i["envases_t_dia"] is None \
-        and s["viajes_semana"] is None and s["ocupacion"] is None \
+        and s["viajes_semana_criterio_masa"] is None and s["ocupacion_masica"] is None \
+        and aves_vivas(10000)["viajes_dia"] is None and "aves_por_camion_vivo" in aves_vivas(10000)["faltantes"] \
+        and insumos(10000)["alimento_viajes_semana"] is None \
         and e["lead_time_total_max_d"] is None and "espera_terminal_d" in e["faltantes"] \
         and cd["paradas_planta_dia"] is None and "n_centros_distribucion" in cd["faltantes"] \
-        and subproductos(10000, estrategia="E2", corriente="sangre")["admisible_sanitario"] is None
+        and subproductos(10000, estrategia="E2", corriente="sangre")["sanitariamente_permitido"] is None
     if tabla is not None:
         pend = [f for f in tabla.filas if f["valor"] == "PENDIENTE"]
         cond = cond and len(pend) > 0 and all(f["clasificacion"] == "[PENDIENTE DE VALIDACIÓN]" for f in pend)
@@ -1377,13 +1629,19 @@ def ejecutar_tests(verbose=True, tabla=None):
     ok("L14 reproduce 23 (t vivas, comestible, sólidos, alimento, camiones, inventario dos bases)",
        errs == 0 and n >= 60, f"{n} cifras comparadas, {errs} diferencias")
 
-    # L15 backhaul solo con evidencia; nunca en flujos "NO"
-    b = aves_vivas(10000)
-    cond = _cerca(b["km_vacio_dia"], b["km_cargado_dia"]) and lanza(km_retorno, 100, "aves_vivas", True, 0.5) \
-        and lanza(km_retorno, 100, "subproductos", True, 0.5) and lanza(km_retorno, 100, "refrigerado_troncal", False, 0.5) \
+    # L15 backhaul = 0 sin evidencia; con evidencia solo donde el estado lo admite; "NO" nunca
+    b = aves_vivas(10000, aves_camion=AVES_CAMION_BASE)
+    cond = _cerca(b["km_retorno_sin_carga_comercial_dia"], b["km_cargado_dia"]) \
+        and lanza(km_retorno, 100, "aves_vivas", False, 0.5) and lanza(km_retorno, 100, "subproductos", False, 0.5) \
+        and lanza(km_retorno, 100, "refrigerado_troncal", False, 0.5) \
         and _cerca(km_retorno(100, "refrigerado_troncal", True, 0.5), 50) \
-        and all(v[0] in ("NO", "REQUIERE_EVIDENCIA", "SI_CON_EVIDENCIA") for v in BACKHAUL_POSIBLE.values())
-    ok("L15 backhaul = 0 sin evidencia; prohibido en aves vivas y subproductos", cond)
+        and all(v[0] in ESTADOS_BACKHAUL for v in BACKHAUL_POSIBLE.values())
+    BACKHAUL_POSIBLE["_prueba_no"] = ("NO", "estado reservado a prohibición con fuente normativa")
+    try:
+        cond = cond and lanza(km_retorno, 100, "_prueba_no", True, 0.5)
+    finally:
+        del BACKHAUL_POSIBLE["_prueba_no"]
+    ok("L15 backhaul = 0 sin evidencia; aves vivas y subproductos deshabilitados por defecto", cond)
 
     # L16 sin economía en variables y unidades
     if tabla is not None:
@@ -1410,21 +1668,114 @@ def ejecutar_tests(verbose=True, tabla=None):
     for E in ESCALAS:
         prev = None
         for doa in sorted(DOA_BARRIDO):
-            r = aves_vivas(E, doa=doa)
+            r = aves_vivas(E, doa=doa, aves_camion=AVES_CAMION_BASE)
             if prev and (r["aves_cargadas_dia"] <= prev["aves_cargadas_dia"] or r["viajes_dia"] < prev["viajes_dia"]):
                 cond = False
             prev = r
-        km = [aves_vivas(E, radio_km=R)["km_total_dia"] for R in RADIOS_KM]
+        km = [aves_vivas(E, radio_km=R, aves_camion=AVES_CAMION_BASE)["km_total_dia"] for R in RADIOS_KM]
         cond = cond and all(b_ > a_ for a_, b_ in zip(km, km[1:]))
     ok("L19 monotonía DOA → aves y viajes; radio → km", cond)
 
-    # L20 ventana de ayuno coherente
+    # L20 ventana prefaena coherente (tiempo de transporte disponible = ventana − tramos no de transporte)
     r = aves_vivas(10000, radio_km=300)
     r2 = aves_vivas(10000, radio_km=25)
-    cond = _cerca(r["viaje_admisible_h"], AYUNO_MAX_H - AYUNO_PREVIO_H - T_CARGA_VIVO_H - T_DESCARGA_ESPERA_H) \
-        and r["dentro_ventana_ayuno_max"] == (1.0 if r["h_viaje_max"] <= r["viaje_admisible_h"] else 0.0) \
-        and r2["dentro_ventana_ayuno_max"] == 1.0
-    ok("L20 ventana de ayuno (viaje admisible = ayuno máx − previo − carga − espera)", cond)
+    no_tr = T_RETIRO_ALIMENTO_H + T_CAPTURA_CARGA_H + T_ESPERA_GRANJA_H + T_ESPERA_PLANTA_H + T_DESCARGA_H
+    cond = _cerca(r["t_transporte_disponible_escenario_h"], VENTANA_PREFAENA_H - no_tr) \
+        and _cerca(r["t_total_prefaena_max_h"], no_tr + r["t_transporte_max_h"]) \
+        and r["alerta_prefaena_excede_ventana_max"] == (1.0 if r["t_total_prefaena_max_h"] > VENTANA_PREFAENA_H else 0.0) \
+        and r2["alerta_prefaena_excede_ventana_max"] == 0.0 \
+        and aves_vivas(10000, ventana_prefaena=None)["t_transporte_disponible_escenario_h"] is None
+    ok("L20 ventana prefaena desagregada y alerta coherente (sin ventana → PENDIENTE)", cond)
+
+    # ===================== controles de la auditoría de interpretación (L21-L28) =====================
+    # L21 alcance / distancia nunca etiquetado como reglamentario u óptimo
+    prohibidas = ("reglamentari", "admisible", "maximo_legal", "optimo", "normativo")
+    cond = not any(any(x in k_ for x in prohibidas) for k_ in aves_vivas(10000, aves_camion=5500))
+    if tabla is not None:
+        filas_alc = [f for f in tabla.filas if any(x in f["variable"] for x in ("alcance", "t_transporte_disponible"))]
+        cond = cond and filas_alc and all("NO es límite" in f["nota"] for f in filas_alc) \
+            and not any(any(x in f["variable"] for x in prohibidas) for f in tabla.filas) \
+            and all(f["clasificacion"] != "[VERIFICADO]" for f in tabla.filas if "ventana" in f["variable"])
+    ok("L21 alcance/radio resultante del escenario, nunca etiquetado como reglamentario u óptimo", cond)
+
+    # L22 cambiar tiempos de captura, espera o retiro de alimento cambia el tiempo disponible de transporte
+    base_ = aves_vivas(10000)["t_transporte_disponible_escenario_h"]
+    cond = all(aves_vivas(10000, **{k_: v})["t_transporte_disponible_escenario_h"] < base_ - 1e-9
+               for k_, v in (("t_captura_carga", 2.5), ("t_espera_planta", 2.0), ("t_espera_granja", 1.0),
+                             ("t_retiro_alimento", 4.0), ("t_descarga", 0.5)))
+    cond = cond and aves_vivas(10000, t_captura_carga=2.5)["alcance_ruta_escenario_km"] < aves_vivas(10000)["alcance_ruta_escenario_km"]
+    ok("L22 tiempos de captura/espera/retiro modifican el tiempo de transporte disponible y el alcance", cond)
+
+    # L23 backhaul de aves deshabilitado por defecto pero NO como prohibición normativa
+    est_aves, txt_aves = BACKHAUL_POSIBLE["aves_vivas"]
+    cond = BACKHAUL_AVES is False and est_aves == "DESHABILITADO_POR_DEFECTO" and "No es una prohibición" in txt_aves \
+        and not lanza(km_retorno, 100, "aves_vivas", True, 0.3) and _cerca(km_retorno(100, "aves_vivas", True, 0.3), 70) \
+        and "envases" in TIPO_RETORNO["aves_vivas"] and set(TIPO_RETORNO) == set(BACKHAUL_POSIBLE)
+    ok("L23 backhaul de aves deshabilitado por defecto (supuesto), no prohibición; retorno con jaulas ≠ vacío", cond)
+
+    # L24 la utilización de flota responde al tiempo de ciclo
+    a_ = aves_vivas(10000, aves_camion=5500, radio_km=50)
+    b_ = aves_vivas(10000, aves_camion=5500, radio_km=50, t_lavado=1.5, t_espera_planta=1.5)
+    componentes = a_["t_ida_h"] + a_["t_captura_carga_h"] + a_["t_espera_granja_h"] + a_["t_espera_planta_h"] \
+        + a_["t_descarga_h"] + a_["t_regreso_h"] + a_["t_lavado_h"]
+    cond = _cerca(a_["tiempo_ciclo_h"], componentes) and b_["tiempo_ciclo_h"] > a_["tiempo_ciclo_h"] \
+        and _cerca(a_["utilizacion_flota"], a_["viajes_dia"] * a_["tiempo_ciclo_h"] / (a_["flota_minima"] * HORAS_CAMION_DIA)) \
+        and _cerca(b_["utilizacion_flota"], b_["viajes_dia"] * b_["tiempo_ciclo_h"] / (b_["flota_minima"] * HORAS_CAMION_DIA)) \
+        and b_["camion_horas_dia"] > a_["camion_horas_dia"] \
+        and _cerca(a_["utilizacion_semanal_flota"], a_["camion_horas_dia"] * 5 / (a_["flota_minima"] * HORAS_CAMION_DIA * 7))
+    ok("L24 utilización de flota = f(tiempo de ciclo = ida + carga + esperas + descarga + regreso + lavado)", cond)
+
+    # L25 todo resultado de viajes/ocupación declara la capacidad usada (o PENDIENTE)
+    if tabla is not None:
+        malas = [f for f in tabla.filas if f["bloque"] not in ("parametros", "backhaul")
+                 and depende_capacidad(f["variable"]) and (f["capacidad_vehiculo"] in ("", "-")
+                                                           or f["tipo_capacidad"] not in TIPOS_CAPACIDAD)]
+        incoh = [f for f in tabla.filas if f["tipo_capacidad"] == "PENDIENTE" and depende_capacidad(f["variable"])
+                 and f["valor"] not in ("PENDIENTE", "NO_APLICA") and "llenar" not in f["variable"]]
+        ok("L25 cada resultado de viajes/ocupación indica la capacidad de escenario usada (o PENDIENTE)",
+           not malas and not incoh, f"{len(malas)} sin capacidad, {len(incoh)} incoherentes")
+    else:
+        ok("L25 capacidad declarada", aves_vivas(10000)["viajes_dia"] is None)
+
+    # L26 ocupación por masa y por volumen distintas; sin densidad no hay ocupación volumétrica
+    sin = subproductos(10000, 5, "B", "E1", cap=10, corriente="G1-plumas", cap_m3=40)
+    con = subproductos(10000, 5, "B", "E1", cap=10, corriente="G1-plumas", cap_m3=40, densidades={"plumas": 0.1})
+    cond = sin["ocupacion_volumetrica"] is None and sin["m3_dia_op"] is None and "densidad_aparente_plumas" in sin["faltantes"] \
+        and sin["ocupacion_masica"] is not None and sin["viajes_por_retiro_vinculante"] is None \
+        and con["ocupacion_volumetrica"] is not None and not _cerca(con["ocupacion_volumetrica"], con["ocupacion_masica"]) \
+        and con["viajes_por_retiro_vinculante"] == max(con["viajes_por_retiro_criterio_masa"], con["viajes_por_retiro_criterio_volumen"]) \
+        and lanza(lambda: subproductos(10000, corriente="plumas", densidades={"plumas": 0}))
+    if tabla is not None:
+        cond = cond and all(f["valor"] in ("PENDIENTE", "NO_APLICA") for f in tabla.filas if f["variable"] == "ocupacion_volumetrica"
+                            or f["variable"].startswith("m3_"))
+    ok("L26 ocupación másica ≠ volumétrica; sin densidad aparente la volumétrica queda PENDIENTE", cond)
+
+    # L27 exportación: cada escenario indica % exportado y payload; utilización ≤ 100 %
+    cond = True
+    for E in ESCALAS:
+        for q in CUOTAS_EXPORT:
+            r = exportacion(E, cuota=q)
+            cond = cond and _cerca(r["cuota_exportacion"], q) and _cerca(r["carga_contenedor_t"], CONTENEDOR_T) \
+                and 0 < r["utilizacion_carga_contenedores"] <= 1 + 1e-12
+    if tabla is not None:
+        grupos = {}
+        for f in tabla.filas:
+            if f["bloque"] == "exportacion":
+                grupos.setdefault((f["escala_aves_dia"], f["parametros"]), set()).add(f["variable"])
+        cond = cond and grupos and all({"cuota_exportacion", "carga_contenedor_t", "utilizacion_carga_contenedores"} <= v
+                                       for v in grupos.values()) \
+            and all(f["escenario"] == "SENSIBILIDAD" for f in tabla.filas if f["bloque"].startswith("exportacion"))
+    ok("L27 exportación como SENSIBILIDAD con % exportado, payload y utilización explícitos", cond)
+
+    # L28 acumulación de subproductos: ninguna dimensión se da por cumplida sin evidencia
+    cond = True
+    for est in ESTRATEGIAS:
+        r = subproductos(10000, estrategia=est, corriente="G3-visceras", cap=10)
+        cond = cond and r["sanitariamente_permitido"] is None and r["aceptado_por_receptor"] is None
+        if ESTRATEGIAS[est][1] > 1:
+            cond = cond and r["fisicamente_posible"] is None and r["requiere_frio"] == 1.0 \
+                and r["riesgo_olores_degradacion_aumentado"] == 1.0 and "normativa_acumulacion_subproductos" in r["faltantes"]
+    ok("L28 acumulación: físico / sanitario / receptor / frío / olores separados y PENDIENTES sin evidencia", cond)
 
     fallas = [x for x in res if not x[1]]
     if verbose:
@@ -1446,18 +1797,24 @@ def fmt(x, d=1):
 
 
 def resumen():
-    print("\nAVES VIVAS (radio 100 km, ruta ×1,3, 5.500 aves/camión, DOA 0,3 %, normal | verano −15 %)")
+    print("\nAVES VIVAS (radio 100 km, ruta ×1,3, CAPACIDAD DE ESCENARIO 5.500 aves/camión, DOA 0,3 %, normal | verano −15 %)")
     print("escala | aves cargadas | t vivas | viajes (normal/verano) | ocup. | km/día | km/ave | ciclo h | flota | utiliz.")
     for E in ESCALAS:
-        n, v = aves_vivas(E), aves_vivas(E, reduccion=0.15)
+        n, v = aves_vivas(E, aves_camion=AVES_CAMION_BASE), aves_vivas(E, aves_camion=AVES_CAMION_BASE, reduccion=0.15)
         print(f"{E:>6} | {fmt(n['aves_cargadas_dia'],0):>8} | {fmt(n['t_vivo_cargado_dia'])} | {n['viajes_dia']}/{v['viajes_dia']} "
               f"| {fmt(n['ocupacion']*100,0)} % | {fmt(n['km_total_dia'],0)} | {fmt(n['km_por_ave'],3)} | "
               f"{fmt(n['tiempo_ciclo_h'])} | {n['flota_minima']} | {fmt(n['utilizacion_flota']*100,0)} %")
-    print("\nRADIOS (10.000 aves/día): radio → km ruta medio, h viaje máx, dentro de ventana de ayuno, km/día")
+    r0 = aves_vivas(10000)
+    print(f"\nVENTANA PREFAENA DE ESCENARIO {fmt(VENTANA_PREFAENA_H)} h (no normativa): retiro de alimento {fmt(T_RETIRO_ALIMENTO_H)} + "
+          f"captura/carga {fmt(T_CAPTURA_CARGA_H)} + espera granja {fmt(T_ESPERA_GRANJA_H)} + espera planta {fmt(T_ESPERA_PLANTA_H,2)} + "
+          f"descarga {fmt(T_DESCARGA_H,2)} → transporte disponible {fmt(r0['t_transporte_disponible_escenario_h'])} h → alcance de "
+          f"escenario {fmt(r0['alcance_ruta_escenario_km'],0)} km por ruta ({fmt(r0['alcance_geo_escenario_km'],0)} km geo)")
+    print("RADIOS (10.000 aves/día, 5.500 aves/camión): km ruta medio, h transporte máx, total prefaena máx, alerta, km/día")
     for R in RADIOS_KM:
-        r = aves_vivas(10000, radio_km=R)
-        print(f"  {R:>3} km → {fmt(r['distancia_ruta_media_km'],0)} km · {fmt(r['h_viaje_max'])} h · "
-              f"{'sí' if r['dentro_ventana_ayuno_max'] else 'NO'} · {fmt(r['km_total_dia'],0)} km/día · ciclo {fmt(r['tiempo_ciclo_h'])} h")
+        r = aves_vivas(10000, radio_km=R, aves_camion=AVES_CAMION_BASE)
+        print(f"  {R:>3} km → {fmt(r['distancia_ruta_media_km'],0)} km · {fmt(r['t_transporte_max_h'])} h · "
+              f"{fmt(r['t_total_prefaena_max_h'])} h · {'ALERTA' if r['alerta_prefaena_excede_ventana_max'] else 'ok'} · "
+              f"{fmt(r['km_total_dia'],0)} km/día · ciclo {fmt(r['tiempo_ciclo_h'])} h")
     print("\nGRANJAS (plazas por granja 15/30/60 mil): granjas equivalentes y cosechas por semana")
     for E in ESCALAS:
         print(f"  {E:>6}: " + " | ".join(f"{fmt(aves_vivas(E, plazas_granja=p)['granjas_equivalentes'])} granjas, "
@@ -1483,14 +1840,14 @@ def resumen():
         r = exportacion(E)
         print(f"  {E:>6}: {fmt(r['export_t_dia_op'],2)} t · {fmt(r['dias_faena_llenar_contenedor'])} d faena · "
               f"{fmt(r['dias_calendario_llenar_contenedor'])} d cal · {fmt(r['contenedores_mes'])} cont/mes")
-    print("\nSUBPRODUCTOS (config. B): t/día por grupo; ocupación con retiro diario y vehículo 5/10/20 t (barrido)")
+    print("\nSUBPRODUCTOS (config. B): t/día por grupo; % de la capacidad MÁSICA 5/10/20 t (barrido); volumétrica PENDIENTE")
     for E in ESCALAS:
         txt = []
         for g in sorted({v[3] for v in CORRIENTES.values()}):
             rr = [subproductos(E, 5, "B", "E1", cap=c, corriente=g) for c in CAP_SUBPROD_BARRIDO]
             if rr[0]["t_dia_op"] == 0:
                 continue
-            txt.append(f"{g} {fmt(rr[0]['t_dia_op'],2)} t ({'/'.join(fmt(x['ocupacion']*100,0) for x in rr)} %)")
+            txt.append(f"{g} {fmt(rr[0]['t_dia_op'],2)} t ({'/'.join(fmt(x['ocupacion_masica']*100,0) for x in rr)} % másica)")
         print(f"  {E:>6}: " + " | ".join(txt))
     print("\nINVENTARIO (10.000 aves/día, comestible, 5 d faena): stock de ciclo máx. según días de despacho")
     com = producto(10000)["comestible_t_dia_op"]
@@ -1509,7 +1866,13 @@ def main():
     ap.add_argument("--dias-semana", type=int, default=5)
     ap.add_argument("--radio-km", type=float, default=100)
     ap.add_argument("--factor-ruta", type=float, default=FACTOR_RUTA_BASE)
-    ap.add_argument("--aves-camion", type=float, default=AVES_CAMION_BASE)
+    ap.add_argument("--aves-camion", type=float, default=None, help="capacidad de escenario; sin valor = PENDIENTE")
+    ap.add_argument("--ventana-prefaena", type=float, default=VENTANA_PREFAENA_H)
+    ap.add_argument("--t-retiro-alimento", type=float, default=T_RETIRO_ALIMENTO_H)
+    ap.add_argument("--t-captura-carga", type=float, default=T_CAPTURA_CARGA_H)
+    ap.add_argument("--t-espera-granja", type=float, default=T_ESPERA_GRANJA_H)
+    ap.add_argument("--t-espera-planta", type=float, default=T_ESPERA_PLANTA_H)
+    ap.add_argument("--cap-subproductos-m3", type=float, default=None)
     ap.add_argument("--doa", type=float, default=DOA_BASE)
     ap.add_argument("--reduccion-verano", type=float, default=0.0)
     ap.add_argument("--cap-refrigerado", type=float, default=None)
@@ -1534,7 +1897,9 @@ def main():
     if a.escenario:
         E, ds = a.aves_dia, a.dias_semana
         out = {"aves_vivas": aves_vivas(E, ds, doa=a.doa, aves_camion=a.aves_camion, reduccion=a.reduccion_verano,
-                                        radio_km=a.radio_km, factor_ruta=a.factor_ruta),
+                                        radio_km=a.radio_km, factor_ruta=a.factor_ruta, ventana_prefaena=a.ventana_prefaena,
+                                        t_retiro_alimento=a.t_retiro_alimento, t_captura_carga=a.t_captura_carga,
+                                        t_espera_granja=a.t_espera_granja, t_espera_planta=a.t_espera_planta),
                "producto": producto(E, ds, a.config, a.perfil, a.dias_despacho, a.cap_refrigerado, a.cap_congelado,
                                     a.dist_mercado_km),
                "red_ancla": red_ancla(a.ancla, a.kg_local_dia, a.entregas_semana, a.modo, a.dias_despacho,
@@ -1542,7 +1907,8 @@ def main():
                                       dist_mercado_km=a.dist_mercado_km),
                "exportacion": exportacion(E, ds, a.config, a.cuota_exportacion, dist_puerto_km=a.dist_puerto_km)}
         for g in sorted({v[3] for v in CORRIENTES.values()}):
-            out[f"subproductos_{g}"] = subproductos(E, ds, a.config, "E1", a.cap_subproductos, corriente=g)
+            out[f"subproductos_{g}"] = subproductos(E, ds, a.config, "E1", a.cap_subproductos, corriente=g,
+                                                    cap_m3=a.cap_subproductos_m3)
         for nombre, r in out.items():
             print(f"\n[{nombre}]  faltantes: {', '.join(sorted(r.get('faltantes', []))) or '—'}")
             for k_, v in r.items():

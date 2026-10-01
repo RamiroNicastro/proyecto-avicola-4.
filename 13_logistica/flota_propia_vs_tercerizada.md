@@ -1,6 +1,6 @@
 # Flota propia vs tercerizada vs híbrida — comparación conceptual
 
-**Fecha:** 2026-10-01 · **Versión:** 1.0 · Sesión 12B · Fase 0
+**Fecha:** 2026-10-01 · **Versión:** 1.1 (auditoría de interpretación) · Sesión 12B · Fase 0
 
 > **No se decide** flota propia ni tercerizada, **no** se selecciona transportista ni se cotiza (DEC-12B-02, abierta). Se comparan conceptualmente las tres modalidades para cada tipo de flujo y se definen los **criterios** con los que se decidirá cuando existan datos de costo, oferta y escala.
 
@@ -16,15 +16,17 @@
 
 ## 2. Uso de flota que muestra el modelo (sin costos)
 
-Caso de **sensibilidad** (radio 100 km, 5.500 aves/camión, refrigerado P1 6 despachos/semana con 12 t y troncal a 300 km, congelado 2 despachos/semana; capacidades = barrido):
+Caso de **sensibilidad** con **capacidades de escenario** (no validadas ni cotizadas): radio 100 km, 5.500 aves/camión, refrigerado P1 6 despachos/semana con 12 t y troncal a 300 km, congelado 2 despachos/semana, granelero 28 t, subproductos 10 t (másica). **No son requerimientos de flota.**
+
+**Tiempo de ciclo** = ida + captura/carga + espera en granja + espera en planta + descarga + regreso + lavado/desinfección. La utilización se calcula desde el ciclo: utilización = viajes × ciclo / (camiones × horas útiles); la semanal multiplica por días de faena / 7. El mantenimiento no está descontado (DPV-12B-17).
 
 | Flujo | 2.500 | 5.000 | 10.000 | 20.000 | Comentario |
 |---|---|---|---|---|---|
-| Aves vivas: camiones · uso de la jornada en día de faena · uso semanal (7 × 12 h) | 1 · 51 % · 37 % | 1 · 51 % · 37 % | 2 · 51 % · 37 % | 3 · 68 % · 49 % | Dedicado por bioseguridad: no puede hacer otra carga; trabaja solo los días de faena |
+| Aves vivas: camiones · uso de la jornada en día de faena · uso semanal (7 × 12 h) | 1 · 51 % · 37 % | 1 · 51 % · 37 % | 2 · 51 % · 37 % | 3 · 68 % · 49 % | Resultado del escenario: ciclo de 6,1 h (1 ciclo por jornada), 1–4 viajes/día, 5 días de faena de 7, sin backhaul comercial (supuesto). Con radio 25 km: 3 ciclos posibles y 24–47 % semanal; con 300 km: 71 % |
 | Refrigerado troncal: camión-día por día de despacho | 0,88 | 0,88 | 1,76 | 2,64 | Ciclo de 10,6 h a 300 km |
 | Congelado troncal: camión-día por despacho (2/sem) | 0,88 | 0,88 | 0,88 | 0,88 | Semanal y programable: buen candidato a tercero |
 | Alimento: entregas/semana (~28 t) | 3 | 5 | 9 | 18 | Usualmente incluido por la fábrica (si es de terceros) |
-| Subproductos: ocupación del retiro diario de plumas (10 t) | 6 % | 12 % | 24 % | 48 % | Habitualmente el receptor retira con su vehículo |
+| Subproductos: plumas con retiro diario, % de la capacidad másica de 10 t (volumétrica PENDIENTE) | 6 % | 12 % | 24 % | 48 % | Habitualmente el receptor retira con su vehículo |
 
 **Lectura:** a escalas de 2.500–5.000 aves/día casi ningún flujo llena un vehículo dedicado una jornada completa todos los días. Una flota propia **inmovilizada y subutilizada** es un riesgo económico (a cuantificar en `19`/`20`); al mismo tiempo, los flujos críticos (aves vivas, refrigerado) son los que más dependen del **control operativo**.
 
@@ -33,7 +35,7 @@ Caso de **sensibilidad** (radio 100 km, 5.500 aves/camión, refrigerado P1 6 des
 | Flujo | OWN | OUTSOURCE | HYBRID | Sesgo conceptual (no decisión) |
 |---|---|---|---|---|
 | **Pollitos BB** | Vehículo climatizado especializado, uso semanal o por lote: muy baja utilización | Normalmente lo provee la **incubadora** (precio puesto en granja; DPV-047). Control de clima y horario en manos del proveedor | Propio solo si la incubadora es propia | Tercerizado / incluido en la compra mientras no haya incubadora propia (SUP-034) |
-| **Aves vivas** | Control total de horarios, carga, bienestar y lavado; dedicación por bioseguridad; equipo especial (jaulas/módulos) y cuadrillas; utilización 37–49 % semanal | Contratistas de captura y transporte existentes en polos avícolas (DPV-054); riesgo de dependencia y de calidad de bienestar variable; menor inversión | Núcleo propio o contratado dedicado + contratista para picos (verano, +1 viaje) | **El flujo más crítico**: bienestar, DOA y coordinación con la línea. La decisión depende de la oferta de contratistas en la zona (12A) y de la escala |
+| **Aves vivas** | Control total de horarios, carga, bienestar y lavado; equipo especial (jaulas/módulos) y cuadrillas; utilización semanal de 37–49 % en el escenario de referencia (depende de días de faena, viajes, distancia, tiempos de carga/descarga/espera/lavado, ciclos posibles por día y mantenimiento; otros usos del vehículo no se modelan porque requieren validar habilitación y compatibilidad sanitaria) | Contratistas de captura y transporte existentes en polos avícolas (DPV-054); riesgo de dependencia y de calidad de bienestar variable; menor inversión | Núcleo propio o contratado dedicado + contratista para picos (verano, +1 viaje) | **El flujo más crítico**: bienestar, DOA y coordinación con la línea. La decisión depende de la oferta de contratistas en la zona (12A) y de la escala |
 | **Alimento a granel** | Solo con fábrica propia (DEC-024) | Incluido por la fábrica de terceros | — | Sigue a la decisión de fábrica de alimento |
 | **Refrigerado — troncal** | Camiones grandes, ciclo diario, buena utilización si hay carga completa; marca visible | Transportistas refrigerados con habilitación SENASA; tarifa por viaje o por kg | Propio para la carga base + tercero para picos o rutas largas | Depende del modelo de distribución (DEC-016, DEC-12B-01) |
 | **Refrigerado — reparto a tiendas** | Muchas rutas con baja carga por parada: **operación de distribución en sí misma** | Operadores de última milla refrigerada en el AMBA; distribuidores | Cross-dock de un operador + reparto tercerizado | Si no hay CD del cliente, la última milla propia es una segunda empresa (02 §3.2) |
