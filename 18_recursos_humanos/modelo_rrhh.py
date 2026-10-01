@@ -3,88 +3,74 @@
 modelo_rrhh.py — Modelo organizacional y de dotación por escala (sesión 14A)
 ===========================================================================
 
-Versión 1.0 · 2026-10-01 · Fase 0 (prefactibilidad) · Carpeta 18_recursos_humanos
+Versión 1.1 · 2026-10-01 · Fase 0 (prefactibilidad) · Carpeta 18_recursos_humanos
+v1.1 = auditoría de unidades laborales: headcount, FTE, dotación simultánea, puestos por turno y pico en
+sitio son variables DISTINTAS; headcount de nómina PENDIENTE sin factor de cobertura validado; sin horas
+extra automáticas (sólo brecha de jornada); tercerización = horas contratadas; mantenimiento con cobertura
+(política) y carga (activos) separadas; matriz de presencia; KPI con denominador declarado.
 
 PREGUNTA
-  ¿Qué personas necesita la empresa, dónde trabajan, en qué turnos y cómo cambia la estructura
-  al crecer de 2.500 a 5.000, 10.000 y 20.000 aves faenadas por día operativo?
+  ¿Qué personas necesita la empresa, dónde trabajan, en qué turnos y cómo cambia la estructura al crecer
+  de 2.500 a 5.000, 10.000 y 20.000 aves faenadas por día operativo?
 
-QUÉ HACE
-  Para un escenario (aves/día, horas netas, modo de turnos, automatización, mix, flota,
-  limpieza, mantenimiento, productividad) construye la lista de PUESTOS con:
-    personas por turno · equipos de turno · personas físicas · equivalentes (FTE por horas) ·
-    zona de trabajo · grupo (directo / supervisión / soporte / administración / dirección) ·
-    modalidad (interno / externo / PENDIENTE).
-  Agrega: directos, indirectos, supervisión, soporte, administración, dirección, total; externos
-  equivalentes de las funciones tercerizadas; alertas de jornada y de la ecuación de 24 h de 09A;
-  indicadores de productividad (varios, ninguno es "la verdad").
+UNIDADES (no se suman entre sí)
+  PUESTOS POR TURNO      posiciones que deben cubrirse durante un turno (por cuadrilla).
+  DOTACIÓN SIMULTÁNEA    personas presentes al mismo tiempo durante una operación (por puesto y franja).
+  PICO EN SITIO          máximo de personas presentes a la vez en el establecimiento (internas + terceros en
+                         sitio; excluye inspección oficial, PENDIENTE). Es lo que debe recibir el layout.
+  PUESTOS EQUIVALENTES   posiciones distintas a cubrir con personas propias (puestos × cuadrillas; integrantes de
+                         la cuadrilla de limpieza; dedicación de roles de estructura). Base del headcount.
+  HEADCOUNT DE NÓMINA    puestos equivalentes × FACTOR_COBERTURA_NOMINA (francos, vacaciones, licencias,
+                         ausentismo, capacitación, reemplazos). Sin factor validado = PENDIENTE (None).
+                         NUNCA se deriva del FTE.
+  FTE                    horas-persona por día operativo ÷ jornada de referencia (8 h). 2 personas × 4 h = 1 FTE.
+  HORAS CONTRATADAS      horas-persona por día de funciones tercerizadas (no desaparecen al tercerizar).
 
 QUÉ NO HACE
-  No calcula salarios, cargas sociales ni OPEX (la plantilla de costo queda VACÍA). No elige escala,
-  turnos, automatización, modalidad de limpieza, mantenimiento ni flota. No modifica los modelos
-  que importa (05/09A, 09/12C, 13/12B, 23). No usa ninguna productividad como dato argentino real:
-  todos los coeficientes son [SUPUESTO] de rango (alta / media / baja) o [PVDP] débiles.
+  No calcula salarios, cargas ni OPEX (plantilla con costos VACÍOS). No elige escala, turnos, automatización,
+  modalidad de limpieza, mantenimiento ni flota. No calcula horas extra: informa la BRECHA entre presencia
+  requerida y jornada de referencia, que puede resolverse con turnos, relevos, escalonamiento, personal
+  adicional, horas extraordinarias u otra organización (DPV-14A-01). No modifica los modelos que importa.
+  Ninguna productividad es un dato argentino medido: coeficientes [SUPUESTO] de rango (alta / media / baja).
 
-DEFINICIONES
-  E            = aves faenadas por día operativo.
-  h            = horas NETAS de faena por día (todas las cuadrillas); ritmo r = E / h (aves/h).
-  turnos       = "1" (una cuadrilla, jornada normal) · "extendido" (una cuadrilla con horas extra)
-                 · "2" (dos cuadrillas; cada una h/2 netas). Ninguno se presume viable.
-  cuadrillas   = 1, 1, 2 respectivamente (n_c).
-  presencia    = horas de presencia de una cuadrilla de línea por día
-                 = h_c / D + pausas(h_c) + limpieza_intermedia(h_c) [+ solapamiento de cambio de turno]
-                 con h_c = h / n_c y D, pausas, limpieza intermedia de 09A (VENTANAS, SUP-061/062).
-  puesto/turno = posición ocupada simultáneamente en una cuadrilla.
-  personas     = personas físicas = ⌈ puestos/turno × n_c × factor de cobertura ⌉ (ausentismo,
-                 vacaciones, licencias: SUP-14A-03). Roles de estructura: sin factor.
-  equivalentes = FTE por horas = puestos × n_c × presencia × días / horas normales semanales
-                 × factor de cobertura (incluye horas extra como fracción de persona).
-  productividad "alta" = menos personas (coeficientes optimistas); "baja" = más personas.
+FÓRMULAS (r = E / h, ritmo de la línea en aves/h; n_c = cuadrillas; J = jornada de referencia 8 h)
+  presencia de cuadrilla p = h_c / D + pausas(h_c) + limpieza intermedia(h_c) [+ traspaso si n_c = 2]
+                             (D, pausas y limpieza intermedia de 09A; h_c = h / n_c)
+  puestos por turno (tarea) = ⌈fijo + coef[nivel] × r / 1.000⌉ · ⌈fijo + kg/h ÷ productividad[nivel]⌉ ·
+                              ⌈fijo + t/día ÷ n_c ÷ t por persona-turno⌉
+  FTE línea                 = puestos × n_c × p / J
+  limpieza post-producción  = cuadrilla simultánea ⌈m² (12C) × f_auto ÷ (m²/persona-h) ÷ ventana⌉;
+                              horas-persona = cuadrilla × ventana; FTE = horas-persona / J
+  mantenimiento             = reconciliación max(COBERTURA, CARGA)
+      COBERTURA (política de referencia) = (técnicos simultáneos × horas con activos en marcha
+                                            + 1 × horas de limpieza/sanitización/mantenimiento) / J
+      CARGA (activos)       = Σ equipos h/semana[nivel] × criticidad × unidades ÷ días ÷ (J × fracción productiva)
+  choferes (flota propia)   = horas-camión/día de 12B / J (capacidad de ESCENARIO); producto PENDIENTE
+  pico en sitio             = máx_t Σ simultáneos presentes en t (matriz de presencia: ingreso, duración, salida)
+  brecha de jornada         = max(0, p − J) por persona de línea; horas-persona a organizar = brecha × puestos × n_c
+  24 h                      = modelo_capacidad_proceso.ventana_24h (alerta si holgura < 0)
 
-FÓRMULAS PRINCIPALES (puestos por cuadrilla; r_c = r, ritmo de la línea mientras corre)
-  área por ritmo      = ⌈ fijo + coef[nivel] × r / 1.000 ⌉                    (aves/h)
-  área por kg         = ⌈ fijo + (kg/ave × r) / productividad_kg_h[nivel] ⌉   (trozado, deshuese, empaque)
-  área por t          = ⌈ fijo + t/día / n_c / t_por_persona_turno ⌉           (cámaras, subproductos)
-  supervisores        = ⌈ directos por cuadrilla / span ⌉ (mínimo 1)
-  limpieza post-prod. = ⌈ m² de proceso (12C) × f_auto / (m²/persona-h) / (t_limpieza + t_sanitización) ⌉
-  mantenimiento       = max( cobertura presencial , carga por activos )
-      cobertura       = días × (horas de producción × técnicos simultáneos + horas fuera de producción × 1)
-                        / horas normales × cobertura
-      carga           = Σ_equipos presentes  h_semana[nivel efectivo] × peso_criticidad × unidades
-                        / horas productivas de técnico      (matriz 08_maquinaria/matriz_equipos.csv)
-  choferes aves vivas = flota mínima (13_logistica, capacidad de ESCENARIO 5.500 aves/camión, SUP-033)
-                        × factor de cobertura — sólo si la flota es propia
-  choferes producto   = PENDIENTE salvo capacidad de camión y distancia explícitas (DPV-084, DPV-036)
-  24 h                = 05_proceso_industrial/modelo_capacidad_proceso.ventana_24h (alerta si holgura < 0)
+ENTRADAS (ver ESCENARIO_BASE): aves_dia · horas_netas · turnos (1 / extendido / 2) · automatizacion (manual /
+  mecanizado / semiautomatico / automatico) · config (A / B / C) · flota_propia · limpieza (propia /
+  tercerizada / hibrida) · mantenimiento (propio / tercerizado / mixto) · productividad (alta / media / baja)
+  · ventana · dias_semana · planta_propia (False = asset-light) · abastecimiento (integracion / compra) ·
+  laboratorio · factor_cobertura_nomina (None = PENDIENTE) · aves_camion · cap_camion_producto_t ·
+  dist_producto_km (None = PENDIENTE).
 
-ENTRADAS (escenario; ver ESCENARIO_BASE)
-  aves_dia · horas_netas · turnos · automatizacion (manual / mecanizado / semiautomatico /
-  automatico) · config (A entero / B trozado / C deshuesado, balance v1.1) · flota_propia ·
-  limpieza (propia / tercerizada / hibrida) · mantenimiento (propio / tercerizado / mixto) ·
-  productividad (alta / media / baja) · ventana (optimista / media / conservadora; por defecto
-  ligada a la productividad) · dias_semana (5 / 6) · planta_propia (False = asset-light, faena a
-  façon) · abastecimiento (integracion / compra) · laboratorio (externo / propio) ·
-  aves_camion (None = PENDIENTE) · cap_camion_producto_t y dist_producto_km (None = PENDIENTE).
-
-SALIDAS
-  18_recursos_humanos/escenarios_rrhh.csv           (una fila por escenario; punto decimal)
-  18_recursos_humanos/plantilla_costo_laboral.csv   (puesto × escenario de referencia; costos VACÍOS)
-
-UNIDADES: personas, personas/turno, FTE, h, h/semana, aves/h, kg/h, t/día, m².
+SALIDAS: escenarios_rrhh.csv (una fila por escenario) · plantilla_costo_laboral.csv (costos vacíos)
 
 USO
-  python3 18_recursos_humanos/modelo_rrhh.py                # tests + CSV + tablas resumen
+  python3 18_recursos_humanos/modelo_rrhh.py                # tests + CSV + tablas
   python3 18_recursos_humanos/modelo_rrhh.py --solo-tests
-  python3 18_recursos_humanos/modelo_rrhh.py --tablas       # sólo tablas (sin escribir CSV)
-  python3 18_recursos_humanos/modelo_rrhh.py --mutaciones   # verifica que los tests detectan errores
+  python3 18_recursos_humanos/modelo_rrhh.py --tablas
+  python3 18_recursos_humanos/modelo_rrhh.py --detalle 10000
+  python3 18_recursos_humanos/modelo_rrhh.py --mutaciones
 
-TESTS (15) R01 dotación ≥ 0 · R02 más escala ⇒ no menos personal · R03/R03b automatización no reduce
-  técnicos y sí directos · R04 tercerizar retira interno y conserva la función · R05 24 h y jornada con alerta
-  explícita · R06 escenarios independientes · R07 faltantes PENDIENTE · R08 entradas inválidas · R09–R11
-  consistencia y KPI · R12 09A intacto · R13 rangos ordenados · R14 mix. --mutaciones: 8 errores deliberados.
+TESTS: R01–R14 de v1.0 adaptados a las nuevas unidades + R15–R23 de la auditoría de unidades (variables
+  distintas, cuadrilla parcial ≠ FTE, tercerización conserva horas, sin horas extra automáticas, cobertura vs
+  carga, layout recibe pico, KPI con denominador, plantilla sin salarios, SENASA fuera de la empresa).
 
-IDs: supuestos SUP-14A-01..15, datos por validar DPV-14A-##, decisiones DEC-14A-##, fuentes FTE-14A-###
-(provisionales; ver actualizaciones_gestion_14A.md). Registros centrales NO modificados.
+IDs: SUP-14A-01..18, DPV-14A-##, DEC-14A-##, FTE-14A-### (provisionales; actualizaciones_gestion_14A.md).
 """
 
 from __future__ import annotations
@@ -112,13 +98,13 @@ with redirect_stdout(io.StringIO()):
     import modelo_superficies as ms        # noqa: E402  (12C v1.0.1: m² de proceso para limpieza)
     import modelo_logistica as ml          # noqa: E402  (12B v1.1: flota de aves vivas, granjas eq.)
 
-VERSION = "1.0"
+VERSION = "1.1"
 FECHA = "2026-10-01"
 CSV_ESCENARIOS = os.path.join(AQUI, "escenarios_rrhh.csv")
 CSV_PLANTILLA = os.path.join(AQUI, "plantilla_costo_laboral.csv")
 CSV_EQUIPOS = os.path.join(RAIZ, "08_maquinaria", "matriz_equipos.csv")
 
-ESCALAS = tuple(mc.ESCALAS)                                    # 2.500 / 5.000 / 10.000 / 20.000
+ESCALAS = tuple(mc.ESCALAS)
 NIVELES_AUTO = ("manual", "mecanizado", "semiautomatico", "automatico")
 ORDEN_NIVEL = {"M": 0, "Mc": 1, "S": 2, "A": 3}
 NIVEL_OBJETIVO = {"manual": 0, "mecanizado": 1, "semiautomatico": 2, "automatico": 3}
@@ -129,7 +115,11 @@ VENTANA_POR_PROD = {"alta": "optimista", "media": "media", "baja": "conservadora
 AREA_12C_POR_PROD = {"alta": "bajo", "media": "medio", "baja": "alto"}
 AUTO_12C = {"manual": "manual", "mecanizado": "manual", "semiautomatico": "semi", "automatico": "auto"}
 GRUPOS = ("directo", "supervision", "soporte", "administracion", "direccion")
+DRIVERS = ("produccion", "activos", "casi_fijo", "estrategia")
+FRANJAS_EN_SITIO = ("linea", "tecnica", "post", "diurna")
 PENDIENTE = None
+# Sensibilidad del factor de cobertura de nómina: SÓLO para mostrar un rango de headcount (no validado)
+FACTOR_COBERTURA_SENSIBILIDAD = (1.08, 1.18)                   # SUP-14A-03 [SUPUESTO DE SENSIBILIDAD]
 
 
 class ErrorRRHH(Exception):
@@ -145,14 +135,10 @@ def T(alta, media, baja):
 # 1. PARÁMETROS — todos [SUPUESTO] de rango o [PVDP]; ninguno es dato argentino medido
 # ---------------------------------------------------------------------------
 P = {
-    # --- jornada y cobertura (SUP-14A-02, SUP-14A-03; DPV-082, DPV-14A-01, DPV-14A-02)
-    "jornada_normal_h": 8.0,              # [PVDP] Ley 11.544 (FTE-14A-001); convenio aplicable PENDIENTE
-    "jornada_extendida_max_h": 10.0,      # [SUPUESTO] SUP-14A-02: tope de trabajo de un turno extendido
-    "horas_extra_mes_ref": 30.0,          # [PVDP] referencia de tope mensual (FTE-14A-002); a verificar
-    "horas_semana_normal": T(48.0, 45.0, 44.0),   # [PVDP/SUPUESTO] Ley 11.544 vs convenio (DPV-14A-01)
-    "factor_cobertura": T(1.08, 1.12, 1.18),      # [SUPUESTO] SUP-14A-03 ausentismo+vacaciones+licencias
-    "solape_cambio_turno_h": 0.25,        # [SUPUESTO] SUP-14A-02: traspaso entre cuadrillas
-    # --- operación industrial: puestos por 1.000 aves/h (SUP-14A-04)
+    # --- jornada (SUP-14A-02; DPV-082, DPV-14A-01)
+    "jornada_referencia_h": 8.0,          # [PVDP] base del FTE y de la brecha (FTE-14A-001); convenio PENDIENTE
+    "solape_cambio_turno_h": 0.25,        # [SUPUESTO] traspaso entre cuadrillas
+    # --- operación industrial: puestos por 1.000 aves/h, POR TAREA (SUP-14A-04)
     "colgado_por_1000": T(1000 / 1380, 1.0, 1000 / 690),   # FTE-219 [PVDP·débil] 23 aves/min; prudente 50 % (SUP-063)
     "descarga_por_1000": {"M": T(0.6, 0.8, 1.0), "S": T(0.4, 0.5, 0.7), "A": T(0.2, 0.3, 0.4)},
     "faena_por_1000": {"M": T(1.6, 2.2, 3.0), "Mc": T(1.2, 1.6, 2.2), "S": T(0.6, 0.9, 1.3), "A": T(0.2, 0.5, 0.8)},
@@ -166,54 +152,57 @@ P = {
     "trozado_kg_h": {"M": T(250, 180, 120), "Mc": T(300, 220, 150), "S": T(450, 320, 220), "A": T(1500, 800, 500)},
     "deshuese_kg_h": {"M": T(70, 50, 35), "S": T(100, 75, 55), "A": T(350, 250, 180)},
     "empaque_kg_h": {"M": T(350, 250, 170), "Mc": T(450, 330, 230), "S": T(700, 500, 350), "A": T(2000, 1100, 700)},
-    "camaras_t_persona_turno": T(25.0, 18.0, 12.0),               # t comestible movida por persona-turno
+    "camaras_t_persona_turno": T(25.0, 18.0, 12.0),
     "subprod_t_persona_turno": {"M": T(6.0, 4.0, 3.0), "S": T(8.0, 6.0, 4.0), "A": T(15.0, 10.0, 8.0)},
-    "limpieza_operativa_por_1000": T(0.3, 0.5, 0.8),              # en turno (pisos, derrames, recipientes)
-    # --- limpieza post-producción (SUP-14A-06; DPV-091)
-    "limpieza_m2_persona_h": T(60.0, 40.0, 25.0),                 # m² de salas de proceso por persona-hora
+    "limpieza_operativa_por_1000": T(0.3, 0.5, 0.8),
+    # --- limpieza post-producción (SUP-14A-06; DPV-091). Factor por automatización y fracción híbrida =
+    #     [SUPUESTO DE SENSIBILIDAD] genéricos (no son tareas medidas)
+    "limpieza_m2_persona_h": T(60.0, 40.0, 25.0),
     "limpieza_factor_auto": {"manual": 1.0, "mecanizado": 1.0, "semiautomatico": 1.1, "automatico": 1.25},
-    "limpieza_hibrida_interna": 0.30,                             # fracción interna en esquema híbrido
+    "limpieza_hibrida_interna": 0.30,
     # --- supervisión (SUP-14A-07)
-    "span_supervision": T(30, 22, 15),                            # directos por supervisor de línea
-    # --- calidad: control operativo por cuadrilla (SUP-14A-08)
+    "span_supervision": T(30, 22, 15),
+    # --- calidad: control operativo QC por cuadrilla (SUP-14A-08)
     "control_calidad_por_1000": T(0.6, 0.8, 1.2),
-    # --- mantenimiento por activos (SUP-14A-09)
+    # --- mantenimiento: CARGA por activos (SUP-14A-09) y COBERTURA por política (SUP-14A-16)
     "mant_h_semana_equipo": {"M": T(0.0, 0.0, 0.0), "Mc": T(0.5, 0.75, 1.5), "S": T(0.75, 1.5, 3.0),
                              "A": T(1.5, 3.0, 6.0)},
     "mant_peso_criticidad": {"CRÍTICO": 1.5, "IMPORTANTE": 1.0, "SECUNDARIO": 0.5},
-    "mant_h_productivas_tecnico": T(36.0, 32.0, 28.0),
-    "unidades_duplicables_aves_h": 1250.0,                        # 1 unidad por cada 1.250 aves/h (SUP-14A-09)
+    "mant_fraccion_productiva": T(0.9, 0.8, 0.7),                 # horas de mantenimiento / horas de jornada
+    "unidades_duplicables_aves_h": 1250.0,
+    # política de cobertura de referencia: técnicos presentes mientras los activos críticos funcionan
+    # (NO es requisito técnico universal): base 1; +1 desde 5.000; +1 desde 10.000; +1 si automático ≥ 10.000
+    "cobertura_umbrales": (5000, 10000),
+    "cobertura_guardia_fuera_produccion": 1,
     # --- producción primaria (coordinación; SUP-14A-10)
     "granjas_por_tecnico": T(20, 15, 10),
-    "plazas_granja": 30000,                                       # 12B/03 [ESTIMACIÓN]
+    "plazas_granja": 30000,
     # --- logística (SUP-14A-11)
     "aves_camion_escenario": 5500,                                # SUP-033 (sin fuente), capacidad de ESCENARIO
-    "radio_km_escenario": 100,                                    # SUP-091 (sensibilidad, no ubicación)
-    # --- RR. HH. (SUP-14A-12)
-    "personas_por_rrhh": T(150, 120, 90),
+    "radio_km_escenario": 100,
+    # --- RR. HH. (SUP-14A-12): 1 cada N puestos equivalentes internos
+    "puestos_por_rrhh": T(150, 120, 90),
 }
 
-# Roles de estructura por banda de escala (equivalentes internos; 0,5 = rol compartido).
-# Bandas: S < 4.000 · M < 8.000 · L < 15.000 · XL ≥ 15.000 aves/día (SUP-14A-13).
 BANDAS = (("S", 4000), ("M", 8000), ("L", 15000), ("XL", float("inf")))
 ESTRUCTURA = {
-    # clave: (puesto, categoría, grupo, zona, {S, M, L, XL}, contrato, nota)
+    # clave: (puesto, categoría, grupo, zona, {S, M, L, XL}, contrato, nota)  — valores = dedicación (FTE)
     "jefe_produccion": ("Jefe de producción", "operacion_industrial", "supervision", "transversal",
                         {"S": 0, "M": 0, "L": 1, "XL": 1}, "fuera_convenio", "Por debajo de 10.000 lo cubre el gerente de operaciones"),
     "jefe_mantenimiento": ("Jefe de mantenimiento", "soporte_industrial", "soporte", "transversal",
                            {"S": 0, "M": 1, "L": 1, "XL": 1}, "fuera_convenio", "En 2.500 lo cubre un técnico líder"),
     "panolero": ("Pañolero / repuestos", "soporte_industrial", "soporte", "transversal",
                  {"S": 0, "M": 0, "L": 1, "XL": 1}, "convenio_pendiente", ""),
-    "jefe_calidad": ("Jefe de calidad e inocuidad", "soporte_industrial", "soporte", "transversal",
-                     {"S": 1, "M": 1, "L": 1, "XL": 1}, "fuera_convenio", "Reporta fuera de producción (independencia)"),
-    "analista_appcc": ("Analista APPCC / documentación", "soporte_industrial", "soporte", "oficinas",
-                       {"S": 0.5, "M": 1, "L": 1, "XL": 2}, "fuera_convenio", "En 2.500 compartido con el jefe de calidad"),
+    "jefe_calidad": ("Jefe de calidad e inocuidad (QA + inocuidad)", "soporte_industrial", "soporte", "transversal",
+                     {"S": 1, "M": 1, "L": 1, "XL": 1}, "fuera_convenio", "Reporta fuera de producción; en 2.500 también APPCC"),
+    "analista_appcc": ("Analista APPCC / POES / documentación (inocuidad)", "soporte_industrial", "soporte", "oficinas",
+                       {"S": 0.5, "M": 1, "L": 1, "XL": 2}, "fuera_convenio", "En 2.500 dedicación 0,5 (función combinada)"),
     "trazabilidad": ("Trazabilidad y registros", "soporte_industrial", "soporte", "oficinas",
-                     {"S": 0, "M": 0.5, "L": 1, "XL": 1}, "convenio_pendiente", ""),
+                     {"S": 0, "M": 0.5, "L": 1, "XL": 1}, "convenio_pendiente", "En 2.500 la cubre el jefe de calidad"),
     "hys": ("Higiene y seguridad laboral (interno)", "soporte_industrial", "soporte", "transversal",
-            {"S": 0, "M": 0, "L": 1, "XL": 1}, "fuera_convenio", "Servicio externo en S y M; horas mínimas por norma PENDIENTE (DPV-14A-07)"),
+            {"S": 0, "M": 0, "L": 1, "XL": 1}, "fuera_convenio", "Servicio externo en S y M (PENDIENTE, DPV-14A-07)"),
     "lavanderia": ("Lavandería / ropería por zona", "soporte_industrial", "soporte", "personal",
-                   {"S": 0.5, "M": 1, "L": 1, "XL": 2}, "convenio_pendiente", "Alternativa tercerizada (12C)"),
+                   {"S": 0.5, "M": 1, "L": 1, "XL": 2}, "convenio_pendiente", "Alternativa tercerizada (DEC-14A-07)"),
     "planificacion_trafico": ("Planificación y tráfico", "logistica", "soporte", "oficinas",
                               {"S": 0.5, "M": 1, "L": 1, "XL": 2}, "fuera_convenio", ""),
     "deposito_insumos": ("Recepción de insumos y depósito (envases, químicos)", "logistica", "soporte", "deposito",
@@ -223,7 +212,7 @@ ESTRUCTURA = {
     "compras": ("Compras", "administracion", "administracion", "oficinas",
                 {"S": 0.5, "M": 1, "L": 1, "XL": 2}, "fuera_convenio", ""),
     "ventas": ("Ventas / ejecutivos de cuenta", "administracion", "administracion", "oficinas",
-               {"S": 1, "M": 2, "L": 3, "XL": 4}, "fuera_convenio", "Depende de canales y clientes, no sólo de aves (02_clientes_demanda)"),
+               {"S": 1, "M": 2, "L": 3, "XL": 4}, "fuera_convenio", "Depende de canales y clientes, no sólo de aves"),
     "administracion": ("Administración (facturación, cobranzas, pagos)", "administracion", "administracion", "oficinas",
                        {"S": 1, "M": 1, "L": 2, "XL": 3}, "fuera_convenio", ""),
     "finanzas": ("Finanzas, contabilidad y tesorería", "administracion", "administracion", "oficinas",
@@ -241,7 +230,7 @@ ESTRUCTURA = {
     "gerente_calidad": ("Gerente de calidad e inocuidad", "direccion", "direccion", "oficinas",
                         {"S": 0, "M": 0, "L": 0, "XL": 1}, "fuera_convenio", "Antes, el jefe de calidad reporta al gerente general"),
 }
-PRIMARIA = {   # abastecimiento por integración (no incluye personal de granjas de terceros)
+PRIMARIA = {
     "coordinador_integracion": ("Coordinador de producción primaria / integrados", {"S": 0.5, "M": 1, "L": 1, "XL": 1}),
     "veterinario": ("Veterinario de la integración", {"S": 0.5, "M": 1, "L": 1, "XL": 2}),
     "planificacion_crianza": ("Planificación de crianza (pollito BB, alimento, cosecha)", {"S": 0, "M": 0.5, "L": 1, "XL": 1}),
@@ -252,14 +241,43 @@ PRIMARIA_COMPRA = {
 }
 LAB_PROPIO = {"S": 1, "M": 1, "L": 2, "XL": 3}
 
+# Cómo escala cada función (SUP-14A-17): produccion · activos · casi_fijo · estrategia
+DRIVER = {
+    **{k: "produccion" for k in ("colgado", "descarga", "faena", "evisceracion", "enfriamiento", "clasificacion",
+                                 "trozado", "deshuese", "empaque", "camaras_expedicion", "subproductos",
+                                 "limpieza_operativa", "limpieza_sanitizacion", "supervisores_linea", "jefes_turno",
+                                 "control_calidad", "trazabilidad", "lavanderia", "planificacion_trafico",
+                                 "deposito_insumos", "expedicion_adm", "tecnicos_campo")},
+    **{k: "activos" for k in ("tecnicos_mantenimiento", "jefe_mantenimiento", "panolero")},
+    **{k: "casi_fijo" for k in ("jefe_produccion", "supervisor_saneamiento", "jefe_calidad", "analista_appcc", "hys",
+                                "coordinador_integracion", "coordinador_abastecimiento", "veterinario",
+                                "planificacion_crianza", "compras", "administracion", "finanzas", "sistemas", "rrhh",
+                                "gerente_general", "gerente_operaciones", "gerente_comercial", "gerente_adm_fin",
+                                "gerente_calidad")},
+    **{k: "estrategia" for k in ("ventas", "choferes_aves", "choferes_producto", "captura", "laboratorio",
+                                 "control_calidad_facon", "hys_externo", "inspeccion_oficial")},
+}
+SUBFUNCION_CALIDAD = {"control_calidad": "QC", "control_calidad_facon": "QC", "jefe_calidad": "QA",
+                      "gerente_calidad": "QA", "analista_appcc": "INOCUIDAD", "trazabilidad": "TRAZABILIDAD",
+                      "laboratorio": "LABORATORIO", "inspeccion_oficial": "OFICIAL_SENASA"}
+BLOQUE_ASSET_LIGHT = {"ventas": "comercial", "gerente_comercial": "comercial", "gerente_general": "dirección",
+                      "administracion": "administración", "finanzas": "administración", "compras": "administración",
+                      "rrhh": "administración", "sistemas": "administración", "gerente_adm_fin": "administración",
+                      "coordinador_integracion": "coordinación productiva", "veterinario": "coordinación productiva",
+                      "planificacion_crianza": "coordinación productiva", "tecnicos_campo": "coordinación productiva",
+                      "coordinador_abastecimiento": "coordinación productiva", "jefe_calidad": "calidad",
+                      "analista_appcc": "calidad", "trazabilidad": "calidad",
+                      "control_calidad_facon": "supervisión de terceros", "planificacion_trafico": "logística",
+                      "deposito_insumos": "logística", "expedicion_adm": "logística", "choferes_aves": "logística",
+                      "choferes_producto": "logística"}
+
 ESCENARIO_BASE = {
     "aves_dia": 10000, "horas_netas": 8.0, "turnos": "1", "automatizacion": "semiautomatico",
     "config": "B", "flota_propia": False, "limpieza": "propia", "mantenimiento": "propio",
     "productividad": "media", "ventana": None, "dias_semana": 5, "planta_propia": True,
-    "abastecimiento": "integracion", "laboratorio": "externo", "aves_camion": None,
-    "cap_camion_producto_t": None, "dist_producto_km": None,
+    "abastecimiento": "integracion", "laboratorio": "externo", "factor_cobertura_nomina": None,
+    "aves_camion": None, "cap_camion_producto_t": None, "dist_producto_km": None,
 }
-# Referencia de trabajo por escala (09A §4; NO es decisión, DEC-037)
 AUTO_REFERENCIA = {2500: "manual", 5000: "mecanizado", 10000: "semiautomatico", 20000: "automatico"}
 
 OPCIONES = {
@@ -283,10 +301,10 @@ def banda(E):
 
 
 def nivel_area(area, auto):
-    """Nivel de automatización de un área para el escenario (09A/08 §1)."""
+    """Nivel de automatización de cada TAREA bajo el escenario (09A/08 §1). SUP-14A-14."""
     t = NIVEL_OBJETIVO[auto]
     tabla = {
-        "recepcion": ("M", "M", "S", "A"), "faena": ("M", "Mc", "S", "A"), "evisceracion": ("M", "M", "S", "A"),
+        "descarga": ("M", "M", "S", "A"), "faena": ("M", "Mc", "S", "A"), "evisceracion": ("M", "M", "S", "A"),
         "clasificacion": ("M", "M", "S", "A"), "trozado": ("M", "Mc", "S", "A"), "deshuese": ("M", "M", "S", "A"),
         "empaque": ("M", "Mc", "S", "A"), "subproductos": ("M", "S", "S", "A"),
     }
@@ -312,6 +330,9 @@ def validar(e):
     for k in ("aves_camion", "cap_camion_producto_t", "dist_producto_km"):
         if e[k] is not None and (not isinstance(e[k], (int, float)) or e[k] <= 0):
             raise ErrorRRHH(f"{k} debe ser None (PENDIENTE) o > 0")
+    f = e["factor_cobertura_nomina"]
+    if f is not None and (not isinstance(f, (int, float)) or f < 1):
+        raise ErrorRRHH("factor_cobertura_nomina debe ser None (PENDIENTE) o ≥ 1")
 
 
 # ---------------------------------------------------------------------------
@@ -335,7 +356,7 @@ def logistica_vivo(E, dias, h, aves_camion):
     r = ml.aves_vivas(E, dias_semana=dias, aves_camion=aves_camion, radio_km=P["radio_km_escenario"],
                       horas_netas=h, plazas_granja=P["plazas_granja"])
     return {"flota_minima": r["flota_minima"], "granjas_equivalentes": r["granjas_equivalentes"],
-            "viajes_dia": r["viajes_dia"]}
+            "camion_horas_dia": r["camion_horas_dia"]}
 
 
 @lru_cache(maxsize=None)
@@ -356,8 +377,6 @@ def _opciones(txt):
 
 
 def nivel_efectivo_equipo(fila, auto):
-    """Nivel del equipo bajo el escenario: la opción técnica más cercana por debajo del objetivo
-    (unión de opciones de la matriz en todas las escalas); si no hay ninguna, la mínima disponible."""
     ops = set()
     for E in ESCALAS:
         ops |= _opciones(fila[f"nivel_{E}"])
@@ -369,9 +388,8 @@ def nivel_efectivo_equipo(fila, auto):
 
 
 def presente(fila, E):
-    """Equipo presente a la escala E: se usa la columna de la mayor escala de referencia ≤ E."""
     ref = max([x for x in ESCALAS if x <= E] or [ESCALAS[0]])
-    return bool(_opciones(fila[f"nivel_{ref}"]))      # '—', 'O' (opcional) y 'T' (tercerizar) no cuentan
+    return bool(_opciones(fila[f"nivel_{ref}"]))
 
 
 def carga_mantenimiento(E, ritmo, auto, prod):
@@ -392,61 +410,74 @@ def carga_mantenimiento(E, ritmo, auto, prod):
     return total, n_eq, por_nivel
 
 
+def tecnicos_cobertura(E, auto):
+    """POLÍTICA DE COBERTURA DE REFERENCIA (SUP-14A-16): técnicos presentes mientras funcionan los activos.
+    No es requisito técnico universal."""
+    u1, u2 = P["cobertura_umbrales"]
+    return 1 + (E >= u1) + (E >= u2) + (auto == "automatico" and E >= u2)
+
+
 # ---------------------------------------------------------------------------
-# 4. TURNOS Y JORNADA (integra la ecuación de 24 h de 09A)
+# 4. TURNOS, JORNADA Y CALENDARIO DEL DÍA (integra la ecuación de 24 h de 09A)
 # ---------------------------------------------------------------------------
 def turnos_y_jornada(e):
     h, modo = e["horas_netas"], e["turnos"]
     vent = e["ventana"] or VENTANA_POR_PROD[e["productividad"]]
     v = mc.VENTANAS[vent]
     D = mc.SENSIBILIDAD[v["sens"]]["D"]
+    J = P["jornada_referencia_h"]
     n_c = CUADRILLAS[modo]
     h_c = h / n_c
-    presencia = h_c / D + v["pausas_8h"] * h_c / 8 + v["limpieza_intermedia_8h"] * h_c / 8
-    if n_c == 2:
-        presencia += P["solape_cambio_turno_h"]
+    sol = P["solape_cambio_turno_h"] if n_c == 2 else 0.0
+    presencia = h_c / D + v["pausas_8h"] * h_c / 8 + v["limpieza_intermedia_8h"] * h_c / 8 + sol
     v24 = mc.ventana_24h(h, vent, turnos=n_c)
-    hs = P["horas_semana_normal"][e["productividad"]]
-    dias = e["dias_semana"]
-    extra_sem = max(0.0, presencia * dias - hs, (presencia - P["jornada_normal_h"]) * dias)
-    extra_mes = extra_sem * 52 / 12
+    comp = v24["componentes"]
+    pa = comp["preparacion_arranque"]
+    inicios = [pa + k * (presencia - sol) for k in range(n_c)]
+    fin_prod = inicios[-1] + presencia
+    ini_limp = fin_prod + comp["cierre_vaciado"]
+    fin_limp = ini_limp + comp["limpieza"] + comp["sanitizacion"]
+    fin_mant = fin_limp + comp["mantenimiento"]
+    brecha = max(0.0, presencia - J)
     alertas = []
     if v24["alerta"]:
         alertas.append(f"ALERTA_24H(holgura {v24['holgura']:.2f} h)")
-    if modo in ("1", "2") and presencia > P["jornada_normal_h"] + 1e-9:
-        alertas.append(f"ALERTA_JORNADA(presencia {presencia:.2f} h > {P['jornada_normal_h']:.0f} h)")
-    if modo == "extendido":
-        if presencia > P["jornada_extendida_max_h"] + 1e-9:
-            alertas.append(f"ALERTA_JORNADA_EXTENDIDA(presencia {presencia:.2f} h > {P['jornada_extendida_max_h']:.0f} h)")
-        if extra_mes > P["horas_extra_mes_ref"] + 1e-9:
-            alertas.append(f"ALERTA_HORAS_EXTRA({extra_mes:.0f} h/mes > ref. {P['horas_extra_mes_ref']:.0f})")
-    if modo == "extendido" and presencia <= P["jornada_normal_h"] + 1e-9:
-        alertas.append("NOTA_EXTENDIDO_INNECESARIO(cabe en jornada normal)")
-    comp = v24["componentes"]
-    fuera_prod = sum(comp[k] for k in ("preparacion_arranque", "cierre_vaciado", "limpieza", "sanitizacion",
-                                       "mantenimiento"))
+    if brecha > 1e-9:
+        if modo in ("1", "2"):
+            alertas.append(f"INCOMPATIBILIDAD_JORNADA(presencia {presencia:.2f} h > jornada de referencia {J:.0f} h: "
+                           "requiere organización adicional)")
+        else:
+            alertas.append(f"JORNADA_EXTENDIDA_A_VALIDAR(presencia {presencia:.2f} h; DPV-14A-01)")
+    elif modo == "extendido":
+        alertas.append("NOTA_EXTENDIDO_INNECESARIO(cabe en la jornada de referencia)")
     return {
-        "ventana": vent, "D": D, "cuadrillas": n_c, "h_netas_cuadrilla": h_c, "presencia_h": presencia,
-        "horas_extra_semana": extra_sem, "horas_extra_mes": extra_mes, "holgura_24h": v24["holgura"],
-        "total_24h": v24["total"], "alerta_24h": v24["alerta"], "alertas": alertas,
+        "ventana": vent, "D": D, "J": J, "cuadrillas": n_c, "h_netas_cuadrilla": h_c, "presencia_h": presencia,
+        "solape_h": sol, "brecha_jornada_h": brecha, "holgura_24h": v24["holgura"], "total_24h": v24["total"],
+        "alerta_24h": v24["alerta"], "alertas": alertas, "inicios_cuadrillas": inicios, "fin_produccion": fin_prod,
+        "inicio_limpieza": ini_limp, "fin_limpieza": fin_limp, "fin_mantenimiento": fin_mant,
         "t_limpieza": comp["limpieza"], "t_sanitizacion": comp["sanitizacion"], "t_mantenimiento": comp["mantenimiento"],
-        "horas_produccion_planta": presencia * n_c - (P["solape_cambio_turno_h"] if n_c == 2 else 0.0),
-        "horas_fuera_produccion": fuera_prod, "horas_semana_normal": hs,
+        "t_cierre": comp["cierre_vaciado"], "t_preparacion": pa,
+        "horas_activos_en_marcha": fin_prod + comp["cierre_vaciado"],
+        "horas_fuera_produccion": comp["limpieza"] + comp["sanitizacion"] + comp["mantenimiento"],
     }
 
 
 # ---------------------------------------------------------------------------
 # 5. CONSTRUCCIÓN DE PUESTOS
 # ---------------------------------------------------------------------------
-def _puesto(lista, clave, puesto, categoria, grupo, zona, modalidad, por_turno=None, cuadrillas=1,
-            equivalentes=None, personas=None, interno=True, externos=0.0, contrato="convenio_pendiente",
-            estado="CALCULADO", base="", ref=""):
-    lista.append({
-        "clave": clave, "puesto": puesto, "categoria": categoria, "grupo": grupo, "zona": zona,
-        "modalidad": modalidad, "por_turno": por_turno, "cuadrillas": cuadrillas, "personas": personas,
-        "equivalentes": equivalentes, "interno": interno, "externos_equivalentes": externos,
-        "contrato": contrato, "estado": estado, "base": base, "ref": ref,
-    })
+def _puesto(lst, **k):
+    base = {"clave": None, "puesto": None, "categoria": None, "grupo": None, "zona": None, "franja": None,
+            "modalidad": None, "puestos_turno": 0, "cuadrillas": 1, "horas_presencia": 0.0, "simultaneos": 0,
+            "puestos_equivalentes": 0.0, "fte_interno": 0.0, "fte_tercerizado": 0.0, "horas_persona_dia": 0.0,
+            "horas_contratadas_dia": 0.0, "estado": "CALCULADO", "contrato": "convenio_pendiente", "base": "",
+            "ref": ""}
+    base.update(k)
+    base["driver"] = DRIVER.get(base["clave"], "casi_fijo")
+    base["subfuncion"] = SUBFUNCION_CALIDAD.get(base["clave"], "")
+    base["interno"] = bool(base["fte_interno"]) or bool(base["puestos_equivalentes"])
+    base["tercerizado"] = bool(base["fte_tercerizado"])
+    lst.append(base)
+    return base
 
 
 def calcular(entradas=None):
@@ -457,121 +488,113 @@ def calcular(entradas=None):
     E, h, pr, auto, cfg = e["aves_dia"], e["horas_netas"], e["productividad"], e["automatizacion"], e["config"]
     b = banda(E)
     tj = turnos_y_jornada(e)
-    n_c, pres, dias, hs = tj["cuadrillas"], tj["presencia_h"], e["dias_semana"], tj["horas_semana_normal"]
-    cob = P["factor_cobertura"][pr]
-    r = E / h                                            # ritmo de línea mientras corre (aves/h)
+    n_c, pres, dias, J = tj["cuadrillas"], tj["presencia_h"], e["dias_semana"], tj["J"]
+    r = E / h
     k = kg_ave(cfg)
     lst = []
     pendientes = []
-
-    def turno(clave, puesto, cat, grupo, zona, pt, interno=True, base="", ref="", contrato="convenio_pendiente"):
-        """Puesto por cuadrilla: personas físicas y equivalentes por horas."""
-        if interno:
-            pers = techo(pt * n_c * cob) if pt > 0 else 0
-            eq = pt * n_c * pres * dias / hs * cob
-            _puesto(lst, clave, puesto, cat, grupo, zona, "turno", pt, n_c, eq, pers, True, 0.0, contrato,
-                    base=base, ref=ref)
-        else:
-            eq = pt * n_c * pres * dias / hs * cob
-            _puesto(lst, clave, puesto, cat, grupo, zona, "turno", 0, n_c, 0.0, 0, False, eq, "servicio_tercerizado",
-                    base=base, ref=ref)
-
-    def estructura(clave, puesto, cat, grupo, zona, eq, contrato="fuera_convenio", nota="", interno=True, ext=0.0):
-        pers = int(math.floor(eq + 1e-9)) if eq > 0 else 0       # fracciones → "roles compartidos" (5.10)
-        _puesto(lst, clave, puesto, cat, grupo, zona, "estructura", None, 1, eq if interno else 0.0,
-                pers if interno else 0, interno, ext, contrato, base=nota)
-
     planta = e["planta_propia"]
-    # ---------------- 5.1 Operación industrial (directos) ----------------
+
+    def linea(clave, puesto, cat, grupo, zona, pt, base="", ref="", contrato="convenio_pendiente", interno=True):
+        """Puesto de línea: presente con su cuadrilla durante toda la presencia."""
+        hp = pt * n_c * pres
+        _puesto(lst, clave=clave, puesto=puesto, categoria=cat, grupo=grupo, zona=zona,
+                franja="linea" if interno else "externo_facon", modalidad="turno", puestos_turno=pt, cuadrillas=n_c,
+                horas_presencia=pres, simultaneos=pt, puestos_equivalentes=pt * n_c if interno else 0.0,
+                fte_interno=hp / J if interno else 0.0, fte_tercerizado=0.0 if interno else hp / J,
+                horas_persona_dia=hp, horas_contratadas_dia=0.0 if interno else hp,
+                contrato=contrato if interno else "servicio_tercerizado (façon)", base=base, ref=ref)
+
+    def estructura(clave, puesto, cat, grupo, zona, ded, contrato="fuera_convenio", nota=""):
+        franja = "diurna" if zona not in ("campo", "ruta", "externo_facon") else zona
+        _puesto(lst, clave=clave, puesto=puesto, categoria=cat, grupo=grupo, zona=zona, franja=franja,
+                modalidad="estructura", horas_presencia=J if ded else 0.0, simultaneos=ded,
+                puestos_equivalentes=ded, fte_interno=ded, horas_persona_dia=ded * J, contrato=contrato, base=nota)
+
+    # ---------------- 5.1 Operación industrial: POR TAREA ----------------
     t_com_dia = k["comestible_a_empaque"] * E / 1000
     t_sol_dia = k["solidos_a_retirar"] * E / 1000
-    nr = {a: nivel_area(a, auto) for a in ("recepcion", "faena", "evisceracion", "clasificacion", "trozado",
+    nr = {a: nivel_area(a, auto) for a in ("descarga", "faena", "evisceracion", "clasificacion", "trozado",
                                            "deshuese", "empaque", "subproductos")}
-    ops = []
-    ops.append(("recepcion_colgado", "Recepción, descarga y colgado", "sucia",
-                techo(1 + (P["colgado_por_1000"][pr] + P["descarga_por_1000"][nr["recepcion"] if nr["recepcion"] != "Mc" else "M"][pr]) * r / 1000),
-                f"nivel {nr['recepcion']}; colgado FTE-219 [PVDP·débil]/SUP-063"))
-    ops.append(("faena", "Faena (aturdido–desplumado, patas, transferencia)", "sucia",
-                techo(1 + P["faena_por_1000"][nr["faena"]][pr] * r / 1000), f"nivel {nr['faena']}; aturdido–desplumado continuo Mc/A en todos los casos (09A)"))
-    ops.append(("evisceracion", "Evisceración, menudencias y lavado (sin inspección oficial)", "evisceracion",
-                techo(P["evisc_fijo"][nr["evisceracion"]] + P["evisc_por_1000"][nr["evisceracion"]][pr] * r / 1000),
-                f"nivel {nr['evisceracion']}; manual FTE-218 [PVDP·débil]"))
-    ops.append(("enfriamiento_clasificacion", "Enfriamiento y clasificación", "limpia",
-                techo(1 + P["clasif_por_1000"][nr["clasificacion"] if nr["clasificacion"] != "Mc" else "M"][pr] * r / 1000),
-                f"nivel {nr['clasificacion']}"))
-    kg_troz_h = k["a_trozado"] * r
-    kg_desh_h = k["a_deshuese"] * r
-    nt = nr["trozado"]
-    ops.append(("trozado", "Trozado", "limpia",
-                techo(1 + kg_troz_h / P["trozado_kg_h"][nt][pr]) if kg_troz_h > 0 else 0,
-                f"nivel {nt}; {kg_troz_h:.0f} kg/h (config. {cfg})"))
-    nd = nr["deshuese"]
-    ops.append(("deshuese", "Deshuese y trimming", "limpia",
-                techo(1 + kg_desh_h / P["deshuese_kg_h"][nd][pr]) if kg_desh_h > 0 else 0,
-                f"nivel {nd}; {kg_desh_h:.0f} kg/h (config. {cfg})"))
-    ne = nr["empaque"]
-    ops.append(("empaque", "Empaque, rotulado y control de peso", "limpia",
-                techo(1 + k["comestible_a_empaque"] * r / P["empaque_kg_h"][ne][pr]), f"nivel {ne}"))
-    ops.append(("camaras_expedicion", "Cámaras, congelado y expedición (carga)", "frio_expedicion",
-                techo(1 + t_com_dia / n_c / P["camaras_t_persona_turno"][pr]), f"{t_com_dia:.1f} t/día"))
-    ns = nr["subproductos"] if nr["subproductos"] != "Mc" else "S"
-    ops.append(("subproductos", "Subproductos y decomisos (manejo y despacho)", "subproductos",
-                max(1, techo(t_sol_dia / n_c / P["subprod_t_persona_turno"][ns][pr])), f"{t_sol_dia:.1f} t/día; nivel {ns}"))
+    nd_ = "M" if nr["descarga"] == "Mc" else nr["descarga"]
+    ncl = "M" if nr["clasificacion"] == "Mc" else nr["clasificacion"]
+    kg_troz_h, kg_desh_h = k["a_trozado"] * r, k["a_deshuese"] * r
+    ns = "S" if nr["subproductos"] == "Mc" else nr["subproductos"]
+    ops = [
+        ("colgado", "Colgado", "sucia", max(1, techo(P["colgado_por_1000"][pr] * r / 1000)),
+         "manual en todos los niveles; FTE-219 [PVDP·débil]/SUP-063"),
+        ("descarga", "Descarga, cajones y andén", "sucia", max(1, techo(P["descarga_por_1000"][nd_][pr] * r / 1000)),
+         f"nivel {nd_}"),
+        ("faena", "Faena (aturdido–desplumado, degüello, patas, transferencia)", "sucia",
+         techo(1 + P["faena_por_1000"][nr["faena"]][pr] * r / 1000), f"nivel {nr['faena']}"),
+        ("evisceracion", "Evisceración, menudencias y lavado (sin inspección oficial)", "evisceracion",
+         techo(P["evisc_fijo"][nr["evisceracion"]] + P["evisc_por_1000"][nr["evisceracion"]][pr] * r / 1000),
+         f"nivel {nr['evisceracion']}; manual FTE-218 [PVDP·débil]"),
+        ("enfriamiento", "Operación de enfriamiento", "limpia", 1, "1 operador por cuadrilla"),
+        ("clasificacion", "Clasificación y calibrado", "limpia",
+         max(1, techo(P["clasif_por_1000"][ncl][pr] * r / 1000)), f"nivel {ncl}"),
+        ("trozado", "Trozado", "limpia", techo(1 + kg_troz_h / P["trozado_kg_h"][nr["trozado"]][pr]) if kg_troz_h > 0 else 0,
+         f"nivel {nr['trozado']}; {kg_troz_h:.0f} kg/h (config. {cfg})"),
+        ("deshuese", "Deshuese y trimming", "limpia",
+         techo(1 + kg_desh_h / P["deshuese_kg_h"][nr["deshuese"]][pr]) if kg_desh_h > 0 else 0,
+         f"nivel {nr['deshuese']}; {kg_desh_h:.0f} kg/h (config. {cfg})"),
+        ("empaque", "Empaque, rotulado y control de peso", "limpia",
+         techo(1 + k["comestible_a_empaque"] * r / P["empaque_kg_h"][nr["empaque"]][pr]), f"nivel {nr['empaque']}"),
+        ("camaras_expedicion", "Cámaras, congelado y expedición (carga)", "frio_expedicion",
+         techo(1 + t_com_dia / n_c / P["camaras_t_persona_turno"][pr]), f"{t_com_dia:.1f} t/día"),
+        ("subproductos", "Subproductos y decomisos", "subproductos",
+         max(1, techo(t_sol_dia / n_c / P["subprod_t_persona_turno"][ns][pr])), f"{t_sol_dia:.1f} t/día; nivel {ns}"),
+    ]
     for clave, nombre, zona, pt, base in ops:
-        turno(clave, nombre, "operacion_industrial", "directo", zona, pt, interno=planta, base=base,
-              ref="SUP-14A-04/05")
+        linea(clave, nombre, "operacion_industrial", "directo", zona, pt, base=base, ref="SUP-14A-04/05",
+              interno=planta)
     directos_turno = sum(o[3] for o in ops) if planta else 0
 
-    # ---------------- 5.2 Limpieza y sanitización (función crítica) ----------------
+    # ---------------- 5.2 Limpieza y sanitización ----------------
     if planta:
-        pt_lo = techo(1 + P["limpieza_operativa_por_1000"][pr] * r / 1000)
-        turno("limpieza_operativa", "Limpieza operativa en turno", "operacion_industrial", "soporte", "transversal",
-              pt_lo, base="durante producción; siempre interna", ref="SUP-14A-06")
+        linea("limpieza_operativa", "Limpieza operativa en turno", "operacion_industrial", "soporte", "transversal",
+              techo(1 + P["limpieza_operativa_por_1000"][pr] * r / 1000), base="durante producción; siempre interna",
+              ref="SUP-14A-06")
         m2 = m2_proceso(E, h, cfg, AUTO_12C[auto], AREA_12C_POR_PROD[pr])
-        ph = m2 * P["limpieza_factor_auto"][auto] / P["limpieza_m2_persona_h"][pr]
-        ventana_l = tj["t_limpieza"] + tj["t_sanitizacion"]
-        cuadrilla_l = techo(ph / ventana_l)
-        eq_l = cuadrilla_l * ventana_l * dias / hs * cob
-        pers_l = techo(cuadrilla_l * cob)
-        modo_l = e["limpieza"]
-        frac_int = {"propia": 1.0, "tercerizada": 0.0, "hibrida": P["limpieza_hibrida_interna"]}[modo_l]
-        cu_int = techo(cuadrilla_l * frac_int) if frac_int > 0 else 0
-        cu_ext = cuadrilla_l - cu_int
-        base_l = f"{m2:.0f} m² proceso (12C) × {ph / max(m2, 1):.3f} persona-h/m²; ventana {ventana_l:.2f} h"
-        _puesto(lst, "limpieza_sanitizacion", "Limpieza y sanitización post-producción (cuadrilla)",
-                "operacion_industrial", "soporte", "transversal", "cuadrilla_post", cu_int, 1,
-                eq_l * cu_int / cuadrilla_l if cuadrilla_l else 0.0, techo(cu_int * cob) if cu_int else 0,
-                cu_int > 0, eq_l * cu_ext / cuadrilla_l if cuadrilla_l else 0.0,
-                "convenio_pendiente" if cu_int else "servicio_tercerizado", base=base_l, ref="SUP-14A-06; DPV-091")
-        lider = 1 if (cu_int >= 6 or modo_l != "propia") else 0
+        ph_req = m2 * P["limpieza_factor_auto"][auto] / P["limpieza_m2_persona_h"][pr]
+        vent_l = tj["t_limpieza"] + tj["t_sanitizacion"]
+        cuadrilla = techo(ph_req / vent_l)
+        frac = {"propia": 1.0, "tercerizada": 0.0, "hibrida": P["limpieza_hibrida_interna"]}[e["limpieza"]]
+        cu_int = techo(cuadrilla * frac) if frac > 0 else 0
+        cu_ext = cuadrilla - cu_int
+        _puesto(lst, clave="limpieza_sanitizacion", puesto="Limpieza y sanitización post-producción",
+                categoria="operacion_industrial", grupo="soporte", zona="transversal", franja="post",
+                modalidad="cuadrilla_post", puestos_turno=cuadrilla, cuadrillas=1, horas_presencia=vent_l,
+                simultaneos=cuadrilla, puestos_equivalentes=cu_int, fte_interno=cu_int * vent_l / J,
+                fte_tercerizado=cu_ext * vent_l / J, horas_persona_dia=cuadrilla * vent_l,
+                horas_contratadas_dia=cu_ext * vent_l,
+                contrato="convenio_pendiente" if cu_int else "servicio_tercerizado",
+                base=f"{m2:.0f} m² proceso (12C); ventana {vent_l:.2f} h; {e['limpieza']}", ref="SUP-14A-06; DPV-091")
         estructura("supervisor_saneamiento", "Supervisor de saneamiento / verificación POES", "operacion_industrial",
-                   "supervision", "transversal", lider, nota="interno aun si la limpieza se terceriza (verificación)")
-        pers_limp_total = pers_l
-    else:
-        pers_limp_total = 0
+                   "supervision", "transversal", 1 if (cu_int >= 6 or e["limpieza"] != "propia") else 0,
+                   nota="interno en toda modalidad (verificación)")
 
-    # ---------------- 5.3 Supervisión de línea ----------------
+    # ---------------- 5.3 Supervisión ----------------
     if planta:
-        span = P["span_supervision"][pr]
-        sup_c = max(1, techo(directos_turno / span))
-        turno("supervisores_linea", "Supervisores de línea", "operacion_industrial", "supervision", "transversal",
+        sup_c = max(1, techo(directos_turno / P["span_supervision"][pr]))
+        linea("supervisores_linea", "Supervisores de línea", "operacion_industrial", "supervision", "transversal",
               sup_c, ref="SUP-14A-07", contrato="fuera_convenio")
         if n_c == 2:
-            turno("jefes_turno", "Jefe de turno", "operacion_industrial", "supervision", "transversal", 1,
+            linea("jefes_turno", "Jefe de turno", "operacion_industrial", "supervision", "transversal", 1,
                   ref="SUP-14A-07", contrato="fuera_convenio")
-        estructura("jefe_produccion", *ESTRUCTURA["jefe_produccion"][:4], ESTRUCTURA["jefe_produccion"][4][b])
+        x = ESTRUCTURA["jefe_produccion"]
+        estructura("jefe_produccion", *x[:4], x[4][b], contrato=x[5], nota=x[6])
     else:
         sup_c = 0
 
-    # ---------------- 5.4 Calidad e inocuidad ----------------
+    # ---------------- 5.4 Calidad (empresa) e inspección oficial (SENASA, separada) ----------------
     if planta:
-        pt_q = techo(1 + P["control_calidad_por_1000"][pr] * r / 1000)
-        turno("control_calidad", "Control de calidad operativo (recepción, línea, empaque)", "soporte_industrial",
-              "soporte", "transversal", pt_q, ref="SUP-14A-08")
+        linea("control_calidad", "Control de calidad operativo (QC)", "soporte_industrial", "soporte", "transversal",
+              techo(1 + P["control_calidad_por_1000"][pr] * r / 1000), ref="SUP-14A-08")
     else:
-        estructura("control_calidad_facon", "Control de calidad propio en la planta del façonier",
+        estructura("control_calidad_facon", "QC propio en la planta del façonier (supervisión de terceros)",
                    "soporte_industrial", "soporte", "externo_facon", 1 if b in ("S", "M") else 2,
-                   contrato="convenio_pendiente", nota="asset-light: la empresa conserva el control de especificaciones")
+                   contrato="convenio_pendiente", nota="asset-light")
     for kk in ("jefe_calidad", "analista_appcc", "trazabilidad"):
         x = ESTRUCTURA[kk]
         estructura(kk, *x[:4], x[4][b], contrato=x[5], nota=x[6])
@@ -579,56 +602,65 @@ def calcular(entradas=None):
         estructura("laboratorio", "Analistas de laboratorio propio", "soporte_industrial", "soporte", "laboratorio",
                    LAB_PROPIO[b], contrato="convenio_pendiente")
     else:
-        estructura("laboratorio", "Laboratorio de autocontrol (externo; toma de muestras interna)", "soporte_industrial",
-                   "soporte", "laboratorio", 0, interno=False, ext=0.0)
-        lst[-1]["estado"] = "EXTERNO_SIN_DOTACION"
-    _puesto(lst, "inspeccion_oficial", "Inspección veterinaria oficial (SENASA) y eventuales auxiliares",
-            "soporte_industrial", "soporte", "evisceracion", "externo_oficial", PENDIENTE, n_c, 0.0, 0, False,
-            PENDIENTE, "oficial", estado="PENDIENTE", base="puestos por velocidad de línea sin norma leída",
+        _puesto(lst, clave="laboratorio", puesto="Laboratorio de autocontrol (servicio externo por análisis)",
+                categoria="soporte_industrial", grupo="soporte", zona="laboratorio", franja="sin_presencia",
+                modalidad="externo", estado="EXTERNO_POR_SERVICIO", contrato="servicio_tercerizado",
+                base="se contrata por análisis, no por horas; toma de muestras interna (QC)")
+    _puesto(lst, clave="inspeccion_oficial", puesto="Inspección veterinaria oficial (SENASA) — NO es personal de la empresa",
+            categoria="oficial", grupo="oficial", zona="evisceracion", franja="oficial", modalidad="externo_oficial",
+            puestos_turno=PENDIENTE, simultaneos=PENDIENTE, puestos_equivalentes=0.0, fte_interno=0.0,
+            fte_tercerizado=PENDIENTE, horas_persona_dia=PENDIENTE, horas_contratadas_dia=PENDIENTE,
+            estado="PENDIENTE", contrato="oficial",
+            base="inspectores por velocidad de línea sin norma leída; tasa o cargo a la empresa sin verificar",
             ref="DPV-090; DPV-14A-05")
     if planta:
         pendientes.append("inspeccion_oficial")
 
-    # ---------------- 5.5 Mantenimiento y utilities ----------------
+    # ---------------- 5.5 Mantenimiento: COBERTURA (política) vs CARGA (activos) ----------------
+    cob = dict(fte=0.0, horas=0.0, simult=0)
+    carga = dict(fte=0.0, h_semana=0.0, equipos=0, por_nivel={})
     if planta:
-        carga_h, n_eq, por_niv = carga_mantenimiento(E, r, auto, pr)
-        fte_carga = carga_h / P["mant_h_productivas_tecnico"][pr]
-        simult = 1 + (E >= 5000) + (E >= 10000) + (auto == "automatico" and E >= 10000)
-        cov_h = dias * (tj["horas_produccion_planta"] * simult + tj["horas_fuera_produccion"] * 1)
-        fte_cov = cov_h / hs * cob
+        h_sem, n_eq, por_niv = carga_mantenimiento(E, r, auto, pr)
+        fte_carga = h_sem / dias / (J * P["mant_fraccion_productiva"][pr])
+        simult = tecnicos_cobertura(E, auto)
+        horas_cob = (simult * tj["horas_activos_en_marcha"]
+                     + P["cobertura_guardia_fuera_produccion"] * tj["horas_fuera_produccion"])
+        fte_cob = horas_cob / J
+        cob = dict(fte=fte_cob, horas=horas_cob, simult=simult)
+        carga = dict(fte=fte_carga, h_semana=h_sem, equipos=n_eq, por_nivel=por_niv)
+        tot = max(fte_cob, fte_carga)
         modo_m = e["mantenimiento"]
-        tecnicos_tot = max(fte_cov, fte_carga)
         if modo_m == "propio":
-            int_eq, ext_eq = tecnicos_tot, 0.0
+            fi, fe = tot, 0.0
         elif modo_m == "tercerizado":
-            int_eq, ext_eq = 0.0, tecnicos_tot
-        else:                                         # mixto: cobertura interna + especialidades externas
-            int_eq, ext_eq = fte_cov, max(0.0, fte_carga - fte_cov)
-        base_m = (f"{n_eq} equipos ({por_niv['Mc']} Mc, {por_niv['S']} S, {por_niv['A']} A); carga {carga_h:.0f} h/sem; "
-                  f"cobertura {simult} técnico(s) simultáneo(s) en producción")
-        _puesto(lst, "tecnicos_mantenimiento", "Técnicos de mantenimiento (mecánica, electricidad, frío/utilities, automatización)",
-                "soporte_industrial", "soporte", "transversal", "cobertura", simult if int_eq else 0, 1, int_eq,
-                techo(int_eq) if int_eq else 0, int_eq > 0, ext_eq,
-                "convenio_pendiente" if int_eq else "servicio_tercerizado", base=base_m, ref="SUP-14A-09")
-        lst[-1]["fte_carga"] = fte_carga
-        lst[-1]["fte_cobertura"] = fte_cov
+            fi, fe = 0.0, tot
+        else:
+            fi, fe = fte_cob, max(0.0, fte_carga - fte_cob)
+        _puesto(lst, clave="tecnicos_mantenimiento",
+                puesto="Técnicos de mantenimiento (mecánica, electricidad, frío/utilities, automatización)",
+                categoria="soporte_industrial", grupo="soporte", zona="transversal", franja="tecnica",
+                modalidad="cobertura", puestos_turno=simult, cuadrillas=n_c,
+                horas_presencia=tj["horas_activos_en_marcha"], simultaneos=simult, puestos_equivalentes=fi,
+                fte_interno=fi, fte_tercerizado=fe, horas_persona_dia=tot * J, horas_contratadas_dia=fe * J,
+                contrato="convenio_pendiente" if fi else "servicio_tercerizado",
+                base=(f"{n_eq} equipos ({por_niv['Mc']} Mc, {por_niv['S']} S, {por_niv['A']} A); carga {h_sem:.0f} h/sem "
+                      f"= {fte_carga:.2f} FTE; cobertura {simult} simultáneo(s) = {fte_cob:.2f} FTE; {modo_m}"),
+                ref="SUP-14A-09; SUP-14A-16")
         x = ESTRUCTURA["jefe_mantenimiento"]
-        jm = x[4][b] if modo_m != "tercerizado" else max(x[4][b], 0.5)
         estructura("jefe_mantenimiento", x[0] if modo_m != "tercerizado" else "Coordinador de mantenimiento y contratos",
-                   *x[1:4], jm, nota="función retenida aun si se terceriza")
+                   *x[1:4], x[4][b] if modo_m != "tercerizado" else max(x[4][b], 0.5), nota="función retenida")
         x = ESTRUCTURA["panolero"]
         estructura("panolero", *x[:4], x[4][b] if modo_m != "tercerizado" else 0, contrato=x[5])
-    else:
-        fte_carga = fte_cov = 0.0
-        n_eq = 0
 
-    # ---------------- 5.6 Otros servicios de soporte ----------------
+    # ---------------- 5.6 Otros servicios ----------------
     for kk in ("hys", "lavanderia"):
         x = ESTRUCTURA[kk]
         estructura(kk, *x[:4], x[4][b] if planta else 0, contrato=x[5], nota=x[6])
-    _puesto(lst, "hys_externo", "Servicio externo de higiene y seguridad y medicina laboral", "soporte_industrial",
-            "soporte", "transversal", "externo", PENDIENTE, 1, 0.0, 0, False, PENDIENTE, "servicio_tercerizado",
-            estado="PENDIENTE", base="horas-profesional según norma no leída", ref="DPV-14A-07; FTE-14A-004")
+    _puesto(lst, clave="hys_externo", puesto="Servicio externo de higiene y seguridad y medicina laboral",
+            categoria="soporte_industrial", grupo="soporte", zona="transversal", franja="sin_presencia",
+            modalidad="externo", fte_tercerizado=PENDIENTE, horas_persona_dia=PENDIENTE,
+            horas_contratadas_dia=PENDIENTE, estado="PENDIENTE", contrato="servicio_tercerizado",
+            base="horas-profesional según norma no leída", ref="DPV-14A-07; FTE-14A-004")
     pendientes.append("hys_externo")
 
     # ---------------- 5.7 Logística ----------------
@@ -636,51 +668,58 @@ def calcular(entradas=None):
         x = ESTRUCTURA[kk]
         estructura(kk, *x[:4], x[4][b], contrato=x[5])
     ac = e["aves_camion"]
+    fp = e["flota_propia"]
     if ac is None:
-        _puesto(lst, "choferes_aves", "Choferes de aves vivas", "logistica", "soporte", "ruta", "flota",
-                PENDIENTE, 1, PENDIENTE if e["flota_propia"] else 0.0, PENDIENTE if e["flota_propia"] else 0,
-                e["flota_propia"], PENDIENTE if not e["flota_propia"] else 0.0, "convenio_pendiente",
-                estado="PENDIENTE", base="capacidad de camión no elegida (DPV-084)", ref="DPV-084; DEC-056")
+        _puesto(lst, clave="choferes_aves", puesto="Choferes de aves vivas", categoria="logistica", grupo="soporte",
+                zona="ruta", franja="ruta", modalidad="flota", puestos_turno=PENDIENTE, simultaneos=PENDIENTE,
+                puestos_equivalentes=PENDIENTE if fp else 0.0, fte_interno=PENDIENTE if fp else 0.0,
+                fte_tercerizado=0.0 if fp else PENDIENTE, horas_persona_dia=PENDIENTE,
+                horas_contratadas_dia=0.0 if fp else PENDIENTE, estado="PENDIENTE",
+                base="capacidad de camión no elegida (DPV-084)", ref="DPV-084; DEC-056")
         pendientes.append("choferes_aves")
     else:
         lv = logistica_vivo(E, dias, h, ac)
-        fl = lv["flota_minima"]
-        eq_ch = fl * cob
-        _puesto(lst, "choferes_aves", "Choferes de aves vivas", "logistica", "soporte", "ruta", "flota", fl, 1,
-                eq_ch if e["flota_propia"] else 0.0, techo(eq_ch) if e["flota_propia"] else 0, e["flota_propia"],
-                0.0 if e["flota_propia"] else eq_ch, "CCT 40/89 [PVDP]" if e["flota_propia"] else "servicio_tercerizado",
-                base=f"flota mínima {fl} (12B; {ac} aves/camión de ESCENARIO, radio {P['radio_km_escenario']} km)",
+        fl, hp = lv["flota_minima"], lv["camion_horas_dia"]
+        _puesto(lst, clave="choferes_aves", puesto="Choferes de aves vivas", categoria="logistica", grupo="soporte",
+                zona="ruta", franja="ruta", modalidad="flota", puestos_turno=fl, simultaneos=fl,
+                horas_presencia=hp / fl, puestos_equivalentes=fl if fp else 0.0, fte_interno=hp / J if fp else 0.0,
+                fte_tercerizado=0.0 if fp else hp / J, horas_persona_dia=hp, horas_contratadas_dia=0.0 if fp else hp,
+                contrato="CCT 40/89 [PVDP]" if fp else "servicio_tercerizado",
+                base=f"flota mínima {fl}; {hp:.1f} h-camión/día (12B; {ac} aves/camión de ESCENARIO)",
                 ref="SUP-033; SUP-14A-11")
     cap, dist = e["cap_camion_producto_t"], e["dist_producto_km"]
     cd = logistica_producto(E, dias, cfg, cap, dist) if (cap and dist) else None
     if cd is None:
-        _puesto(lst, "choferes_producto", "Choferes de producto terminado", "logistica", "soporte", "ruta", "flota",
-                PENDIENTE, 1, PENDIENTE if e["flota_propia"] else 0.0, PENDIENTE if e["flota_propia"] else 0,
-                e["flota_propia"], PENDIENTE if not e["flota_propia"] else 0.0, "convenio_pendiente",
-                estado="PENDIENTE", base="capacidad, distancia y modelo de distribución no definidos",
-                ref="DPV-084; DPV-036; DEC-016; DEC-056")
+        _puesto(lst, clave="choferes_producto", puesto="Choferes de producto terminado", categoria="logistica",
+                grupo="soporte", zona="ruta", franja="ruta", modalidad="flota", puestos_turno=PENDIENTE,
+                simultaneos=PENDIENTE, puestos_equivalentes=PENDIENTE if fp else 0.0,
+                fte_interno=PENDIENTE if fp else 0.0, fte_tercerizado=0.0 if fp else PENDIENTE,
+                horas_persona_dia=PENDIENTE, horas_contratadas_dia=0.0 if fp else PENDIENTE, estado="PENDIENTE",
+                base="capacidad, distancia y modelo de distribución no definidos", ref="DPV-084; DPV-036; DEC-016")
         pendientes.append("choferes_producto")
     else:
         n_ch = techo(cd)
-        eq_ch = n_ch * cob
-        _puesto(lst, "choferes_producto", "Choferes de producto terminado", "logistica", "soporte", "ruta", "flota",
-                n_ch, 1, eq_ch if e["flota_propia"] else 0.0, techo(eq_ch) if e["flota_propia"] else 0,
-                e["flota_propia"], 0.0 if e["flota_propia"] else eq_ch, "CCT 40/89 [PVDP]",
-                base=f"{cd:.2f} camión-día (12B, capacidad {cap} t y {dist} km de ESCENARIO)", ref="SUP-14A-11")
-    _puesto(lst, "captura", "Cuadrillas de captura y carga en granja", "logistica", "soporte", "granja", "externo",
-            PENDIENTE, 1, 0.0, 0, False, PENDIENTE, "servicio_tercerizado", estado="PENDIENTE",
-            base="función del integrado o contratista; dotación no modelada", ref="DPV-14A-09")
+        hp = cd * ml.HORAS_CAMION_DIA
+        _puesto(lst, clave="choferes_producto", puesto="Choferes de producto terminado", categoria="logistica",
+                grupo="soporte", zona="ruta", franja="ruta", modalidad="flota", puestos_turno=n_ch, simultaneos=n_ch,
+                horas_presencia=hp / n_ch, puestos_equivalentes=n_ch if fp else 0.0,
+                fte_interno=hp / J if fp else 0.0, fte_tercerizado=0.0 if fp else hp / J, horas_persona_dia=hp,
+                horas_contratadas_dia=0.0 if fp else hp, contrato="CCT 40/89 [PVDP]",
+                base=f"{cd:.2f} camión-día (12B, {cap} t y {dist} km de ESCENARIO)", ref="SUP-14A-11")
+    _puesto(lst, clave="captura", puesto="Cuadrillas de captura y carga en granja", categoria="logistica",
+            grupo="soporte", zona="granja", franja="campo", modalidad="externo", fte_tercerizado=PENDIENTE,
+            horas_persona_dia=PENDIENTE, horas_contratadas_dia=PENDIENTE, estado="PENDIENTE",
+            contrato="servicio_tercerizado", base="función del integrado o contratista", ref="DPV-14A-09")
     pendientes.append("captura")
 
     # ---------------- 5.8 Producción primaria (sólo coordinación) ----------------
     if e["abastecimiento"] == "integracion":
         for kk, (nombre, tabla) in PRIMARIA.items():
-            estructura(kk, nombre, "produccion_primaria", "soporte", "campo", tabla[b], nota="no incluye personal de granjas de terceros")
-        lv = logistica_vivo(E, dias, h, ac or P["aves_camion_escenario"])
-        gr = lv["granjas_equivalentes"]
+            estructura(kk, nombre, "produccion_primaria", "soporte", "campo", tabla[b],
+                       nota="no incluye personal de granjas de terceros")
+        gr = logistica_vivo(E, dias, h, ac or P["aves_camion_escenario"])["granjas_equivalentes"]
         estructura("tecnicos_campo", "Técnicos de campo (asistencia a integrados)", "produccion_primaria", "soporte",
-                   "campo", techo(gr / P["granjas_por_tecnico"][pr]),
-                   nota=f"{gr:.1f} granjas equivalentes de {P['plazas_granja']} plazas (12B/03)")
+                   "campo", techo(gr / P["granjas_por_tecnico"][pr]), nota=f"{gr:.1f} granjas equivalentes (12B/03)")
     else:
         for kk, (nombre, tabla) in PRIMARIA_COMPRA.items():
             estructura(kk, nombre, "produccion_primaria", "soporte", "campo", tabla[b])
@@ -691,89 +730,162 @@ def calcular(entradas=None):
         estructura(kk, *x[:4], x[4][b], contrato=x[5], nota=x[6])
     for kk in ("gerente_general", "gerente_operaciones", "gerente_comercial", "gerente_adm_fin", "gerente_calidad"):
         x = ESTRUCTURA[kk]
-        val = x[4][b] if (planta or kk != "gerente_operaciones") else 0
-        if kk == "gerente_calidad" and not planta:
-            val = 0
+        val = x[4][b] if (planta or kk not in ("gerente_operaciones", "gerente_calidad")) else 0
         estructura(kk, *x[:4], val, contrato=x[5], nota=x[6])
-    # RR. HH. al final: depende de las personas internas (sin incluirse)
-    pers_previas = sum((p["personas"] or 0) + ((p["equivalentes"] or 0) - (p["personas"] or 0)
-                       if p["modalidad"] == "estructura" else (p["personas"] or 0)) for p in lst if p["interno"])
-    rrhh = max(0.5, pers_previas / P["personas_por_rrhh"][pr])
-    rrhh = math.ceil(rrhh * 2 - 1e-9) / 2                       # medios puestos
+    pe = sum(p["puestos_equivalentes"] or 0 for p in lst)
+    rrhh = math.ceil(max(0.5, pe / P["puestos_por_rrhh"][pr]) * 2 - 1e-9) / 2
     estructura("rrhh", "Recursos humanos (liquidación, selección, capacitación)", "administracion",
-               "administracion", "oficinas", rrhh, nota="liquidación externa posible en 2.500")
+               "administracion", "oficinas", rrhh)
 
-    # ---------------- 5.10 Roles compartidos: las fracciones de puestos de estructura se suman por
-    # categoría y se redondean hacia arriba una sola vez (no se infla la estructura chica)
-    fr = {}
-    for p in lst:
-        if p["modalidad"] == "estructura" and p["interno"] and p["equivalentes"]:
-            f = p["equivalentes"] - p["personas"]
-            if f > 1e-9:
-                fr.setdefault((p["categoria"], p["grupo"]), []).append(p["clave"])
-    for (cat, grupo), claves in sorted(fr.items()):
-        suma = sum(p["equivalentes"] - p["personas"] for p in lst if p["clave"] in claves and p["categoria"] == cat)
-        _puesto(lst, f"compartidos_{cat}_{grupo}", f"Roles compartidos ({', '.join(claves)})", cat, grupo,
-                "oficinas", "compartido", None, 1, 0.0, techo(suma), True, 0.0, "fuera_convenio",
-                base=f"Σ fracciones = {suma:.2f} equivalentes (ya contados en cada rol)")
-    # ---------------- 5.11 Agregados ----------------
-    out = agregar(lst, e, tj, r, k, pendientes)
-    out.update({"entradas": e, "banda": b, "ritmo": r, "turnos": tj, "puestos": lst,
-                "mant_fte_carga": fte_carga, "mant_fte_cobertura": fte_cov, "mant_equipos": n_eq,
-                "pers_limpieza_cuadrilla": pers_limp_total})
+    # ---------------- 5.10 Agregados, presencia, pico ----------------
+    out = agregar(lst, e, tj, k, pendientes)
+    pres_mat = matriz_presencia(lst, tj)
+    out.update({"entradas": e, "banda": b, "ritmo": r, "turnos": tj, "puestos": lst, "presencia": pres_mat,
+                "pico": pico_en_sitio(pres_mat), "mant_cobertura": cob, "mant_carga": carga,
+                "directos_turno": directos_turno, "supervisores_turno": sup_c})
+    out["headcount_sensibilidad"] = tuple(out["puestos_equivalentes_internos"] * f for f in FACTOR_COBERTURA_SENSIBILIDAD)
     return out
 
 
-def agregar(lst, e, tj, r, k, pendientes):
+def _num(x):
+    return x or 0.0
+
+
+def agregar(lst, e, tj, k, pendientes):
     E = e["aves_dia"]
-    g_pers = {g: 0 for g in GRUPOS}
-    g_eq = {g: 0.0 for g in GRUPOS}
-    ext = 0.0
-    zonas = {}
-    cat_eq = {}
-    por_turno_planta = 0.0
+    f_nom = e["factor_cobertura_nomina"]
+    fte_i = {g: 0.0 for g in GRUPOS}
+    fte_t = {g: 0.0 for g in GRUPOS}
+    pe_g = {g: 0.0 for g in GRUPOS}
+    drv = {d: 0.0 for d in DRIVERS}
+    cat = {}
     for p in lst:
-        if p["interno"] and p["personas"] is not None:
-            g_pers[p["grupo"]] += p["personas"]
-            g_eq[p["grupo"]] += p["equivalentes"] or 0.0
-            cat_eq[p["categoria"]] = cat_eq.get(p["categoria"], 0.0) + (p["equivalentes"] or 0.0)
-        if p["externos_equivalentes"]:
-            ext += p["externos_equivalentes"]
-        if p["modalidad"] == "turno" and p["interno"] and p["por_turno"]:
-            zonas[p["zona"]] = zonas.get(p["zona"], 0) + p["por_turno"]
-            por_turno_planta += p["por_turno"]
-        if p["modalidad"] == "cobertura" and p["interno"] and p["por_turno"]:
-            zonas["transversal"] = zonas.get("transversal", 0) + p["por_turno"]
-            por_turno_planta += p["por_turno"]
-    tot_pers = sum(g_pers.values())
-    tot_eq = sum(g_eq.values())
-    directos_turno = sum(p["por_turno"] for p in lst if p["grupo"] == "directo" and p["interno"] and p["por_turno"])
-    sup_turno = sum(p["por_turno"] for p in lst if p["clave"] in ("supervisores_linea", "jefes_turno") and p["interno"])
-    hp_dir = directos_turno * tj["cuadrillas"] * tj["presencia_h"]
+        p["headcount_nomina"] = (None if (f_nom is None or p["puestos_equivalentes"] is None)
+                                 else p["puestos_equivalentes"] * f_nom)
+        if p["grupo"] not in GRUPOS:
+            continue                                  # inspección oficial: fuera de la empresa
+        fte_i[p["grupo"]] += _num(p["fte_interno"])
+        fte_t[p["grupo"]] += _num(p["fte_tercerizado"])
+        pe_g[p["grupo"]] += _num(p["puestos_equivalentes"])
+        drv[p["driver"]] += _num(p["fte_interno"]) + _num(p["fte_tercerizado"])
+        cat[p["categoria"]] = cat.get(p["categoria"], 0.0) + _num(p["fte_interno"]) + _num(p["fte_tercerizado"])
+    fi, ft = sum(fte_i.values()), sum(fte_t.values())
+    pe = sum(pe_g.values())
+    hp_dir = sum(_num(p["horas_persona_dia"]) for p in lst if p["grupo"] == "directo")
+    hp_tot = sum(_num(p["horas_persona_dia"]) for p in lst if p["grupo"] in GRUPOS)
+    hc_dia = sum(_num(p["horas_contratadas_dia"]) for p in lst if p["grupo"] in GRUPOS)
     kg_com = k["comestible_a_empaque"] * E
-    tecnicos = [p for p in lst if p["clave"] == "tecnicos_mantenimiento"]
-    tec_tot = (tecnicos[0]["equivalentes"] or 0) + (tecnicos[0]["externos_equivalentes"] or 0) if tecnicos else 0.0
-    n_eq = None
-    for p in tecnicos:
-        n_eq = p["base"].split(" ")[0]
-    hp_total_dia = tot_eq * tj["horas_semana_normal"] / e["dias_semana"]
-    kpi = {
-        "aves_persona_h_directa": E / hp_dir if hp_dir else None,
-        "kg_persona_h_directa": kg_com / hp_dir if hp_dir else None,
-        "aves_persona_h_total": E / hp_total_dia if hp_total_dia else None,
-        "personas_por_1000_aves": tot_pers / (E / 1000),
-        "directos_por_1000_aves": g_pers["directo"] / (E / 1000),
-        "ratio_indirecta_directa": (tot_eq - g_eq["directo"]) / g_eq["directo"] if g_eq["directo"] else None,
-        "directos_por_supervisor": directos_turno / sup_turno if sup_turno else None,
-        "equipos_por_tecnico": (float(n_eq) / tec_tot) if (n_eq and tec_tot) else None,
+    sim_prod = sum(p["simultaneos"] for p in lst if p["franja"] in ("linea", "tecnica") and p["simultaneos"])
+    zonas = {}
+    for p in lst:
+        if p["franja"] in ("linea", "tecnica") and p["simultaneos"]:
+            zonas[p["zona"]] = zonas.get(p["zona"], 0) + p["simultaneos"]
+    sup = sum(p["puestos_turno"] for p in lst if p["clave"] in ("supervisores_linea", "jefes_turno"))
+    dir_t = sum(p["puestos_turno"] for p in lst if p["grupo"] == "directo" and p["franja"] == "linea")
+    fdir = fte_i["directo"] + fte_t["directo"]
+    tec = [p for p in lst if p["clave"] == "tecnicos_mantenimiento"]
+    n_eq = int(tec[0]["base"].split(" ")[0]) if tec else None
+    tec_fte = (_num(tec[0]["fte_interno"]) + _num(tec[0]["fte_tercerizado"])) if tec else 0.0
+    funciones = [p for p in lst if p["grupo"] in GRUPOS and (
+        _num(p["fte_interno"]) + _num(p["fte_tercerizado"]) > 0 or p["estado"] in ("PENDIENTE", "EXTERNO_POR_SERVICIO"))]
+    n_int = sum(1 for p in funciones if _num(p["fte_interno"]) > 0)
+    n_ter = sum(1 for p in funciones if _num(p["fte_tercerizado"]) > 0 or p["estado"] == "EXTERNO_POR_SERVICIO")
+    n_pen = sum(1 for p in funciones if p["estado"] == "PENDIENTE")
+
+    def kpi(v, den, uni):
+        return {"valor": v, "denominador": den, "universo": uni}
+
+    kp = {
+        "aves_por_hora_persona_directa": kpi(E / hp_dir if hp_dir else None, "horas-persona/día de puestos directos",
+                                             "directos (operación industrial sin limpieza)"),
+        "kg_por_hora_persona_directa": kpi(kg_com / hp_dir if hp_dir else None, "horas-persona/día de puestos directos",
+                                           "directos; kg comestible (peso comercial, balance v1.1)"),
+        "aves_por_hora_persona_total": kpi(E / hp_tot if hp_tot else None,
+                                           "horas-persona/día internas + tercerizadas calculadas",
+                                           "toda la empresa sin funciones PENDIENTES ni inspección oficial"),
+        "fte_directos_por_1000_aves": kpi(fdir / (E / 1000), "1.000 aves faenadas/día operativo", "FTE directos"),
+        "fte_totales_por_1000_aves": kpi((fi + ft) / (E / 1000), "1.000 aves faenadas/día operativo",
+                                         "FTE internos + tercerizados (sin PENDIENTES)"),
+        "ratio_fte_indirecto_directo": kpi(((fi + ft) - fdir) / fdir if fdir else None, "FTE directos",
+                                           "FTE internos + tercerizados; informativo, NO dimensiona"),
+        "directos_por_supervisor": kpi(dir_t / sup if sup else None, "supervisores de línea por turno",
+                                       "puestos directos por turno"),
+        "equipos_por_fte_mantenimiento": kpi(n_eq / tec_fte if (n_eq and tec_fte) else None,
+                                             "FTE de mantenimiento (interno + tercerizado)", "unidades de equipo (08)"),
     }
+    brecha_hp = tj["brecha_jornada_h"] * sum(p["puestos_turno"] * p["cuadrillas"] for p in lst
+                                             if p["franja"] == "linea" and p["puestos_equivalentes"])
     return {
-        "personas": g_pers, "equivalentes": g_eq, "total_personas": tot_pers, "total_equivalentes": tot_eq,
-        "indirectos_equivalentes": tot_eq - g_eq["directo"], "externos_equivalentes": ext,
-        "por_turno_planta": por_turno_planta, "directos_turno": directos_turno, "zonas_turno": zonas,
-        "categorias_eq": cat_eq, "kpi": kpi, "pendientes": sorted(set(pendientes)),
-        "estado": "INCOMPLETO" if pendientes else "COMPLETO",
+        "fte_interno": fte_i, "fte_tercerizado": fte_t, "puestos_equivalentes": pe_g,
+        "fte_internos": fi, "fte_tercerizados": ft, "fte_total": fi + ft, "puestos_equivalentes_internos": pe,
+        "headcount_nomina": None if f_nom is None else pe * f_nom,
+        "horas_persona_dia": hp_tot, "horas_contratadas_dia": hc_dia, "fte_por_driver": drv, "fte_por_categoria": cat,
+        "simultaneos_produccion": sim_prod, "zonas_produccion": zonas,
+        "funciones": {"internas": n_int, "tercerizadas": n_ter, "pendientes": n_pen, "total": len(funciones)},
+        "kpi": kp, "pendientes": sorted(set(pendientes)), "estado": "INCOMPLETO" if pendientes else "COMPLETO",
+        "horas_persona_brecha_jornada_dia": brecha_hp,
     }
+
+
+def matriz_presencia(lst, tj):
+    """MATRIZ CONCEPTUAL DE PRESENCIA: puesto → ingreso → duración → salida → franja (h desde el inicio de la
+    preparación). Sólo puestos en sitio (internos y terceros en sitio). SUP-14A-18."""
+    filas = []
+    J = tj["J"]
+    for p in lst:
+        s = p["simultaneos"]
+        if not s or p["franja"] not in FRANJAS_EN_SITIO:
+            continue
+        if p["franja"] == "linea":
+            for i, ini in enumerate(tj["inicios_cuadrillas"]):
+                filas.append({"clave": p["clave"], "franja": "linea", "cuadrilla": i + 1, "ingreso": ini,
+                              "duracion": tj["presencia_h"], "salida": ini + tj["presencia_h"], "simultaneos": s})
+        elif p["franja"] == "tecnica":
+            filas.append({"clave": p["clave"], "franja": "tecnica", "cuadrilla": 0, "ingreso": 0.0,
+                          "duracion": tj["horas_activos_en_marcha"], "salida": tj["horas_activos_en_marcha"],
+                          "simultaneos": s})
+            g = P["cobertura_guardia_fuera_produccion"]
+            filas.append({"clave": p["clave"] + "_guardia", "franja": "tecnica", "cuadrilla": 0,
+                          "ingreso": tj["inicio_limpieza"], "duracion": tj["horas_fuera_produccion"],
+                          "salida": tj["fin_mantenimiento"], "simultaneos": g})
+        elif p["franja"] == "post":
+            filas.append({"clave": p["clave"], "franja": "post", "cuadrilla": 0, "ingreso": tj["inicio_limpieza"],
+                          "duracion": tj["fin_limpieza"] - tj["inicio_limpieza"], "salida": tj["fin_limpieza"],
+                          "simultaneos": s})
+        else:   # diurna: jornada de referencia desde el fin de la preparación
+            filas.append({"clave": p["clave"], "franja": "diurna", "cuadrilla": 0, "ingreso": tj["t_preparacion"],
+                          "duracion": J, "salida": tj["t_preparacion"] + J, "simultaneos": s})
+    return filas
+
+
+def pico_en_sitio(filas, paso=0.05):
+    """Máximo de personas presentes a la vez. Las dedicaciones fraccionarias de la franja diurna se suman y
+    se redondean una vez (una persona puede cubrir dos roles de 0,5)."""
+    if not filas:
+        return {"total": 0, "hora": None, "por_franja": {}}
+    fin = max(f["salida"] for f in filas)
+    mejor, hora, comp = -1, None, {}
+    t = 0.0
+    while t <= fin + 1e-9:
+        por = {}
+        for f in filas:
+            if f["ingreso"] - 1e-9 <= t < f["salida"] - 1e-9:
+                por[f["franja"]] = por.get(f["franja"], 0) + f["simultaneos"]
+        tot = sum(techo(v) if kf == "diurna" else v for kf, v in por.items())
+        if tot > mejor:
+            mejor, hora, comp = tot, t, {kf: (techo(v) if kf == "diurna" else v) for kf, v in por.items()}
+        t = round(t + paso, 6)
+    return {"total": mejor, "hora": hora, "por_franja": comp}
+
+
+def salida_layout(R):
+    """Insumo para 09 (vestuarios, comedor, estacionamiento): PICO SIMULTÁNEO, nunca FTE ni headcount."""
+    lim = [p for p in R["puestos"] if p["clave"] == "limpieza_sanitizacion"]
+    return {"pico_personas_en_sitio": R["pico"]["total"], "hora_del_pico_h": R["pico"]["hora"],
+            "simultaneos_produccion_por_zona": dict(R["zonas_produccion"]),
+            "cuadrilla_limpieza_simultanea": lim[0]["simultaneos"] if lim else 0,
+            "excluye": "inspección oficial (PENDIENTE), choferes en ruta, personal de campo",
+            "nota": "agregar margen y requisitos (por zona sucia/limpia y por sexo, DPV-138); no usar FTE"}
 
 
 # ---------------------------------------------------------------------------
@@ -783,17 +895,21 @@ MODOS_HORAS = (("1", 6.0), ("1", 8.0), ("extendido", 8.0), ("extendido", 10.0), 
 CAMPOS = [
     "id", "aves_dia", "horas_netas", "turnos", "cuadrillas", "automatizacion", "config", "flota_propia",
     "limpieza", "mantenimiento", "productividad", "ventana", "dias_semana", "planta_propia", "abastecimiento",
-    "laboratorio", "banda", "ritmo_aves_h", "presencia_cuadrilla_h", "horas_extra_mes_persona", "holgura_24h",
-    "alertas", "directos_por_turno", "personas_por_turno_planta", "zona_sucia_turno", "zona_evisceracion_turno",
-    "zona_limpia_turno", "zona_frio_expedicion_turno", "zona_subproductos_turno", "zona_transversal_turno",
-    "directos_personas", "supervision_personas", "soporte_personas", "administracion_personas",
-    "direccion_personas", "total_personas_internas", "directos_eq", "indirectos_eq", "supervision_eq",
-    "soporte_eq", "administracion_eq", "direccion_eq", "total_equivalentes_internos", "externos_equivalentes",
-    "eq_operacion_industrial", "eq_soporte_industrial", "eq_logistica", "eq_produccion_primaria",
-    "eq_administracion", "eq_direccion", "mant_fte_carga", "mant_fte_cobertura",
-    "aves_persona_h_directa", "kg_persona_h_directa", "aves_persona_h_total", "personas_por_1000_aves",
-    "ratio_indirecta_directa", "directos_por_supervisor", "equipos_por_tecnico", "proxy_12C_turno_medio",
-    "pendientes", "estado", "clasificacion",
+    "laboratorio", "banda", "ritmo_aves_h", "presencia_cuadrilla_h", "brecha_jornada_h_persona",
+    "horas_persona_brecha_dia", "holgura_24h", "alertas",
+    "puestos_directos_turno", "puestos_simultaneos_produccion", "pico_personas_en_sitio", "hora_pico_h",
+    "cuadrilla_limpieza_simultanea", "zona_sucia_simult", "zona_evisceracion_simult", "zona_limpia_simult",
+    "zona_frio_expedicion_simult", "zona_subproductos_simult", "zona_transversal_simult",
+    "puestos_equivalentes_internos", "headcount_nomina", "headcount_sensibilidad_f108", "headcount_sensibilidad_f118",
+    "fte_internos", "fte_tercerizados", "fte_total", "horas_persona_dia", "horas_contratadas_dia",
+    "fte_directo", "fte_supervision", "fte_soporte", "fte_administracion", "fte_direccion",
+    "fte_driver_produccion", "fte_driver_activos", "fte_driver_casi_fijo", "fte_driver_estrategia",
+    "mant_fte_cobertura_politica", "mant_fte_carga_activos", "funciones_internas", "funciones_tercerizadas",
+    "funciones_pendientes", "funciones_total",
+    "kpi_aves_hora_persona_directa", "kpi_kg_hora_persona_directa", "kpi_aves_hora_persona_total",
+    "kpi_fte_directos_1000_aves", "kpi_fte_totales_1000_aves", "kpi_ratio_fte_indirecto_directo",
+    "kpi_directos_por_supervisor", "kpi_equipos_por_fte_mant", "proxy_12C_turno_medio", "pendientes", "estado",
+    "clasificacion",
 ]
 
 
@@ -804,57 +920,63 @@ def _r(x, d=3):
 def proxy_12c(E, h, auto, cfg):
     """Dotación proxy por turno de 12C (SUP-116) — sólo para comparar; no se usa."""
     v = ms.P
-    ritmo = E / h
     a = AUTO_12C[auto]
-    return (v["dotacion_base_proxy"]["v"][1] + v["dotacion_por_ave_h_proxy"]["v"][1] * ritmo
+    return (v["dotacion_base_proxy"]["v"][1] + v["dotacion_por_ave_h_proxy"]["v"][1] * E / h
             * v["factor_dotacion_automatizacion"][a] * v["factor_dotacion_config"][cfg])
 
 
 def fila_csv(i, R):
-    e, tj, kp, z = R["entradas"], R["turnos"], R["kpi"], R["zonas_turno"]
-    ce = R["categorias_eq"]
+    e, tj, kp, z = R["entradas"], R["turnos"], R["kpi"], R["zonas_produccion"]
+    fi, ft, dr, f = R["fte_interno"], R["fte_tercerizado"], R["fte_por_driver"], R["funciones"]
+    lay = salida_layout(R)
     return {
         "id": i, "aves_dia": e["aves_dia"], "horas_netas": e["horas_netas"], "turnos": e["turnos"],
         "cuadrillas": tj["cuadrillas"], "automatizacion": e["automatizacion"], "config": e["config"],
         "flota_propia": int(e["flota_propia"]), "limpieza": e["limpieza"], "mantenimiento": e["mantenimiento"],
         "productividad": e["productividad"], "ventana": tj["ventana"], "dias_semana": e["dias_semana"],
-        "planta_propia": int(e["planta_propia"]), "abastecimiento": e["abastecimiento"],
-        "laboratorio": e["laboratorio"], "banda": R["banda"], "ritmo_aves_h": _r(R["ritmo"], 1),
-        "presencia_cuadrilla_h": _r(tj["presencia_h"], 2), "horas_extra_mes_persona": _r(tj["horas_extra_mes"], 1),
-        "holgura_24h": _r(tj["holgura_24h"], 2), "alertas": ";".join(tj["alertas"]),
-        "directos_por_turno": R["directos_turno"], "personas_por_turno_planta": _r(R["por_turno_planta"], 1),
-        "zona_sucia_turno": z.get("sucia", 0), "zona_evisceracion_turno": z.get("evisceracion", 0),
-        "zona_limpia_turno": z.get("limpia", 0), "zona_frio_expedicion_turno": z.get("frio_expedicion", 0),
-        "zona_subproductos_turno": z.get("subproductos", 0), "zona_transversal_turno": z.get("transversal", 0),
-        "directos_personas": R["personas"]["directo"], "supervision_personas": R["personas"]["supervision"],
-        "soporte_personas": R["personas"]["soporte"], "administracion_personas": R["personas"]["administracion"],
-        "direccion_personas": R["personas"]["direccion"], "total_personas_internas": R["total_personas"],
-        "directos_eq": _r(R["equivalentes"]["directo"], 2), "indirectos_eq": _r(R["indirectos_equivalentes"], 2),
-        "supervision_eq": _r(R["equivalentes"]["supervision"], 2), "soporte_eq": _r(R["equivalentes"]["soporte"], 2),
-        "administracion_eq": _r(R["equivalentes"]["administracion"], 2),
-        "direccion_eq": _r(R["equivalentes"]["direccion"], 2),
-        "total_equivalentes_internos": _r(R["total_equivalentes"], 2),
-        "externos_equivalentes": _r(R["externos_equivalentes"], 2),
-        "eq_operacion_industrial": _r(ce.get("operacion_industrial", 0.0), 2),
-        "eq_soporte_industrial": _r(ce.get("soporte_industrial", 0.0), 2),
-        "eq_logistica": _r(ce.get("logistica", 0.0), 2), "eq_produccion_primaria": _r(ce.get("produccion_primaria", 0.0), 2),
-        "eq_administracion": _r(ce.get("administracion", 0.0), 2), "eq_direccion": _r(ce.get("direccion", 0.0), 2),
-        "mant_fte_carga": _r(R["mant_fte_carga"], 2), "mant_fte_cobertura": _r(R["mant_fte_cobertura"], 2),
-        "aves_persona_h_directa": _r(kp["aves_persona_h_directa"], 1), "kg_persona_h_directa": _r(kp["kg_persona_h_directa"], 1),
-        "aves_persona_h_total": _r(kp["aves_persona_h_total"], 1), "personas_por_1000_aves": _r(kp["personas_por_1000_aves"], 2),
-        "ratio_indirecta_directa": _r(kp["ratio_indirecta_directa"], 3),
-        "directos_por_supervisor": _r(kp["directos_por_supervisor"], 1),
-        "equipos_por_tecnico": _r(kp["equipos_por_tecnico"], 1),
+        "planta_propia": int(e["planta_propia"]), "abastecimiento": e["abastecimiento"], "laboratorio": e["laboratorio"],
+        "banda": R["banda"], "ritmo_aves_h": _r(R["ritmo"], 1), "presencia_cuadrilla_h": _r(tj["presencia_h"], 2),
+        "brecha_jornada_h_persona": _r(tj["brecha_jornada_h"], 2),
+        "horas_persona_brecha_dia": _r(R["horas_persona_brecha_jornada_dia"], 1),
+        "holgura_24h": _r(tj["holgura_24h"], 2), "alertas": ";".join(a.split("(")[0] for a in tj["alertas"]),
+        "puestos_directos_turno": R["directos_turno"], "puestos_simultaneos_produccion": R["simultaneos_produccion"],
+        "pico_personas_en_sitio": lay["pico_personas_en_sitio"], "hora_pico_h": _r(lay["hora_del_pico_h"], 2),
+        "cuadrilla_limpieza_simultanea": lay["cuadrilla_limpieza_simultanea"],
+        "zona_sucia_simult": z.get("sucia", 0), "zona_evisceracion_simult": z.get("evisceracion", 0),
+        "zona_limpia_simult": z.get("limpia", 0), "zona_frio_expedicion_simult": z.get("frio_expedicion", 0),
+        "zona_subproductos_simult": z.get("subproductos", 0), "zona_transversal_simult": z.get("transversal", 0),
+        "puestos_equivalentes_internos": _r(R["puestos_equivalentes_internos"], 2),
+        "headcount_nomina": "PENDIENTE" if R["headcount_nomina"] is None else _r(R["headcount_nomina"], 1),
+        "headcount_sensibilidad_f108": _r(R["headcount_sensibilidad"][0], 1),
+        "headcount_sensibilidad_f118": _r(R["headcount_sensibilidad"][1], 1),
+        "fte_internos": _r(R["fte_internos"], 2), "fte_tercerizados": _r(R["fte_tercerizados"], 2),
+        "fte_total": _r(R["fte_total"], 2), "horas_persona_dia": _r(R["horas_persona_dia"], 1),
+        "horas_contratadas_dia": _r(R["horas_contratadas_dia"], 1),
+        "fte_directo": _r(fi["directo"] + ft["directo"], 2), "fte_supervision": _r(fi["supervision"] + ft["supervision"], 2),
+        "fte_soporte": _r(fi["soporte"] + ft["soporte"], 2),
+        "fte_administracion": _r(fi["administracion"] + ft["administracion"], 2),
+        "fte_direccion": _r(fi["direccion"] + ft["direccion"], 2),
+        "fte_driver_produccion": _r(dr["produccion"], 2), "fte_driver_activos": _r(dr["activos"], 2),
+        "fte_driver_casi_fijo": _r(dr["casi_fijo"], 2), "fte_driver_estrategia": _r(dr["estrategia"], 2),
+        "mant_fte_cobertura_politica": _r(R["mant_cobertura"]["fte"], 2),
+        "mant_fte_carga_activos": _r(R["mant_carga"]["fte"], 2),
+        "funciones_internas": f["internas"], "funciones_tercerizadas": f["tercerizadas"],
+        "funciones_pendientes": f["pendientes"], "funciones_total": f["total"],
+        "kpi_aves_hora_persona_directa": _r(kp["aves_por_hora_persona_directa"]["valor"], 1),
+        "kpi_kg_hora_persona_directa": _r(kp["kg_por_hora_persona_directa"]["valor"], 1),
+        "kpi_aves_hora_persona_total": _r(kp["aves_por_hora_persona_total"]["valor"], 1),
+        "kpi_fte_directos_1000_aves": _r(kp["fte_directos_por_1000_aves"]["valor"], 2),
+        "kpi_fte_totales_1000_aves": _r(kp["fte_totales_por_1000_aves"]["valor"], 2),
+        "kpi_ratio_fte_indirecto_directo": _r(kp["ratio_fte_indirecto_directo"]["valor"], 3),
+        "kpi_directos_por_supervisor": _r(kp["directos_por_supervisor"]["valor"], 1),
+        "kpi_equipos_por_fte_mant": _r(kp["equipos_por_fte_mantenimiento"]["valor"], 1),
         "proxy_12C_turno_medio": _r(proxy_12c(e["aves_dia"], e["horas_netas"], e["automatizacion"], e["config"]), 1)
         if e["planta_propia"] else "",
-        "pendientes": ";".join(R["pendientes"]), "estado": R["estado"],
-        "clasificacion": "[ESTIMACIÓN]",
+        "pendientes": ";".join(R["pendientes"]), "estado": R["estado"], "clasificacion": "[ESTIMACIÓN]",
     }
 
 
 def grilla():
-    """Grilla de escenarios (independientes). Planta propia: escala × turnos/horas × automatización × mix ×
-    limpieza × mantenimiento × flota × productividad. Asset-light: escala × flota × productividad."""
     for E, (modo, h), auto, cfg, limp, mant, flota, pr in itertools.product(
             ESCALAS, MODOS_HORAS, NIVELES_AUTO, ("A", "B", "C"), OPCIONES["limpieza"], OPCIONES["mantenimiento"],
             (False, True), PROD):
@@ -877,18 +999,59 @@ def escribir_csv(ruta=CSV_ESCENARIOS):
     return n
 
 
-def escenario_referencia(E, pr="media"):
-    """Escenario de trabajo para documentos y plantilla de costo (NO es decisión): 1 cuadrilla de 8 h netas
-    en turno extendido, automatización de referencia de 09A, config. B, limpieza y mantenimiento propios,
-    flota tercerizada, capacidad de camión de escenario."""
-    return {"aves_dia": E, "horas_netas": 8.0, "turnos": "extendido", "automatizacion": AUTO_REFERENCIA[E],
-            "config": "B", "productividad": pr, "aves_camion": P["aves_camion_escenario"]}
+def escenario_referencia(E, pr="media", **extra):
+    """Escenario de trabajo para documentos y plantilla (NO es decisión): 1 cuadrilla de 8 h netas en turno
+    extendido, automatización de referencia de 09A, config. B, limpieza y mantenimiento propios, flota de
+    terceros, capacidad de camión de escenario."""
+    d = {"aves_dia": E, "horas_netas": 8.0, "turnos": "extendido", "automatizacion": AUTO_REFERENCIA[E],
+         "config": "B", "productividad": pr, "aves_camion": P["aves_camion_escenario"]}
+    d.update(extra)
+    return d
 
 
-CAMPOS_PLANTILLA = ["escenario", "PUESTO", "area_categoria", "grupo", "zona", "CANTIDAD", "por_turno",
-                    "cuadrillas", "HORAS", "equivalentes", "TIPO_CONTRATO", "interno_externo",
-                    "COSTO_EMPRESA_MENSUAL", "COSTO_ANUAL", "moneda", "tipo_cambio_fecha_fuente",
-                    "fuente_costo", "estado_costo"]
+CAMPOS_COSTO = ["SUELDO_BASE", "CARGAS", "ADICIONALES", "HORAS_EXTRA", "BENEFICIOS", "COSTO_EMPRESA_MENSUAL",
+                "COSTO_EMPRESA_ANUAL"]
+CAMPOS_PLANTILLA = ["ESCENARIO", "PUESTO", "AREA", "GRUPO", "ZONA", "FRANJA", "MODALIDAD", "PUESTOS_TURNO",
+                    "SIMULTANEOS", "PUESTOS_EQUIVALENTES", "HEADCOUNT", "FTE", "HORAS_MES", "TURNOS",
+                    "TIPO_CONTRATACION"] + CAMPOS_COSTO + ["MONEDA", "TIPO_CAMBIO_FECHA_FUENTE", "FUENTE", "ESTADO"]
+
+
+def filas_plantilla(R, nombre):
+    """Una fila por puesto y modalidad (interno / tercerizado). HORAS_MES = FTE × jornada × días operativos/mes.
+    HEADCOUNT queda PENDIENTE (FACTOR_COBERTURA_NOMINA no validado). Costos VACÍOS."""
+    e = R["entradas"]
+    dmes = e["dias_semana"] * 52 / 12
+    J = R["turnos"]["J"]
+    filas = []
+    for p in R["puestos"]:
+        partes = []
+        if p["estado"] == "PENDIENTE":
+            partes.append(("PENDIENTE", None))
+        else:
+            if p["fte_interno"]:
+                partes.append(("interno", p["fte_interno"]))
+            if p["fte_tercerizado"]:
+                partes.append(("tercerizado (horas contratadas)", p["fte_tercerizado"]))
+            if p["estado"] == "EXTERNO_POR_SERVICIO":
+                partes.append(("servicio externo por unidad", None))
+        for mod, fte in partes:
+            filas.append({
+                "ESCENARIO": nombre, "PUESTO": p["puesto"], "AREA": p["categoria"], "GRUPO": p["grupo"],
+                "ZONA": p["zona"], "FRANJA": p["franja"], "MODALIDAD": mod,
+                "PUESTOS_TURNO": "" if p["puestos_turno"] is None else p["puestos_turno"],
+                "SIMULTANEOS": "" if p["simultaneos"] is None else p["simultaneos"],
+                "PUESTOS_EQUIVALENTES": round(p["puestos_equivalentes"], 2) if mod == "interno" else "",
+                "HEADCOUNT": "PENDIENTE (FACTOR_COBERTURA_NOMINA)" if mod == "interno" else "no aplica",
+                "FTE": "PENDIENTE" if fte is None else round(fte, 3),
+                "HORAS_MES": "PENDIENTE" if fte is None else round(fte * J * dmes, 1),
+                "TURNOS": p["cuadrillas"],
+                "TIPO_CONTRATACION": p["contrato"] if mod == "interno" else (
+                    "oficial" if p["grupo"] == "oficial" else "servicio_tercerizado"),
+                **{c: "" for c in CAMPOS_COSTO},
+                "MONEDA": "USD", "TIPO_CAMBIO_FECHA_FUENTE": "", "FUENTE": "",
+                "ESTADO": "COSTO PENDIENTE DE VALIDACIÓN (DPV-14A-03)" + ("; dotación PENDIENTE" if fte is None else ""),
+            })
+    return filas
 
 
 def escribir_plantilla(ruta=CSV_PLANTILLA):
@@ -897,25 +1060,8 @@ def escribir_plantilla(ruta=CSV_PLANTILLA):
         w = csv.DictWriter(f, fieldnames=CAMPOS_PLANTILLA)
         w.writeheader()
         for E in ESCALAS:
-            R = calcular(escenario_referencia(E))
-            tj = R["turnos"]
-            for p in R["puestos"]:
-                if p["modalidad"] in ("turno", "cuadrilla_post"):
-                    horas = round(tj["presencia_h"] * R["entradas"]["dias_semana"], 1) if p["modalidad"] == "turno" else \
-                        round((tj["t_limpieza"] + tj["t_sanitizacion"]) * R["entradas"]["dias_semana"], 1)
-                else:
-                    horas = tj["horas_semana_normal"]
-                w.writerow({
-                    "escenario": f"REF-{E}", "PUESTO": p["puesto"], "area_categoria": p["categoria"],
-                    "grupo": p["grupo"], "zona": p["zona"],
-                    "CANTIDAD": "PENDIENTE" if p["personas"] is None else p["personas"],
-                    "por_turno": "" if p["por_turno"] is None else p["por_turno"], "cuadrillas": p["cuadrillas"],
-                    "HORAS": horas, "equivalentes": "" if p["equivalentes"] is None else round(p["equivalentes"], 2),
-                    "TIPO_CONTRATO": p["contrato"],
-                    "interno_externo": "interno" if p["interno"] else ("externo" if p["estado"] != "PENDIENTE" else "PENDIENTE"),
-                    "COSTO_EMPRESA_MENSUAL": "", "COSTO_ANUAL": "", "moneda": "USD", "tipo_cambio_fecha_fuente": "",
-                    "fuente_costo": "", "estado_costo": "PENDIENTE DE VALIDACIÓN (DPV-14A-03)",
-                })
+            for fila in filas_plantilla(calcular(escenario_referencia(E)), f"REF-{E}"):
+                w.writerow(fila)
                 n += 1
     return n
 
@@ -923,8 +1069,12 @@ def escribir_plantilla(ruta=CSV_PLANTILLA):
 # ---------------------------------------------------------------------------
 # 7. TESTS
 # ---------------------------------------------------------------------------
-def _total_func(R):
-    return R["total_equivalentes"] + R["externos_equivalentes"]
+def _fte_func(p):
+    return _num(p["fte_interno"]) + _num(p["fte_tercerizado"])
+
+
+def _pp(R):
+    return {p["clave"]: p for p in R["puestos"]}
 
 
 def ejecutar_tests(verbose=True):
@@ -933,7 +1083,6 @@ def ejecutar_tests(verbose=True):
     def ok(nombre, cond, detalle=""):
         res.append((nombre, bool(cond), detalle))
 
-    # Subconjunto representativo de la grilla (todas las combinaciones de dimensiones críticas)
     sub = list(itertools.product(ESCALAS, MODOS_HORAS, NIVELES_AUTO, ("A", "B", "C"), PROD))
     Rs = {}
     for E, (modo, h), auto, cfg, pr in sub:
@@ -941,45 +1090,47 @@ def ejecutar_tests(verbose=True):
                                                     "automatizacion": auto, "config": cfg, "productividad": pr,
                                                     "aves_camion": P["aves_camion_escenario"]})
 
-    # R01 dotación nunca negativa
-    neg = [(k_, p["clave"]) for k_, R in Rs.items() for p in R["puestos"]
-           for c in ("personas", "equivalentes", "externos_equivalentes", "por_turno")
+    # R01 nada negativo
+    campos = ("puestos_turno", "simultaneos", "puestos_equivalentes", "fte_interno", "fte_tercerizado",
+              "horas_persona_dia", "horas_contratadas_dia")
+    neg = [(k_, p["clave"]) for k_, R in Rs.items() for p in R["puestos"] for c in campos
            if p[c] is not None and p[c] < 0]
-    ok("R01 dotación nunca negativa", not neg, str(neg[:3]))
+    ok("R01 dotación nunca negativa (todas las unidades)", not neg, str(neg[:3]))
 
-    # R02 aumentar escala no reduce personal (total interno+externo, y cada grupo) sin explicación
+    # R02 más escala ⇒ no menos FTE, puestos equivalentes, simultáneos ni pico (mismo nivel, mix y turnos)
     viol = []
     for (modo, h), auto, cfg, pr in itertools.product(MODOS_HORAS, NIVELES_AUTO, ("A", "B", "C"), PROD):
         prev = None
         for E in ESCALAS:
             R = Rs[(E, modo, h, auto, cfg, pr)]
             if prev is not None:
-                if _total_func(R) < _total_func(prev) - 1e-9 or R["total_personas"] < prev["total_personas"]:
-                    viol.append((E, modo, h, auto, cfg, pr, "total"))
+                for c in ("fte_total", "puestos_equivalentes_internos", "simultaneos_produccion"):
+                    if R[c] < prev[c] - 1e-9:
+                        viol.append((E, modo, h, auto, cfg, pr, c))
+                if R["pico"]["total"] < prev["pico"]["total"]:
+                    viol.append((E, modo, h, auto, cfg, pr, "pico"))
                 for g in GRUPOS:
-                    if R["personas"][g] < prev["personas"][g]:
+                    if R["fte_interno"][g] + R["fte_tercerizado"][g] < prev["fte_interno"][g] + prev["fte_tercerizado"][g] - 1e-9:
                         viol.append((E, modo, h, auto, cfg, pr, g))
             prev = R
-    ok("R02 más escala ⇒ no menos personal (total y por grupo)", not viol, str(viol[:3]))
+    ok("R02 más escala ⇒ no menos FTE, puestos, simultáneos ni pico", not viol, str(viol[:3]))
 
-    # R03 automatización no reduce el personal técnico (mantenimiento interno+externo; carga por activos)
+    # R03 automatización no reduce técnicos (cobertura, carga ni reconciliación); R03b reduce directos
     viol = []
     for E, (modo, h), cfg, pr in itertools.product(ESCALAS, MODOS_HORAS, ("A", "B", "C"), PROD):
         prev = None
         for auto in NIVELES_AUTO:
             R = Rs[(E, modo, h, auto, cfg, pr)]
-            t = [p for p in R["puestos"] if p["clave"] == "tecnicos_mantenimiento"][0]
-            tec = (t["equivalentes"] or 0) + (t["externos_equivalentes"] or 0)
-            if prev is not None and (tec < prev[0] - 1e-9 or R["mant_fte_carga"] < prev[1] - 1e-9):
+            cur = (_fte_func(_pp(R)["tecnicos_mantenimiento"]), R["mant_carga"]["fte"], R["mant_cobertura"]["fte"])
+            if prev is not None and any(c < p_ - 1e-9 for c, p_ in zip(cur, prev)):
                 viol.append((E, modo, h, cfg, pr, auto))
-            prev = (tec, R["mant_fte_carga"])
-    ok("R03 automatización ⇒ técnicos no disminuyen", not viol, str(viol[:3]))
-    # R03b y sí reduce directos (si no, el modelo no representaría la automatización)
-    red = all(Rs[(E, "1", 8.0, "automatico", "B", "media")]["personas"]["directo"]
-              < Rs[(E, "1", 8.0, "manual", "B", "media")]["personas"]["directo"] for E in ESCALAS)
-    ok("R03b automatización reduce directos (con la misma escala y mix)", red)
+            prev = cur
+    ok("R03 automatización ⇒ técnicos no disminuyen (cobertura, carga, dotación)", not viol, str(viol[:3]))
+    red = all(Rs[(E, "1", 8.0, "automatico", "B", "media")]["directos_turno"]
+              < Rs[(E, "1", 8.0, "manual", "B", "media")]["directos_turno"] for E in ESCALAS)
+    ok("R03b automatización reduce puestos directos (misma escala y mix)", red)
 
-    # R04 tercerización retira personal interno sin borrar la función
+    # R04 tercerizar retira interno, conserva responsable interno y presencia; asset-light conserva la faena
     base = {"aves_dia": 10000, "aves_camion": P["aves_camion_escenario"]}
     viol = []
     for campo, propio, terc, clave in (("limpieza", "propia", "tercerizada", "limpieza_sanitizacion"),
@@ -987,34 +1138,26 @@ def ejecutar_tests(verbose=True):
                                        ("flota_propia", True, False, "choferes_aves")):
         a = calcular(dict(base, **{campo: propio}))
         bb = calcular(dict(base, **{campo: terc}))
-        pa = [p for p in a["puestos"] if p["clave"] == clave][0]
-        pb = [p for p in bb["puestos"] if p["clave"] == clave][0]
-        if not (pb["personas"] == 0 and pa["personas"] > 0 and pb["externos_equivalentes"] > 0):
-            viol.append((campo, "interno/externo"))
-        if abs((pa["equivalentes"] + pa["externos_equivalentes"]) - (pb["equivalentes"] + pb["externos_equivalentes"])) > 1e-9:
-            viol.append((campo, "la función cambia de tamaño al tercerizar"))
-        if bb["total_personas"] >= a["total_personas"]:
-            viol.append((campo, "el total interno no baja"))
-    hib = calcular(dict(base, limpieza="hibrida"))
-    ph = [p for p in hib["puestos"] if p["clave"] == "limpieza_sanitizacion"][0]
-    if not (ph["personas"] > 0 and ph["externos_equivalentes"] > 0):
-        viol.append(("limpieza", "híbrida sin ambas partes"))
-    terc = calcular(dict(base, limpieza="tercerizada", mantenimiento="tercerizado"))
-    claves = {p["clave"] for p in terc["puestos"]}
-    for c in ("supervisor_saneamiento", "jefe_mantenimiento", "limpieza_sanitizacion", "tecnicos_mantenimiento"):
-        if c not in claves:
-            viol.append(("función borrada", c))
-    sv = [p for p in terc["puestos"] if p["clave"] in ("supervisor_saneamiento", "jefe_mantenimiento")]
-    if any((p["personas"] or 0) < 1 for p in sv):
-        viol.append(("sin responsable interno", [p["clave"] for p in sv]))
+        pa_, pb = _pp(a)[clave], _pp(bb)[clave]
+        if not (pb["fte_interno"] == 0 and pa_["fte_interno"] > 0 and pb["fte_tercerizado"] > 0
+                and pb["horas_contratadas_dia"] > 0 and pb["puestos_equivalentes"] == 0):
+            viol.append((campo, "interno/tercerizado"))
+        if a["fte_internos"] <= bb["fte_internos"]:
+            viol.append((campo, "FTE interno no baja"))
+    pt = _pp(calcular(dict(base, limpieza="tercerizada", mantenimiento="tercerizado")))
+    for c in ("supervisor_saneamiento", "jefe_mantenimiento"):
+        if c not in pt or pt[c]["fte_interno"] < 0.5:
+            viol.append(("sin responsable interno", c))
+    if pt["limpieza_sanitizacion"]["simultaneos"] <= 0:
+        viol.append(("tercerizado desaparece del sitio",))
     al = calcular(dict(base, planta_propia=False))
-    if any(p["interno"] and p["categoria"] == "operacion_industrial" and p["personas"] for p in al["puestos"]):
+    if any(p["categoria"] == "operacion_industrial" and p["fte_interno"] for p in al["puestos"]):
         viol.append(("asset-light con directos internos",))
-    if not any(p["clave"] == "evisceracion" and p["externos_equivalentes"] > 0 for p in al["puestos"]):
-        viol.append(("asset-light borra la función de faena",))
-    ok("R04 tercerizar retira interno y conserva la función", not viol, str(viol[:3]))
+    if not _pp(al)["evisceracion"]["fte_tercerizado"] > 0:
+        viol.append(("asset-light borra la faena",))
+    ok("R04 tercerizar retira interno y conserva función, responsable y presencia", not viol, str(viol[:3]))
 
-    # R05 turnos no violan la ecuación de 24 h en silencio
+    # R05 ecuación de 24 h y jornada: alertas explícitas, holgura idéntica a 09A
     viol = []
     for R in Rs.values():
         tj = R["turnos"]
@@ -1022,45 +1165,38 @@ def ejecutar_tests(verbose=True):
         if abs(v24["holgura"] - tj["holgura_24h"]) > 1e-9:
             viol.append("holgura distinta de 09A")
         if (tj["holgura_24h"] < 0) != any(a.startswith("ALERTA_24H") for a in tj["alertas"]):
-            viol.append(("alerta 24 h faltante", R["entradas"]["horas_netas"], tj["ventana"]))
-        if R["entradas"]["turnos"] in ("1", "2") and tj["presencia_h"] > P["jornada_normal_h"] + 1e-9 and \
-                not any(a.startswith("ALERTA_JORNADA") for a in tj["alertas"]):
-            viol.append("alerta de jornada faltante")
-    r16 = Rs[(10000, "2", 16.0, "semiautomatico", "B", "baja")]["turnos"]
-    if not r16["alerta_24h"]:
-        viol.append("16 h conservador sin alerta (09A: −8,3 h)")
-    ok("R05 turnos con ecuación de 24 h y jornada explícitas", not viol, str(viol[:3]))
+            viol.append("alerta 24 h")
+        if tj["brecha_jornada_h"] > 0 and not any(a.startswith(("INCOMPATIBILIDAD_JORNADA", "JORNADA_EXTENDIDA"))
+                                                   for a in tj["alertas"]):
+            viol.append("brecha sin alerta")
+    ok("R05 24 h y jornada con alerta explícita (09A idéntica)", not viol, str(viol[:3]))
 
-    # R06 escenarios independientes (orden de cálculo y entradas no se contaminan)
+    # R06 escenarios independientes
     a1 = calcular({"aves_dia": 5000})
-    _ = calcular({"aves_dia": 20000, "automatizacion": "automatico", "turnos": "2", "horas_netas": 16.0,
-                  "limpieza": "tercerizada", "flota_propia": True, "aves_camion": 5500})
+    calcular({"aves_dia": 20000, "automatizacion": "automatico", "turnos": "2", "horas_netas": 16.0,
+              "limpieza": "tercerizada", "flota_propia": True, "aves_camion": 5500, "factor_cobertura_nomina": 1.2})
     a2 = calcular({"aves_dia": 5000})
     ent = {"aves_dia": 2500}
-    ent_copia = copy.deepcopy(ent)
+    ent_c = copy.deepcopy(ent)
+    P0 = copy.deepcopy(P)
     calcular(ent)
-    P_antes = copy.deepcopy(P)
-    calcular({"aves_dia": 10000, "productividad": "baja"})
-    ok("R06 escenarios independientes", a1["total_equivalentes"] == a2["total_equivalentes"]
-       and a1["total_personas"] == a2["total_personas"] and ent == ent_copia and P == P_antes
-       and ESCENARIO_BASE["aves_dia"] == 10000)
+    ok("R06 escenarios independientes", a1["fte_total"] == a2["fte_total"] and a1["pico"] == a2["pico"]
+       and a2["headcount_nomina"] is None and ent == ent_c and P == P0
+       and ESCENARIO_BASE["factor_cobertura_nomina"] is None)
 
-    # R07 datos faltantes no se rellenan
-    R = calcular({"aves_dia": 10000, "flota_propia": True})          # sin capacidad de camión
-    ch = {p["clave"]: p for p in R["puestos"]}
-    cond = (ch["choferes_aves"]["personas"] is None and ch["choferes_producto"]["personas"] is None
-            and ch["inspeccion_oficial"]["externos_equivalentes"] is None
-            and ch["hys_externo"]["externos_equivalentes"] is None and R["estado"] == "INCOMPLETO"
-            and {"choferes_aves", "choferes_producto", "inspeccion_oficial"} <= set(R["pendientes"]))
-    with open(CSV_PLANTILLA if os.path.exists(CSV_PLANTILLA) else os.devnull, encoding="utf-8") as f:
-        filas = list(csv.DictReader(f)) if os.path.exists(CSV_PLANTILLA) else []
-    cond = cond and all(x["COSTO_EMPRESA_MENSUAL"] == "" and x["COSTO_ANUAL"] == "" for x in filas)
-    ok("R07 faltantes quedan PENDIENTE (choferes, inspección, HyS, costos)", cond)
+    # R07 faltantes quedan PENDIENTE
+    R = calcular({"aves_dia": 10000, "flota_propia": True})
+    pp = _pp(R)
+    ok("R07 faltantes PENDIENTE (choferes, inspección, HyS, captura)",
+       pp["choferes_aves"]["fte_interno"] is None and pp["choferes_producto"]["fte_interno"] is None
+       and pp["inspeccion_oficial"]["fte_tercerizado"] is None and pp["hys_externo"]["fte_tercerizado"] is None
+       and pp["captura"]["fte_tercerizado"] is None and R["estado"] == "INCOMPLETO"
+       and {"choferes_aves", "choferes_producto", "inspeccion_oficial", "hys_externo", "captura"} <= set(R["pendientes"]))
 
-    # R08 entradas inválidas se rechazan
+    # R08 entradas inválidas
     malos = [{"aves_dia": -1}, {"aves_dia": 0}, {"horas_netas": 0}, {"horas_netas": 25}, {"turnos": "3"},
              {"automatizacion": "robot"}, {"limpieza": "nadie"}, {"config": "Z"}, {"aves_camion": -5},
-             {"dias_semana": 7}]
+             {"dias_semana": 7}, {"factor_cobertura_nomina": 0.8}]
     rech = 0
     for m in malos:
         try:
@@ -1069,54 +1205,145 @@ def ejecutar_tests(verbose=True):
             rech += 1
     ok("R08 entradas inválidas rechazadas", rech == len(malos), f"{rech}/{len(malos)}")
 
-    # R09 personas físicas ≥ puestos por turno × cuadrillas (cobertura ≥ 1) y equivalentes coherentes
-    viol = []
-    for R in Rs.values():
-        for p in R["puestos"]:
-            if p["modalidad"] == "turno" and p["interno"] and p["por_turno"]:
-                if p["personas"] < p["por_turno"] * p["cuadrillas"]:
-                    viol.append(p["clave"])
-    ok("R09 personas ≥ puestos × cuadrillas", not viol, str(viol[:3]))
+    # R09 puestos equivalentes = puestos × cuadrillas en roles de línea internos
+    viol = [p["clave"] for R in Rs.values() for p in R["puestos"]
+            if p["franja"] == "linea" and p["fte_interno"]
+            and abs(p["puestos_equivalentes"] - p["puestos_turno"] * p["cuadrillas"]) > 1e-9]
+    ok("R09 puestos equivalentes = puestos por turno × cuadrillas", not viol, str(viol[:3]))
 
-    # R10 suma de grupos = total; indirectos = total − directos
-    viol = [k_ for k_, R in Rs.items() if abs(sum(R["equivalentes"].values()) - R["total_equivalentes"]) > 1e-9
-            or abs(R["indirectos_equivalentes"] - (R["total_equivalentes"] - R["equivalentes"]["directo"])) > 1e-9
-            or sum(R["personas"].values()) != R["total_personas"]]
-    ok("R10 consistencia de agregados", not viol)
+    # R10 agregados consistentes
+    viol = [k_ for k_, R in Rs.items()
+            if abs(sum(R["fte_interno"].values()) - R["fte_internos"]) > 1e-9
+            or abs(R["fte_internos"] + R["fte_tercerizados"] - R["fte_total"]) > 1e-9
+            or abs(sum(R["fte_por_driver"].values()) - R["fte_total"]) > 1e-9
+            or abs(R["horas_persona_dia"] / P["jornada_referencia_h"] - R["fte_total"]) > 1e-6]
+    ok("R10 agregados consistentes (FTE = horas-persona / jornada)", not viol, str(viol[:3]))
 
-    # R11 KPIs múltiples y coherentes (ninguno único)
-    R = Rs[(10000, "1", 8.0, "semiautomatico", "B", "media")]
-    kp = R["kpi"]
-    ok("R11 indicadores múltiples presentes y positivos",
-       all(kp[x] and kp[x] > 0 for x in ("aves_persona_h_directa", "kg_persona_h_directa", "personas_por_1000_aves",
-                                          "ratio_indirecta_directa", "directos_por_supervisor", "equipos_por_tecnico")))
+    # R11 KPI múltiples, positivos
+    kp = Rs[(10000, "1", 8.0, "semiautomatico", "B", "media")]["kpi"]
+    ok("R11 KPI múltiples presentes y positivos", all(v["valor"] and v["valor"] > 0 for v in kp.values()))
 
-    # R12 modelos importados sin cambios (ritmos y horas 24 h de 09A)
+    # R12 09A intacto
     ok("R12 09A intacto (horas netas máx. 16,57 / 13,77 / 10,00)",
        abs(mc.horas_netas_max_24h("optimista") - 16.57) < 0.011 and abs(mc.horas_netas_max_24h("media") - 13.77) < 0.011
        and abs(mc.horas_netas_max_24h("conservadora") - 10.0) < 0.011)
 
-    # R13 la productividad "alta" nunca da más personas que la "baja" (rangos ordenados)
+    # R13 rangos ordenados alta ≤ baja (FTE total, simultáneos de producción y puestos por tarea)
     viol = []
     for E, (modo, h), auto, cfg in itertools.product(ESCALAS, MODOS_HORAS, NIVELES_AUTO, ("A", "B", "C")):
         a_, b_ = Rs[(E, modo, h, auto, cfg, "alta")], Rs[(E, modo, h, auto, cfg, "baja")]
-        pb = {p["clave"]: p for p in b_["puestos"]}
-        if a_["total_personas"] > b_["total_personas"]:
+        # el pico NO se exige ordenado: depende de cuándo cae el traspaso respecto de la franja diurna
+        if a_["fte_total"] > b_["fte_total"] + 1e-9 or a_["simultaneos_produccion"] > b_["simultaneos_produccion"]:
             viol.append((E, modo, h, auto, cfg, "total"))
+        pb = _pp(b_)
         for p in a_["puestos"]:
             q = pb.get(p["clave"])
-            if q and p["personas"] is not None and q["personas"] is not None and p["personas"] > q["personas"] \
-                    and not p["clave"].startswith("compartidos_"):
+            if q and p["puestos_turno"] is not None and q["puestos_turno"] is not None and p["puestos_turno"] > q["puestos_turno"]:
                 viol.append((E, modo, h, auto, cfg, p["clave"]))
-    ok("R13 rangos ordenados (alta ≤ baja, total y por puesto)", not viol, str(viol[:3]))
+    ok("R13 rangos ordenados (alta ≤ baja)", not viol, str(viol[:3]))
 
-    # R14 el mix cambia la sala de corte: C (deshuese) ≥ B ≥ A en directos de salas limpias
+    # R14 mix: sala limpia A ≤ B ≤ C
     viol = []
     for E, auto in itertools.product(ESCALAS, NIVELES_AUTO):
-        z = [Rs[(E, "1", 8.0, auto, c, "media")]["zonas_turno"].get("limpia", 0) for c in ("A", "B", "C")]
+        z = [Rs[(E, "1", 8.0, auto, c, "media")]["zonas_produccion"].get("limpia", 0) for c in ("A", "B", "C")]
         if not z[0] <= z[1] <= z[2]:
             viol.append((E, auto, z))
     ok("R14 mix: limpia A ≤ B ≤ C", not viol, str(viol[:3]))
+
+    # ---------- auditoría de unidades ----------
+    # R15 headcount, FTE, simultáneos y puestos son variables distintas; headcount PENDIENTE sin factor
+    R = Rs[(20000, "extendido", 8.0, "automatico", "B", "media")]
+    lim = _pp(R)["limpieza_sanitizacion"]
+    distintas = (R["headcount_nomina"] is None and all(p["headcount_nomina"] is None for p in R["puestos"])
+                 and abs(R["fte_total"] - R["puestos_equivalentes_internos"]) > 1e-6
+                 and R["pico"]["total"] != round(R["fte_total"])
+                 and lim["simultaneos"] != lim["fte_interno"])
+    Rf = calcular(escenario_referencia(20000, factor_cobertura_nomina=1.15))
+    distintas = (distintas and Rf["headcount_nomina"] is not None
+                 and abs(Rf["headcount_nomina"] - Rf["puestos_equivalentes_internos"] * 1.15) < 1e-9
+                 and abs(Rf["headcount_nomina"] - Rf["fte_internos"] * 1.15) > 1e-6)
+    ok("R15 headcount ≠ FTE ≠ simultáneos ≠ puestos; headcount PENDIENTE sin factor y nunca desde FTE", distintas)
+
+    # R16 cuadrilla parcial: FTE = simultáneos × horas / jornada (< simultáneos si horas < jornada)
+    viol = []
+    for R in Rs.values():
+        q = _pp(R)["limpieza_sanitizacion"]
+        esperado = q["simultaneos"] * q["horas_presencia"] / P["jornada_referencia_h"]
+        if abs(_fte_func(q) - esperado) > 1e-9 or (q["horas_presencia"] < P["jornada_referencia_h"]
+                                                    and _fte_func(q) >= q["simultaneos"]):
+            viol.append(R["entradas"]["aves_dia"])
+    ok("R16 cuadrilla parcial no se cuenta como igual número de FTE", not viol, str(viol[:3]))
+
+    # R17 tercerizar no elimina horas de trabajo (horas-persona de la función idénticas en toda modalidad)
+    viol = []
+    for E in ESCALAS:
+        for campo, ops_, clave in (("limpieza", OPCIONES["limpieza"], "limpieza_sanitizacion"),
+                                   ("mantenimiento", OPCIONES["mantenimiento"], "tecnicos_mantenimiento"),
+                                   ("flota_propia", (True, False), "choferes_aves")):
+            ps = [_pp(calcular(escenario_referencia(E, **{campo: o})))[clave] for o in ops_]
+            hs = [p["horas_persona_dia"] for p in ps]
+            fts = [_fte_func(p) for p in ps]
+            if max(hs) - min(hs) > 1e-9 or max(fts) - min(fts) > 1e-9:
+                viol.append((E, campo, hs))
+    ok("R17 tercerizar no elimina horas de trabajo (pasan a horas contratadas)", not viol, str(viol[:3]))
+
+    # R18 sin horas extra automáticas: no hay variable de horas extra; "1" y "extendido" = mismas horas
+    claves_r = set(CAMPOS)
+    for R in list(Rs.values())[::50]:
+        claves_r |= set(R) | set(R["turnos"])
+    sin_he = not any("extra" in c for c in claves_r)
+    for E in ESCALAS:
+        a_, b_ = calcular({"aves_dia": E, "turnos": "1"}), calcular({"aves_dia": E, "turnos": "extendido"})
+        sin_he = sin_he and abs(a_["fte_total"] - b_["fte_total"]) < 1e-9 and a_["pico"] == b_["pico"]
+    ok("R18 sin horas extra automáticas (sólo brecha de jornada)", sin_he)
+
+    # R19 mantenimiento separa cobertura (política) y carga (activos)
+    R1 = calcular({"aves_dia": 10000})
+    Pm = copy.deepcopy(P)
+    P["cobertura_umbrales"] = (10**9, 10**9)
+    R2 = calcular({"aves_dia": 10000})
+    P.clear()
+    P.update(Pm)
+    sep = (abs(R1["mant_carga"]["fte"] - R2["mant_carga"]["fte"]) < 1e-12
+           and R2["mant_cobertura"]["fte"] < R1["mant_cobertura"]["fte"]
+           and abs(_fte_func(_pp(R1)["tecnicos_mantenimiento"])
+                   - max(R1["mant_carga"]["fte"], R1["mant_cobertura"]["fte"])) < 1e-9)
+    ok("R19 mantenimiento: cobertura y carga separadas; dotación = máx(ambas)", sep)
+
+    # R20 layout recibe el pico simultáneo (no FTE ni headcount)
+    viol = []
+    for R in list(Rs.values())[::37]:
+        lay = salida_layout(R)
+        mx = pico_en_sitio(matriz_presencia(R["puestos"], R["turnos"]))["total"]
+        if lay.get("pico_personas_en_sitio") != mx or lay["pico_personas_en_sitio"] < R["simultaneos_produccion"]:
+            viol.append(R["entradas"]["aves_dia"])
+        if any(k_.startswith(("fte", "headcount")) for k_ in lay):
+            viol.append("layout con FTE/headcount")
+    ok("R20 layout recibe pico simultáneo (matriz de presencia), no FTE", not viol, str(viol[:3]))
+
+    # R21 KPI declaran denominador y universo
+    ok("R21 KPI con denominador y universo declarados",
+       all(v.get("denominador") and v.get("universo") for R in list(Rs.values())[:50] for v in R["kpi"].values()))
+
+    # R22 plantilla de costos sin salarios ni headcount numérico
+    filas = []
+    for E in ESCALAS:
+        filas += filas_plantilla(calcular(escenario_referencia(E)), f"REF-{E}")
+    sin_sal = all(all(f[c] == "" for c in CAMPOS_COSTO) for f in filas) and \
+        all(not str(f["HEADCOUNT"]).replace(".", "").isdigit() for f in filas)
+    if os.path.exists(CSV_PLANTILLA):
+        with open(CSV_PLANTILLA, encoding="utf-8") as fh:
+            filas_d = list(csv.DictReader(fh))
+        sin_sal = sin_sal and all(c in filas_d[0] for c in CAMPOS_COSTO) and \
+            all(all(x[c] == "" for c in CAMPOS_COSTO) for x in filas_d)
+    ok("R22 plantilla de costos sin salarios ni headcount numérico", sin_sal)
+
+    # R23 inspección oficial fuera de la nómina y de los FTE de la empresa
+    R = Rs[(10000, "1", 8.0, "semiautomatico", "B", "media")]
+    io_ = _pp(R)["inspeccion_oficial"]
+    ok("R23 SENASA separada de la empresa (no suma FTE, puestos ni pico)",
+       io_["grupo"] == "oficial" and io_["fte_interno"] == 0 and io_["puestos_equivalentes"] == 0
+       and io_["franja"] not in FRANJAS_EN_SITIO)
 
     if verbose:
         for n, c, d in res:
@@ -1127,58 +1354,102 @@ def ejecutar_tests(verbose=True):
 
 def prueba_mutaciones():
     """Introduce errores deliberados y verifica que algún test los detecta."""
-    global calcular
     original_P = copy.deepcopy(P)
-    orig_calc = calcular
+    orig = {n: globals()[n] for n in ("calcular", "salida_layout", "turnos_y_jornada", "filas_plantilla")}
     mut = []
 
     def restaurar():
         P.clear()
         P.update(copy.deepcopy(original_P))
-        globals()["calcular"] = orig_calc
+        globals().update(orig)
         for f in (m2_proceso, logistica_vivo, logistica_producto):
             f.cache_clear()
 
-    casos = [
-        ("productividad alta con más gente que baja", lambda: P["span_supervision"].update({"alta": 5})),
-        ("automatización reduce mantenimiento", lambda: P["mant_h_semana_equipo"].update({"A": T(0.0, 0.0, 0.0)})),
-        ("cobertura < 1", lambda: P["factor_cobertura"].update({"media": 0.5, "alta": 0.5, "baja": 0.5})),
-        ("coeficiente negativo", lambda: P["faena_por_1000"].update({"A": T(-5, -5, -5)})),
-        ("deshuese menos productivo en manual que en auto (orden invertido de mix)",
-         lambda: P["trozado_kg_h"].update({"M": T(1e9, 1e9, 1e9), "Mc": T(1e9, 1e9, 1e9), "S": T(1e9, 1e9, 1e9), "A": T(1e9, 1e9, 1e9)})
-         or P["deshuese_kg_h"].update({"M": T(1e9, 1e9, 1e9), "S": T(1e9, 1e9, 1e9), "A": T(1e9, 1e9, 1e9)})
-         or P["empaque_kg_h"].update({"A": T(1, 1, 1)})),
-    ]
+    def envolver(fn):
+        def c2(entradas=None):
+            return fn(orig["calcular"](entradas), entradas or {})
+        globals()["calcular"] = c2
 
     def m_rellena():
-        def c2(entradas=None):
-            R = orig_calc(entradas)
+        def f(R, ent):
             for p in R["puestos"]:
                 if p["estado"] == "PENDIENTE":
-                    p["personas"] = 1
-                    p["externos_equivalentes"] = 1.0
-            R["pendientes"] = []
-            R["estado"] = "COMPLETO"
+                    p["fte_interno"] = p["fte_tercerizado"] = 1.0
+            R["pendientes"], R["estado"] = [], "COMPLETO"
             return R
-        globals()["calcular"] = c2
+        envolver(f)
 
     def m_silencio():
-        def c2(entradas=None):
-            R = orig_calc(entradas)
+        def f(R, ent):
             R["turnos"]["alertas"] = []
             return R
-        globals()["calcular"] = c2
+        envolver(f)
 
-    def m_borra_funcion():
-        def c2(entradas=None):
-            R = orig_calc(entradas)
-            if (entradas or {}).get("limpieza") == "tercerizada":
+    def m_borra():
+        def f(R, ent):
+            if ent.get("limpieza") == "tercerizada":
                 R["puestos"] = [p for p in R["puestos"] if p["clave"] != "supervisor_saneamiento"]
             return R
-        globals()["calcular"] = c2
+        envolver(f)
 
-    casos += [("faltantes rellenados", m_rellena), ("alertas 24 h silenciadas", m_silencio),
-              ("tercerización borra la función", m_borra_funcion)]
+    def m_headcount_fte():
+        def f(R, ent):
+            R["headcount_nomina"] = R["fte_internos"]
+            return R
+        envolver(f)
+
+    def m_parcial():
+        def f(R, ent):
+            for p in R["puestos"]:
+                if p["clave"] == "limpieza_sanitizacion":
+                    if p["fte_interno"]:
+                        p["fte_interno"] = float(p["simultaneos"])
+                    else:
+                        p["fte_tercerizado"] = float(p["simultaneos"])
+            return R
+        envolver(f)
+
+    def m_terc_borra_horas():
+        def f(R, ent):
+            for p in R["puestos"]:
+                if p["clave"] == "limpieza_sanitizacion" and p["fte_tercerizado"]:
+                    p["fte_tercerizado"] = p["horas_contratadas_dia"] = 0.0
+                    p["horas_persona_dia"] = p["fte_interno"] * P["jornada_referencia_h"]
+            return R
+        envolver(f)
+
+    def m_horas_extra():
+        def tj2(e):
+            t = orig["turnos_y_jornada"](e)
+            t["horas_extra_mes"] = max(0, t["presencia_h"] - 8) * 22
+            return t
+        globals()["turnos_y_jornada"] = tj2
+
+    def m_layout_fte():
+        globals()["salida_layout"] = lambda R: {"pico_personas_en_sitio": round(R["fte_total"]),
+                                                "fte_total": R["fte_total"]}
+
+    def m_salario():
+        def fp(R, n):
+            fs = orig["filas_plantilla"](R, n)
+            for x in fs:
+                x["SUELDO_BASE"] = "1000"
+            return fs
+        globals()["filas_plantilla"] = fp
+
+    casos = [
+        ("rangos invertidos (span)", lambda: P["span_supervision"].update({"alta": 5})),
+        ("automatización reduce mantenimiento", lambda: P["mant_h_semana_equipo"].update({"A": T(0.0, 0.0, 0.0)})),
+        ("coeficiente negativo", lambda: P["faena_por_1000"].update({"A": T(-5, -5, -5)})),
+        ("mix invertido", lambda: P["deshuese_kg_h"].update({"M": T(1e9, 1e9, 1e9), "S": T(1e9, 1e9, 1e9), "A": T(1e9, 1e9, 1e9)})
+         or P["trozado_kg_h"].update({k_: T(1e9, 1e9, 1e9) for k_ in ("M", "Mc", "S", "A")})
+         or P["empaque_kg_h"].update({"A": T(1, 1, 1)})),
+        ("faltantes rellenados", m_rellena), ("alertas silenciadas", m_silencio),
+        ("tercerización borra la función", m_borra), ("headcount desde FTE", m_headcount_fte),
+        ("cuadrilla parcial = FTE", m_parcial), ("tercerizar elimina horas", m_terc_borra_horas),
+        ("horas extra automáticas", m_horas_extra), ("layout recibe FTE", m_layout_fte),
+        ("plantilla con salario", m_salario),
+    ]
     for nombre, aplicar in casos:
         restaurar()
         aplicar()
@@ -1196,7 +1467,7 @@ def prueba_mutaciones():
 
 
 # ---------------------------------------------------------------------------
-# 8. TABLAS RESUMEN
+# 8. TABLAS
 # ---------------------------------------------------------------------------
 def fmt(x, d=0):
     if x is None:
@@ -1206,36 +1477,29 @@ def fmt(x, d=0):
 
 
 def imprimir_tablas():
-    print("\n## Escenario de referencia por escala (1 cuadrilla, 8 h netas en turno extendido; auto. de referencia 09A; B; propios; flota de terceros)")
-    print("| Escala | Auto | Directos/turno | Personas/turno planta | Directos | Supervisión | Soporte | Administración | Dirección | Total personas (baja–media–alta prod.) | Equivalentes internos | Externos eq. | Personas/1.000 aves | Alertas |")
-    print("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+    print("\n## Escenario de referencia (1 cuadrilla, 8 h netas en turno extendido; auto. 09A; B; propios; flota de terceros)")
+    print("| Escala | Puestos simultáneos de producción | Pico en sitio | Puestos equivalentes internos | Headcount de nómina "
+          "| FTE internos | FTE tercerizados | Funciones (int./terc./pend./total) |")
+    print("|---|---|---|---|---|---|---|---|")
     for E in ESCALAS:
-        Rr = {pr: calcular(escenario_referencia(E, pr)) for pr in PROD}
-        R = Rr["media"]
-        g = R["personas"]
-        print(f"| {fmt(E)} | {AUTO_REFERENCIA[E]} | {R['directos_turno']} | {fmt(R['por_turno_planta'])} | {g['directo']} | "
-              f"{g['supervision']} | {g['soporte']} | {g['administracion']} | {g['direccion']} | "
-              f"{Rr['alta']['total_personas']}–**{R['total_personas']}**–{Rr['baja']['total_personas']} | "
-              f"{fmt(R['total_equivalentes'], 1)} | {fmt(R['externos_equivalentes'], 1)} | "
-              f"{fmt(R['kpi']['personas_por_1000_aves'], 1)} | {'; '.join(R['turnos']['alertas']) or '—'} |")
-    print("\n## Total de personas internas por escala, automatización y modo de turno (config. B, propios, media)")
-    print("| Escala | Modo (h netas) | manual | mecanizado | semiautomático | automático | holgura 24 h | presencia cuadrilla h | alertas |")
-    print("|---|---|---|---|---|---|---|---|---|")
-    for E in ESCALAS:
-        for modo, h in MODOS_HORAS:
-            Rs = [calcular({"aves_dia": E, "horas_netas": h, "turnos": modo, "automatizacion": a}) for a in NIVELES_AUTO]
-            tj = Rs[0]["turnos"]
-            print(f"| {fmt(E)} | {modo} ({fmt(h)}) | " + " | ".join(str(R["total_personas"]) for R in Rs)
-                  + f" | {fmt(tj['holgura_24h'], 1)} | {fmt(tj['presencia_h'], 2)} | {len(tj['alertas'])} |")
+        R = calcular(escenario_referencia(E))
+        f = R["funciones"]
+        print(f"| {fmt(E)} | {R['simultaneos_produccion']} | {R['pico']['total']} | "
+              f"{fmt(R['puestos_equivalentes_internos'], 1)} | PENDIENTE | {fmt(R['fte_internos'], 1)} | "
+              f"{fmt(R['fte_tercerizados'], 1)} | {f['internas']}/{f['tercerizadas']}/{f['pendientes']}/{f['total']} |")
 
 
 def imprimir_detalle(E, pr="media"):
     R = calcular(escenario_referencia(E, pr))
     print(f"\n### Detalle REF-{E}")
     for p in R["puestos"]:
-        print(f"  {p['clave']:<28} {p['grupo']:<14} {p['zona']:<16} t={p['por_turno']} c={p['cuadrillas']} "
-              f"pers={p['personas']} eq={fmt(p['equivalentes'], 2) if p['equivalentes'] is not None else 'PEND.'} "
-              f"ext={fmt(p['externos_equivalentes'], 2) if p['externos_equivalentes'] is not None else 'PEND.'} {p['base']}")
+        print(f"  {p['clave']:<26} {p['grupo']:<14} {p['franja']:<13} t={p['puestos_turno']} sim={p['simultaneos']} "
+              f"pe={fmt(p['puestos_equivalentes'], 2)} fte_i={fmt(p['fte_interno'], 2)} "
+              f"fte_t={fmt(p['fte_tercerizado'], 2)} hp={fmt(p['horas_persona_dia'], 1)} {p['base']}")
+    print("  pico:", R["pico"])
+    for f in R["presencia"]:
+        print(f"   {f['clave']:<28} {f['franja']:<8} c{f['cuadrilla']} {f['ingreso']:5.2f} → {f['salida']:5.2f} "
+              f"({f['duracion']:.2f} h) × {f['simultaneos']}")
 
 
 def main():

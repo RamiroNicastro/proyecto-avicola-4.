@@ -1,6 +1,6 @@
 # Estructura organizacional — funciones, ubicación y organigramas por nivel
 
-**Fecha:** 2026-10-01 · **Versión:** 1.0 (sesión 14A, en paralelo con 14B) · Fase 0
+**Fecha:** 2026-10-01 · **Versión:** 1.1 (sesión 14A, en paralelo con 14B; auditoría de unidades) · Fase 0
 
 > **Pregunta:** ¿qué funciones necesita la empresa, quién las cubre (interno, externo, compartido), dónde trabaja cada persona y cómo cambia la estructura al crecer?
 > **No** se elige escala, automatización, turnos, modalidad de limpieza, mantenimiento ni flota; **no** se calculan salarios ni OPEX. Las cantidades salen de [`modelo_rrhh.py`](modelo_rrhh.py) y se analizan en [`dotacion_por_escala.md`](dotacion_por_escala.md).
@@ -11,7 +11,7 @@
 ## 1. Principios de diseño
 
 1. **Función ≠ persona ≠ puesto de tiempo completo.** Toda función necesaria existe en todas las escalas; lo que cambia es si la cubre una persona dedicada, una persona que acumula roles (rol compartido) o un tercero. Tercerizar **retira personal interno pero no borra la función**: queda un responsable interno que la contrata y la verifica (test R04 del modelo).
-2. **No inflar la estructura chica.** En 2.500 aves/día un gerente general cubre también lo comercial y lo administrativo-financiero; el gerente de operaciones cubre la jefatura de producción; un técnico líder cubre la jefatura de mantenimiento. Las fracciones (0,5 de un rol) se suman y se redondean **una vez** por bloque (fila "roles compartidos" del modelo), no rol por rol.
+2. **No inflar la estructura chica.** En 2.500 aves/día un gerente general cubre también lo comercial y lo administrativo-financiero; el gerente de operaciones cubre la jefatura de producción; un técnico líder cubre la jefatura de mantenimiento. Un rol combinado se expresa como **dedicación en FTE** (0,5 de un rol), no como una persona más; el número de personas de nómina que resulta queda PENDIENTE hasta validar el factor de cobertura (v1.1).
 3. **Calidad independiente de producción.** El responsable de calidad e inocuidad no reporta a quien es medido por volumen; en escalas chicas reporta al gerente general, en la escalada se vuelve gerencia.
 4. **Producción primaria: sólo coordinación.** No se cuenta personal de granjas de terceros (integrados o proveedores de pollo vivo); se cuentan coordinación, veterinaria, técnicos de campo y planificación ([`../03_produccion_primaria/modelos_integracion.md`](../03_produccion_primaria/modelos_integracion.md)).
 5. **Zonas higiénicas mandan sobre la polivalencia.** Una persona de zona sucia no pasa a zona limpia dentro de la jornada sin el circuito de cambio previsto ([`../05_proceso_industrial/zonificacion_higienica.md`](../05_proceso_industrial/zonificacion_higienica.md)); la polivalencia se diseña **dentro** de cada zona (DEC-14A-05).
@@ -93,11 +93,11 @@ La Res. SENASA 592/2026 derogó la **obligación reglamentaria** del Director T�
 
 ## 3. Organigramas por nivel
 
-Los tres niveles son **configuraciones organizacionales**, no escalas elegidas. Cantidades: escenario de referencia del modelo (productividad media; [`dotacion_por_escala.md`](dotacion_por_escala.md) §2).
+Los tres niveles son **configuraciones organizacionales**, no escalas elegidas. Cantidades en FTE o puestos, nunca headcount de nómina (PENDIENTE): escenario de referencia del modelo (productividad media; [`dotacion_por_escala.md`](dotacion_por_escala.md) §2).
 
 ### 3.1 Nivel 1 — Startup / asset-light (faena a façon, DEC-004 / DEC-018)
 
-La empresa compra pollo vivo o integra productores, hace faenar a un tercero habilitado y vende. Conserva: especificación de producto, control de calidad en la planta del façonier, abastecimiento, logística y comercial. **11–36 personas internas** según volumen (2.500–20.000 aves/día equivalentes); la dotación industrial (23–84 equivalentes) es del façonier.
+La empresa compra pollo vivo o integra productores, hace faenar a un tercero habilitado y vende. Conserva: especificación de producto, control de calidad en la planta del façonier, abastecimiento, logística y comercial. **Escenario organizacional de referencia:** 10–36 FTE internos según volumen (2.500–20.000 aves/día equivalentes), desagregados por bloque y por dependencia del volumen en [`dotacion_por_escala.md`](dotacion_por_escala.md) §4; no se asume que cada incremento de aves requiera automáticamente esa estructura. Las horas industriales (23–84 FTE) son del façonier.
 
 ```
 Gerente general (+ comercial + adm./fin. en volúmenes chicos)
@@ -162,11 +162,11 @@ Gerente general
 |---|---|---|
 | Asset-light → planta propia | Toda la operación industrial, mantenimiento, limpieza, control operativo, gerente de operaciones | La empresa pasa a operar activos |
 | 2.500 → 5.000 | Gerente comercial, jefe de mantenimiento, analista APPCC dedicado, planificación y depósito dedicados | Los roles compartidos superan la capacidad de una persona |
-| 5.000 → 10.000 | Jefe de producción, gerente adm./fin., pañol, HyS interno, sistemas, trazabilidad dedicada | Volumen, cantidad de personas (> ~100) y de equipos |
+| 5.000 → 10.000 | Jefe de producción, gerente adm./fin., pañol, HyS interno, sistemas, trazabilidad dedicada | Volumen, cantidad de puestos (> ~100 equivalentes) y de equipos |
 | 10.000 → 20.000 | Gerencia de calidad, especialista en automatización (si automático), duplicación de logística y administración | Exportación potencial, auditorías, activos automáticos |
 | 1 → 2 cuadrillas | Jefes de turno, segunda línea de supervisores, cobertura técnica en ambos turnos | Cada turno necesita mando y técnico presentes |
 
-Lo que **no** crece proporcionalmente: dirección (2 → 5), supervisión (4 → 5 con una cuadrilla), administración (4 → 16). Lo que crece más que proporcionalmente con la automatización: mantenimiento y la relación indirecta/directa ([`turnos_y_productividad.md`](turnos_y_productividad.md) §4).
+Lo que **no** crece proporcionalmente (FTE): dirección (2 → 5), supervisión (3,5 → 4,5 con una cuadrilla), administración (3,5 → 14,5). Lo que crece más que proporcionalmente con la automatización: mantenimiento y la relación indirecta/directa ([`turnos_y_productividad.md`](turnos_y_productividad.md) §4).
 
 ## 5. Decisiones abiertas que esta estructura no toma
 
