@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 **Fase actual:** FASE 0 — DEFINICIÓN Y PREFACTIBILIDAD
-**Última actualización:** 2026-09-30 (plan de validación de campo: [`plan_trabajo_campo.md`](plan_trabajo_campo.md); antes, reconciliación de las sesiones 09A–09D: [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md))
+**Última actualización:** 2026-10-01 (reconciliación de las sesiones 12A–12C: [`reconciliacion_sesiones_12.md`](reconciliacion_sesiones_12.md); antes, plan de validación de campo: [`plan_trabajo_campo.md`](plan_trabajo_campo.md), y reconciliación 09A–09D: [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md))
 
 ## Situación de partida
 
@@ -13,7 +13,7 @@
 
 Detalle de premisas: [`supuestos.md`](supuestos.md).
 
-## Tablero de estado (2026-09-30)
+## Tablero de estado (2026-10-01)
 
 **Cómo leerlo:** *Modelo preliminar completado* = el método, el documento y (si corresponde) el modelo reproducible existen y pasan sus pruebas. **No** significa validado en campo. *Evidencia de campo pendiente* = sus cifras todavía no fueron contrastadas con datos reales (plantas argentinas, compradores, proveedores, organismos, sitios). En toda la Fase 0 **ninguna** cifra externa pudo leerse en su documento original desde el entorno de análisis (DPV-009).
 
@@ -32,10 +32,10 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | Agua y efluentes (`11`) | **Completado** v1.1 (modelo de utilities, 30 tests) | Pendiente — agua, vuelco, DQO/DBO/SST, lodos | [`conclusiones_agua_efluentes.md`](../11_agua_efluentes/conclusiones_agua_efluentes.md) |
 | Energía y frío (`12`) | **Completado** v1.1 (mismo modelo; pico, carga frigorífica total y generador PENDIENTES) | Pendiente — lista de cargas, balance frigorífico | [`conclusiones_energia_frio.md`](../12_energia_frio/conclusiones_energia_frio.md) |
 | Simulador HTML v0.1 (`23/simulador_html`) | **Construido** v0.1 (20/20 validaciones; sin economía) | No aplica (interfaz de modelos) | [`simulador_html/README.md`](../23_plan_expansion/simulador_html/README.md) |
-| Trabajo de campo (demanda, plantas, proveedores, SENASA, sitios) | **Plan completado** v1.0 (115 DPV priorizados N1–N4, instrumentos, orden de trabajo; sin evidencia recolectada) | **Pendiente** — ningún actor contactado | [`plan_trabajo_campo.md`](plan_trabajo_campo.md) |
-| Localización (`10`) | **Pendiente** (no iniciado) | Pendiente | — |
-| Logística detallada (`13`) | **Pendiente** (no iniciado) | Pendiente | — |
-| Layout y obra civil (`09`) | **Pendiente** (no iniciado) | Pendiente | — |
+| Trabajo de campo (demanda, plantas, proveedores, SENASA, sitios) | **Plan completado** v1.0 (115 DPV priorizados N1–N4, instrumentos, orden de trabajo; sin evidencia recolectada); **ampliado** 2026-10-01 a 145 DPV con los de 12A–12C | **Pendiente** — ningún actor contactado | [`plan_trabajo_campo.md`](plan_trabajo_campo.md) |
+| Localización (`10`) | **MODELO PRELIMINAR COMPLETADO** v1.1 (metodología en embudo, 13 corredores, 45 subcriterios monotónicos + 3 trade-offs, 4 perfiles, gates, 28 tests). **LOCALIZACIÓN DEFINITIVA = PENDIENTE: no existe ranking válido de regiones** (0 de 624 celdas verificadas; 0 regiones elegibles con 60 / 75 / 90 %) | Pendiente — sitios, ruteo, SENASA, municipios | [`conclusiones_localizacion.md`](../10_localizacion/conclusiones_localizacion.md) |
+| Logística detallada (`13`) | **MODELO PRELIMINAR COMPLETADO** v1.1 (modelo físico de flujos, 28 tests; capacidades de vehículos de escenario). **LOGÍSTICA ECONÓMICA = PENDIENTE** (sin costos, sin flota ni transportistas, sin modelo de distribución elegido) | Pendiente — red de supermercados, contratistas, receptores, capacidades reales | [`conclusiones_logistica.md`](../13_logistica/conclusiones_logistica.md) |
+| Layout y obra civil (`09`) | **MODELO PRELIMINAR COMPLETADO** v1.0.1 (programa de 54 áreas, 9 zonas, 9 flujos, superficies en rango, terreno conceptual, estrategia de expansión; 22 tests, 7/7 mutaciones). **LAYOUT CONSTRUCTIVO = NO EXISTE** (sin planos ni anteproyecto; 23 de 54 áreas PROXY). Existe rango conceptual preliminar de 12C; superficie real de terreno sigue pendiente de municipio, efluentes, footprints y estrategia de expansión | Pendiente — footprints, dotación, retiros, plantas reales | [`conclusiones_layout.md`](../09_layout_obra_civil/conclusiones_layout.md) |
 | Recursos humanos (`18`) | **Pendiente** (no iniciado) | Pendiente | — |
 | CAPEX (`19`) / OPEX (`20`) | **Pendiente** (no iniciado) | Pendiente | — |
 | Modelo financiero (`21`) y riesgo financiero (`22`) | **Pendiente** (no iniciado) | Pendiente | — |
@@ -57,6 +57,7 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 - **No** se realizan recomendaciones de inversión.
 - **No** se selecciona maquinaria ni proveedores (solo relevamiento; DEC-049 abierta). Las capacidades de fabricantes son nominales declaradas, nunca capacidad del proyecto.
 - **No** se eligen automatización, arquitectura de línea, segundo turno, enfriamiento, aturdido, tratamiento de efluentes, refrigerante, fuente térmica, respaldo, rendering ni ubicación (DEC-003, DEC-026, DEC-027, DEC-036 a DEC-049).
+- **No** se eligen región/corredor ni lista corta, terreno ni superficie a asegurar, arquitectura una planta vs planta + CD, modelo de distribución, modalidad de flota, radio de abastecimiento, congelado propio/tercerizado, una vs dos líneas, forma de nave ni reserva para rendering (DEC-003, DEC-016, DEC-038, DEC-050 a DEC-066). Los perfiles de ponderación, umbrales (cobertura 75 %, EXP-04 ≥ 3), radios, ventana prefaena, capacidades vehiculares, proxies de superficie, retiros y buffers son **supuestos o criterios de modelo**, no hechos (SUP-078 a SUP-123).
 - **No** se fija capacidad de faena (el modelo de escala de 2026-09-30 compara escenarios; no elige escala).
 
 ## Hitos
@@ -78,6 +79,10 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | 2026-09-30 | Simulador HTML v0.1 (`23_plan_expansion/simulador_html`; sesión 09D) | **Construido.** Reproduce los modelos físicos aprobados (4.224 cifras de `escenarios_escala.csv` sin diferencias; 20/20 validaciones; prueba en navegador 16/16); funciona offline (`file://`, sin CDN); comparador A/B/C; **sin economía** (CAPEX, OPEX, EBITDA, VAN, TIR y payback pendientes); no integra todavía proceso (09A) ni utilities (09C) |
 | 2026-09-30 | Reconciliación de las sesiones 09A–09D en los registros maestros | Completada: 17 SUP, 28 DPV, 13 DEC y 75 FTE nuevos; 15 IDs provisionales consolidados en registros existentes o fusionados entre sí (ninguno duplicado); tensiones abiertas registradas sin resolver. Ver [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md) |
 | 2026-09-30 | Plan de validación de campo (`00_gestion_proyecto`, `24_inversores` y cuestionarios por carpeta): 115 DPV clasificados en N1–N4 (18 / 53 / 11 / 33) con actor, método, evidencia requerida, decisión que desbloquea y consecuencia; matriz de validación; cuestionario maestro y ejecutivo (20 preguntas) para inversores y minuta; plan de validación comercial con escala de evidencia E1–E6; cuestionarios de productores, incubadoras y subproductos; guía de visita a plantas; plan de RFQ con plantilla de comparación por capas de costo; preguntas ejecutivas a SENASA; ficha de terreno; data room; guía de recolección de evidencia; orden de trabajo en olas O0–O9 con hitos H-A / H-B / H-C | **Plan completado.** Ningún DPV validado, ninguna decisión cerrada, ninguna cotización pedida. Trabajo de campo **no iniciado** |
+| 2026-10-01 | Localización industrial (`10_localizacion`; sesión 12A, en paralelo con 12B y 12C): niveles y embudo E0–E5, 13 corredores, matriz multicriterio (45 subcriterios monotónicos + 3 trade-offs + NETWORK no puntuable), ecosistema vs exposición sanitaria, gates duros/condicionales, cobertura de información con sensibilidad 60/75/90 %, envolvente por faltantes, perfiles A–D, nodo reefer como condición (EXP-04 ≥ 3), corrección de Río Negro (2024 oficial) y de puertos; `modelo_localizacion.py` v1.1 | **Modelo preliminar completado** v1.1 (28/28 tests). **Sin ranking válido de regiones; localización definitiva pendiente.** Calidad: MEDIA–ALTA como método, NULA como evidencia comparativa |
+| 2026-10-01 | Logística integral (`13_logistica`; sesión 12B): mapa de flujos, aves vivas (ventana prefaena desagregada, ciclo, flota), tamaño de lote, refrigerado vs congelado, directo vs CD vs cross-dock, red ancla, inventario y despacho, exportación como sensibilidad, subproductos (másica ≠ volumétrica; acumulación en cinco dimensiones), flota propia/tercerizada/híbrida, KPI, backhaul condicionado; `modelo_logistica.py` v1.1 | **Modelo preliminar completado** v1.1 (28/28 tests). **Sin costos: logística económica pendiente.** Sin escala, localización ni transportistas |
+| 2026-10-01 | Layout y obra civil (`09_layout_obra_civil`; sesión 12C): programa de 54 áreas con origen A–E, nueve zonas, nueve flujos y matriz de cruces, superficies en rango para 4 escalas, terreno conceptual, estrategia de expansión S/P/M/D, una vs dos líneas, requisitos de obra civil; `modelo_superficies.py` v1.0.1 | **Modelo preliminar completado** v1.0.1 (22/22 tests; 7/7 mutaciones). **No existe layout constructivo**; superficies = orden de magnitud |
+| 2026-10-01 | Reconciliación de las sesiones 12A–12C en los registros maestros | Completada: 46 SUP, 30 DPV, 17 DEC y 29 FTE nuevos; 14 IDs provisionales consolidados en registros existentes o fusionados entre sesiones; tensiones abiertas registradas sin resolver. Ver [`reconciliacion_sesiones_12.md`](reconciliacion_sesiones_12.md) |
 | — | Escenarios CAPEX/OPEX y modelo financiero | Pendiente |
 | — | Informe de prefactibilidad | Pendiente |
 
@@ -189,6 +194,15 @@ Documentación en [`../23_plan_expansion/simulador_html/README.md`](../23_plan_e
 - **Sin economía:** CAPEX, OPEX, EBITDA, VAN, TIR y payback **pendientes** (pestaña deshabilitada). No integra todavía la capacidad de proceso (09A), utilities (09C), gates ni localización.
 - Umbrales de alerta de interfaz — **no son límites industriales validados**: utilización < 50 % (umbral visual ilustrativo), inventario ≥ 7 días (umbral visual ilustrativo), FCR ±0,15 (criterio de interfaz), ganancia diaria ±15 % (criterio de interfaz). Registrados en la anotación de SUP-060.
 
+## Resultado de localización, logística y layout (2026-10-01, sesiones 12A–12C)
+
+Síntesis en [`../10_localizacion/conclusiones_localizacion.md`](../10_localizacion/conclusiones_localizacion.md), [`../13_logistica/conclusiones_logistica.md`](../13_logistica/conclusiones_logistica.md) y [`../09_layout_obra_civil/conclusiones_layout.md`](../09_layout_obra_civil/conclusiones_layout.md); integración y tensiones en [`reconciliacion_sesiones_12.md`](reconciliacion_sesiones_12.md):
+
+- **Localización — modelo preliminar completado; localización definitiva PENDIENTE.** Con la evidencia actual **no existe ranking válido de regiones**: 0 de 624 celdas verificadas, 35 `[PVDP]`, 589 vacías; ninguna región alcanza la cobertura mínima con 60, 75 ni 90 %. Las 13 regiones siguen habilitadas para investigación. Río Negro: ~2,41 % de la faena habilitada por SENASA en 2024 (tabla oficial, FTE-283; confirmada en revisión externa), distinto del extracto 2025 de 2,5 % (FTE-001). Decisiones abiertas: DEC-003, DEC-050 a DEC-055.
+- **Logística — modelo preliminar completado; logística económica PENDIENTE.** Todo es físico y de escenario: con una ventana prefaena de escenario de 10 h quedan 4,5 h de transporte disponible (≈ 270 km por ruta) — **resultado, no límite**; capacidades de vehículos de escenario (sin elección → PENDIENTE); directo vs CD sin frontera universal; subproductos posiblemente limitados por volumen (densidad pendiente). Decisiones abiertas: DEC-016 (ampliada), DEC-053, DEC-056 a DEC-061.
+- **Layout — modelo preliminar completado; layout constructivo NO EXISTE.** ~1.800 / 2.600 / 4.300 / 7.500 m² construidos (medio) para 2.500 / 5.000 / 10.000 / 20.000 aves/día. **Existe rango conceptual preliminar de 12C; superficie real de terreno sigue pendiente de municipio, efluentes, footprints y estrategia de expansión** (terreno conceptual 0,8–12,8 ha según escala y supuestos; ~3,3 ha medio reservando para 20.000; márgenes supuestos ≈ 50–68 % del terreno). Decisiones abiertas: DEC-038, DEC-043, DEC-062 a DEC-066.
+- **Dependencia futura documentada:** camiones / frecuencia / capacidad → docks → playas → circulación → terreno (D12-01 de la reconciliación).
+
 ## Plan de validación de campo (2026-09-30)
 
 Síntesis en [`plan_trabajo_campo.md`](plan_trabajo_campo.md); matriz en [`matriz_validacion_campo.csv`](matriz_validacion_campo.csv):
@@ -216,6 +230,7 @@ Síntesis en [`plan_trabajo_campo.md`](plan_trabajo_campo.md); matriz en [`matri
 
 9. Proceso, maquinaria, normativa y utilities (realizados 2026-09-30, modelos preliminares). Pendiente de **campo**: capacidad real y definición contractual de capacidad (DPV-088, DPV-097), servicio técnico y repuestos (DPV-089), limpieza y sanitización reales (DPV-091), productividad (DPV-092), texto del Decreto 4238/68 y revisión de anteproyecto con SENASA (DPV-090, DPV-115, DEC-042), agua, vuelco y efluentes reales (DPV-053, DPV-067, DPV-106, DPV-114), lista de cargas y balance frigorífico de proveedores (DPV-095, DPV-109). Lista completa en [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md) §11.
 10. Simulador HTML: v0.5 (variantes del balance, gates, datos de campo) y v1.0 (economía) **solo cuando existan** los módulos correspondientes.
-11. **Próximos módulos técnicamente habilitados** (tienen insumos preliminares, pero **no se inician hasta que el promotor lo indique**): localización (`10`; criterios de 09B y 09C), logística detallada (`13`), layout y obra civil (`09`; zonificación de 09A y requisitos de 09B), recursos humanos (`18`; puestos equivalentes de 09A), CAPEX y OPEX (`19`, `20`; requieren cotizaciones y definición de alcance). Modelo financiero, riesgo financiero, decisión de escala y documentación para inversores dependen de los anteriores y del trabajo de campo.
+11. ~~Próximos módulos técnicamente habilitados: localización, logística, layout~~ (realizados 2026-10-01 como modelos preliminares, sesiones 12A–12C, y reconciliados). Pendiente de campo: ruteo, exposición sanitaria, terrenos, retiros y FOS, capacidades y tiempos reales de transporte, CD de la red, densidad de subproductos, footprints, dotación, requisitos edilicios SENASA (lista en [`reconciliacion_sesiones_12.md`](reconciliacion_sesiones_12.md) §4).
+12. **Próximos módulos técnicamente habilitados** (tienen insumos preliminares, pero **no se inician hasta que el promotor lo indique**): recursos humanos (`18`; puestos equivalentes de 09A, proxy de personas de 12C, oferta laboral por corredor de 12A), incubación y alimento balanceado (`15`, `14`; flujos de pollitos y alimento de 12B), CAPEX y OPEX (`19`, `20`; requieren cotizaciones, definición de alcance y superficies; incluyen la logística económica). Modelo financiero, riesgo financiero, decisión de escala y documentación para inversores dependen de los anteriores y del trabajo de campo.
 
 Ver [`decisiones_pendientes.md`](decisiones_pendientes.md) y [`datos_por_validar.md`](datos_por_validar.md).

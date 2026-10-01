@@ -15,7 +15,7 @@
 
 ## 2. Zonificación
 
-Nueve zonas de layout ([`zonificacion_layout.md`](zonificacion_layout.md)) mapeadas a las zonas higiénicas Z0–Z8/ZX/ZS/ZP de 09A. **No son categorías regulatorias** (SUP-12C-16). Siete fronteras críticas (F1 transferencia, F2 chiller, F3 frío/despacho, F4 producto/subproductos, F5 vivo/producto, F6 personal, F7 aire y agua). La zonificación **no se simplifica en la planta chica**: 2.500 aves/día exige la misma secuencia que 20.000.
+Nueve zonas de layout ([`zonificacion_layout.md`](zonificacion_layout.md)) mapeadas a las zonas higiénicas Z0–Z8/ZX/ZS/ZP de 09A. **No son categorías regulatorias** (SUP-122). Siete fronteras críticas (F1 transferencia, F2 chiller, F3 frío/despacho, F4 producto/subproductos, F5 vivo/producto, F6 personal, F7 aire y agua). La zonificación **no se simplifica en la planta chica**: 2.500 aves/día exige la misma secuencia que 20.000.
 
 ## 3. Flujos
 
@@ -49,7 +49,7 @@ TERRENO = (huella de edificios + circulación + estacionamiento + playas + trata
 | Reservando para 20.000 | 1,4 / 3,3 / 8,2 | 1,4 / 3,3 / 8,2 | 1,4 / 3,3 / 8,2 | 1,4 / 3,3 / 8,2 |
 | Con lagunas (medio, sin objetivo) | 2,6 | 3,5 | 5,2 | 8,2 |
 
-- **El edificio ocupa ~10–17 % del terreno medio.** En el escenario medio del modelo actual, los factores reservados para retiros, buffers y franjas representan aproximadamente **57 % del terreno conceptual a 10.000 aves/día** (50–68 % según la escala; 56 % reservando para 20.000). No es una exigencia conocida: hay que separar el **retiro reglamentario real** (municipio, DPV-12C-05; hoy 5 / 10 / 15 m supuestos), el **buffer de diseño** (supuesto/proxy 10 / 20 / 40 m, SUP-12C-15) y la **reserva sanitaria o ambiental** (supuesto o requisito según jurisdicción, DPV-106). Son variables: sin márgenes el terreno medio a 10.000 sería ~1,3 ha; con 10 m de retiro y sin buffer, ~1,8 ha (test T21). Por eso los datos del sitio pueden mover el terreno más que cualquier factor de proceso.
+- **El edificio ocupa ~10–17 % del terreno medio.** En el escenario medio del modelo actual, los factores reservados para retiros, buffers y franjas representan aproximadamente **57 % del terreno conceptual a 10.000 aves/día** (50–68 % según la escala; 56 % reservando para 20.000). No es una exigencia conocida: hay que separar el **retiro reglamentario real** (municipio, DPV-141; hoy 5 / 10 / 15 m supuestos), el **buffer de diseño** (supuesto/proxy 10 / 20 / 40 m, SUP-121) y la **reserva sanitaria o ambiental** (supuesto o requisito según jurisdicción, DPV-106). Son variables: sin márgenes el terreno medio a 10.000 sería ~1,3 ha; con 10 m de retiro y sin buffer, ~1,8 ha (test T21). Por eso los datos del sitio pueden mover el terreno más que cualquier factor de proceso.
 - **Lagunas:** en el escenario de superficies actual, el biológico con lagunas ocupa ~35–40 veces el compacto — **resultado del escenario actual / proxy, no relación general de ingeniería**; la relación real depende de tecnología, carga, clima, tiempo de retención, profundidad, calidad de efluente, terreno y normativa. Aun así, la dirección es clara: la tecnología de efluentes (DEC-043) y el terreno (DEC-003) deben evaluarse juntos.
 - Insumo para 12A (localización): buscar terrenos con **capacidad de alojar la escala objetivo**, no la de arranque.
 
@@ -85,17 +85,17 @@ Inputs a exponer: escala, horas netas, configuración A/B/C, perfil P1–P3 y d�
 
 ## 9. Datos faltantes (prioridad para el layout)
 
-1. **Huellas de equipos** por área (DPV-12C-01) — 23 áreas en proxy.
-2. **Retiros, FOS y distancias** por sitio (DPV-12C-05) — dominan el terreno.
-3. **Dotación** por turno y zona (DPV-12C-02) — vestuarios, comedor, estacionamiento.
-4. **Requisitos edilicios del servicio oficial y del Decreto 4238/68** (DPV-12C-04, DPV-090).
-5. **Tecnología y superficie de efluentes** (DPV-12C-08, DEC-043) y **lodos** (DPV-114).
+1. **Huellas de equipos** por área (DPV-137) — 23 áreas en proxy.
+2. **Retiros, FOS y distancias** por sitio (DPV-141) — dominan el terreno.
+3. **Dotación** por turno y zona (DPV-138) — vestuarios, comedor, estacionamiento.
+4. **Requisitos edilicios del servicio oficial y del Decreto 4238/68** (DPV-140, DPV-090).
+5. **Tecnología y superficie de efluentes** (DPV-144, DEC-043) y **lodos** (DPV-114).
 6. **Capacidad de camiones y canal de despacho** (DPV-084, DPV-036; 12B).
-7. **Densidad de estiba de cámaras** (DPV-12C-06) y **balance frigorífico** (DPV-109).
-8. **Superficies reales de plantas argentinas** (DPV-12C-07).
-9. Bomberos, exportación/Halal, lavado de camiones (DPV-12C-09 a 11).
+7. **Densidad de estiba de cámaras** (DPV-142) y **balance frigorífico** (DPV-109).
+8. **Superficies reales de plantas argentinas** (DPV-143).
+9. Bomberos, exportación/Halal, lavado de camiones (DPV-106, DPV-145 y DPV-058).
 
-Registro completo con IDs provisionales: [`actualizaciones_gestion_12C.md`](actualizaciones_gestion_12C.md); fuentes: [`fuentes_12C.csv`](fuentes_12C.csv) (10 fuentes, todas `[PVDP]`; ninguna leída en original).
+Registros integrados en `00_gestion_proyecto/` en la reconciliación de las sesiones 12 (2026-10-01) (mapa de IDs en [`../00_gestion_proyecto/reconciliacion_sesiones_12.md`](../00_gestion_proyecto/reconciliacion_sesiones_12.md); propuestas originales en [`actualizaciones_gestion_12C.md`](actualizaciones_gestion_12C.md), archivo histórico); fuentes en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) (10 fuentes, todas `[PVDP]`; ninguna leída en original).
 
 ## 10. Tests del modelo
 
@@ -129,7 +129,7 @@ Registro completo con IDs provisionales: [`actualizaciones_gestion_12C.md`](actu
 ## 11. Límites y advertencias
 
 - **Orden de magnitud, no arquitectura:** ningún m² es una medida de sala; los rangos son amplios a propósito.
-- **Proxies sin fuente:** los factores de intensidad (SUP-12C-01) y la dotación (SUP-12C-10) son del analista; su efecto puede verse con el modo estricto.
+- **Proxies sin fuente:** los factores de intensidad (SUP-107) y la dotación (SUP-116) son del analista; su efecto puede verse con el modo estricto.
 - **Benchmarks no comparables en alcance** (regla 18): se desconoce qué incluye cada m² declarado por las plantas citadas.
 - **No se eligió** escala, terreno, tecnología de efluentes, método de enfriamiento, número de líneas, forma de nave ni proveedor; **no se calculó** CAPEX.
 - **Coordinación con 12A y 12B:** los retiros/buffers/FOS (12A) y las capacidades y frecuencias de camiones (12B) reemplazan proxies de este modelo; sus resultados deben cargarse como inputs, no recalcularse aquí.

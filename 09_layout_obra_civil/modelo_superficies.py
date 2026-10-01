@@ -108,13 +108,13 @@ class ErrorSuperficies(Exception):
 #    Origen: SUPUESTO = hipótesis del analista sin fuente; PVDP = extracto no leído en original;
 #    PROXY = sustituto de un dato faltante (genera alerta). Ningún valor está validado.
 # ---------------------------------------------------------------------------
-def T(b, m, a, origen="SUPUESTO", ref="SUP-12C-01", nota=""):
+def T(b, m, a, origen="SUPUESTO", ref="SUP-107", nota=""):
     return {"v": (b, m, a), "origen": origen, "ref": ref, "nota": nota}
 
 
-BETA = 0.80   # [SUPUESTO] economía de escala espacial de salas de proceso (SUP-12C-01)
+BETA = 0.80   # [SUPUESTO] economía de escala espacial de salas de proceso (SUP-107)
 
-# Proxy de intensidad: m² = k × (driver/1.000)^β, con mínimo funcional (SUP-12C-01, sin fuente)
+# Proxy de intensidad: m² = k × (driver/1.000)^β, con mínimo funcional (SUP-107, sin fuente)
 K = {
     # driver: ritmo por línea (aves/h)
     "colgado_aturdido":            (T(80, 110, 150),  T(30, 40, 55)),
@@ -144,119 +144,119 @@ K = {
 
 P = {
     # --- recepción y andén de espera (bahías de camión) ---
-    "espera_h": T(1.0, 1.5, 2.0, "SUPUESTO", "SUP-12C-02", "horas de aves en espera (buffer entre llegada y colgado)"),
+    "espera_h": T(1.0, 1.5, 2.0, "SUPUESTO", "SUP-108", "horas de aves en espera (buffer entre llegada y colgado)"),
     "aves_por_camion_proxy": T(6000, 4500, 3000, "PROXY", "DPV-084", "aves por camión de vivo; dato pendiente"),
-    "m2_bahia_recepcion": T(70, 90, 120, "SUPUESTO", "SUP-12C-02", "bahía cubierta y ventilada por camión"),
+    "m2_bahia_recepcion": T(70, 90, 120, "SUPUESTO", "SUP-108", "bahía cubierta y ventilada por camión"),
     # --- líneas ---
-    "factor_separacion_dos_lineas": T(1.05, 1.10, 1.15, "SUPUESTO", "SUP-12C-03", "pasillos entre líneas"),
+    "factor_separacion_dos_lineas": T(1.05, 1.10, 1.15, "SUPUESTO", "SUP-109", "pasillos entre líneas"),
     "factor_automatizacion": {"manual": 1.20, "semi": 1.00, "auto": 0.90, "origen": "SUPUESTO",
-                              "ref": "SUP-12C-03", "nota": "superficie de salas con puestos (evisceración, "
+                              "ref": "SUP-109", "nota": "superficie de salas con puestos (evisceración, "
                                                           "trozado, deshuese, empaque); débil"},
     # --- enfriamiento: m² por carcasa simultánea (residencias de 09A) ---
-    "m2_carcasa_inmersion": T(0.15, 0.20, 0.28, "SUPUESTO", "SUP-12C-04", "tanques + perímetro de operación"),
-    "m2_carcasa_aire": T(0.10, 0.14, 0.20, "SUPUESTO", "SUP-12C-04", "riel multinivel en cámara"),
-    "min_enfriamiento": T(30, 40, 55, "SUPUESTO", "SUP-12C-04"),
+    "m2_carcasa_inmersion": T(0.15, 0.20, 0.28, "SUPUESTO", "SUP-110", "tanques + perímetro de operación"),
+    "m2_carcasa_aire": T(0.10, 0.14, 0.20, "SUPUESTO", "SUP-110", "riel multinivel en cámara"),
+    "min_enfriamiento": T(30, 40, 55, "SUPUESTO", "SUP-110"),
     # --- circulación interna de proceso (pasillos técnicos, esclusas, barreras sanitarias) ---
-    "f_circulacion_proceso": T(0.15, 0.22, 0.30, "SUPUESTO", "SUP-12C-05"),
+    "f_circulacion_proceso": T(0.15, 0.22, 0.30, "SUPUESTO", "SUP-111"),
     # --- depósito de envases e insumos secos ---
-    "m2_envases_por_t_dia": T(5, 8, 12, "SUPUESTO", "SUP-12C-05", "m² por t/día de comestible"),
-    "min_envases": T(20, 30, 40, "SUPUESTO", "SUP-12C-05"),
+    "m2_envases_por_t_dia": T(5, 8, 12, "SUPUESTO", "SUP-111", "m² por t/día de comestible"),
+    "min_envases": T(20, 30, 40, "SUPUESTO", "SUP-111"),
     # --- FRÍO (convierte t de 09C en m²; no rehace el balance frigorífico) ---
-    "factor_pico_stock": T(1.15, 1.30, 1.50, "SUPUESTO", "SUP-12C-06", "stock máximo / stock del escenario"),
-    "densidad_refrigerado_t_m2": T(1.0, 0.7, 0.5, "PVDP", "FTE-12C-005; SUP-12C-06",
+    "factor_pico_stock": T(1.15, 1.30, 1.50, "SUPUESTO", "SUP-112", "stock máximo / stock del escenario"),
+    "densidad_refrigerado_t_m2": T(1.0, 0.7, 0.5, "PVDP", "FTE-293; SUP-112",
                                    "5–7 m³ brutos/t × altura útil 3,5–5 m (extracto comercial)"),
-    "densidad_congelado_t_m2": T(1.75, 1.25, 0.9, "PVDP", "FTE-12C-004; SUP-12C-06",
+    "densidad_congelado_t_m2": T(1.75, 1.25, 0.9, "PVDP", "FTE-292; SUP-112",
                                  "~4 m³ brutos/t de carne congelada × altura útil 3,6–7 m (FAO, extracto)"),
-    "min_camara_refrigerada": T(20, 25, 30, "SUPUESTO", "SUP-12C-06"),
-    "min_camara_congelada": T(15, 20, 30, "SUPUESTO", "SUP-12C-06"),
-    "f_antecamara": T(0.20, 0.30, 0.40, "SUPUESTO", "SUP-12C-06", "antecámaras, pasillo frío, preparación de pedidos"),
-    "m2_tunel_por_t_dia": T(6, 9, 14, "SUPUESTO", "SUP-12C-06; DPV-12C-01", "túnel/espiral: huella real por RFQ"),
-    "min_tunel": T(12, 15, 20, "SUPUESTO", "SUP-12C-06"),
+    "min_camara_refrigerada": T(20, 25, 30, "SUPUESTO", "SUP-112"),
+    "min_camara_congelada": T(15, 20, 30, "SUPUESTO", "SUP-112"),
+    "f_antecamara": T(0.20, 0.30, 0.40, "SUPUESTO", "SUP-112", "antecámaras, pasillo frío, preparación de pedidos"),
+    "m2_tunel_por_t_dia": T(6, 9, 14, "SUPUESTO", "SUP-112; DPV-137", "túnel/espiral: huella real por RFQ"),
+    "min_tunel": T(12, 15, 20, "SUPUESTO", "SUP-112"),
     "factor_tecnologia_congelado": {"sin_definir": 1.0, "estatico": 1.0, "lineal": 1.0, "espiral": 0.35,
                                     "origen": "PVDP", "ref": "FTE-215",
                                     "nota": "espiral 60–70 % menos superficie que túnel lineal (extracto débil)"},
     # --- expedición ---
-    "factor_pico_despacho": T(1.0, 1.2, 1.5, "SUPUESTO", "SUP-12C-07"),
+    "factor_pico_despacho": T(1.0, 1.2, 1.5, "SUPUESTO", "SUP-113"),
     "t_por_camion_proxy": T(12, 8, 5, "PROXY", "DPV-084; DPV-036", "t por camión refrigerado de despacho"),
-    "cargas_por_dock_dia": T(4, 3, 2, "SUPUESTO", "SUP-12C-07"),
-    "m2_dock_interior": T(35, 45, 60, "SUPUESTO", "SUP-12C-07"),
-    "m2_playa_por_dock": T(150, 200, 250, "SUPUESTO", "SUP-12C-07", "maniobra exterior frente a cada dock"),
+    "cargas_por_dock_dia": T(4, 3, 2, "SUPUESTO", "SUP-113"),
+    "m2_dock_interior": T(35, 45, 60, "SUPUESTO", "SUP-113"),
+    "m2_playa_por_dock": T(150, 200, 250, "SUPUESTO", "SUP-113", "maniobra exterior frente a cada dock"),
     # --- subproductos ---
-    "dias_subproductos_refrigerados": T(0.5, 1.0, 3.0, "SUPUESTO", "SUP-056; SUP-12C-08"),
-    "densidad_subproductos_t_m2": T(0.7, 0.5, 0.35, "SUPUESTO", "SUP-12C-08"),
-    "min_camara_subproductos": T(8, 10, 15, "SUPUESTO", "SUP-12C-08"),
-    "m2_decomisos": T(6, 8, 12, "SUPUESTO", "SUP-12C-08; DPV-090"),
-    "m2_sala_subproductos_por_t_dia": T(10, 15, 22, "SUPUESTO", "SUP-12C-08"),
-    "min_sala_subproductos": T(25, 35, 50, "SUPUESTO", "SUP-12C-08"),
+    "dias_subproductos_refrigerados": T(0.5, 1.0, 3.0, "SUPUESTO", "SUP-056; SUP-114"),
+    "densidad_subproductos_t_m2": T(0.7, 0.5, 0.35, "SUPUESTO", "SUP-114"),
+    "min_camara_subproductos": T(8, 10, 15, "SUPUESTO", "SUP-114"),
+    "m2_decomisos": T(6, 8, 12, "SUPUESTO", "SUP-114; DPV-090"),
+    "m2_sala_subproductos_por_t_dia": T(10, 15, 22, "SUPUESTO", "SUP-114"),
+    "min_sala_subproductos": T(25, 35, 50, "SUPUESTO", "SUP-114"),
     # --- servicios ---
-    "f_sala_maquinas_frio": T(0.12, 0.18, 0.25, "PROXY", "SUP-12C-09; DPV-109", "carga frigorífica total PENDIENTE (09C)"),
-    "min_sala_maquinas_frio": T(40, 60, 80, "SUPUESTO", "SUP-12C-09"),
-    "m2_tratamiento_agua_por_m3_dia": T(0.08, 0.12, 0.18, "SUPUESTO", "SUP-12C-09"),
-    "min_tratamiento_agua": T(15, 20, 30, "SUPUESTO", "SUP-12C-09"),
-    "dias_reserva_agua": T(0.5, 1.0, 1.5, "SUPUESTO", "SUP-12C-09; DPV-053", "incluye reserva de incendio a definir (DPV-106)"),
-    "altura_tanque_m": T(6, 5, 4, "SUPUESTO", "SUP-12C-09"),
-    "m2_lavanderia_por_persona": T(0.15, 0.20, 0.30, "SUPUESTO", "SUP-12C-09"),
+    "f_sala_maquinas_frio": T(0.12, 0.18, 0.25, "PROXY", "SUP-115; DPV-109", "carga frigorífica total PENDIENTE (09C)"),
+    "min_sala_maquinas_frio": T(40, 60, 80, "SUPUESTO", "SUP-115"),
+    "m2_tratamiento_agua_por_m3_dia": T(0.08, 0.12, 0.18, "SUPUESTO", "SUP-115"),
+    "min_tratamiento_agua": T(15, 20, 30, "SUPUESTO", "SUP-115"),
+    "dias_reserva_agua": T(0.5, 1.0, 1.5, "SUPUESTO", "SUP-115; DPV-053", "incluye reserva de incendio a definir (DPV-106)"),
+    "altura_tanque_m": T(6, 5, 4, "SUPUESTO", "SUP-115"),
+    "m2_lavanderia_por_persona": T(0.15, 0.20, 0.30, "SUPUESTO", "SUP-115"),
     # --- personal / admin ---
-    "dotacion_base_proxy": T(10, 15, 20, "PROXY", "SUP-12C-10; DPV-12C-02", "personas fijas por turno"),
-    "dotacion_por_ave_h_proxy": T(0.05, 0.08, 0.12, "PROXY", "SUP-12C-10; DPV-12C-02", "personas por ave/h"),
+    "dotacion_base_proxy": T(10, 15, 20, "PROXY", "SUP-116; DPV-138", "personas fijas por turno"),
+    "dotacion_por_ave_h_proxy": T(0.05, 0.08, 0.12, "PROXY", "SUP-116; DPV-138", "personas por ave/h"),
     "factor_dotacion_automatizacion": {"manual": 1.35, "semi": 1.0, "auto": 0.75, "origen": "PROXY",
-                                       "ref": "SUP-12C-10", "nota": ""},
-    "factor_dotacion_config": {"A": 0.9, "B": 1.0, "C": 1.3, "origen": "PROXY", "ref": "SUP-12C-10", "nota": ""},
-    "m2_vestuario_por_persona": T(1.0, 1.3, 1.7, "SUPUESTO", "SUP-12C-10; DPV-090", "vestuarios y sanitarios por zona y sexo"),
-    "factor_vestuario_segundo_turno": T(0.4, 0.6, 0.8, "SUPUESTO", "SUP-12C-10", "lockers del 2.º turno"),
-    "min_vestuarios": T(40, 50, 70, "SUPUESTO", "SUP-12C-10", "dos vestuarios mínimos (sucia/limpia)"),
-    "fraccion_comedor_simultaneo": T(0.33, 0.5, 0.5, "SUPUESTO", "SUP-12C-10"),
-    "m2_comensal": T(1.2, 1.5, 1.8, "SUPUESTO", "SUP-12C-10"),
-    "min_comedor": T(20, 30, 40, "SUPUESTO", "SUP-12C-10"),
-    "admin_puestos": T(4, 6, 10, "SUPUESTO", "SUP-12C-10"),
-    "m2_puesto_oficina": T(8, 10, 12, "SUPUESTO", "SUP-12C-10"),
-    "min_oficinas": T(40, 60, 80, "SUPUESTO", "SUP-12C-10"),
-    "m2_porteria": T(10, 15, 20, "SUPUESTO", "SUP-12C-10"),
-    "f_circulacion_personal": T(0.10, 0.15, 0.20, "SUPUESTO", "SUP-12C-10"),
+                                       "ref": "SUP-116", "nota": ""},
+    "factor_dotacion_config": {"A": 0.9, "B": 1.0, "C": 1.3, "origen": "PROXY", "ref": "SUP-116", "nota": ""},
+    "m2_vestuario_por_persona": T(1.0, 1.3, 1.7, "SUPUESTO", "SUP-116; DPV-090", "vestuarios y sanitarios por zona y sexo"),
+    "factor_vestuario_segundo_turno": T(0.4, 0.6, 0.8, "SUPUESTO", "SUP-116", "lockers del 2.º turno"),
+    "min_vestuarios": T(40, 50, 70, "SUPUESTO", "SUP-116", "dos vestuarios mínimos (sucia/limpia)"),
+    "fraccion_comedor_simultaneo": T(0.33, 0.5, 0.5, "SUPUESTO", "SUP-116"),
+    "m2_comensal": T(1.2, 1.5, 1.8, "SUPUESTO", "SUP-116"),
+    "min_comedor": T(20, 30, 40, "SUPUESTO", "SUP-116"),
+    "admin_puestos": T(4, 6, 10, "SUPUESTO", "SUP-116"),
+    "m2_puesto_oficina": T(8, 10, 12, "SUPUESTO", "SUP-116"),
+    "min_oficinas": T(40, 60, 80, "SUPUESTO", "SUP-116"),
+    "m2_porteria": T(10, 15, 20, "SUPUESTO", "SUP-116"),
+    "f_circulacion_personal": T(0.10, 0.15, 0.20, "SUPUESTO", "SUP-116"),
     # --- exteriores ---
-    "m2_camion_playa": T(150, 200, 250, "SUPUESTO", "SUP-12C-11", "estacionamiento/maniobra de un camión"),
-    "m2_lavado_camion": T(100, 130, 160, "SUPUESTO", "SUP-12C-11"),
-    "camiones_por_plataforma_lavado": T(12, 10, 8, "SUPUESTO", "SUP-12C-11"),
-    "m2_playa_subproductos_base": T(100, 150, 200, "SUPUESTO", "SUP-12C-11"),
-    "m2_playa_subproductos_por_t_dia": T(5, 8, 12, "SUPUESTO", "SUP-12C-11"),
-    "fraccion_personal_motorizado": T(0.20, 0.35, 0.50, "SUPUESTO", "SUP-12C-11; DPV-12C-03"),
-    "m2_plaza_auto": T(20, 25, 28, "SUPUESTO", "SUP-12C-11"),
-    "plazas_visitas": T(4, 6, 10, "SUPUESTO", "SUP-12C-11"),
-    "f_circulacion_pesada": T(0.25, 0.35, 0.50, "SUPUESTO", "SUP-12C-11", "caminos internos separados por flujo"),
+    "m2_camion_playa": T(150, 200, 250, "SUPUESTO", "SUP-117", "estacionamiento/maniobra de un camión"),
+    "m2_lavado_camion": T(100, 130, 160, "SUPUESTO", "SUP-117"),
+    "camiones_por_plataforma_lavado": T(12, 10, 8, "SUPUESTO", "SUP-117"),
+    "m2_playa_subproductos_base": T(100, 150, 200, "SUPUESTO", "SUP-117"),
+    "m2_playa_subproductos_por_t_dia": T(5, 8, 12, "SUPUESTO", "SUP-117"),
+    "fraccion_personal_motorizado": T(0.20, 0.35, 0.50, "SUPUESTO", "SUP-117; DPV-139"),
+    "m2_plaza_auto": T(20, 25, 28, "SUPUESTO", "SUP-117"),
+    "plazas_visitas": T(4, 6, 10, "SUPUESTO", "SUP-117"),
+    "f_circulacion_pesada": T(0.25, 0.35, 0.50, "SUPUESTO", "SUP-117", "caminos internos separados por flujo"),
     # --- efluentes (NO se elige tecnología; reglas de ingeniería sanitaria de manual, sin lectura primaria) ---
-    "m2_pretrat_por_m3_h": T(1.0, 1.5, 2.0, "SUPUESTO", "SUP-12C-12"),
-    "min_pretratamiento": T(40, 60, 80, "SUPUESTO", "SUP-12C-12"),
-    "fraccion_ecualizacion": T(0.30, 0.50, 0.70, "SUPUESTO", "SUP-12C-12", "volumen / caudal diario"),
-    "prof_ecualizacion_m": T(4.5, 4.0, 3.5, "SUPUESTO", "SUP-12C-12"),
-    "carga_superficial_daf_m3_m2_h": T(6, 5, 4, "PVDP", "FTE-12C-006; SUP-12C-12"),
-    "factor_huella_daf": T(3, 4, 5, "SUPUESTO", "SUP-12C-12", "equipo + accesos + químicos"),
-    "min_daf": T(20, 30, 40, "SUPUESTO", "SUP-12C-12"),
+    "m2_pretrat_por_m3_h": T(1.0, 1.5, 2.0, "SUPUESTO", "SUP-118"),
+    "min_pretratamiento": T(40, 60, 80, "SUPUESTO", "SUP-118"),
+    "fraccion_ecualizacion": T(0.30, 0.50, 0.70, "SUPUESTO", "SUP-118", "volumen / caudal diario"),
+    "prof_ecualizacion_m": T(4.5, 4.0, 3.5, "SUPUESTO", "SUP-118"),
+    "carga_superficial_daf_m3_m2_h": T(6, 5, 4, "PVDP", "FTE-294; SUP-118"),
+    "factor_huella_daf": T(3, 4, 5, "SUPUESTO", "SUP-118", "equipo + accesos + químicos"),
+    "min_daf": T(20, 30, 40, "SUPUESTO", "SUP-118"),
     "remocion_dbo_daf": T(0.60, 0.45, 0.30, "PVDP", "FTE-256 (09C)", "DAF 30–90 % DBO"),
     "remocion_dqo_daf": T(0.80, 0.75, 0.70, "PVDP", "FTE-256 (09C)", "DAF 70–80 % DQO"),
-    "carga_vol_aerobia_kg_dbo_m3_d": T(0.8, 0.5, 0.3, "PVDP", "FTE-12C-006; SUP-12C-12"),
-    "prof_aerobio_m": T(5.0, 4.5, 4.0, "SUPUESTO", "SUP-12C-12"),
-    "factor_huella_aerobio": T(1.4, 1.6, 1.9, "SUPUESTO", "SUP-12C-12", "clarificador, bordes, accesos"),
-    "min_biologico": T(10, 20, 30, "SUPUESTO", "SUP-12C-12", "mínimo funcional de un tren biológico"),
-    "carga_vol_anaerobia_kg_dqo_m3_d": T(8, 5, 3, "PVDP", "FTE-263 (09C); FTE-12C-006", "7–11 en ensayos"),
-    "prof_reactor_anaerobio_m": T(6.0, 5.5, 5.0, "SUPUESTO", "SUP-12C-12"),
-    "factor_huella_anaerobio": T(1.3, 1.5, 1.8, "SUPUESTO", "SUP-12C-12"),
-    "fraccion_dbo_a_pulido": T(0.20, 0.30, 0.40, "SUPUESTO", "SUP-12C-12", "DBO residual tras anaerobio"),
-    "carga_vol_laguna_anaerobia_kg_dbo_m3_d": T(0.35, 0.25, 0.15, "PVDP", "FTE-12C-006; SUP-12C-12"),
-    "prof_laguna_anaerobia_m": T(5.0, 4.0, 3.0, "SUPUESTO", "SUP-12C-12"),
-    "fraccion_dbo_a_laguna_facultativa": T(0.40, 0.50, 0.60, "SUPUESTO", "SUP-12C-12"),
-    "carga_sup_laguna_facultativa_kg_dbo_ha_d": T(350, 250, 150, "PVDP", "FTE-12C-006; SUP-12C-12", "depende del clima"),
-    "factor_taludes_lagunas": T(1.2, 1.3, 1.5, "SUPUESTO", "SUP-12C-12"),
-    "m2_lodos_por_kg_dbo_d": T(0.10, 0.15, 0.25, "PROXY", "SUP-12C-12; DPV-114", "lodos PENDIENTES en 09C"),
-    "min_lodos": T(30, 50, 80, "PROXY", "SUP-12C-12"),
-    "f_circulacion_efluentes": T(0.25, 0.30, 0.40, "SUPUESTO", "SUP-12C-12"),
+    "carga_vol_aerobia_kg_dbo_m3_d": T(0.8, 0.5, 0.3, "PVDP", "FTE-294; SUP-118"),
+    "prof_aerobio_m": T(5.0, 4.5, 4.0, "SUPUESTO", "SUP-118"),
+    "factor_huella_aerobio": T(1.4, 1.6, 1.9, "SUPUESTO", "SUP-118", "clarificador, bordes, accesos"),
+    "min_biologico": T(10, 20, 30, "SUPUESTO", "SUP-118", "mínimo funcional de un tren biológico"),
+    "carga_vol_anaerobia_kg_dqo_m3_d": T(8, 5, 3, "PVDP", "FTE-263 (09C); FTE-294", "7–11 en ensayos"),
+    "prof_reactor_anaerobio_m": T(6.0, 5.5, 5.0, "SUPUESTO", "SUP-118"),
+    "factor_huella_anaerobio": T(1.3, 1.5, 1.8, "SUPUESTO", "SUP-118"),
+    "fraccion_dbo_a_pulido": T(0.20, 0.30, 0.40, "SUPUESTO", "SUP-118", "DBO residual tras anaerobio"),
+    "carga_vol_laguna_anaerobia_kg_dbo_m3_d": T(0.35, 0.25, 0.15, "PVDP", "FTE-294; SUP-118"),
+    "prof_laguna_anaerobia_m": T(5.0, 4.0, 3.0, "SUPUESTO", "SUP-118"),
+    "fraccion_dbo_a_laguna_facultativa": T(0.40, 0.50, 0.60, "SUPUESTO", "SUP-118"),
+    "carga_sup_laguna_facultativa_kg_dbo_ha_d": T(350, 250, 150, "PVDP", "FTE-294; SUP-118", "depende del clima"),
+    "factor_taludes_lagunas": T(1.2, 1.3, 1.5, "SUPUESTO", "SUP-118"),
+    "m2_lodos_por_kg_dbo_d": T(0.10, 0.15, 0.25, "PROXY", "SUP-118; DPV-114", "lodos PENDIENTES en 09C"),
+    "min_lodos": T(30, 50, 80, "PROXY", "SUP-118"),
+    "f_circulacion_efluentes": T(0.25, 0.30, 0.40, "SUPUESTO", "SUP-118"),
     # --- reserva y terreno ---
-    "fraccion_reserva_sin_objetivo": T(0.25, 0.50, 1.00, "SUPUESTO", "SUP-12C-13", "solo si no hay escala objetivo"),
-    "m2_rendering_por_t_dia": T(40, 60, 90, "PROXY", "SUP-12C-13; DPV-065; DEC-027", "rendering futuro (reserva, no se construye)"),
-    "min_rendering": T(300, 400, 600, "PROXY", "SUP-12C-13"),
-    "factor_envolvente_footprint": T(2.2, 2.8, 3.5, "SUPUESTO", "SUP-12C-14", "m² de sala / m² de huella de equipos"),
-    "retiro_m": T(5, 10, 15, "SUPUESTO", "SUP-12C-15; DPV-106", "retiro perimetral municipal"),
-    "buffer_proxy_m": T(10, 20, 40, "PROXY", "SUP-12C-15; DPV-087", "franja de bioseguridad/vecindad"),
-    "relacion_largo_ancho": T(1.5, 1.5, 1.5, "SUPUESTO", "SUP-12C-15"),
+    "fraccion_reserva_sin_objetivo": T(0.25, 0.50, 1.00, "SUPUESTO", "SUP-119", "solo si no hay escala objetivo"),
+    "m2_rendering_por_t_dia": T(40, 60, 90, "PROXY", "SUP-119; DPV-065; DEC-027", "rendering futuro (reserva, no se construye)"),
+    "min_rendering": T(300, 400, 600, "PROXY", "SUP-119"),
+    "factor_envolvente_footprint": T(2.2, 2.8, 3.5, "SUPUESTO", "SUP-120", "m² de sala / m² de huella de equipos"),
+    "retiro_m": T(5, 10, 15, "SUPUESTO", "SUP-121; DPV-106", "retiro perimetral municipal"),
+    "buffer_proxy_m": T(10, 20, 40, "PROXY", "SUP-121; DPV-087", "franja de bioseguridad/vecindad"),
+    "relacion_largo_ancho": T(1.5, 1.5, 1.5, "SUPUESTO", "SUP-121"),
 }
 
 # Áreas cuya superficie depende de la HUELLA DE EQUIPOS (si falta: PROXY + alerta; estricto: None)
@@ -308,7 +308,7 @@ ORIGEN_AREA = {
     "efl_pretratamiento": "A·B", "efl_ecualizacion": "A·B", "efl_daf": "A·B", "efl_biologico": "A·B·E",
     "efl_lodos": "C", "efl_circulacion": "B", "reserva_expansion": "B·C",
 }
-ORIGEN_TERRENO = "B·C·E — retiro y buffer VARIABLES (retiro reglamentario: DPV-12C-05; buffer de diseño: SUP-12C-15)"
+ORIGEN_TERRENO = "B·C·E — retiro y buffer VARIABLES (retiro reglamentario: DPV-141; buffer de diseño: SUP-121)"
 
 
 def entradas_por_defecto():
@@ -505,7 +505,7 @@ def calcular(entradas=None, _con_reserva=True):
             return vals, "FOOTPRINT", "[ESTIMACIÓN] huella × envolvente [SUPUESTO]"
         if "M02" in _MUT:
             return [0.0, 0.0, 0.0], "PROXY", ""
-        R.alerta("FOOTPRINT_DESCONOCIDO", "huellas de equipos desconocidas (DPV-12C-01): las áreas de equipos usan "
+        R.alerta("FOOTPRINT_DESCONOCIDO", "huellas de equipos desconocidas (DPV-137): las áreas de equipos usan "
                                           "un PROXY de intensidad sin fuente")
         if estricto:
             return [None, None, None], "PENDIENTE", "[PENDIENTE DE VALIDACIÓN] footprint"
@@ -531,7 +531,7 @@ def calcular(entradas=None, _con_reserva=True):
     R.add("recepcion_espera", "Recepción, andén de espera ventilado y descarga", "proceso", "SUCIA",
           "bahías = ⌈ritmo × horas de espera ÷ aves por camión⌉ + 1; × m²/bahía",
           [bahias[i] * v("m2_bahia_recepcion", i) for i in range(3)],
-          "PROXY" if apc is None else "ESTIMACION", "[ESTIMACIÓN] con [SUPUESTO]", "SUP-12C-02; DPV-084")
+          "PROXY" if apc is None else "ESTIMACION", "[ESTIMACIÓN] con [SUPUESTO]", "SUP-108; DPV-084")
 
     sep = [v("factor_separacion_dos_lineas", i) if L == 2 else 1.0 for i in range(3)]
     for aid, nombre, zona, extra in (
@@ -542,7 +542,7 @@ def calcular(entradas=None, _con_reserva=True):
         vals, est, cl = proxy_equipos(aid, ritmo_linea, extra=extra, lineas=L)
         vals = [None if x is None else x * sep[i] for i, x in enumerate(vals)]
         R.add(aid, nombre, "proceso", zona, "k × (ritmo por línea/1.000)^β × líneas (proxy) o huella × envolvente",
-              vals, est, cl, "SUP-12C-01; SUP-12C-03; DPV-12C-01; DPV-090")
+              vals, est, cl, "SUP-107; SUP-109; DPV-137; DPV-090")
 
     # Enfriamiento (residencias de 09A)
     res = mc.RESIDENCIA_MIN
@@ -556,7 +556,7 @@ def calcular(entradas=None, _con_reserva=True):
         est, cl = "FOOTPRINT", "[ESTIMACIÓN] huella × envolvente"
     elif estricto:
         vals, est, cl = [None] * 3, "PENDIENTE", "[PENDIENTE DE VALIDACIÓN]"
-        R.alerta("FOOTPRINT_DESCONOCIDO", "huellas de equipos desconocidas (DPV-12C-01): las áreas de equipos usan "
+        R.alerta("FOOTPRINT_DESCONOCIDO", "huellas de equipos desconocidas (DPV-137): las áreas de equipos usan "
                                           "un PROXY de intensidad sin fuente")
     else:
         vals = []
@@ -568,11 +568,11 @@ def calcular(entradas=None, _con_reserva=True):
             vals.append(max(v("min_enfriamiento", i), x * sep[i]))
         est, cl = "ESTIMACION", "[ESTIMACIÓN] carcasas simultáneas (09A) × m²/carcasa [SUPUESTO]"
     R.add("enfriamiento", "Enfriamiento (inmersión, aire o mixto) y escurrido", "proceso", "LIMPIA",
-          "carcasas simultáneas = ritmo × residencia (09A) × m²/carcasa", vals, est, cl, "SUP-12C-04; DEC-026")
+          "carcasas simultáneas = ritmo × residencia (09A) × m²/carcasa", vals, est, cl, "SUP-110; DEC-026")
 
     vals, est, cl = proxy_equipos("clasificacion", ritmo)
     R.add("clasificacion", "Clasificación por peso y calidad", "proceso", "LIMPIA", "k × (ritmo/1.000)^β", vals,
-          est, cl, "SUP-12C-01")
+          est, cl, "SUP-107")
 
     for aid, nombre, kg_key, req in (("trozado", "Trozado (incluye sala mínima en config. A)", "a_trozado", "ABC"),
                                      ("deshuese", "Deshuese, fileteado y trimming", "a_deshuese", "C"),
@@ -584,23 +584,23 @@ def calcular(entradas=None, _con_reserva=True):
             continue
         vals, est, cl = proxy_equipos(aid, kg_h, extra=fa if aid != "cms" else 1.0)
         R.add(aid, nombre, "proceso", "LIMPIA", "k × (kg/h que entran a la sala/1.000)^β (kg/h de 09A)", vals, est,
-              cl, "SUP-12C-01; DPV-12C-01")
+              cl, "SUP-107; DPV-137")
 
     vals, est, cl = proxy_equipos("coproductos", (kgh["garras_a_y_segunda"] + kgh["menudencias_y_cuello"]) * ritmo)
     R.add("coproductos", "Coproductos comestibles: garras y menudencias", "proceso", "LIMPIA",
-          "k × (kg/h garras + menudencias/1.000)^β", vals, est, cl, "SUP-12C-01; DEC-031")
+          "k × (kg/h garras + menudencias/1.000)^β", vals, est, cl, "SUP-107; DEC-031")
     vals, est, cl = proxy_equipos("empaque", kgh["comestible_a_empaque"] * ritmo, extra=fa)
     R.add("empaque", "Envasado primario, control, encajonado y paletizado", "proceso", "LIMPIA",
-          "k × (kg/h comestible/1.000)^β", vals, est, cl, "SUP-12C-01")
+          "k × (kg/h comestible/1.000)^β", vals, est, cl, "SUP-107")
     vals, est, cl = proxy_equipos("lavado_cajones", ritmo)
     R.add("lavado_cajones", "Lavado de cajones/módulos de aves vivas", "proceso", "SUCIA", "k × (ritmo/1.000)^β",
-          vals, est, cl, "SUP-12C-01")
+          vals, est, cl, "SUP-107")
 
     sub_proc = [R.total(("proceso",), n) for n in NIVELES]
     R.add("circulacion_proceso", "Circulación interna de proceso, esclusas y barreras sanitarias", "proceso",
           "TRANSVERSAL", "fracción de las salas de proceso",
           [None if s is None else s * v("f_circulacion_proceso", i) for i, s in enumerate(sub_proc)],
-          "ESTIMACION" if None not in sub_proc else "PENDIENTE", "[SUPUESTO]", "SUP-12C-05")
+          "ESTIMACION" if None not in sub_proc else "PENDIENTE", "[SUPUESTO]", "SUP-111")
 
     # ================================ FRÍO ==============================================
     com_t = [U[n]["comestible_t_dia"] for n in NIVELES]
@@ -615,14 +615,14 @@ def calcular(entradas=None, _con_reserva=True):
             if st_c[i] > 0 else 0.0 for i in range(3)]
     R.add("camaras_refrigeradas", "Cámaras de producto refrigerado", "frio", "FRIA",
           "stock refrigerado (09C) × pico ÷ densidad de estiba", camr, "ESTIMACION" if st_r[1] > 0 else "NO_APLICA",
-          "[ESTIMACIÓN] t de 09C; densidad [PVDP]/[SUPUESTO]", "SUP-055; SUP-056; SUP-12C-06; FTE-12C-005")
+          "[ESTIMACIÓN] t de 09C; densidad [PVDP]/[SUPUESTO]", "SUP-055; SUP-056; SUP-112; FTE-293")
     R.add("camaras_congeladas", "Cámaras de producto congelado (incluye lotes de exportación)", "frio", "FRIA",
           "stock congelado (09C) × pico ÷ densidad de estiba", camc, "ESTIMACION" if st_c[1] > 0 else "NO_APLICA",
-          "[ESTIMACIÓN] t de 09C; densidad [PVDP]", "SUP-055; SUP-056; SUP-12C-06; FTE-12C-004")
+          "[ESTIMACIÓN] t de 09C; densidad [PVDP]", "SUP-055; SUP-056; SUP-112; FTE-292")
     ftec = P["factor_tecnologia_congelado"][e["tecnologia_congelado"]]
     if not e["congelado_propio"]:
         R.add("tunel_congelado", "Congelado (túnel/espiral/placas)", "frio", "FRIA", "tercerizado", [0.0] * 3,
-              "NO_APLICA", "[NO APLICA]", "DEC-12C-03", "congelado de terceros (decisión del usuario)")
+              "NO_APLICA", "[NO APLICA]", "DEC-064", "congelado de terceros (decisión del usuario)")
         R.alerta("CONGELADO_TERCERIZADO", "congelado tercerizado: no se reserva túnel; prever espacio si se internaliza")
     elif cg[1] <= 0:
         R.add("tunel_congelado", "Congelado (túnel/espiral/placas)", "frio", "FRIA", "sin congelado en el perfil",
@@ -633,19 +633,19 @@ def calcular(entradas=None, _con_reserva=True):
             vals, est = [fp * v("factor_envolvente_footprint", i) for i in range(3)], "FOOTPRINT"
         elif estricto:
             vals, est = [None] * 3, "PENDIENTE"
-            R.alerta("FOOTPRINT_DESCONOCIDO", "huellas de equipos desconocidas (DPV-12C-01): las áreas de equipos "
+            R.alerta("FOOTPRINT_DESCONOCIDO", "huellas de equipos desconocidas (DPV-137): las áreas de equipos "
                                               "usan un PROXY de intensidad sin fuente")
         else:
             vals = [max(v("min_tunel", i), cg[i] * v("m2_tunel_por_t_dia", i) * ftec) for i in range(3)]
             est = "PROXY"
-            R.alerta("FOOTPRINT_DESCONOCIDO", "huellas de equipos desconocidas (DPV-12C-01): las áreas de equipos "
+            R.alerta("FOOTPRINT_DESCONOCIDO", "huellas de equipos desconocidas (DPV-137): las áreas de equipos "
                                               "usan un PROXY de intensidad sin fuente")
         R.add("tunel_congelado", "Congelado (túnel/espiral/placas)", "frio", "FRIA",
               "capacidad de congelación t/día (09C) × m²/(t/día)", vals, est, "[SUPUESTO] proxy",
-              "SUP-12C-06; DPV-12C-01; FTE-215")
+              "SUP-112; DPV-137; FTE-215")
     R.add("antecamaras_preparacion", "Antecámaras, pasillo frío y preparación de pedidos", "frio", "FRIA",
           "fracción de cámaras", [(camr[i] + camc[i]) * v("f_antecamara", i) for i in range(3)], "ESTIMACION",
-          "[SUPUESTO]", "SUP-12C-06")
+          "[SUPUESTO]", "SUP-112")
     tpc = e["t_por_camion_despacho"]
     if tpc is None:
         R.alerta("T_POR_CAMION", "t por camión de despacho desconocidas (DPV-084, DPV-036): se usa PROXY 5–12 t")
@@ -657,17 +657,17 @@ def calcular(entradas=None, _con_reserva=True):
     R.add("expedicion_docks", "Expedición: andenes refrigerados con sello", "frio", "DESPACHO",
           "docks = ⌈t/día × pico ÷ (t por camión × cargas por dock)⌉ × m²/dock",
           [docks[i] * v("m2_dock_interior", i) for i in range(3)], "PROXY" if tpc is None else "ESTIMACION",
-          "[ESTIMACIÓN] con [SUPUESTO]", "SUP-12C-07; DPV-036; DPV-084")
+          "[ESTIMACIÓN] con [SUPUESTO]", "SUP-113; DPV-036; DPV-084")
     _, kfull = kg_config(e["config"])
     sp_t = kfull["c_perecedero_sin_plumas"] * E / 1000
     R.add("camara_subproductos", "Cámara de subproductos perecederos (separada del producto)", "frio", "SUBPRODUCTOS",
           "t/día de C perecederos sin plumas × días ÷ densidad",
           [max(v("min_camara_subproductos", i), sp_t * v("dias_subproductos_refrigerados", i) /
                v("densidad_subproductos_t_m2", i)) for i in range(3)], "ESTIMACION", "[SUPUESTO]",
-          "SUP-056; SUP-12C-08; DEC-027")
+          "SUP-056; SUP-114; DEC-027")
     R.add("camara_decomisos", "Sala/cámara de decomisos bajo control oficial", "frio", "SUBPRODUCTOS",
           "superficie mínima", [v("m2_decomisos", i) for i in range(3)], "ESTIMACION", "[SUPUESTO]",
-          "SUP-12C-08; DPV-090")
+          "SUP-114; DPV-090")
 
     # ================================ SERVICIOS =========================================
     sol_t = kfull["solidos_a_retirar"] * E / 1000
@@ -679,13 +679,13 @@ def calcular(entradas=None, _con_reserva=True):
         est = "ESTIMACION"
     R.add("sala_subproductos", "Subproductos no comestibles: sangre, plumas, vísceras, cabezas (tanques, tolvas, "
           "contenedores, báscula)", "servicios", "SUBPRODUCTOS", "t/día de sólidos a retirar (09A) × m²/(t/día)",
-          vals, est, "[SUPUESTO]", "SUP-12C-08; DEC-027; DEC-044")
+          vals, est, "[SUPUESTO]", "SUP-114; DEC-027; DEC-044")
     k, mn = K["residuos_carton"]
     R.add("residuos_carton", "Residuos, cartón y compactación", "servicios", "SUBPRODUCTOS", "k × (ritmo/1.000)^β",
-          [max(mn["v"][i], _pot(k["v"][i], ritmo)) for i in range(3)], "ESTIMACION", "[SUPUESTO]", "SUP-12C-09")
+          [max(mn["v"][i], _pot(k["v"][i], ritmo)) for i in range(3)], "ESTIMACION", "[SUPUESTO]", "SUP-115")
     envases = [max(v("min_envases", i), com_t[i] * v("m2_envases_por_t_dia", i)) for i in range(3)]
     R.add("deposito_envases", "Depósito de envases, cartón e insumos secos (fuera de salas de proceso)", "servicios",
-          "LIMPIA_APOYO", "t/día de comestible × m²/(t/día)", envases, "ESTIMACION", "[SUPUESTO]", "SUP-12C-05")
+          "LIMPIA_APOYO", "t/día de comestible × m²/(t/día)", envases, "ESTIMACION", "[SUPUESTO]", "SUP-111")
     frio_camaras = [camr[i] + camc[i] + (R.areas["tunel_congelado"]["valores"][NIVELES[i]] or 0) for i in range(3)]
     fp = (e["footprints"] or {}).get("sala_maquinas_frio")
     if fp is not None:
@@ -698,10 +698,10 @@ def calcular(entradas=None, _con_reserva=True):
         R.alerta("CARGA_FRIGORIFICA_PENDIENTE", "sala de máquinas de frío por proxy: la carga frigorífica total sigue "
                                                 "PENDIENTE en 09C (DPV-109)")
     R.add("sala_maquinas_frio", "Sala de máquinas de frío (compresores, condensadores)", "servicios", "UTILITIES",
-          "fracción de m² de frío (proxy)", vals, est, "[SUPUESTO] proxy", "SUP-12C-09; DPV-109; DEC-046")
-    for aid, nombre, ref in (("caldera_agua_caliente", "Caldera / agua caliente / vapor", "SUP-12C-09; DEC-045"),
-                             ("aire_comprimido", "Compresores de aire comprimido", "SUP-12C-09"),
-                             ("generador", "Grupo electrógeno de respaldo", "SUP-12C-09; DEC-047")):
+          "fracción de m² de frío (proxy)", vals, est, "[SUPUESTO] proxy", "SUP-115; DPV-109; DEC-046")
+    for aid, nombre, ref in (("caldera_agua_caliente", "Caldera / agua caliente / vapor", "SUP-115; DEC-045"),
+                             ("aire_comprimido", "Compresores de aire comprimido", "SUP-115"),
+                             ("generador", "Grupo electrógeno de respaldo", "SUP-115; DEC-047")):
         vals, est, cl = proxy_equipos(aid, ritmo)
         R.add(aid, nombre, "servicios", "UTILITIES", "k × (ritmo/1.000)^β (proxy) o huella", vals, est, cl, ref)
     R.alerta("GENERADOR_PENDIENTE", "grupo electrógeno PENDIENTE en 09C (lista de cargas críticas): su área es proxy")
@@ -709,31 +709,31 @@ def calcular(entradas=None, _con_reserva=True):
     R.add("sala_electrica", "Sala eléctrica, tableros y transformador", "servicios", "UTILITIES",
           "k × (ritmo/1.000)^β (potencia pico PENDIENTE en 09C)",
           [max(mn["v"][i], _pot(k["v"][i], ritmo)) for i in range(3)], "PROXY", "[SUPUESTO] proxy",
-          "SUP-12C-09; DPV-095")
+          "SUP-115; DPV-095")
     agua = [U[n]["agua_utilizada_m3_dia"] for n in NIVELES]
     R.add("tratamiento_agua", "Tratamiento de agua potable (cloración, filtros, bombeo)", "servicios", "UTILITIES",
           "m³/día (09C) × m²/(m³/día)", [max(v("min_tratamiento_agua", i), agua[i] *
                                              v("m2_tratamiento_agua_por_m3_dia", i)) for i in range(3)],
-          "ESTIMACION", "[SUPUESTO]", "SUP-12C-09; DPV-053")
+          "ESTIMACION", "[SUPUESTO]", "SUP-115; DPV-053")
     for aid, nombre, zona in (("mantenimiento_taller", "Mantenimiento y taller", "UTILITIES"),
                               ("repuestos", "Pañol de repuestos", "UTILITIES"),
                               ("quimicos", "Depósito de químicos (bajo llave)", "UTILITIES")):
         k, mn = K[aid]
         R.add(aid, nombre, "servicios", zona, "k × (ritmo/1.000)^β",
-              [max(mn["v"][i], _pot(k["v"][i], ritmo)) for i in range(3)], "ESTIMACION", "[SUPUESTO]", "SUP-12C-09")
+              [max(mn["v"][i], _pot(k["v"][i], ritmo)) for i in range(3)], "ESTIMACION", "[SUPUESTO]", "SUP-115")
     k, mn = K["laboratorio_calidad"]
     if e["laboratorio_propio"]:
         R.add("laboratorio_calidad", "Laboratorio de autocontrol / calidad", "servicios", "ADMINISTRATIVA",
               "k × (ritmo/1.000)^β", [max(mn["v"][i], _pot(k["v"][i], ritmo)) for i in range(3)], "ESTIMACION",
-              "[SUPUESTO]", "SUP-12C-09; DEC-12C-04")
+              "[SUPUESTO]", "SUP-115; DEC-065")
     else:
         R.add("laboratorio_calidad", "Sala de toma de muestras (laboratorio tercerizado)", "servicios", "ADMINISTRATIVA",
-              "superficie mínima", [mn["v"][i] for i in range(3)], "ESTIMACION", "[SUPUESTO]", "DEC-12C-04")
+              "superficie mínima", [mn["v"][i] for i in range(3)], "ESTIMACION", "[SUPUESTO]", "DEC-065")
 
     # ================================ PERSONAL / ADMIN ===================================
     dot_in = e["dotacion_turno"]
     if dot_in is None:
-        R.alerta("DOTACION_PROXY", "dotación por turno desconocida (18_recursos_humanos no iniciado; DPV-12C-02): "
+        R.alerta("DOTACION_PROXY", "dotación por turno desconocida (18_recursos_humanos no iniciado; DPV-138): "
                                    "se usa PROXY lineal en el ritmo")
     fda = P["factor_dotacion_automatizacion"][e["automatizacion"]]
     fdc = P["factor_dotacion_config"][e["config"]]
@@ -758,56 +758,56 @@ def calcular(entradas=None, _con_reserva=True):
         est_p = "PROXY" if dot_in is None else "ESTIMACION"
     R.add("vestuarios", "Vestuarios y sanitarios separados por zona (sucia / limpia) y por sexo", "personal_admin",
           "PERSONAL", "personas por turno × m²/persona (+ lockers del 2.º turno)", vest, est_p, "[SUPUESTO]",
-          "SUP-12C-10; DPV-12C-02; DPV-090")
+          "SUP-116; DPV-138; DPV-090")
     R.add("comedor", "Comedor y office", "personal_admin", "PERSONAL", "personas simultáneas × m²/comensal",
-          comedor, est_p, "[SUPUESTO]", "SUP-12C-10")
+          comedor, est_p, "[SUPUESTO]", "SUP-116")
     R.add("lavanderia", "Lavandería / ropería de indumentaria por color de zona", "servicios", "PERSONAL",
-          "personas × m²/persona", lav, est_p, "[SUPUESTO]", "SUP-12C-09")
+          "personas × m²/persona", lav, est_p, "[SUPUESTO]", "SUP-115")
     R.add("oficinas", "Oficinas de administración", "personal_admin", "ADMINISTRATIVA", "puestos × m²/puesto",
           [max(v("min_oficinas", i), v("admin_puestos", i) * v("m2_puesto_oficina", i) * (1 + 0.01 * ritmo / 100))
-           for i in range(3)], "ESTIMACION", "[SUPUESTO]", "SUP-12C-10")
+           for i in range(3)], "ESTIMACION", "[SUPUESTO]", "SUP-116")
     for aid, nombre, zona, ref in (
             ("oficina_senasa", "Oficina del servicio de inspección oficial (SENASA) con sanitario propio",
-             "ADMINISTRATIVA", "DPV-090; DPV-12C-04"),
-            ("enfermeria_capacitacion", "Enfermería, sala de capacitación", "PERSONAL", "SUP-12C-10")):
+             "ADMINISTRATIVA", "DPV-090; DPV-140"),
+            ("enfermeria_capacitacion", "Enfermería, sala de capacitación", "PERSONAL", "SUP-116")):
         k, mn = K[aid]
         R.add(aid, nombre, "personal_admin", zona, "superficie base (crece con el ritmo)",
               [max(mn["v"][i], _pot(k["v"][i], ritmo, 0.5)) for i in range(3)], "ESTIMACION", "[SUPUESTO]", ref)
     R.add("porterias_seguridad", "Porterías y seguridad (accesos separados)", "personal_admin", "ADMINISTRATIVA",
           "porterías × m²", [e["porterias"] * v("m2_porteria", i) for i in range(3)], "ESTIMACION", "[SUPUESTO]",
-          "SUP-12C-10")
+          "SUP-116")
     sub_p = [R.total(("personal_admin",), n) for n in NIVELES]
     R.add("circulacion_personal", "Circulación de personal y filtros sanitarios", "personal_admin", "PERSONAL",
           "fracción de personal/admin", [None if s is None else s * v("f_circulacion_personal", i)
                                          for i, s in enumerate(sub_p)],
-          "ESTIMACION" if None not in sub_p else "PENDIENTE", "[SUPUESTO]", "SUP-12C-10")
+          "ESTIMACION" if None not in sub_p else "PENDIENTE", "[SUPUESTO]", "SUP-116")
 
     # ================================ EXTERIORES =========================================
     camiones_dia = [E / (apc if apc is not None else v("aves_por_camion_proxy", i)) for i in range(3)]
     R.ctx["camiones_aves_dia"] = camiones_dia
     R.add("playa_aves_vivas", "Playa de camiones de aves vivas (espera exterior y maniobra)", "exteriores", "SUCIA",
           "camiones simultáneos (= bahías) × m²/camión", [bahias[i] * v("m2_camion_playa", i) for i in range(3)],
-          "PROXY" if apc is None else "ESTIMACION", "[SUPUESTO]", "SUP-12C-11; DPV-084")
+          "PROXY" if apc is None else "ESTIMACION", "[SUPUESTO]", "SUP-117; DPV-084")
     R.add("lavado_camiones", "Lavado y desinfección de camiones de vivo", "exteriores", "SUCIA",
           "plataformas = ⌈camiones/día ÷ camiones por plataforma⌉",
           [max(1, math.ceil(camiones_dia[i] / v("camiones_por_plataforma_lavado", i))) * v("m2_lavado_camion", i)
-           for i in range(3)], "ESTIMACION", "[SUPUESTO]", "SUP-12C-11")
+           for i in range(3)], "ESTIMACION", "[SUPUESTO]", "SUP-117")
     R.add("playa_despacho", "Playa de maniobra de despacho (frente a docks)", "exteriores", "DESPACHO",
           "docks × m² de maniobra", [docks[i] * v("m2_playa_por_dock", i) for i in range(3)],
-          "PROXY" if tpc is None else "ESTIMACION", "[SUPUESTO]", "SUP-12C-07; DPV-036")
+          "PROXY" if tpc is None else "ESTIMACION", "[SUPUESTO]", "SUP-113; DPV-036")
     R.add("playa_subproductos", "Playa de contenedores y retiro de subproductos", "exteriores", "SUBPRODUCTOS",
           "base + t/día × m²", [v("m2_playa_subproductos_base", i) + sol_t * v("m2_playa_subproductos_por_t_dia", i)
-                                for i in range(3)], "ESTIMACION", "[SUPUESTO]", "SUP-12C-11")
+                                for i in range(3)], "ESTIMACION", "[SUPUESTO]", "SUP-117")
     if None in dot:
         estac = [None] * 3
     else:
         estac = [(dot[i] * (1 + 0.5 * (turnos - 1)) * v("fraccion_personal_motorizado", i) + v("plazas_visitas", i))
                  * v("m2_plaza_auto", i) for i in range(3)]
     R.add("estacionamiento", "Estacionamiento de personal y visitas", "exteriores", "PERSONAL",
-          "personas × fracción motorizada × m²/plaza", estac, est_p, "[SUPUESTO]", "SUP-12C-11; DPV-12C-03")
+          "personas × fracción motorizada × m²/plaza", estac, est_p, "[SUPUESTO]", "SUP-117; DPV-139")
     tanques = [agua[i] * v("dias_reserva_agua", i) / v("altura_tanque_m", i) * 1.3 for i in range(3)]
     R.add("tanques_agua", "Tanques de reserva de agua (incluye incendio a definir)", "exteriores", "UTILITIES",
-          "m³/día × días ÷ altura × 1,3", tanques, "ESTIMACION", "[SUPUESTO]", "SUP-12C-09; DPV-053; DPV-106")
+          "m³/día × días ÷ altura × 1,3", tanques, "ESTIMACION", "[SUPUESTO]", "SUP-115; DPV-053; DPV-106")
     huella_parcial = []
     for n in NIVELES:
         cub = R.total(CUBIERTAS, n)
@@ -815,7 +815,7 @@ def calcular(entradas=None, _con_reserva=True):
     R.add("circulacion_pesada", "Circulación pesada interna (vivo / producto / subproductos separados)", "exteriores",
           "EXTERIOR", "fracción de la superficie cubierta",
           [None if c is None else c * v("f_circulacion_pesada", i) for i, c in enumerate(huella_parcial)],
-          "ESTIMACION" if None not in huella_parcial else "PENDIENTE", "[SUPUESTO]", "SUP-12C-11")
+          "ESTIMACION" if None not in huella_parcial else "PENDIENTE", "[SUPUESTO]", "SUP-117")
 
     # ================================ EFLUENTES =========================================
     tec = e["tecnologia_efluentes"]
@@ -854,12 +854,12 @@ def areas_efluentes(U, tec):
     dqo = [U[n]["dqo_kg_dia"] for n in NIVELES]
     out["efl_pretratamiento"] = ("Pretratamiento: rejas, tamiz, desengrasador, bombeo",
                                  [max(v("min_pretratamiento", i), qh[i] * v("m2_pretrat_por_m3_h", i))
-                                  for i in range(3)], "ESTIMACION", "SUP-12C-12")
+                                  for i in range(3)], "ESTIMACION", "SUP-118")
     out["efl_ecualizacion"] = ("Ecualización", [q[i] * v("fraccion_ecualizacion", i) / v("prof_ecualizacion_m", i) * 1.3
-                                                for i in range(3)], "ESTIMACION", "SUP-12C-12")
+                                                for i in range(3)], "ESTIMACION", "SUP-118")
     out["efl_daf"] = ("DAF (flotación por aire disuelto) y química",
                       [max(v("min_daf", i), qh[i] / v("carga_superficial_daf_m3_m2_h", i) * v("factor_huella_daf", i))
-                       for i in range(3)], "ESTIMACION", "SUP-12C-12; FTE-12C-006")
+                       for i in range(3)], "ESTIMACION", "SUP-118; FTE-294")
     dbo_in = [dbo[i] * (1 - v("remocion_dbo_daf", i)) for i in range(3)]
     dqo_in = [dqo[i] * (1 - v("remocion_dqo_daf", i)) for i in range(3)]
 
@@ -884,14 +884,14 @@ def areas_efluentes(U, tec):
     if t_ref != "cloaca":
         bio = [max(v("min_biologico", i), bio[i]) for i in range(3)]
     out["efl_biologico"] = (f"Tratamiento biológico ({t_ref})", bio, est,
-                            "SUP-12C-12; FTE-12C-006; FTE-263; DEC-043")
+                            "SUP-118; FTE-294; FTE-263; DEC-043")
     lod = [0.0] * 3 if t_ref == "cloaca" else [max(v("min_lodos", i), dbo_in[i] * v("m2_lodos_por_kg_dbo_d", i))
                                                for i in range(3)]
     out["efl_lodos"] = ("Manejo de lodos y flotados (espesado, deshidratación, acopio)", lod,
-                        "NO_APLICA" if t_ref == "cloaca" else "PROXY", "SUP-12C-12; DPV-114; DEC-027")
+                        "NO_APLICA" if t_ref == "cloaca" else "PROXY", "SUP-118; DPV-114; DEC-027")
     s = [sum(x[1][i] for x in out.values()) for i in range(3)]
     out["efl_circulacion"] = ("Circulación, laboratorio y operación de efluentes",
-                              [s[i] * v("f_circulacion_efluentes", i) for i in range(3)], "ESTIMACION", "SUP-12C-12")
+                              [s[i] * v("f_circulacion_efluentes", i) for i in range(3)], "ESTIMACION", "SUP-118")
     return out
 
 
@@ -928,7 +928,7 @@ def reserva(R, tot):
             res[n] = {c: 0.0 for c in CATEGORIAS}
     else:
         R.alerta("OBJETIVO_EXPANSION_NO_DEFINIDO", "sin escala objetivo: la reserva es una FRACCIÓN [SUPUESTO] de lo "
-                                                   "operativo (SUP-12C-13)")
+                                                   "operativo (SUP-119)")
         for i, n in enumerate(NIVELES):
             op = tot[n]["operativo"]
             res[n] = {"sin_objetivo": None if op is None else op * v("fraccion_reserva_sin_objetivo", i)}
@@ -946,7 +946,7 @@ def reserva(R, tot):
         tot[n]["reserva"] = res[n]["total"]
     R.add("reserva_expansion", "Reserva de terreno para expansión (incluye rendering futuro si se pide)", "reserva",
           "RESERVA", "Σ max(0, área objetivo − área actual) + rendering", [res[n]["total"] for n in NIVELES],
-          "ESTIMACION" if obj is not None else "PROXY", "[ESTIMACIÓN] / [SUPUESTO]", "SUP-12C-13; DEC-035",
+          "ESTIMACION" if obj is not None else "PROXY", "[ESTIMACIÓN] / [SUPUESTO]", "SUP-119; DEC-035",
           cubierta=False)
 
 
@@ -986,13 +986,13 @@ def terreno(R):
 # Benchmarks argentinos de superficie cubierta [PVDP]: extractos de prensa / INTI, nunca leídos en original.
 BENCHMARKS = [
     {"planta": "Frigorífico MARK (Buenos Aires)", "aves_dia": (70000, 80000), "m2_cubiertos": (12000, 15000),
-     "fuente": "FTE-12C-001"},
+     "fuente": "FTE-224"},
     {"planta": "Avex (Río Cuarto, Córdoba)", "aves_dia": (120000, 120000), "m2_cubiertos": (13000, 13000),
-     "fuente": "FTE-12C-002"},
+     "fuente": "FTE-290"},
     {"planta": "Sala de faena municipal China Muerta (Neuquén)", "aves_dia": (1000, 1000), "m2_cubiertos": (181, 181),
-     "fuente": "FTE-12C-003"},
+     "fuente": "FTE-291"},
     {"planta": "Sala de faena municipal Ayacucho (Buenos Aires, en obra)", "aves_dia": (200, 300),
-     "m2_cubiertos": (290, 290), "fuente": "FTE-12C-009"},
+     "m2_cubiertos": (290, 290), "fuente": "FTE-296"},
 ]
 
 
@@ -1029,9 +1029,9 @@ def salida_interfaz(R):
                                   "estado": x["estado"], "origen": x["origen"], **x["valores"]}
                               for a, x in R.areas.items()},
         "supuestos_terreno": {"retiro_m": R.e["retiro_m"] if R.e["retiro_m"] is not None else P["retiro_m"]["v"],
-                              "retiro_origen": "INPUT" if R.e["retiro_m"] is not None else "SUPUESTO (DPV-12C-05)",
+                              "retiro_origen": "INPUT" if R.e["retiro_m"] is not None else "SUPUESTO (DPV-141)",
                               "buffer_m": R.e["buffer_m"] if R.e["buffer_m"] is not None else P["buffer_proxy_m"]["v"],
-                              "buffer_origen": "INPUT" if R.e["buffer_m"] is not None else "PROXY (SUP-12C-15)",
+                              "buffer_origen": "INPUT" if R.e["buffer_m"] is not None else "PROXY (SUP-121)",
                               "fos": R.e["fos"], "nota": "terreno VARIABLE con retiro, buffer y FOS"},
         "efluentes_por_tecnologia": R.ctx["efluentes_por_tecnologia"],
         "alertas": [c for c, _ in R.alertas],
@@ -1079,10 +1079,10 @@ def filas_totales(bloque, esc, R):
         out.append(_fila(bloque, esc, R.e, k, k, "terreno", "", [None if R.terreno[n] is None else R.terreno[n][k]
                                                                 for n in NIVELES], u,
                          "fórmula de terreno; RETIRO Y BUFFER VARIABLES (" + _margen_txt(R) + ")", "ESTIMACION",
-                         "[ESTIMACIÓN] con [SUPUESTO]/[PROXY]", "SUP-12C-15; DPV-12C-05", ORIGEN_TERRENO))
+                         "[ESTIMACIÓN] con [SUPUESTO]/[PROXY]", "SUP-121; DPV-141", ORIGEN_TERRENO))
     out.append(_fila(bloque, esc, R.e, "m2_cubiertos_por_ave_dia", "Contraste con benchmarks [PVDP]", "contraste", "",
                      R.ctx["m2_cubiertos_por_ave_dia"], "m²/(ave/día)", "construido ÷ aves/día", "ESTIMACION",
-                     "[ESTIMACIÓN]", "FTE-12C-001; 002; 003; 009"))
+                     "[ESTIMACIÓN]", "FTE-224; 002; 003; 009"))
     for k, u in (("dotacion_turno", "personas"), ("bahias_recepcion", "bahías"), ("docks_expedicion", "docks")):
         out.append(_fila(bloque, esc, R.e, k, k, "driver", "", R.ctx[k], u, "driver del modelo",
                          "PROXY" if (k == "dotacion_turno" and R.e["dotacion_turno"] is None) else "ESTIMACION",

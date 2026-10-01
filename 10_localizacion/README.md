@@ -22,8 +22,8 @@
 | [`pesos_localizacion.csv`](pesos_localizacion.csv) | Perfiles A MERCADO, B PRODUCCIÓN, C EQUILIBRADO, D EXPORTADOR (ninguno es el correcto) |
 | [`modelo_localizacion.py`](modelo_localizacion.py) | Modelo reproducible (fórmulas, supuestos y unidades en su docstring) |
 | `resultados_localizacion.csv` | Salida generada por el modelo (no editar a mano) |
-| [`actualizaciones_gestion_12A.md`](actualizaciones_gestion_12A.md) | Registros provisionales SUP-12A, DPV-12A, DEC-12A a consolidar en `00_gestion_proyecto` |
-| [`fuentes_12A.csv`](fuentes_12A.csv) | Fuentes provisionales FTE-12A (identificadas, no consultadas) a consolidar en `25_fuentes` |
+| [`actualizaciones_gestion_12A.md`](actualizaciones_gestion_12A.md) | **Archivo histórico**: registros provisionales de la sesión 12A, ya integrados en `00_gestion_proyecto` (mapa de IDs en [`../00_gestion_proyecto/reconciliacion_sesiones_12.md`](../00_gestion_proyecto/reconciliacion_sesiones_12.md)) |
+| [`fuentes_12A.csv`](fuentes_12A.csv) | **Histórico, no activo** desde la reconciliación de las sesiones 12 (2026-10-01): las 17 fuentes están en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) (FTE-269 a FTE-285) |
 
 ## Uso del modelo
 

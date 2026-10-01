@@ -16,13 +16,13 @@
 | Aves faenadas/día operativo | 2.500 / 5.000 / 10.000 / 20.000 (escalas **aprobadas** de `23`, leídas por el modelo) | `[SUPUESTO]` SUP-025/052; no es escala elegida |
 | Aves cargadas = faenadas / (1 − DOA) | DOA 0,3 % (barrido 0,2–1,63 %) | SUP-026; FTE-156 `[PVDP]` |
 | Peso vivo | 2,9 kg **en planta** (ancla del balance, SUP-035/058); el peso en granja se recalcula si se activa la merma de viaje | `[SUPUESTO]` |
-| **Aves por camión** | **Capacidad de ESCENARIO**, editable: barrido 4.000 / 5.500 / 7.000 (SUP-033, sin fuente). **Ninguna está validada ni cotizada.** Si no se elige una, el modelo devuelve los viajes como **PENDIENTE** | `[SUPUESTO]` SUP-12B-06; DPV-084 |
-| Reducción de carga en verano | 15 % (barrido 10–25 %): 03 indica 1–2 aves menos por cajón | `[SUPUESTO]` SUP-12B-07 |
+| **Aves por camión** | **Capacidad de ESCENARIO**, editable: barrido 4.000 / 5.500 / 7.000 (SUP-033, sin fuente). **Ninguna está validada ni cotizada.** Si no se elige una, el modelo devuelve los viajes como **PENDIENTE** | `[SUPUESTO]` SUP-096; DPV-084 |
+| Reducción de carga en verano | 15 % (barrido 10–25 %): 03 indica 1–2 aves menos por cajón | `[SUPUESTO]` SUP-097 |
 | Velocidad media cargado | 60 km/h (03: 60–70) | `[ESTIMACIÓN]` sin fuente |
-| Tramos de la ventana prefaena y del ciclo | §3 | `[SUPUESTO]` SUP-12B-05, sin fuente (DPV-12B-01) |
-| Horas útiles por camión-día | 12 h (no descuenta mantenimiento: DPV-12B-17) | `[SUPUESTO]` SUP-12B-08 |
+| Tramos de la ventana prefaena y del ciclo | §3 | `[SUPUESTO]` SUP-095, sin fuente (DPV-127) |
+| Horas útiles por camión-día | 12 h (no descuenta mantenimiento: DPV-136) | `[SUPUESTO]` SUP-098 |
 
-**Capacidad de escenario ≠ capacidad validada o cotizada.** Las cifras de viajes de este documento indican siempre la capacidad que las produce (columna `capacidad_vehiculo` del CSV, con `tipo_capacidad` = ESCENARIO o PENDIENTE). **No son requerimientos de flota.** Un extracto de foros (FTE-12B-004 `[PVDP · débil]`) indica 8–12 pollos por jaula según peso; no permite derivar aves por camión.
+**Capacidad de escenario ≠ capacidad validada o cotizada.** Las cifras de viajes de este documento indican siempre la capacidad que las produce (columna `capacidad_vehiculo` del CSV, con `tipo_capacidad` = ESCENARIO o PENDIENTE). **No son requerimientos de flota.** Un extracto de foros (FTE-289 `[PVDP · débil]`) indica 8–12 pollos por jaula según peso; no permite derivar aves por camión.
 
 ## 2. Aves, toneladas y viajes por escala (radio 100 km, factor de ruta 1,3)
 
@@ -81,9 +81,9 @@ Cualquier hora ganada en captura, espera o recepción **amplía el tiempo de tra
 
 | Concepto | Definición | Valor en el modelo |
 |---|---|---|
-| **Radio** (geográfico) | Distancia en línea recta de la granja más lejana a la planta | Barrido 25 / 50 / 100 / 150 / 200 / 300 km (**sensibilidad**, SUP-12B-01) |
-| Distancia geográfica **media** | Con granjas repartidas uniformemente en un círculo, la media es 2/3 del radio (SUP-12B-03) | 2/3 × R |
-| **Factor de ruta** | km por ruta / km en línea recta | 1,2 / 1,3 / 1,4 (base 1,3). Estudios internacionales: ~1,2–1,42 (FTE-12B-001 `[PVDP]`); **sin medición argentina** (DPV-12B-07) |
+| **Radio** (geográfico) | Distancia en línea recta de la granja más lejana a la planta | Barrido 25 / 50 / 100 / 150 / 200 / 300 km (**sensibilidad**, SUP-091) |
+| Distancia geográfica **media** | Con granjas repartidas uniformemente en un círculo, la media es 2/3 del radio (SUP-093) | 2/3 × R |
+| **Factor de ruta** | km por ruta / km en línea recta | 1,2 / 1,3 / 1,4 (base 1,3). Estudios internacionales: ~1,2–1,42 (FTE-286 `[PVDP]`); **sin medición argentina** (DPV-116) |
 | Distancia **por ruta** | Geográfica × factor de ruta (≥ geográfica; test L18) | — |
 
 ## 5. Escenarios de radio (10.000 aves/día, factor 1,3; camión de escenario de 5.500 aves)
@@ -103,9 +103,9 @@ La alerta indica que, **con esta parametrización**, las granjas del borde de un
 
 | Dimensión | Efecto de un radio mayor | Cuantificable hoy | Qué falta |
 |---|---|---|---|
-| **Tiempo** | +1 h de viaje por cada ~60 km de ruta | Sí (velocidad supuesta) | Velocidades reales por camino (DPV-12B-07) |
+| **Tiempo** | +1 h de viaje por cada ~60 km de ruta | Sí (velocidad supuesta) | Velocidades reales por camino (DPV-116) |
 | **Bienestar** | Más ave·horas en tránsito (×12 de 25 a 300 km); exposición a calor | Ave·h (exposición, no daño) | Relación con lesiones y DOA en Argentina |
-| **Mortalidad (DOA)** | Puede aumentar con tiempo y calor, pero **no hay función validada DOA–distancia** | **No**: barrido independiente (§6) | DPV-12B-02 |
+| **Mortalidad (DOA)** | Puede aumentar con tiempo y calor, pero **no hay función validada DOA–distancia** | **No**: barrido independiente (§6) | DPV-054 |
 | **Bioseguridad** | Rutas más largas cruzan más zonas; más dispersión reduce el impacto de un brote en un sitio | No | Mapa de granjas y rutas (12A) |
 | **Costo** | km/día ×12 entre 25 y 300 km; camión-horas ×3 | Drivers físicos sí; costo **no** | Tarifas (DPV-054) |
 | **Utilización de camiones** | Ciclos más largos llenan más la jornada (39 % → 99 %) pero bajan los ciclos posibles por camión (3 → 1) | Sí | Horas útiles reales, mantenimiento |
@@ -179,7 +179,7 @@ La utilización semanal de **37–49 % (radio 100 km)** es un **resultado del es
 
 Granjas equivalentes = plazas de alojamiento de 03 v1.1 ÷ plazas por granja (dato real DPV-048). Cada granja entrega ~5,7 veces por año.
 
-**Incompatibilidad operativa POTENCIAL bajo el supuesto de que el lote se retire con la cadencia modelada:** si toda una granja de 30.000 aves se retirara a ritmo de 2.500 aves/día, tardaría ~11 días de faena, frente a la referencia de "1–2 noches" de 03 (`[ESTIMACIÓN]`). El modelo marca `alerta_cosecha_prolongada_potencial` cuando se supera esa referencia. **No se concluye que ambas escalas sean incompatibles**: hay que validar retiros parciales (raleo), el esquema all-in/all-out, el tamaño real de los lotes por galpón, la programación entre varias granjas y las restricciones sanitarias y productivas (DPV-12B-10, DEC-12B-06).
+**Incompatibilidad operativa POTENCIAL bajo el supuesto de que el lote se retire con la cadencia modelada:** si toda una granja de 30.000 aves se retirara a ritmo de 2.500 aves/día, tardaría ~11 días de faena, frente a la referencia de "1–2 noches" de 03 (`[ESTIMACIÓN]`). El modelo marca `alerta_cosecha_prolongada_potencial` cuando se supera esa referencia. **No se concluye que ambas escalas sean incompatibles**: hay que validar retiros parciales (raleo), el esquema all-in/all-out, el tamaño real de los lotes por galpón, la programación entre varias granjas y las restricciones sanitarias y productivas (DPV-133, DEC-060).
 
 ## 11. Bioseguridad y bienestar en la operación
 
@@ -189,4 +189,4 @@ Granjas equivalentes = plazas de alojamiento de 03 v1.1 ÷ plazas por granja (da
 
 ## 12. Qué debe validarse en campo
 
-DPV-054 (contratistas, aves/camión, radio real, DOA, lavado), DPV-058 (normativa de transporte), DPV-048 (productores), DPV-12B-01 (tiempos de cada tramo), DPV-12B-02 (DOA vs distancia y estación), DPV-12B-07 (velocidades y factor de ruta), DPV-12B-10 (lotes y cadencia de retiro), DPV-12B-17 (disponibilidad de flota y mantenimiento).
+DPV-054 (contratistas, aves/camión, radio real, DOA, lavado), DPV-058 (normativa de transporte), DPV-048 (productores), DPV-127 (tiempos de cada tramo), DPV-054 (DOA vs distancia y estación), DPV-116 (velocidades y factor de ruta), DPV-133 (lotes y cadencia de retiro), DPV-136 (disponibilidad de flota y mantenimiento).

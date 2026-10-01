@@ -45,7 +45,9 @@ El terreno es de lo **más barato de prever y más caro de corregir** ([`../23_p
 
 ## 4. Superficie: qué se puede decir hoy y qué no
 
-**No hay base suficiente para dar hectáreas** (`[PVDP]`, DPV-12A-09):
+> **Actualización (reconciliación de las sesiones 12, 2026-10-01):** existe un **rango conceptual preliminar de 12C**; la **superficie real de terreno sigue pendiente** de municipio, efluentes, footprints y estrategia de expansión. Rango de 12C (modelo `09_layout_obra_civil/modelo_superficies.py`, bajo / medio / alto, todo orden de magnitud y con 23 de 54 áreas en PROXY): terreno conceptual **0,8–5,3 / 0,9–6,5 / 1,2–8,7 / 1,7–12,8 ha** para 2.500 / 5.000 / 10.000 / 20.000 aves/día sin escala objetivo; **1,4 / 3,3 / 8,2 ha** si se supone reservada desde el inicio la superficie para 20.000 aves/día; con lagunas (medio, sin objetivo) 2,6 / 3,5 / 5,2 / 8,2 ha ([`../09_layout_obra_civil/conclusiones_layout.md`](../09_layout_obra_civil/conclusiones_layout.md) §5). En el escenario medio, retiros, buffers y franjas **supuestos** (SUP-121) representan ~50–68 % del terreno conceptual: el retiro real (DPV-141), el FOS, la zonificación, la tecnología de efluentes (DEC-043, DPV-144), las huellas de equipos (DPV-137) y la escala objetivo a reservar (DEC-063) pueden mover el resultado más que cualquier factor de proceso. El rango **no** es superficie a comprar ni criterio de descarte de terrenos; se compara con la superficie **disponible** del sitio (ficha de terreno) cuando esta exista (DPV-124, estado *En curso*). Detalle en [`../00_gestion_proyecto/reconciliacion_sesiones_12.md`](../00_gestion_proyecto/reconciliacion_sesiones_12.md) §5.
+
+**No hay base suficiente para dar hectáreas** (`[PVDP]`, DPV-124):
 
 - La superficie del edificio por escala la está estimando conceptualmente el módulo 12C en su propia rama; 12A **no la lee ni la modifica**, y la superficie del terreno queda **pendiente** aquí.
 - La superficie del tratamiento de efluentes depende de la tecnología (lagunas vs reactores, DEC-043), del tiempo de retención y de los límites de vuelco del sitio: puede ser la mayor superficie del predio o una fracción menor.
@@ -66,7 +68,7 @@ superficie del terreno = edificio de planta (12C, por escala y configuración)
 
 **Qué sí se puede decir en términos relativos** (sin hectáreas): entre 2.500 y 20.000 aves/día se multiplican por ~8 los camiones de aves vivas, el producto despachado, los subproductos y el caudal de efluentes de sensibilidad (flujos lineales con la escala en los modelos de `23` y `11`). El edificio y los servicios **no** necesariamente crecen ×8 (hay elementos fijos y economías de escala), pero las playas y el tratamiento por lagunas tienden a crecer con el volumen. Por eso **la tecnología de efluentes y la escala final esperada son las dos variables que más mueven la superficie necesaria**.
 
-**Escenarios de rango de superficie:** quedan **PENDIENTES** en 12A. En la **reconciliación 12A–12C** este estado genérico se reemplazará por: (a) el **rango conceptual de superficie de 12C** por escala y tecnología, y (b) las **restricciones reales municipales y del terreno** (retiros, factor de ocupación, zonificación, cota, forma). Para no inventar cifras, la ficha de terreno pide la superficie **disponible** (dato del sitio) y la decisión se toma comparándola con la necesaria cuando esta exista (DPV-12A-09).
+**Escenarios de rango de superficie:** quedan **PENDIENTES** en 12A. En la **reconciliación 12A–12C** este estado genérico se reemplazará por: (a) el **rango conceptual de superficie de 12C** por escala y tecnología, y (b) las **restricciones reales municipales y del terreno** (retiros, factor de ocupación, zonificación, cota, forma). Para no inventar cifras, la ficha de terreno pide la superficie **disponible** (dato del sitio) y la decisión se toma comparándola con la necesaria cuando esta exista (DPV-124).
 
 ## 5. Por qué un terreno barato puede ser caro
 

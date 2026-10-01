@@ -68,7 +68,7 @@ La **ocupación** es el KPI que mejor resume el problema de escala: con estas ca
 | Costo por kg entregado, por canal | USD de distribución del canal / kg entregados | DPV-042, fee de CD (DPV-039) |
 | Costo por parada | USD de la ruta / paradas | DPV-042 |
 | Costo por t·km | USD / t·km | Tarifas |
-| Costo del km sin carga comercial | km sin carga comercial × USD/km | Tarifas, consumo (DPV-12B-06) |
+| Costo del km sin carga comercial | km sin carga comercial × USD/km | Tarifas, consumo (DPV-131) |
 | Costo de la merma y del DOA | kg × precio del kg vivo | Precios (DPV-013) |
 | Capital de trabajo inmovilizado | t·día en stock × costo por t × días | Costos de producción (`20`) |
 | Costo de retiro de subproductos | USD por retiro o por t (positivo, cero o negativo) | DPV-065 |

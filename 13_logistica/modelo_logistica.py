@@ -71,8 +71,8 @@ Aves vivas (por día operativo de faena):
   viajes (entero)          = techo(aves cargadas / capacidad efectiva)    (L06)
   ocupación                = aves cargadas / (viajes × capacidad efectiva)  ≤ 100 % (L08)
   distancia geográfica media = radio × factor de distribución (2/3 = media de puntos uniformes
-                             en un disco; SUP-12B-03)
-  distancia por ruta       = distancia geográfica × factor de ruta (≥ 1; SUP-12B-02) (L18)
+                             en un disco; SUP-093)
+  distancia por ruta       = distancia geográfica × factor de ruta (≥ 1; SUP-092) (L18)
   km/día                   = viajes × (ida cargado + retorno sin carga comercial, con jaulas)  (L15, L23)
   tiempo de ciclo [h]      = ida + captura/carga + espera en granja + espera en planta + descarga
                              + regreso + lavado/desinfección                                   (L24)
@@ -152,7 +152,7 @@ class ErrorLogistica(Exception):
 
 
 # ---------------------------------------------------------------------------
-# 1. PARÁMETROS (importados cuando existen; propios con ID provisional SUP-12B-xx)
+# 1. PARÁMETROS (importados cuando existen; propios con ID SUP-### de la reconciliación 12: SUP-085, SUP-091 a SUP-106)
 # ---------------------------------------------------------------------------
 ESCALAS = list(me.ESCALAS)                          # leídas del modelo de escala aprobado
 CALENDARIOS = dict(me.CALENDARIOS)                  # {5: 250, 6: 300}
@@ -165,24 +165,24 @@ CONFIGS = tuple(me.CONFIG_VARIANTE)                 # A / B / C
 # Aves vivas
 AVES_CAMION = (4000, 5500, 7000)      # SUP-033 (sin fuente); 5.500 = punto medio de barrido
 AVES_CAMION_BASE = 5500                       # punto medio de barrido; se usa SOLO si se elige explícitamente
-ESTACIONES = {"normal": 0.0, "verano": 0.15}   # SUP-12B-07: reducción de carga en verano (barrido 0,10-0,25)
+ESTACIONES = {"normal": 0.0, "verano": 0.15}   # SUP-097: reducción de carga en verano (barrido 0,10-0,25)
 DOA_BARRIDO = (0.002, 0.003, 0.005, 0.010, 0.0163)   # SUP-026 + condiciones adversas FTE-156 [PVDP]
-RADIOS_KM = (25, 50, 100, 150, 200, 300)      # SUP-12B-01: radios de SENSIBILIDAD, no óptimos
-FACTOR_RUTA = (1.2, 1.3, 1.4)                 # SUP-12B-02 (FTE-12B-001 [PVDP]); base 1,3
+RADIOS_KM = (25, 50, 100, 150, 200, 300)      # SUP-091: radios de SENSIBILIDAD, no óptimos
+FACTOR_RUTA = (1.2, 1.3, 1.4)                 # SUP-092 (FTE-286 [PVDP]); base 1,3
 FACTOR_RUTA_BASE = 1.3
-FACTOR_DISTRIBUCION = 2.0 / 3.0               # SUP-12B-03: media de puntos uniformes en un disco
+FACTOR_DISTRIBUCION = 2.0 / 3.0               # SUP-093: media de puntos uniformes en un disco
 VEL_VIVO = 60.0                               # km/h; 03 transporte_aves.md [ESTIMACIÓN] 60-70 (barrido 50-70)
-# Ventana prefaena DESAGREGADA (SUP-12B-05). Todos son parámetros de escenario, no normas.
+# Ventana prefaena DESAGREGADA (SUP-095). Todos son parámetros de escenario, no normas.
 T_RETIRO_ALIMENTO_H = 3.0                     # retiro de alimento → inicio de captura (barrido 2-4), sin fuente
 T_CAPTURA_CARGA_H = 1.5                       # captura y carga por camión (barrido 1,0-2,5), sin fuente
 T_ESPERA_GRANJA_H = 0.0                       # espera adicional en granja tras cargar (barrido 0-1), sin fuente
 T_ESPERA_PLANTA_H = 0.75                      # espera en planta hasta descargar (barrido 0,5-2,0), sin fuente
 T_DESCARGA_H = 0.25                           # descarga / colgado (barrido 0,25-0,5), sin fuente
-T_LAVADO_H = 0.75                             # SUP-12B-05 (barrido 0,5-1,0); Res. SENASA 723/2025 (FTE-234) [PVDP]
+T_LAVADO_H = 0.75                             # SUP-095 (barrido 0,5-1,0); Res. SENASA 723/2025 (FTE-234) [PVDP]
 VENTANA_PREFAENA_H = 10.0                     # VENTANA DE ESCENARIO: 8-12 h citadas como práctica (FTE-156 [PVDP]);
                                               # NO es un máximo normativo (no hay fuente primaria que lo fije)
 DIAS_COSECHA_REFERENCIA = 2                   # 03 transporte_aves.md: una granja "se vacía en 1-2 noches" [ESTIMACIÓN]
-HORAS_CAMION_DIA = 12.0                       # SUP-12B-08: horas útiles por camión-día (barrido)
+HORAS_CAMION_DIA = 12.0                       # SUP-098: horas útiles por camión-día (barrido)
 HORAS_NETAS = 8                               # 23/05: referencia de sensibilidad (DEC-036)
 MERMA_H_BARRIDO = (0.0, 0.002, 0.005)         # 03 [ESTIMACIÓN] 0,2-0,5 %/h; 0 = SUP-058 (base)
 PLAZAS_GRANJA = (15000, 30000, 60000)         # 03 [ESTIMACIÓN] 15-30 mil; 60 mil = barrido
@@ -190,7 +190,7 @@ PLAZAS_GRANJA = (15000, 30000, 60000)         # 03 [ESTIMACIÓN] 15-30 mil; 60 m
 # Insumos
 CAP_GRANELERO_T = 28.0                        # 03 alimentacion.md [ESTIMACIÓN] sin fuente; DPV-084. Capacidad de
                                               # ESCENARIO: se usa solo si se pasa explícitamente (por defecto PENDIENTE)
-DIST_FABRICA_KM = (25, 75, 150)               # SUP-12B-01 (sin ubicación)
+DIST_FABRICA_KM = (25, 75, 150)               # SUP-091 (sin ubicación)
 CAP_POLLITOS = None                           # PENDIENTE (DPV-047, DPV-084)
 CAP_POLLITOS_BARRIDO = (20000, 40000, 80000)  # barrido ilustrativo, NO capacidad estándar
 KG_CAMA_M2 = None                             # PENDIENTE
@@ -204,36 +204,36 @@ CAP_REFRIGERADO = None                        # PENDIENTE (DPV-084)
 CAP_CONGELADO = None                          # PENDIENTE (DPV-084)
 CAP_TRONCAL_BARRIDO = (3, 6, 12, 20)          # t; barrido de SENSIBILIDAD, no capacidad estándar
 CAP_REPARTO_BARRIDO = (3, 6)                  # t; barrido (reparto urbano)
-DIAS_DESPACHO = (5, 6, 7)                     # SUP-12B-09 (refrigerado)
-DESPACHOS_CONGELADO = (1, 2, 3, 6)            # SUP-12B-09: despachos/semana del congelado (acumulable)
-DESFASE_DESPACHO = 1                          # SUP-12B-09: despacho desde el día siguiente a la faena
-DIST_MERCADO_KM = (30, 150, 300, 600, 1000)   # planta → AMBA por ruta; SUP-12B-01 (sin ubicación)
-VEL_TRONCAL = 70.0                            # SUP-12B-04 (barrido 60-80), sin fuente
-VEL_URBANA = 20.0                             # SUP-12B-04 (barrido 15-30), sin fuente
-T_PARADA_H = 0.75                             # SUP-12B-10 (barrido 0,5-1,0), sin fuente
-KM_ENTRE_PARADAS = 8.0                        # SUP-12B-10 (barrido 5-15), sin fuente
-PARADAS_RUTA_MAX = (6, 10, 15)                # SUP-12B-10 barrido
-T_CARGA_PT_H = 1.0                            # SUP-12B-10: carga en andén de planta, sin fuente
-CONDUCCION_MAX_H = 10.0                       # CCT 40/89 [PVDP] FTE-12B-002 (media/larga distancia)
+DIAS_DESPACHO = (5, 6, 7)                     # SUP-099 (refrigerado)
+DESPACHOS_CONGELADO = (1, 2, 3, 6)            # SUP-099: despachos/semana del congelado (acumulable)
+DESFASE_DESPACHO = 1                          # SUP-099: despacho desde el día siguiente a la faena
+DIST_MERCADO_KM = (30, 150, 300, 600, 1000)   # planta → AMBA por ruta; SUP-091 (sin ubicación)
+VEL_TRONCAL = 70.0                            # SUP-094 (barrido 60-80), sin fuente
+VEL_URBANA = 20.0                             # SUP-094 (barrido 15-30), sin fuente
+T_PARADA_H = 0.75                             # SUP-100 (barrido 0,5-1,0), sin fuente
+KM_ENTRE_PARADAS = 8.0                        # SUP-100 (barrido 5-15), sin fuente
+PARADAS_RUTA_MAX = (6, 10, 15)                # SUP-100 barrido
+T_CARGA_PT_H = 1.0                            # SUP-100: carga en andén de planta, sin fuente
+CONDUCCION_MAX_H = 10.0                       # CCT 40/89 [PVDP] FTE-287 (media/larga distancia)
 VENTANA_RECEPCION_H = None                    # PENDIENTE (DPV-036)
 ENTREGAS_SEMANA = (3, 6)                      # 02 supermercados.md §3.1
 KG_LOCAL_DIA = (25, 50, 100, 150, 300)        # 02 escenarios_demanda.csv (RED-xxx): barrido de prueba
-ANCLA = {"A": 0.0, "B": 0.5, "C": 1.0}        # SUP-12B-11: fracción de locales adheridos (variable)
+ANCLA = {"A": 0.0, "B": 0.5, "C": 1.0}        # SUP-085: fracción de locales adheridos (variable)
 N_CD = None                                   # PENDIENTE (DPV-036)
-DIST_CROSSDOCK_KM = 25.0                      # SUP-12B-10: cross-dock → tiendas en el AMBA (15-40)
+DIST_CROSSDOCK_KM = 25.0                      # SUP-100: cross-dock → tiendas en el AMBA (15-40)
 
 # Exportación
 CUOTAS_EXPORT = (0.10, 0.20, 0.50)            # barrido; P3 = 20 % (SUP-055). Demanda = 0 (SUP-022)
-DIST_PUERTO_KM = (30, 150, 300, 600, 1000)    # SUP-12B-01 (sin ubicación ni puerto elegido)
+DIST_PUERTO_KM = (30, 150, 300, 600, 1000)    # SUP-091 (sin ubicación ni puerto elegido)
 TRANSITO_MARITIMO_D = (20, 45)                # 17 logistica_exportacion.md [PVDP · débil]
 ESPERA_TERMINAL_D = None                      # PENDIENTE (DPV-027)
 
 # Subproductos
 CAP_SUBPROD_BARRIDO = (5, 10, 20)             # t; barrido, NO capacidad estándar
 CAP_SUBPROD = None                            # PENDIENTE (DPV-084)
-DIST_RECEPTOR_KM = (10, 50, 150)              # SUP-12B-01 (receptor no identificado, DPV-065)
-DIAS_MAX_REFRIGERADO_SUBPROD = None           # PENDIENTE [PVDP] (SUP-12B-12)
-CAP_SUBPROD_M3 = None                         # capacidad VOLUMÉTRICA útil del vehículo/contenedor: PENDIENTE (DPV-12B-16)
+DIST_RECEPTOR_KM = (10, 50, 150)              # SUP-091 (receptor no identificado, DPV-065)
+DIAS_MAX_REFRIGERADO_SUBPROD = None           # PENDIENTE [PVDP] (SUP-101)
+CAP_SUBPROD_M3 = None                         # capacidad VOLUMÉTRICA útil del vehículo/contenedor: PENDIENTE (DPV-135)
 # Densidad aparente (t/m³) por corriente, en el estado y acondicionamiento en que se transporta: SIN EVIDENCIA.
 # Sin densidad NO se calcula ocupación volumétrica (las plumas pueden saturar volumen antes que peso).
 DENSIDAD_APARENTE_T_M3 = {"plumas": None, "sangre": None, "visceras": None, "cabeza": None, "huesos": None,
@@ -250,7 +250,7 @@ BACKHAUL_POSIBLE = {
     "exportacion_reefer": ("REQUIERE_EVIDENCIA", "Retorno del contenedor vacío o de otra carga: gestión de naviera/operador"),
     "subproductos": ("DESHABILITADO_POR_DEFECTO", "Supuesto conservador: vehículo de subproductos no aptos para consumo humano; otra carga requiere verificar habilitación y compatibilidad sanitaria (DPV-066). No se afirma prohibición normativa sin fuente específica"),
 }
-BACKHAUL_AVES = False                         # SUP-12B-14: deshabilitado por defecto (no es prohibición)
+BACKHAUL_AVES = False                         # SUP-103: deshabilitado por defecto (no es prohibición)
 ESTADOS_BACKHAUL = ("NO", "DESHABILITADO_POR_DEFECTO", "REQUIERE_EVIDENCIA", "SI_CON_EVIDENCIA")
 # "NO" se reserva para flujos con prohibición respaldada por fuente normativa específica (hoy: ninguno)
 
@@ -566,7 +566,7 @@ def producto(E, dias_semana=5, config=me.CONFIG_REF, perfil="P1", dias_despacho=
              cap_refrigerado=CAP_REFRIGERADO, cap_congelado=CAP_CONGELADO, dist_km=300,
              vel=VEL_TRONCAL, horas_camion_dia=HORAS_CAMION_DIA, despachos_congelado=None):
     """Refrigerado: `dias_despacho` por semana. Congelado: `despachos_congelado` por semana
-    (por defecto = dias_despacho); el congelado puede acumularse para llenar camiones (SUP-12B-09)."""
+    (por defecto = dias_despacho); el congelado puede acumularse para llenar camiones (SUP-099)."""
     faltantes = set()
     if perfil not in PERFILES:
         raise ErrorLogistica(f"Perfil {perfil} inexistente")
@@ -648,7 +648,7 @@ def red_ancla(escenario, kg_local_dia, entregas_semana=3, modo="directo", dias_d
 
     def reparto(dist_origen, cap, vel_acceso):
         capr = _cap(cap, "cap_camion_reparto_t", faltantes)
-        # paradas que caben en la jornada útil del camión (SUP-12B-08) después de cargar e ir y volver
+        # paradas que caben en la jornada útil del camión (SUP-098) después de cargar e ir y volver
         libre = horas_camion_dia - T_CARGA_PT_H - 2 * dist_origen / vel_acceso
         por_tiempo = math.floor(libre / (t_parada + kpar / vel_urbana) + 1e-9) if libre > 0 else 0
         inviable = 1.0 if por_tiempo < 1 else 0.0
@@ -713,7 +713,7 @@ def red_ancla(escenario, kg_local_dia, entregas_semana=3, modo="directo", dias_d
 # 7. ASIGNACIÓN POR ESCALA (red + otros canales + exportación = comestible; día calendario)
 # ---------------------------------------------------------------------------
 def reparto_otros_canales():
-    """Participación ilustrativa de los canales NO supermercado en ESC-BAS (02; SUP-12B-13)."""
+    """Participación ilustrativa de los canales NO supermercado en ESC-BAS (02; SUP-102)."""
     esc, _ = me.leer_demanda()
     r = esc["ESC-BAS"]
     canales = {"mayorista_distribuidor": float(r["mayoristas_distribuidores_kg_dia"]),
@@ -892,9 +892,9 @@ def subproductos(E, dias_semana=5, config=me.CONFIG_REF, estrategia="E1", cap=CA
             "km_semana_criterio_masa": None if v_masa is None else 2 * v_masa * retiros * d,
             "stock_refrigerado_max_t": t_dia * (acum - 1),
             "dias_faena_para_llenar_capacidad_masica": None if capx is None or t_dia == 0 else capx / t_dia,
-            # acumulación: cinco dimensiones separadas (SUP-12B-12); ninguna se da por cumplida sin evidencia
+            # acumulación: cinco dimensiones separadas (SUP-101); ninguna se da por cumplida sin evidencia
             "fisicamente_posible": 1.0 if acum == 1 else None,          # >1 día: depende de cámara/recipientes (12C)
-            "sanitariamente_permitido": None,                            # normativa no leída (DPV-066, DPV-12B-03)
+            "sanitariamente_permitido": None,                            # normativa no leída (DPV-066, DPV-128)
             "aceptado_por_receptor": None,                               # DPV-065
             "requiere_frio": 1.0 if acum > 1 else 0.0,                   # frío o recipiente específico si se acumula
             "riesgo_olores_degradacion_aumentado": 1.0 if acum > 1 else 0.0}
@@ -912,7 +912,7 @@ PATRON_DEPENDE_CAPACIDAD = ("viajes", "rutas", "flota", "ocupacion", "camion_dia
                             "t_por_viaje", "pct_km", "utilizacion_flota", "utilizacion_semanal_flota", "intervalo",
                             "capacidad_efectiva", "contenedores", "llenar", "paradas_planta", "t_km")
 TIPOS_CAPACIDAD = ("ESCENARIO", "ESCENARIO [ESTIMACIÓN 03]", "ESCENARIO [PVDP]", "PENDIENTE", "VALIDADA", "COTIZADA")
-NOTA_ALCANCE = ("Resultado del escenario (ventana prefaena, tiempos y velocidad supuestos: SUP-12B-04/05); "
+NOTA_ALCANCE = ("Resultado del escenario (ventana prefaena, tiempos y velocidad supuestos: SUP-094/095); "
                 "NO es límite sanitario, reglamentario ni radio óptimo")
 
 
@@ -1014,20 +1014,20 @@ PARAMETROS_TABLA = [  # (variable, valor, unidad, clasificación, referencia/not
     ("peso_vivo_planta_kg", PESO, "kg", "[SUPUESTO]", "Perfil medio 03 (SUP-026/058)"),
     ("doa_base", DOA_BASE, "ratio", "[SUPUESTO]", "SUP-026; barrido 0,2-1,63 % (FTE-156 [PVDP])"),
     ("aves_por_camion_vivo", "4000/5500/7000", "aves/viaje", "[SUPUESTO]", "Capacidad de ESCENARIO (SUP-033 sin fuente; DPV-084); sin elección explícita = PENDIENTE; ninguna validada ni cotizada"),
-    ("reduccion_carga_verano", "0.15 (0.10-0.25)", "ratio", "[SUPUESTO]", "SUP-12B-07; 03: 1-2 aves menos por cajón"),
-    ("radios_km", "25/50/100/150/200/300", "km", "[SUPUESTO]", "SUP-12B-01: sensibilidad, NO radio óptimo"),
-    ("factor_ruta", "1.2/1.3/1.4 (base 1.3)", "ratio", "[SUPUESTO]", "SUP-12B-02; FTE-12B-001 [PVDP]"),
-    ("factor_distribucion", round(FACTOR_DISTRIBUCION, 6), "ratio", "[ESTIMACIÓN]", "SUP-12B-03: media de puntos uniformes en un disco = 2R/3"),
+    ("reduccion_carga_verano", "0.15 (0.10-0.25)", "ratio", "[SUPUESTO]", "SUP-097; 03: 1-2 aves menos por cajón"),
+    ("radios_km", "25/50/100/150/200/300", "km", "[SUPUESTO]", "SUP-091: sensibilidad, NO radio óptimo"),
+    ("factor_ruta", "1.2/1.3/1.4 (base 1.3)", "ratio", "[SUPUESTO]", "SUP-092; FTE-286 [PVDP]"),
+    ("factor_distribucion", round(FACTOR_DISTRIBUCION, 6), "ratio", "[ESTIMACIÓN]", "SUP-093: media de puntos uniformes en un disco = 2R/3"),
     ("velocidad_aves_vivas_kmh", VEL_VIVO, "km/h", "[ESTIMACIÓN]", "03 transporte_aves.md §4 (60-70); sin fuente"),
-    ("t_retiro_alimento_h", T_RETIRO_ALIMENTO_H, "h", "[SUPUESTO]", "SUP-12B-05: retiro de alimento → inicio de captura; sin fuente (DPV-12B-01)"),
-    ("t_captura_carga_h", T_CAPTURA_CARGA_H, "h", "[SUPUESTO]", "SUP-12B-05 sin fuente (DPV-12B-01)"),
-    ("t_espera_granja_h", T_ESPERA_GRANJA_H, "h", "[SUPUESTO]", "SUP-12B-05: sin espera adicional en granja (barrido 0-1 h)"),
-    ("t_espera_planta_h", T_ESPERA_PLANTA_H, "h", "[SUPUESTO]", "SUP-12B-05 sin fuente"),
-    ("t_descarga_h", T_DESCARGA_H, "h", "[SUPUESTO]", "SUP-12B-05: descarga/colgado; sin fuente"),
-    ("t_lavado_desinfeccion_h", T_LAVADO_H, "h", "[SUPUESTO]", "SUP-12B-05: duración sin fuente. La obligación de lavar y desinfectar superficies a cada viaje proviene de la Res. SENASA 723/2025 (FTE-234, confirmada en revisión externa); la resolución no fija duración"),
-    ("ventana_prefaena_escenario_h", VENTANA_PREFAENA_H, "h", "[SUPUESTO]", "SUP-12B-05: parámetro de ESCENARIO dentro del rango 8-12 h citado como práctica (FTE-156 [PVDP]); NO es un máximo normativo (sin fuente primaria que lo establezca)"),
+    ("t_retiro_alimento_h", T_RETIRO_ALIMENTO_H, "h", "[SUPUESTO]", "SUP-095: retiro de alimento → inicio de captura; sin fuente (DPV-127)"),
+    ("t_captura_carga_h", T_CAPTURA_CARGA_H, "h", "[SUPUESTO]", "SUP-095 sin fuente (DPV-127)"),
+    ("t_espera_granja_h", T_ESPERA_GRANJA_H, "h", "[SUPUESTO]", "SUP-095: sin espera adicional en granja (barrido 0-1 h)"),
+    ("t_espera_planta_h", T_ESPERA_PLANTA_H, "h", "[SUPUESTO]", "SUP-095 sin fuente"),
+    ("t_descarga_h", T_DESCARGA_H, "h", "[SUPUESTO]", "SUP-095: descarga/colgado; sin fuente"),
+    ("t_lavado_desinfeccion_h", T_LAVADO_H, "h", "[SUPUESTO]", "SUP-095: duración sin fuente. La obligación de lavar y desinfectar superficies a cada viaje proviene de la Res. SENASA 723/2025 (FTE-234, confirmada en revisión externa); la resolución no fija duración"),
+    ("ventana_prefaena_escenario_h", VENTANA_PREFAENA_H, "h", "[SUPUESTO]", "SUP-095: parámetro de ESCENARIO dentro del rango 8-12 h citado como práctica (FTE-156 [PVDP]); NO es un máximo normativo (sin fuente primaria que lo establezca)"),
     ("dias_cosecha_referencia", DIAS_COSECHA_REFERENCIA, "d", "[ESTIMACIÓN]", "03 transporte_aves.md §5: granja de 15-30 mil aves se vacía en 1-2 noches; solo dispara una alerta POTENCIAL"),
-    ("horas_utiles_camion_dia", HORAS_CAMION_DIA, "h", "[SUPUESTO]", "SUP-12B-08"),
+    ("horas_utiles_camion_dia", HORAS_CAMION_DIA, "h", "[SUPUESTO]", "SUP-098"),
     ("horas_netas_faena", HORAS_NETAS, "h", "[SUPUESTO]", "23 / 05 (DEC-036)"),
     ("merma_viaje_por_h", "0/0.002/0.005", "ratio", "[ESTIMACIÓN]", "03 transporte_aves.md §3; 0 = SUP-058"),
     ("plazas_por_granja", "15000/30000/60000", "aves", "[ESTIMACIÓN]", "03 transporte_aves.md §5 (15-30 mil); 60 mil = barrido; DPV-048"),
@@ -1037,34 +1037,34 @@ PARAMETROS_TABLA = [  # (variable, valor, unidad, clasificación, referencia/not
     ("cap_camion_congelado_t", None, "t", "[PENDIENTE DE VALIDACIÓN]", "DPV-084; barrido 3/6/12/20 t"),
     ("cap_vehiculo_subproductos_t", None, "t", "[PENDIENTE DE VALIDACIÓN]", "DPV-084; barrido 5/10/20 t"),
     ("carga_contenedor_reefer_t", CONTENEDOR_T, "t", "[PVDP]", "FTE-135 (24-27 t, débil)"),
-    ("kg_por_pallet", None, "kg", "[PENDIENTE DE VALIDACIÓN]", "DPV-12B-04; barrido 500/750/1000"),
-    ("kg_cama_m2", None, "kg", "[PENDIENTE DE VALIDACIÓN]", "DPV-12B-05"),
-    ("kg_envase_por_kg", None, "ratio", "[PENDIENTE DE VALIDACIÓN]", "DPV-12B-04"),
-    ("consumo_combustible_l_km", None, "índice", "[PENDIENTE DE VALIDACIÓN]", "DPV-12B-06"),
-    ("dias_despacho_semana", "5/6/7", "d", "[SUPUESTO]", "SUP-12B-09"),
-    ("desfase_despacho_d", DESFASE_DESPACHO, "d", "[SUPUESTO]", "SUP-12B-09"),
-    ("dist_planta_mercado_km", "30/150/300/600/1000", "km", "[SUPUESTO]", "SUP-12B-01 (sin localización; 12A)"),
-    ("velocidad_troncal_kmh", VEL_TRONCAL, "km/h", "[SUPUESTO]", "SUP-12B-04 sin fuente"),
-    ("velocidad_urbana_kmh", VEL_URBANA, "km/h", "[SUPUESTO]", "SUP-12B-04 sin fuente"),
-    ("t_parada_h", T_PARADA_H, "h", "[SUPUESTO]", "SUP-12B-10 sin fuente"),
-    ("km_entre_paradas", KM_ENTRE_PARADAS, "km", "[SUPUESTO]", "SUP-12B-10 sin fuente"),
-    ("paradas_ruta_max", "6/10/15", "paradas", "[SUPUESTO]", "SUP-12B-10 barrido"),
-    ("conduccion_max_h", CONDUCCION_MAX_H, "h", "[PVDP]", "CCT 40/89 (FTE-12B-002): 8 h urbano, 10 h media/larga distancia"),
+    ("kg_por_pallet", None, "kg", "[PENDIENTE DE VALIDACIÓN]", "DPV-129; barrido 500/750/1000"),
+    ("kg_cama_m2", None, "kg", "[PENDIENTE DE VALIDACIÓN]", "DPV-130"),
+    ("kg_envase_por_kg", None, "ratio", "[PENDIENTE DE VALIDACIÓN]", "DPV-129"),
+    ("consumo_combustible_l_km", None, "índice", "[PENDIENTE DE VALIDACIÓN]", "DPV-131"),
+    ("dias_despacho_semana", "5/6/7", "d", "[SUPUESTO]", "SUP-099"),
+    ("desfase_despacho_d", DESFASE_DESPACHO, "d", "[SUPUESTO]", "SUP-099"),
+    ("dist_planta_mercado_km", "30/150/300/600/1000", "km", "[SUPUESTO]", "SUP-091 (sin localización; 12A)"),
+    ("velocidad_troncal_kmh", VEL_TRONCAL, "km/h", "[SUPUESTO]", "SUP-094 sin fuente"),
+    ("velocidad_urbana_kmh", VEL_URBANA, "km/h", "[SUPUESTO]", "SUP-094 sin fuente"),
+    ("t_parada_h", T_PARADA_H, "h", "[SUPUESTO]", "SUP-100 sin fuente"),
+    ("km_entre_paradas", KM_ENTRE_PARADAS, "km", "[SUPUESTO]", "SUP-100 sin fuente"),
+    ("paradas_ruta_max", "6/10/15", "paradas", "[SUPUESTO]", "SUP-100 barrido"),
+    ("conduccion_max_h", CONDUCCION_MAX_H, "h", "[PVDP]", "CCT 40/89 (FTE-287): 8 h urbano, 10 h media/larga distancia"),
     ("ventana_recepcion_h", None, "h", "[PENDIENTE DE VALIDACIÓN]", "DPV-036"),
     ("entregas_semana_local", "3/6", "índice", "[SUPUESTO]", "02 supermercados.md §3.1"),
     ("kg_local_dia", "25/50/100/150/300", "kg", "[SUPUESTO]", "02 escenarios_demanda.csv RED-xxx; demanda NO validada"),
-    ("fraccion_locales_A_B_C", "0/0.5/1", "ratio", "[SUPUESTO]", "SUP-12B-11: escenarios logísticos; volumen variable"),
+    ("fraccion_locales_A_B_C", "0/0.5/1", "ratio", "[SUPUESTO]", "SUP-085: escenarios logísticos; volumen variable"),
     ("n_centros_distribucion", None, "índice", "[PENDIENTE DE VALIDACIÓN]", "DPV-036"),
-    ("dist_crossdock_tiendas_km", DIST_CROSSDOCK_KM, "km", "[SUPUESTO]", "SUP-12B-10 (15-40)"),
-    ("reparto_otros_canales", "ESC-BAS", "ratio", "[SUPUESTO]", "SUP-12B-13: leído de 02 (ilustrativo)"),
+    ("dist_crossdock_tiendas_km", DIST_CROSSDOCK_KM, "km", "[SUPUESTO]", "SUP-100 (15-40)"),
+    ("reparto_otros_canales", "ESC-BAS", "ratio", "[SUPUESTO]", "SUP-102: leído de 02 (ilustrativo)"),
     ("cuota_exportacion", "0.10/0.20/0.50", "ratio", "[SUPUESTO]", "Barrido; P3 = 20 % (SUP-055); demanda de exportación = 0 (SUP-022)"),
-    ("dist_planta_puerto_km", "30/150/300/600/1000", "km", "[SUPUESTO]", "SUP-12B-01 (sin puerto elegido)"),
+    ("dist_planta_puerto_km", "30/150/300/600/1000", "km", "[SUPUESTO]", "SUP-091 (sin puerto elegido)"),
     ("transito_maritimo_d", "20-45", "d", "[PVDP]", "17 logistica_exportacion.md §4 (débil)"),
     ("espera_terminal_d", None, "d", "[PENDIENTE DE VALIDACIÓN]", "DPV-027"),
-    ("dias_max_refrigerado_subproductos", None, "d", "[PENDIENTE DE VALIDACIÓN]", "SUP-12B-12 / DPV-12B-03 [PVDP]"),
-    ("backhaul_aplicado", 0, "ratio", "[SUPUESTO]", "SUP-12B-14: 0 salvo evidencia; BACKHAUL_AVES = false como supuesto conservador, NO como prohibición normativa"),
-    ("cap_vehiculo_subproductos_m3", None, "m³", "[PENDIENTE DE VALIDACIÓN]", "DPV-12B-16: capacidad volumétrica útil"),
-    ("densidad_aparente_subproductos_t_m3", None, "t/m³", "[PENDIENTE DE VALIDACIÓN]", "DPV-12B-16: por corriente (plumas, sangre, vísceras, cabezas, decomisos); sin ella no se calcula ocupación volumétrica"),
+    ("dias_max_refrigerado_subproductos", None, "d", "[PENDIENTE DE VALIDACIÓN]", "SUP-101 / DPV-128 [PVDP]"),
+    ("backhaul_aplicado", 0, "ratio", "[SUPUESTO]", "SUP-103: 0 salvo evidencia; BACKHAUL_AVES = false como supuesto conservador, NO como prohibición normativa"),
+    ("cap_vehiculo_subproductos_m3", None, "m³", "[PENDIENTE DE VALIDACIÓN]", "DPV-135: capacidad volumétrica útil"),
+    ("densidad_aparente_subproductos_t_m3", None, "t/m³", "[PENDIENTE DE VALIDACIÓN]", "DPV-135: por corriente (plumas, sangre, vísceras, cabezas, decomisos); sin ella no se calcula ocupación volumétrica"),
 ]
 
 # Variables por bloque: las que NO dependen de la capacidad del vehículo se escriben una sola vez
@@ -1109,14 +1109,14 @@ EXP_FLUJO = ["cuota_exportacion", "carga_contenedor_t", "export_t_dia_op", "expo
              "lead_time_total_max_d"]
 EXP_RUTA = ["h_terrestre_planta_puerto", "km_terrestre_anio"]
 
-# Base de la sensibilidad directo / CD / cross-dock (SUP-12B-10/11): un parámetro por vez
+# Base de la sensibilidad directo / CD / cross-dock (SUP-100/085): un parámetro por vez
 RED_BASE = {"escenario": "C", "kg_local_dia": 100, "entregas_semana": 3, "dist_mercado_km": 300,
             "paradas_ruta_max": 10, "cap_reparto": 6, "cap_troncal": 20, "t_parada": T_PARADA_H,
             "horas_camion_dia": HORAS_CAMION_DIA}
 RED_BARRIDOS = {"dist_mercado_km": (30, 100, 150, 300, 600), "paradas_ruta_max": (6, 10, 15),
                 "kg_local_dia": (25, 100, 300), "cap_reparto": (3, 6, 12), "t_parada": (0.5, 0.75, 1.0),
                 "horas_camion_dia": (10, 12, 14)}
-# Barrido de la ventana prefaena (un parámetro por vez; base = constantes SUP-12B-05)
+# Barrido de la ventana prefaena (un parámetro por vez; base = constantes SUP-095)
 PREFAENA_BARRIDOS = {"ventana_prefaena": (8, 10, 12), "t_retiro_alimento": (2, 3, 4),
                      "t_captura_carga": (1.0, 1.5, 2.5), "t_espera_granja": (0.0, 0.5, 1.0),
                      "t_espera_planta": (0.5, 0.75, 2.0)}
@@ -1194,7 +1194,7 @@ def construir():
                 if f["variable"] in ("alerta_cosecha_prolongada_potencial", "dias_faena_por_cosecha"):
                     f["nota"] = ("Incompatibilidad operativa POTENCIAL si el lote se retira con la cadencia modelada; "
                                  "validar retiros parciales, all-in/all-out, tamaño real de lote y programación "
-                                 "entre granjas (DPV-12B-10). Referencia 1-2 noches: 03 [ESTIMACIÓN]")
+                                 "entre granjas (DPV-133). Referencia 1-2 noches: 03 [ESTIMACIÓN]")
         # --- insumos (granelero: capacidad de ESCENARIO de 03, pasada explícitamente)
         for dfab in DIST_FABRICA_KM:
             capv, tipo = _cap_col(CAP_GRANELERO_T, "t (granelero)", "ESCENARIO [ESTIMACIÓN 03]")
@@ -1278,7 +1278,7 @@ def construir():
                 t.add("subproductos_corrientes", E, ds, cfg, f"corriente={c}; grupo={grp}", "t_dia_op", v,
                       "dia_operativo", base="biologica+agua", cadena="subproducto", sumable="si",
                       nota=f"{et}; {est}; {veh}; vida sin frío: {vida}; densidad aparente, temperatura y "
-                           f"acondicionamiento PENDIENTES (DPV-12B-16)")
+                           f"acondicionamiento PENDIENTES (DPV-135)")
             t.add("subproductos_corrientes", E, ds, cfg, "total", "solidos_a_retirar_t_dia_op", tot, "dia_operativo",
                   base="biologica+agua", cadena="subproducto", nota="= suma de corrientes (L04); 23 §12")
             for c, v in coprod.items():
@@ -1309,7 +1309,7 @@ def construir():
     for clave, valores in PREFAENA_BARRIDOS.items():
         for v in valores:
             r = aves_vivas(10000, 5, **{clave: v})
-            t.volcar("aves_vivas_prefaena_sens", None, None, "ESCENARIO", f"{clave}={v} (resto: base SUP-12B-05)", r,
+            t.volcar("aves_vivas_prefaena_sens", None, None, "ESCENARIO", f"{clave}={v} (resto: base SUP-095)", r,
                      "lote", claves=VIVO_ALCANCE, base="vivo")
     # --- red ancla (no depende de la escala de la planta)
     for esc in ANCLA:
@@ -1321,7 +1321,7 @@ def construir():
                     for dm in (30, 300, 600):
                         r = red_ancla(esc, kl, ent, modo, cap_reparto=6, cap_troncal=20, dist_mercado_km=dm)
                         t.volcar("red_ancla", None, None, esc, f"kg_local_dia={kl}; entregas_semana={ent}; modo={modo}; "
-                                 f"dist_mercado_km={dm} (resto: SUP-12B-10, ver parametros)",
+                                 f"dist_mercado_km={dm} (resto: SUP-100, ver parametros)",
                                  r, "dia_despacho", claves=RED_VARS, cadena="refrigerado", base="comercial",
                                  capacidad="reparto 6 t / troncal 20 t", tipo_capacidad="ESCENARIO")
     # --- sensibilidad directo / CD / cross-dock: un parámetro por vez alrededor de RED_BASE

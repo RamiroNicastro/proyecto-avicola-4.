@@ -26,15 +26,15 @@ Partición exacta de los **sólidos y líquidos a retirar** (clase C + decomisos
 
 **Coproductos comestibles que viajan con el producto (no se suman):** garras 0,25 / 0,51 / 1,01 / 2,02; menudencias 0,27 / 0,55 / 1,09 / 2,18; carcasa-esqueleto 1,02 / 2,05 / 4,10 / 8,19; cuello 0,19 / 0,37 / 0,75 / 1,49 t/día. Si la carcasa no tiene comprador baja a rendering (SUP-046) y G3 casi se triplica.
 
-**Por qué cuatro grupos:** mezclar define el mercado y la habilitación (plumas mezcladas pierden la condición de "harina de plumas", [`../07_subproductos/rendering.md` §3](../07_subproductos/rendering.md); la sangre es líquida; los decomisos tienen destino restringido). La compatibilidad real depende del receptor y de la normativa (DPV-065, DPV-066, DPV-12B-03): los grupos son hipótesis de trabajo (SUP-12B-16).
+**Por qué cuatro grupos:** mezclar define el mercado y la habilitación (plumas mezcladas pierden la condición de "harina de plumas", [`../07_subproductos/rendering.md` §3](../07_subproductos/rendering.md); la sangre es líquida; los decomisos tienen destino restringido). La compatibilidad real depende del receptor y de la normativa (DPV-065, DPV-066, DPV-128): los grupos son hipótesis de trabajo (SUP-105).
 
 ## 2. Capacidad másica vs capacidad volumétrica
 
 | Concepto | Unidad | Qué limita | Estado en el modelo |
 |---|---|---|---|
 | **Capacidad másica** | t (o kg) | Peso legal y estructural del vehículo/contenedor | Barrido de escenario 5 / 10 / 20 t (no estándar; DPV-084) |
-| **Capacidad volumétrica** | m³ útiles | Volumen del contenedor/caja/cisterna, grado de llenado | **PENDIENTE** (`cap_m3`, DPV-12B-16) |
-| **Densidad aparente** por corriente | t/m³ | Convierte t en m³ en el estado real de transporte (temperatura, humedad, escurrido, compactación) | **PENDIENTE** para todas las corrientes (`DENSIDAD_APARENTE_T_M3`, DPV-12B-16) |
+| **Capacidad volumétrica** | m³ útiles | Volumen del contenedor/caja/cisterna, grado de llenado | **PENDIENTE** (`cap_m3`, DPV-135) |
+| **Densidad aparente** por corriente | t/m³ | Convierte t en m³ en el estado real de transporte (temperatura, humedad, escurrido, compactación) | **PENDIENTE** para todas las corrientes (`DENSIDAD_APARENTE_T_M3`, DPV-135) |
 
 Para materiales de baja densidad —**en especial plumas húmedas**, y eventualmente vísceras o residuos en contenedores específicos— la restricción puede ser **volumétrica antes que de peso**: un contenedor puede llenarse en volumen con mucho menos de su capacidad en toneladas. Por eso el modelo calcula por separado:
 
@@ -47,7 +47,7 @@ viajes vinculantes    = max(viajes por masa, viajes por volumen)                
 
 Si falta la densidad aparente de cualquier corriente del grupo, la ocupación volumétrica y los viajes vinculantes quedan **PENDIENTES** (tests L26 y L13). Los viajes que se informan hoy son **viajes por criterio de masa**: pueden subestimar los reales si el volumen es la restricción.
 
-Datos a relevar por corriente (DPV-12B-16): densidad aparente (t/m³) en el estado de transporte, temperatura, acondicionamiento (escurrido, compactación, triturado), capacidad útil en m³ del contenedor o cisterna y grado de llenado admitido.
+Datos a relevar por corriente (DPV-135): densidad aparente (t/m³) en el estado de transporte, temperatura, acondicionamiento (escurrido, compactación, triturado), capacidad útil en m³ del contenedor o cisterna y grado de llenado admitido.
 
 ## 3. Fracción de la capacidad másica con retiro diario
 
@@ -80,7 +80,7 @@ Consolidar retiros **puede** mejorar la ocupación, pero no se asume que acumula
 | Dimensión | Variable | E1 (diario) | E2 / E3 (acumulación) | Qué la valida |
 |---|---|---|---|---|
 | **Físicamente posible** (espacio, recipientes, cámara) | `fisicamente_posible` | Sí | **PENDIENTE** | Layout y frío (12C, 12) |
-| **Sanitariamente permitido** | `sanitariamente_permitido` | **PENDIENTE** | **PENDIENTE** | Normativa aplicable (DPV-066, DPV-12B-03) |
+| **Sanitariamente permitido** | `sanitariamente_permitido` | **PENDIENTE** | **PENDIENTE** | Normativa aplicable (DPV-066, DPV-128) |
 | **Aceptado por el receptor** (frescura, calidad de la harina, horario) | `aceptado_por_receptor` | **PENDIENTE** | **PENDIENTE** | Requisitos del comprador (DPV-065) |
 | **Necesidad de refrigeración / recipiente** | `requiere_frio` | No | Sí | Diseño (12) |
 | **Olores y degradación** | `riesgo_olores_degradacion_aumentado` | Base | Aumentado | Ambiental; receptor |
@@ -108,12 +108,12 @@ Vehículo o contenedor más chico en escalas de 2.500–5.000 aves/día; consoli
 
 | Restricción | Estado | Registro |
 |---|---|---|
-| Vida útil de sangre, vísceras y plumas sin frío | "Horas" — orden de magnitud de `07`, sin fuente primaria | `[PVDP]`; DPV-12B-03 |
-| Tiempo máximo con refrigeración antes del rendering | Desconocido | DPV-12B-03 |
+| Vida útil de sangre, vísceras y plumas sin frío | "Horas" — orden de magnitud de `07`, sin fuente primaria | `[PVDP]`; DPV-128 |
+| Tiempo máximo con refrigeración antes del rendering | Desconocido | DPV-128 |
 | Habilitación del vehículo de subproductos no aptos para consumo | La Res. SENASA 723/2025 regula la habilitación sanitaria de los vehículos alcanzados (FTE-234, confirmada en revisión externa); requisitos específicos para cada tipo de subproducto: a precisar | DPV-066 |
 | Destino de decomisos (digestor / grasería) | Decreto 4238/68 caps. XIV y XIX (extracto) | FTE-192 `[PVDP]`; DPV-066 |
 | Manifiestos provinciales de transporte de residuos/subproductos | No relevado | DPV-066 |
-| Densidad aparente y volumen útil | No relevado | DPV-12B-16 |
+| Densidad aparente y volumen útil | No relevado | DPV-135 |
 
 ## 6. Retorno y backhaul
 
@@ -121,4 +121,4 @@ Retorno **con contenedores vacíos (rotativos), sin carga comercial**. `BACKHAUL
 
 ## 7. Qué decidir y con qué datos
 
-DEC-12B-05 (estrategia de retiro por corriente) depende de: receptores en las zonas candidatas, qué aceptan, con qué frecuencia, vehículo y volumen, si pagan o cobran (DPV-065); normativa (DPV-066, DPV-12B-03); densidad y volumen (DPV-12B-16); escala; localización (12A); y DEC-027.
+DEC-059 (estrategia de retiro por corriente) depende de: receptores en las zonas candidatas, qué aceptan, con qué frecuencia, vehículo y volumen, si pagan o cobran (DPV-065); normativa (DPV-066, DPV-128); densidad y volumen (DPV-135); escala; localización (12A); y DEC-027.

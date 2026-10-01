@@ -5,6 +5,7 @@
 > **Pregunta central:** ¿qué información tenemos que conseguir **fuera de Internet** para pasar de prefactibilidad a una decisión de inversión?
 > **Qué es este plan:** la priorización de los 115 datos por validar (DPV-001 a DPV-115, sin cambiar su numeración), los instrumentos para salir a buscarlos y el orden de trabajo.
 > **Qué no es:** no investiga tecnologías nuevas, no construye modelos, no elige escala, localización, proveedor ni maquinaria, no solicita cotizaciones, no calcula CAPEX ni OPEX. **Ningún DPV se marca validado** y **ninguna decisión se cierra**.
+> **Actualización (reconciliación de las sesiones 12, 2026-10-01):** se agregaron DPV-116 a DPV-145 (localización, logística y layout) a la matriz con nivel y ola (N2: 19, N3: 7, N4: 4); la matriz tiene ahora 145 DPV. Ninguno es N1: no cambian los hitos H-A / H-B, pero varios se suman a las olas O0 (escritorio), O3, O5, O7 y O8. Detalle en [`reconciliacion_sesiones_12.md`](reconciliacion_sesiones_12.md) §4.
 
 ---
 

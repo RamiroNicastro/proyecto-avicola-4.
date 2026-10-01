@@ -35,7 +35,7 @@ Ejemplo con datos **ficticios** (`python3 10_localizacion/modelo_localizacion.py
 | B — Producción (ecosistema 13, exposición sanitaria 9, clima 3, alimento 15) | Z-CLUSTER (0,516) | Z-GRANOS (0,431) | Z-CERCA (0,410) |
 | C — Equilibrado | Z-CLUSTER (0,526) | Z-CERCA (0,460) | Z-GRANOS (0,391) |
 
-**Con los mismos datos**, la zona "ganadora" cambia según el perfil. En el perfil A, Z-CERCA y Z-CLUSTER están a 0,016 de distancia: si el peso de la demanda baja un 50 %, o si sube un 50 % el del ecosistema avícola, el de la logística o el del terreno, gana Z-CLUSTER (8 de 28 variaciones cambian el orden). En el perfil C, en cambio, ninguna variación de ±50 % cambia el orden: el margen es amplio. Lección: **cuando el resultado depende de los pesos, la decisión es de valores (estrategia), no técnica**. Por eso el estudio **no declara cuál perfil es el correcto**: eso lo deciden los socios con la estrategia clara (DEC-12A-02).
+**Con los mismos datos**, la zona "ganadora" cambia según el perfil. En el perfil A, Z-CERCA y Z-CLUSTER están a 0,016 de distancia: si el peso de la demanda baja un 50 %, o si sube un 50 % el del ecosistema avícola, el de la logística o el del terreno, gana Z-CLUSTER (8 de 28 variaciones cambian el orden). En el perfil C, en cambio, ninguna variación de ±50 % cambia el orden: el margen es amplio. Lección: **cuando el resultado depende de los pesos, la decisión es de valores (estrategia), no técnica**. Por eso el estudio **no declara cuál perfil es el correcto**: eso lo deciden los socios con la estrategia clara (DEC-051).
 
 ## 4. Con los datos reales, hoy no hay ranking — y está bien
 
@@ -69,7 +69,7 @@ Una planta en el periurbano del AMBA queda cerca de los supermercados, pero:
 - los camiones de aves vivas cruzan zonas pobladas y otras granjas: **peor bioseguridad**;
 - el suelo es caro, los vecinos están cerca (olores, ruido, tránsito de madrugada) y **crecer es difícil**.
 
-Por eso la lógica habitual del sector es "planta cerca de las granjas; el producto refrigerado viaja al mercado". Otra alternativa es cambiar de **arquitectura**: faena en zona productiva más un centro de distribución o trozado en el AMBA. Eso no es "otra ubicación" sino otra forma de organizar la red (dos instalaciones, doble manipulación, más inventario y frío, otro nivel de servicio); se comparará aparte (DEC-12A-04).
+Por eso la lógica habitual del sector es "planta cerca de las granjas; el producto refrigerado viaja al mercado". Otra alternativa es cambiar de **arquitectura**: faena en zona productiva más un centro de distribución o trozado en el AMBA. Eso no es "otra ubicación" sino otra forma de organizar la red (dos instalaciones, doble manipulación, más inventario y frío, otro nivel de servicio); se comparará aparte (DEC-053).
 
 ## 8. Una zona avícola fuerte tiene ventajas y riesgos
 
