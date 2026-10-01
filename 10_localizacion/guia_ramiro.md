@@ -18,8 +18,8 @@ Además, cada provincia tiene **varias zonas muy distintas**: el periurbano de P
 
 Es una tabla que:
 
-1. **Divide** la pregunta grande en preguntas medibles (distancia a CABA, granjas en 100 km, calidad del agua, límites de vuelco, potencia eléctrica…): son los **criterios** (43 subcriterios en 12 grupos).
-2. **Convierte** cada medida a una escala común de 0 a 1 (1 = mejor). Si "menos es mejor" (distancia, precio de la tierra, densidad de granjas), la escala se invierte.
+1. **Divide** la pregunta grande en preguntas medibles (distancia a CABA, granjas en 100 km, calidad del agua, límites de vuelco, potencia eléctrica…): son los **criterios** (45 subcriterios en 14 grupos, más 3 trade-offs que no se puntúan).
+2. **Convierte** cada medida a una escala común de 0 a 1 (1 = mejor). Si "menos es mejor" (distancia, precio de la tierra, eventos de influenza aviar cerca), la escala se invierte. Algunas cosas no son ni "más es mejor" ni "menos es mejor" (la densidad de granjas, por ejemplo: §8); esas no se convierten en un número automáticamente.
 3. **Pondera**: le da a cada grupo un peso según lo que importa para quien decide (los pesos suman 100).
 4. **Suma**: puntaje = Σ peso × valor normalizado.
 
@@ -31,18 +31,22 @@ Ejemplo con datos **ficticios** (`python3 10_localizacion/modelo_localizacion.py
 
 | Perfil de pesos | Primero | Segundo | Tercero |
 |---|---|---|---|
-| A — Mercado (demanda 30, logística 12) | Z-CERCA (0,550) | Z-CLUSTER (0,527) | Z-GRANOS (0,344) |
-| B — Producción (producción primaria 25, alimento 15) | Z-CLUSTER (0,491) | Z-GRANOS (0,482) | Z-CERCA (0,415) |
-| C — Equilibrado | Z-CLUSTER (0,512) | Z-CERCA (0,460) | Z-GRANOS (0,418) |
+| A — Mercado (demanda 30, logística 12) | Z-CERCA (0,550) | Z-CLUSTER (0,534) | Z-GRANOS (0,328) |
+| B — Producción (ecosistema 13, exposición sanitaria 9, clima 3, alimento 15) | Z-CLUSTER (0,516) | Z-GRANOS (0,431) | Z-CERCA (0,410) |
+| C — Equilibrado | Z-CLUSTER (0,526) | Z-CERCA (0,460) | Z-GRANOS (0,391) |
 
-**Con los mismos datos**, la zona "ganadora" cambia según el perfil. Y en el perfil B, Z-CLUSTER y Z-GRANOS están a 0,009 de distancia: si el peso del alimento sube un 50 %, gana Z-GRANOS. Lección: **cuando el resultado depende de los pesos, la decisión es de valores (estrategia), no técnica**. Por eso el estudio **no declara cuál perfil es el correcto**: eso lo deciden los socios con la estrategia clara (DEC-12A-02).
+**Con los mismos datos**, la zona "ganadora" cambia según el perfil. En el perfil A, Z-CERCA y Z-CLUSTER están a 0,016 de distancia: si el peso de la demanda baja un 50 %, o si sube un 50 % el del ecosistema avícola, el de la logística o el del terreno, gana Z-CLUSTER (8 de 28 variaciones cambian el orden). En el perfil C, en cambio, ninguna variación de ±50 % cambia el orden: el margen es amplio. Lección: **cuando el resultado depende de los pesos, la decisión es de valores (estrategia), no técnica**. Por eso el estudio **no declara cuál perfil es el correcto**: eso lo deciden los socios con la estrategia clara (DEC-12A-02).
 
 ## 4. Con los datos reales, hoy no hay ranking — y está bien
 
-De 559 celdas de la matriz real, **0 están verificadas**, 35 tienen un dato visto solo en extractos o estimado sin medir (`[PVDP]`) y 524 están vacías. El modelo:
+De 624 celdas de la matriz real, **0 están verificadas**, 35 tienen un dato visto solo en extractos, confirmado solo en revisión externa o estimado sin medir (`[PVDP]`) y 589 están vacías. El modelo:
 
 - en modo **estricto** (solo datos verificados) da puntaje 0 a todas y **no emite ranking**;
-- en modo **exploratorio** (aceptando extractos) muestra intervalos del tipo "entre 0,07 y 0,99": significa "no sabemos". Tampoco emite ranking.
+- en modo **exploratorio** (aceptando extractos) muestra rangos del tipo "entre 0,02 y 1,00": significa "no sabemos". Tampoco emite ranking.
+
+**Cómo leer ese rango.** El mínimo es lo que sumaría la región si todo lo que falta fuera lo peor posible; el máximo, si todo lo que falta fuera lo mejor posible. Es una **envolvente de peor/mejor caso por falta de información**, no un intervalo de confianza ni una probabilidad: no dice "lo más probable es tal valor". Por eso siempre va acompañado de la **cobertura de información** (qué porcentaje del peso tiene datos). Con 2 % de cobertura el rango no dice nada.
+
+**El 75 % de cobertura** que exige el modelo para ordenar es una regla de control que pusimos nosotros, no una norma técnica. Por eso el modelo muestra también qué pasaría con 60 % y 90 %. Hoy, con cualquiera de los tres, ninguna región califica.
 
 El modelo nunca rellena celdas vacías para poder calcular. **Un ranking hecho con datos inventados sería peor que no tener ranking**, porque parecería una conclusión.
 
@@ -65,11 +69,13 @@ Una planta en el periurbano del AMBA queda cerca de los supermercados, pero:
 - los camiones de aves vivas cruzan zonas pobladas y otras granjas: **peor bioseguridad**;
 - el suelo es caro, los vecinos están cerca (olores, ruido, tránsito de madrugada) y **crecer es difícil**.
 
-Por eso la lógica habitual del sector es "planta cerca de las granjas; el producto refrigerado viaja al mercado". Una alternativa a estudiar es separar: faena en zona productiva y un centro de trozado o distribución en el AMBA (DEC-12A-04).
+Por eso la lógica habitual del sector es "planta cerca de las granjas; el producto refrigerado viaja al mercado". Otra alternativa es cambiar de **arquitectura**: faena en zona productiva más un centro de distribución o trozado en el AMBA. Eso no es "otra ubicación" sino otra forma de organizar la red (dos instalaciones, doble manipulación, más inventario y frío, otro nivel de servicio); se comparará aparte (DEC-12A-04).
 
 ## 8. Una zona avícola fuerte tiene ventajas y riesgos
 
-Entre Ríos concentra la mitad de la faena del país (dato de extractos, `[PVDP]`). Eso significa:
+En 2024, Entre Ríos representó ~51 % de la **faena habilitada por SENASA** (tabla oficial de la Secretaría de Agricultura, confirmada en revisión externa del proyecto; no pudimos abrirla desde este entorno). Ojo: SENASA dice que ~90 % de la **actividad avícola** está en Entre Ríos y Buenos Aires: es otra medida, no hay que mezclarlas. Y ninguna de las dos es un dato del corredor: son promedios provinciales.
+
+La concentración de granjas tiene **dos caras**, y el estudio las mide por separado: el **ecosistema** (productores, incubadoras, veterinarios, contratistas, proveedores: cuanto más, mejor) y la **exposición sanitaria** (granjas muy cerca unas de otras, mucho tránsito de aves, brotes cercanos: cuanto más, peor). La cantidad de granjas en sí misma no se puntúa, porque es las dos cosas a la vez. Eso significa:
 
 | Ventajas | Riesgos |
 |---|---|
@@ -86,7 +92,7 @@ Es una ventaja **para conseguir información y reuniones** en Chaco. No es un ah
 
 ## 10. Estar cerca del puerto no te hace exportador
 
-Para exportar hace falta, en este orden: que el país destino esté abierto, que la planta esté habilitada y listada para ese destino, que el producto esté autorizado, un comprador con contrato, volumen para llenar contenedores y congelado. El puerto solo resuelve el último paso del camino. Rosario está cerca de los granos pero tiene pocos servicios de contenedores refrigerados; casi todo sale por Buenos Aires y Dock Sud.
+Para exportar hace falta, en este orden: que el país destino esté abierto, que la planta esté habilitada y listada para ese destino, que el producto esté autorizado, un comprador con contrato, volumen para llenar contenedores y congelado. El puerto solo resuelve el último paso del camino. Además, son cuatro cosas distintas: estar **cerca** de un puerto, que ese puerto tenga **enchufes y capacidad para contenedores refrigerados**, que haya un **servicio marítimo** con la frecuencia y los destinos que se necesitan, y que la planta esté **habilitada para exportar**. Buenos Aires y Dock Sud son los nodos de referencia para contenedores, pero hay que comparar otros (Zárate, Rosario, Concepción del Uruguay) nodo por nodo. Por eso el modelo no da puntos por estar cerca de un puerto si no está verificado el servicio refrigerado de ese puerto.
 
 ## 11. Cómo usar el modelo
 
@@ -94,7 +100,7 @@ Para exportar hace falta, en este orden: que el país destino esté abierto, que
 python3 10_localizacion/modelo_localizacion.py                       # pruebas + resultados reales
 python3 10_localizacion/modelo_localizacion.py --demo                # ejemplo ficticio para entender
 python3 10_localizacion/modelo_localizacion.py --demo --sensibilidad 0.5
-python3 10_localizacion/modelo_localizacion.py --peso DEMANDA=20 --peso PRODUCCION_PRIMARIA=20 ...
+python3 10_localizacion/modelo_localizacion.py --peso DEMANDA=20 --peso ECOSISTEMA_AVICOLA=10 ...
 ```
 
 Para cargar un dato: completar la fila en `matriz_localizacion.csv` con valor, tipo de evidencia, fuente y estado (`DISPONIBLE` solo si se leyó el documento original o es una medición o cotización). Para cambiar prioridades: editar `pesos_localizacion.csv` (cada perfil debe sumar 100).

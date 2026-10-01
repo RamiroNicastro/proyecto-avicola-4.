@@ -1,6 +1,6 @@
 # Terreno ideal para una planta avícola: requisitos conceptuales
 
-**Fecha:** 2026-10-01 · **Versión:** 1.0 · **Sesión:** 12A · Relevamiento de cada terreno: [`ficha_relevamiento_terreno.md`](ficha_relevamiento_terreno.md) · Filtros eliminatorios: [`criterios_localizacion.md`](criterios_localizacion.md) §4
+**Fecha:** 2026-10-01 · **Versión:** 1.1 (auditoría metodológica) · **Sesión:** 12A · Relevamiento de cada terreno: [`ficha_relevamiento_terreno.md`](ficha_relevamiento_terreno.md) · Gates duros y condicionales: [`criterios_localizacion.md`](criterios_localizacion.md) §4
 
 > Este documento explica **qué debería tener** un terreno para una planta de faena y procesamiento avícola que pueda crecer por etapas. **No define cantidad de hectáreas**, no selecciona terreno y no reemplaza el layout del módulo 12C (`09_layout_obra_civil`, no modificado por esta sesión). El terreno de las **granjas** es otro problema (densidad, distancias sanitarias, DPV-057) y no se trata aquí.
 
@@ -34,11 +34,11 @@ El terreno es de lo **más barato de prever y más caro de corregir** ([`../23_p
 |---|---|---|
 | **Forma** | Regular, con frente suficiente para accesos separados | Permite un flujo lineal (sucio → limpio) y crecer sin cruzar flujos |
 | **Topografía** | Plana o con pendiente suave y conocida | Drenaje por gravedad hacia el tratamiento; menos movimiento de suelos |
-| **Cota** | Por encima de su entorno, fuera de zonas inundables | Riesgo hídrico es filtro eliminatorio; el acceso también debe ser transitable con lluvia |
+| **Cota** | Por encima de su entorno, fuera de zonas inundables | Riesgo hídrico: gate **condicional** si es mitigable (cota, relleno, drenaje); el acceso también debe ser transitable con lluvia |
 | **Drenaje** | Pluviales separados de efluentes industriales | Evita que una lluvia sobrecargue el tratamiento |
 | **Suelo y napa** | Estudio de suelos; napa no superficial | Fundaciones de cámaras (cargas, congelamiento del suelo bajo cámaras de congelado), lagunas impermeabilizadas |
 | **Accesos** | Pavimento hasta el predio; acceso directo a ruta sin atravesar zonas urbanas | Camiones de aves vivas de madrugada y reefers; seguridad vial y vecinal |
-| **Servicios en el lindero** | Media tensión, gas natural, agua o acuífero apto, cuerpo receptor o colectora | Cada servicio ausente es una obra, un plazo y un riesgo (filtros eliminatorios) |
+| **Servicios en el lindero** | Media tensión, gas natural, agua o acuífero apto, cuerpo receptor o colectora | Cada servicio ausente es una obra, un plazo y un riesgo: gate **duro** solo si la imposibilidad está demostrada; si se resuelve con inversión o diseño, **condicional** |
 | **Vecinos** | Uso rural o industrial; viviendas lejos y a sotavento de los vientos predominantes | Olores, ruido, tránsito y amoníaco son la principal fuente de conflicto |
 | **Linderos** | Terrenos vecinos disponibles o con opción de compra | Seguro de expansión |
 | **Situación dominial** | Clara y verificada por profesional | Sin esto, nada de lo anterior sirve |
@@ -47,7 +47,7 @@ El terreno es de lo **más barato de prever y más caro de corregir** ([`../23_p
 
 **No hay base suficiente para dar hectáreas** (`[PVDP]`, DPV-12A-09):
 
-- No existe todavía la superficie del edificio por escala (módulo 12C en curso, sin modificar desde esta sesión).
+- La superficie del edificio por escala la está estimando conceptualmente el módulo 12C en su propia rama; 12A **no la lee ni la modifica**, y la superficie del terreno queda **pendiente** aquí.
 - La superficie del tratamiento de efluentes depende de la tecnología (lagunas vs reactores, DEC-043), del tiempo de retención y de los límites de vuelco del sitio: puede ser la mayor superficie del predio o una fracción menor.
 - La reserva de expansión depende de la arquitectura de crecimiento (DEC-033), que no está decidida.
 
@@ -66,7 +66,7 @@ superficie del terreno = edificio de planta (12C, por escala y configuración)
 
 **Qué sí se puede decir en términos relativos** (sin hectáreas): entre 2.500 y 20.000 aves/día se multiplican por ~8 los camiones de aves vivas, el producto despachado, los subproductos y el caudal de efluentes de sensibilidad (flujos lineales con la escala en los modelos de `23` y `11`). El edificio y los servicios **no** necesariamente crecen ×8 (hay elementos fijos y economías de escala), pero las playas y el tratamiento por lagunas tienden a crecer con el volumen. Por eso **la tecnología de efluentes y la escala final esperada son las dos variables que más mueven la superficie necesaria**.
 
-**Escenarios de rango de superficie:** quedan **PENDIENTES** hasta tener la superficie por escala de 12C y una tecnología de tratamiento de referencia. Para no inventar cifras, la ficha de terreno pide la superficie **disponible** (dato del sitio) y la decisión se toma comparándola con la necesaria cuando esta exista.
+**Escenarios de rango de superficie:** quedan **PENDIENTES** en 12A. En la **reconciliación 12A–12C** este estado genérico se reemplazará por: (a) el **rango conceptual de superficie de 12C** por escala y tecnología, y (b) las **restricciones reales municipales y del terreno** (retiros, factor de ocupación, zonificación, cota, forma). Para no inventar cifras, la ficha de terreno pide la superficie **disponible** (dato del sitio) y la decisión se toma comparándola con la necesaria cuando esta exista (DPV-12A-09).
 
 ## 5. Por qué un terreno barato puede ser caro
 
@@ -74,7 +74,7 @@ Un terreno de bajo precio puede requerir: extender la línea de media tensión v
 
 ## 6. Datos de terreno a levantar en campo
 
-Los campos de la [`ficha_relevamiento_terreno.md`](ficha_relevamiento_terreno.md) cubren lo necesario. Prioridad para la lista corta (los primeros son eliminatorios):
+Los campos de la [`ficha_relevamiento_terreno.md`](ficha_relevamiento_terreno.md) cubren lo necesario. Prioridad para la lista corta (los cinco primeros alimentan los gates; solo la **imposibilidad demostrada por escrito** los vuelve duros, y un gate de un terreno nunca descarta su corredor):
 
 1. Uso de suelo admitido y posibilidad de ampliación (por escrito).
 2. Agua: caudal sostenible (ensayo de bombeo) y análisis de calidad.

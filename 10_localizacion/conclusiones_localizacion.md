@@ -1,8 +1,8 @@
 # Conclusiones de localización industrial (módulo 12A)
 
-**Fecha:** 2026-10-01 · **Versión:** 1.0 · **Sesión:** 12A (en paralelo con 12B Logística y 12C Layout/Obra civil) · **Estado:** metodología y modelo completos; **sin ubicación elegida y sin ranking** (DEC-003 abierta)
+**Fecha:** 2026-10-01 · **Versión:** 1.1 (auditoría metodológica final) · **Sesión:** 12A (en paralelo con 12B Logística y 12C Layout/Obra civil) · **Estado:** metodología y modelo completos y auditados; **sin ubicación elegida y sin ranking** (DEC-003 abierta)
 
-> **Resultado central:** se construyó un método reproducible para comparar zonas, pero **con la evidencia actual no se puede ordenar ninguna**. De 559 celdas de la matriz, 0 están verificadas, 35 son `[PVDP]` y 524 están vacías. El modelo lo dice explícitamente en lugar de inventar un orden. Eso no es una falla: es el estado real del conocimiento.
+> **Resultado central:** se construyó un método reproducible para comparar zonas, pero **con la evidencia actual no se puede ordenar ninguna**. De 624 celdas de la matriz, 0 están verificadas, 35 son `[PVDP]` y 589 están vacías. Ninguna región alcanza la cobertura de información mínima con umbrales de 60, 75 ni 90 %, en ningún modo ni perfil. El modelo lo dice explícitamente en lugar de inventar un orden.
 
 ---
 
@@ -10,156 +10,159 @@
 
 Detalle en [`metodologia_localizacion.md`](metodologia_localizacion.md).
 
-- **Niveles:** país → provincia → corredor → municipio → terreno. Esta sesión llega a **provincia + corredor**; municipio y terreno quedan para la lista corta (ola O8).
-- **Embudo:** E0 universo → E1 cribado regional (este módulo) → E2 lista corta (después de los hitos H-A capital/ancla y H-B escala/abastecimiento) → E3 municipios (plantilla de 14 temas) → E4 terrenos (ficha + filtros eliminatorios) → E5 decisión junto con escala, CAPEX y finanzas.
-- **Matriz multicriterio** en formato largo (13 corredores × 43 subcriterios en 12 grupos) + **perfiles de ponderación** editables + **modelo** que valida, normaliza (min-max o rango fijo, con inversión para "menor es mejor"), pondera y calcula un **intervalo** [observado, máximo] por región sin imputar faltantes.
-- **Dos modos:** *estricto* (solo datos verificados, cotizaciones o estimaciones documentadas) y *exploratorio* (acepta `[PVDP]`, siempre rotulado).
-- **Reglas de emisión:** puntaje informado solo con cobertura ≥ 75 % del peso; orden solo entre regiones que la alcanzan; subcriterio no comparable si sus datos vienen de una sola provincia o de < 50 % de las regiones; NETWORK nunca puntúa.
+- **Niveles:** país → provincia → corredor → municipio → terreno. Esta sesión llega a **provincia + corredor**.
+- **Embudo:** E0 universo → E1 cribado regional (este módulo) → E2 lista corta (después de los hitos H-A y H-B del plan de campo) → E3 municipios → E4 terrenos (ficha + gates) → E5 decisión con escala, CAPEX y finanzas.
+- **Matriz multicriterio** en formato largo (13 corredores × 48 subcriterios: 45 monotónicos en 14 grupos ponderables + 3 trade-offs; más 2 filas NETWORK) + **4 perfiles de ponderación** editables + **modelo** que valida, normaliza, pondera y calcula la **envolvente por faltantes** y la **cobertura de información** sin imputar faltantes.
+- **Sentidos:** `MAYOR_MEJOR`, `MENOR_MEJOR`, `NO_MONOTONICO` (nunca lineal) y `GATE_DURO` / `GATE_CONDICIONAL` (no puntúan; municipio/terreno).
+- **Dos modos:** *estricto* (solo datos verificados, cotizaciones o estimaciones documentadas) y *exploratorio* (acepta `[PVDP]`, rotulado).
+- **Datos provinciales:** `PROVINCIA_NORMA` se aplica a cada corredor; `PROVINCIA_AGREGADO` no puntúa corredores.
 
-## 2. Regiones comparadas
+## 2. Densidad / ecosistema avícola (cambio de la auditoría)
 
-Detalle en [`regiones_preliminares.md`](regiones_preliminares.md). Ninguna elegida ni descartada.
+La densidad avícola dejó de ser un criterio "menor es mejor". Ahora hay:
 
-| Provincia | Corredores |
-|---|---|
-| Buenos Aires | BA-AMBA (periurbano), BA-NORTE (RN9/RN8), BA-OESTE (RN5/RN7), BA-INTERIOR (centro y sur de menor presión urbana) |
-| Entre Ríos | ER-SUR (Gualeguaychú–Gualeguay), ER-URUGUAY (cluster del río Uruguay), ER-CENTRO (Paraná–Crespo–Villaguay) |
-| Santa Fe | SF-SUR (Gran Rosario y corredor del Paraná), SF-CENTRO (Santa Fe–Esperanza–Rafaela) |
-| Córdoba | CBA-SUR (Río Cuarto), CBA-ESTE (Villa María–Marcos Juárez–San Francisco) |
-| Chaco | CH-ESTE (Gran Resistencia), CH-CENTRO (Sáenz Peña) |
-
-Referencia secundaria fuera de la matriz: **Río Negro** (2,5 % de la faena SENASA 2025, FTE-001 `[PVDP]`), por evidencia de actividad, sin incorporarla a la comparación. No se agregaron otras provincias por falta de evidencia.
-
-## 3. Criterios principales
-
-Detalle en [`criterios_localizacion.md`](criterios_localizacion.md).
-
-- **12 grupos:** demanda, producción primaria, alimento, faena/industria, agua, efluentes, energía, logística, exportación, terreno, normativa, RRHH.
-- **Los que más diferencian corredores** (cuando haya datos): granjas e integrables en radio (PRI-02, PRI-03), pollito BB (PRI-04), densidad avícola como riesgo (PRI-05), maíz y fábricas de alimento (ALI-01, ALI-03), façon (IND-02), calidad del acuífero (AGU-02), cuerpo receptor (EFL-02), potencia y gas (ENE-01, ENE-02), tiempo al AMBA (DEM-02), presión urbana (TER-04).
-- **Filtros eliminatorios** (no ponderables, a nivel terreno): uso de suelo, agua, vuelco, energía, riesgo hídrico, vecinos, receptor de subproductos.
-- **Fuera de la matriz:** el contacto en Chaco (factor NETWORK, cualitativo, sin peso).
-
-## 4. Información faltante
-
-| Bloque | Qué falta | Registro | Ola |
+| Dimensión | Sentido | Variables (distintas entre sí) | Estado de los datos |
 |---|---|---|---|
-| Demanda | Mapa de locales y CD de la red; otros canales | DPV-018, DPV-036, DPV-040 | O1–O2 |
-| Producción primaria | Granjas, integrables e incubadoras **georreferenciadas** por corredor; IAAP georreferenciada; clima | DPV-023, DPV-047, DPV-048, DPV-12A-05, DPV-12A-07 | O0, O4 |
-| Alimento | Maíz y soja por departamento; plantas de molienda; fábricas y precio puesto | DPV-12A-02, DPV-050 | O0, O4 |
-| Industria | Capacidad a façon por radio; servicios técnicos | DPV-006, DPV-089 | O3, O7 |
-| Agua y efluentes | Caudal y calidad de acuíferos; límites de vuelco de ER, SF, Cba y Chaco | DPV-053, DPV-067, DPV-106 | O8 |
-| Energía | Potencia en MT, gas industrial, calidad de servicio por distribuidora | DPV-052, DPV-087 | O8 |
-| Logística y exportación | Distancias y tiempos **medidos**; servicios reefer por terminal | DPV-12A-01, DPV-027 | O0 (con 12B) |
-| Terreno y normativa | Parques industriales; riesgo hídrico; densidad por partido; plazos de EIA; superficie por escala | DPV-12A-03, DPV-12A-04, DPV-12A-08, DPV-106, DPV-12A-09 | O0, O8 (con 12C) |
-| RRHH | Población activa, experiencia, técnicos | DPV-12A-06 | O8 |
+| **ECOSISTEMA_AVICOLA** | Más presencia = favorable | ECO-02 productores integrables, ECO-03 incubadoras con venta a terceros, ECO-04 servicios avícolas especializados (veterinarios, técnicos, contratistas de captura, transportistas de aves vivas, proveedores); ECO-01 faena provincial 2024 (agregado, **no puntúa**) | Vacías por corredor; ECO-01 con valores provinciales `[PVDP]` |
+| **EXPOSICION_SANITARIA** | Más exposición = desfavorable | SAN-01 distancia mediana entre establecimientos, SAN-02 movimientos de aves (DT-e), SAN-03 eventos de IAAP en 50 km, SAN-04 lejanía de humedales y aves silvestres | Vacías |
+| **TRADE_OFF** | No monotónico | TOF-01 densidad de granjas (variable de doble efecto), TOF-02 concentración industrial, TOF-03 distancia al borde urbano | Sin puntaje; análisis cualitativo |
 
-Cobertura por grupo hoy: solo DEM-01 (distancia, estimada), PRI-01 (faena provincial), IND-01 (plantas provinciales) y EFL-01 (vuelco, solo Buenos Aires) tienen algún valor, todos `[PVDP]`.
+Ninguna variable representa las dos cosas a la vez (test T22). El peso entre ecosistema y exposición es una decisión estratégica (DEC-12A-02).
 
-## 5. Sensibilidad de ponderaciones
+## 3. Criterios monotónicos vs trade-off
 
-**Con los datos reales — modo estricto:** cobertura 0 % en las 13 regiones y en los 4 perfiles; **RANKING NO EMITIDO**.
+- **Monotónicos (45):** cada uno mide **una sola dimensión** en la que más (o menos) es mejor: distancia y tiempo al AMBA, productores, incubadoras, servicios, exposición sanitaria, clima, maíz, molienda, fábricas, façon, agua, vuelco, energía, accesos, nodo reefer, parques industriales, precio de tierra (solo DPV), riesgo hídrico, presión urbana, plazos ambientales, mano de obra.
+- **No monotónicos (3, sin puntaje):** densidad de granjas, concentración industrial, cercanía al borde urbano. No hay función defendible (registro `FUNCIONES_NO_MONOTONICAS` vacío): se analizan cualitativamente o se dividen en componentes. Un intento de normalizarlos linealmente es rechazado por el modelo (T21).
+- DEM-01 (distancia a CABA) sigue siendo monotónico porque mide **solo** la dimensión de distribución; las compensaciones (granjas, tierra, sanidad) están en otros criterios.
 
-**Con los datos reales — modo exploratorio** (acepta `[PVDP]`; **no es resultado**), perfil C equilibrado:
+## 4. Gates duros vs condicionales
 
-| Región | Cobertura | Intervalo de puntaje [observado – máximo] |
+| Tipo | Gates | Efecto |
 |---|---|---|
-| BA-AMBA / BA-NORTE / BA-OESTE / BA-INTERIOR | 4 % | 0,030–0,036 → 0,989–0,994 |
-| ER-SUR / ER-URUGUAY / ER-CENTRO | 7 % | 0,062–0,067 → 0,991–0,996 |
-| SF-SUR / SF-CENTRO | 7 % | 0,018–0,022 → 0,947–0,951 |
-| CBA-SUR / CBA-ESTE | 7 % | 0,012–0,013 → 0,941–0,942 |
-| CH-ESTE / CH-CENTRO | 2 % | 0,000–0,003 → 0,976–0,979 |
+| **Duro** (solo con imposibilidad demostrada por escrito) | G-D1 uso de suelo incompatible sin vía legal · G-D2 imposibilidad demostrada de agua mínima · G-D3 imposibilidad legal de gestionar efluentes · G-D4 imposibilidad física de energía indispensable | Descarta **ese terreno** (o municipio) |
+| **Condicional** | G-C1 riesgo hídrico mitigable · G-C2 vecinos · G-C3 receptor de subproductos · G-C4 falta inicial de gas · G-C5 potencia limitada ampliable · G-C6 agua que requiere tratamiento · G-C7 acceso | Marca el terreno **CONDICIONADO** (inversión, tratamiento, tercerización, mitigación o diseño) |
 
-Todas las regiones tienen un intervalo de casi 0 a casi 1: **cualquier orden sería compatible con los datos**. En los perfiles A, B y D ocurre lo mismo (coberturas de 2 % a 10 %). 40 de los 43 subcriterios son NO_COMPARABLES (incluido el límite de vuelco, que solo existe para Buenos Aires).
+Se aplican en E3/E4 (municipio/terreno). **Ningún gate de un terreno elimina una región completa**; un gate duro afirmado solo de palabra deja el terreno condicionado, no descartado (T23). Umbrales concretos: DEC-12A-03.
 
-**Con datos ficticios de demostración** (`--demo`; tres zonas inventadas): el primer lugar cambia de Z-CERCA (perfil A) a Z-CLUSTER (perfiles B, C y D); con ±50 % en el peso de un solo grupo, el orden cambia en 6 de 24 variaciones del perfil A, 7 de 24 del B, 2 de 24 del C y 9 de 24 del D. En el perfil B, las dos primeras zonas quedan a 0,009 de distancia. **Lección:** cuando los datos existan, cualquier "ganador" deberá presentarse con su sensibilidad; si cambia con un ±50 % razonable de un peso, la elección es estratégica (DEC-12A-02), no técnica.
+## 5. Sensibilidad del umbral de cobertura 60 / 75 / 90 %
 
-## 6. Principales trade-offs
+El 75 % es un **criterio de control del modelo / supuesto metodológico**, no un estándar de análisis multicriterio.
 
-Detalle en [`escenarios_localizacion.md`](escenarios_localizacion.md).
+| Modo | Perfil | Elegibles con 60 % | con 75 % | con 90 % |
+|---|---|---|---|---|
+| Estricto | A, B, C, D | 0 | 0 | 0 |
+| Exploratorio | A, B, C, D | 0 | 0 | 0 |
 
-1. **Mercado vs granjas:** cerca del AMBA se gana distribución y se pierde bioseguridad, bienestar de aves vivas, suelo y expansión; la lógica sectorial es "planta cerca de las granjas, producto refrigerado al mercado".
-2. **Ecosistema vs sanidad:** el cluster entrerriano ofrece todo cerca y concentra el riesgo; una zona de baja densidad ofrece sanidad inicial y obliga a construir el ecosistema.
-3. **Tierra barata vs servicios:** un terreno barato sin potencia, agua apta o vuelco puede ser el más caro de operar.
-4. **Puerto vs granos:** las terminales reefer están en CABA/Dock Sud; el maíz y la soja, en el centro del país. Estar cerca del puerto no vuelve exportadora a una planta.
-5. **Planta única vs dos nodos:** faena productiva + nodo comercial en el AMBA (DEC-12A-04).
-6. **Red de supermercados:** con ancla fuerte (13,5–27 t/día de prueba), una planta a ~1.000 km mueve ~19 veces más t·km hacia el AMBA que una en el periurbano; sin ancla, la cercanía al AMBA pierde peso relativo. **La arquitectura de distribución (CD vs 90 locales) puede pesar más que la ubicación de la planta.** Demanda no validada: solo sensibilidad.
+Con los datos actuales **el conjunto elegible no cambia porque es vacío en todos los casos**: la cobertura de información máxima es 6 % (exploratorio, perfil A, solo por la distancia estimada a CABA). Con datos ficticios de demostración (T24), el conjunto sí cambia: 3 regiones elegibles con 60 %, 2 con 75 % y 1 con 90 % (sin orden). Cuando haya datos reales, el resultado deberá informarse junto con esta sensibilidad.
 
-## 7. Zonas habilitadas para investigación futura
+## 6. Interpretación correcta de los rangos por faltantes
 
-**Las 13 regiones quedan habilitadas para investigación**; ninguna se descarta ni se prioriza por preferencia. Lo que difiere es **qué hay que averiguar primero** en cada una:
+- **Qué es:** la **envolvente de peor/mejor caso producida exclusivamente por la información faltante**: mínimo = cada faltante vale 0; máximo = cada faltante vale 1. Su ancho es exactamente el peso de lo que no se sabe.
+- **Qué NO es:** no es un intervalo de confianza, no es una probabilidad, no es un error estadístico. No dice qué valor es más probable ni mide la incertidumbre de los datos que sí existen.
+- **Cómo se muestra:** siempre junto con la **COBERTURA_DE_INFORMACION** (% del peso con dato admisible), en consola, en `resultados_localizacion.csv` (`PUNTAJE_MIN_FALTANTES_0`, `PUNTAJE_MAX_FALTANTES_1`, `COBERTURA_DE_INFORMACION`) y en la futura interfaz (T25).
 
-| Región | Pregunta que más podría cambiar su evaluación |
-|---|---|
-| BA-AMBA | ¿Algún municipio admite frigorífico con expansión? ¿Sirve más como nodo comercial (trozado/distribución) que como faena? |
-| BA-NORTE, BA-OESTE | ¿Hay productores e incubadoras en radio? ¿Calidad de acuíferos? ¿Servicios reefer en Zárate? |
-| BA-INTERIOR | ¿Cuánto cuesta construir el ecosistema (pollito, alimento, servicios)? ¿Riesgo de IAAP georreferenciado? |
-| ER-SUR, ER-URUGUAY, ER-CENTRO | ¿Hay productores integrables libres (incluidos ex integrados de GTA, sin suponerlo)? ¿Presión sanitaria real? ¿Límites de vuelco provinciales? |
-| SF-SUR, SF-CENTRO | ¿Productores e incubadoras? ¿Ventaja real de alimento (molienda, maíz)? |
-| CBA-SUR, CBA-ESTE | ¿Productores? ¿Diferencial de maíz? ¿Situación de Avex sin asumir disponibilidad? |
-| CH-ESTE, CH-CENTRO | Prácticamente todo: pollito, alimento, agua, energía, mercado regional. **Requiere relevamiento específico antes de ser comparable** (cobertura 2 %) |
+Datos reales, modo exploratorio (**no es resultado**):
 
-La lista corta (DEC-12A-06) se define **después** de los hitos H-A y H-B del plan de campo, no antes.
+| Perfil | Cobertura de información | Envolvente por faltantes |
+|---|---|---|
+| A — Mercado | 6 % en todas las regiones | de 0,000–0,060 (mínimo) a 0,940–1,000 (máximo) |
+| B — Producción | 2 % | 0,000–0,016 → 0,984–1,000 |
+| C — Equilibrado | 2 % | 0,000–0,024 → 0,976–1,000 |
+| D — Exportador | 2 % | 0,000–0,016 → 0,984–1,000 |
 
-## 8. Datos de terreno a levantar en campo
+Cualquier orden es compatible con lo que se sabe. Respecto de la v1.0 la cobertura exploratoria bajó (de hasta 10 % a hasta 6 %) porque los agregados provinciales (faena, plantas) ya no puntúan corredores: es una corrección, no una pérdida de información.
 
-Con la [`ficha_relevamiento_terreno.md`](ficha_relevamiento_terreno.md) y los requisitos de [`terreno_ideal.md`](terreno_ideal.md), en este orden (los cinco primeros son eliminatorios y deben estar **por escrito**):
+## 7. Fuentes oficiales incorporadas
 
-1. Uso de suelo y posibilidad de ampliación.
-2. Agua: caudal (ensayo de bombeo) y calidad (análisis).
-3. Vuelco: cuerpo receptor, organismo, límites, permiso.
-4. Energía: potencia disponible y ampliable; gas natural.
-5. Riesgo hídrico: cota, anegamiento, acceso con lluvia.
-6. Vecinos y vientos; antecedentes de conflictos; postura municipal.
-7. Superficie, forma, topografía, napa, linderos disponibles.
-8. Distancias medidas a granjas, incubadoras, alimento, rendering, SENASA, rutas y puertos.
-9. Precio como `[COTIZACIÓN]`.
+En [`fuentes_12A.csv`](fuentes_12A.csv), con trazabilidad "**confirmado en revisión externa del proyecto; lectura directa pendiente en este entorno**" (el acceso a magyp.gob.ar y argentina.gob.ar/senasa sigue bloqueado; prueba 2026-10-01):
 
-La superficie necesaria **no** se fija todavía: depende de la escala, de la tecnología de efluentes y del layout de 12C (DPV-12A-09).
+| ID | Fuente | Universo · año | Dato | Uso en 12A |
+|---|---|---|---|---|
+| FTE-12A-015 | SAGyP, "Faena Provincial 2024–2025" | **Faena habilitada por SENASA · 2024** | ER ~50,90 %; BA ~34,89 %; SF ~5,09 %; Cba ~4,49 %; RN ~2,41 % | ECO-01 (agregado provincial: **no puntúa corredores**) y contexto en regiones |
+| FTE-12A-016 | SAGyP, "Faena Provincial 2025–2026" | Faena habilitada por SENASA · 2025–2026 | No leída | Actualización futura de ECO-01 |
+| FTE-12A-017 | SENASA, publicación del 2024-07-02 | **Actividad avícola** | Casi 90 % en Entre Ríos y Buenos Aires | Solo contexto; **no** es participación de faena |
 
-## 9. Tests
+No se mezclan actividad avícola, producción primaria y faena; tampoco el extracto 2025 de FTE-001 con la tabla oficial 2024 (regla 18).
 
-`python3 10_localizacion/modelo_localizacion.py --solo-tests` → **20/20** superadas:
+## 8. Corrección de Río Negro
 
-| Test | Qué prueba |
-|---|---|
-| T01 | Perfiles suman 100; sumas ≠ 100, negativos, grupos desconocidos u omitidos se rechazan; pesos de subcriterios suman 1 |
-| T02 | Inversión menor/mejor |
-| T03 | Faltantes: aportan 0, cobertura = 1 − peso faltante, ancho del intervalo = peso faltante, no se imputan |
-| T04 | Sin ranking ni puntaje cuando la cobertura es insuficiente; alerta de faltantes |
-| T05 | Cambiar ponderaciones cambia el resultado (demo: A → Z-CERCA, B → Z-CLUSTER) |
-| T06 | `[PVDP]` ignorado en modo estricto; solo el exploratorio lo usa |
-| T07 | Ninguna región recibe puntos por datos inexistentes; región sin datos fuera del orden (no última); matriz real con observado 0 |
-| T08 | NETWORK (contacto en Chaco): peso > 0 rechazado; su fila no cambia puntajes |
-| T09 | Validación: PVDP disfrazado de DISPONIBLE, sin fuente, no numérico, DISPONIBLE sin valor, PENDIENTE con valor; matriz real válida |
-| T10 | Dato de una sola provincia → NO_COMPARABLE |
-| T11 | Alerta de faltantes solo en la región afectada |
-| T12 | `[SUPUESTO]` excluido en modo estricto |
-| T13 | Invariancia de unidades (km → m) |
-| T14 | Empate y rango fijo con recorte |
-| T15 | Suma de contribuciones = observado; observado ≤ sobre disponible ≤ máximo |
-| T16 | Con datos completos el intervalo es nulo |
-| T17 | Matriz real: grilla completa 13 × 43; ningún perfil emite ranking (estricto ni exploratorio) |
-| T18 | Datos provinciales contados por región; vuelco solo-BA NO_COMPARABLE |
-| T19 | Evaluar no modifica la matriz (no se rellenan celdas) |
-| T20 | Sensibilidad ±50 % detecta cambios de orden en la demo |
+Antes: "Río Negro tiene 2,5 % de la faena". Ahora: **"Río Negro representó aproximadamente 2,4 % de la faena nacional habilitada por SENASA en 2024 según la tabla oficial de Secretaría de Agricultura"** (FTE-12A-015, confirmado en revisión externa; lectura directa pendiente). Sigue como **referencia secundaria**: no se descarta ni se incorpora automáticamente a la matriz principal.
 
-T17 y T18 describen el **estado actual de los datos**: cuando la matriz se complete, deberán revisarse (dejarán de cumplirse a propósito).
+## 9. Corrección de puertos / exportación
 
-## 10. Archivos
+- Se eliminó "las terminales refrigeradas están en CABA y Dock Sud". Ahora: **"Buenos Aires / Dock Sud son nodos logísticos de referencia para contenedores y deben compararse con otras alternativas portuarias"**, porque no hay un inventario nacional de terminales reefer verificado.
+- **Cercanía a puerto ≠ disponibilidad reefer ≠ servicio marítimo adecuado ≠ exportación habilitada.**
+- Nuevo DPV-12A-10 **por nodo** (Buenos Aires, Dock Sud, Zárate, Gran Rosario, Concepción del Uruguay u otros): terminal de contenedores, enchufes/capacidad reefer, frecuencia, destinos, cut-off, costos y disponibilidad real.
+- Nuevo subcriterio EXP-04 (servicio reefer verificado del nodo) y **dependencia**: los km al nodo (EXP-01) solo puntúan si EXP-04 ≥ 3. La proximidad a un puerto no produce por sí sola puntaje exportador (T27).
+
+## 10. Sensibilidad t·km (red ancla)
+
+Se mantiene la sensibilidad, ahora con **todos los parámetros explícitos** ([`escenarios_localizacion.md`](escenarios_localizacion.md) §3): origen = centro de referencia del corredor; distancia por ruta = orden de magnitud no medido (SUP-12A-02); toneladas = 1,0 / 4,5 / 13,5 / 27 t/día de prueba; 100 % al AMBA (con variante 60 % y 30 %); entrega troncal a un único punto del AMBA cuya existencia (CD de la red o cross-dock) **no está confirmada** (DPV-036).
+
+- Con esos parámetros, Resistencia (~1.020 km) frente a Pilar (~55 km) da **≈ 18,5 veces** más t·km de traslado troncal (antes se citaba "~19 veces" sin parámetros). Ese múltiplo es **solo el cociente de dos distancias supuestas**; no es una característica de una provincia.
+- La forma de distribución puede cambiar sustancialmente el resultado: sin CD, una planta lejana no puede repartir a 90 locales desde su origen y necesita la arquitectura R2.
+- **Una planta vs planta + CD** quedan como **arquitecturas de red diferentes** (DEC-12A-04, abierta), no como criterios equivalentes de localización. La comparación futura considerará inversión, inventario, frío, doble manipulación, transporte primario, distribución secundaria y nivel de servicio, **sin calcular costos todavía**.
+
+## 11. Integración con 12C
+
+12C está generando una estimación conceptual de superficie en su propia rama; 12A **no la leyó ni la modificó**. La superficie del terreno sigue **pendiente** en 12A. En la reconciliación 12A–12C se reemplazará el estado genérico por **el rango conceptual de 12C + las restricciones reales municipales y del terreno** (DPV-12A-09, [`terreno_ideal.md`](terreno_ideal.md) §4).
+
+## 12. Zonas habilitadas para investigación y datos de campo
+
+Sin cambios respecto de la v1.0: **las 13 regiones siguen habilitadas para investigación**, ninguna descartada ni priorizada por preferencia; Río Negro como referencia secundaria. La lista corta (DEC-12A-06) se define después de los hitos H-A y H-B. Datos de terreno a levantar: los que alimentan los gates (uso de suelo, agua, efluentes, energía, riesgo hídrico, vecinos, subproductos), por escrito, más superficie, topografía, distancias medidas y precio como `[COTIZACIÓN]` ([`terreno_ideal.md`](terreno_ideal.md) §6). Nuevos datos regionales: servicios avícolas especializados (DPV-12A-11), exposición sanitaria por corredor (DPV-12A-12) y nodos portuarios (DPV-12A-10).
+
+## 13. Tests
+
+`python3 10_localizacion/modelo_localizacion.py --solo-tests` → **28/28** superadas.
+
+| Test | Qué prueba | v1.1 |
+|---|---|---|
+| T01 | Perfiles suman 100 (14 grupos); errores de pesos rechazados; pesos de subcriterios suman 1 | sin cambios |
+| T02 | Inversión menor/mejor | sin cambios |
+| T03 | Faltantes: aportan 0, ancho de la envolvente = peso faltante, no se imputan | redacción |
+| T04 | Sin ranking ni puntaje cuando la cobertura es insuficiente | códigos de la demo |
+| T05 | Cambiar ponderaciones cambia el resultado (A → Z-CERCA, B → Z-CLUSTER) | sin cambios |
+| T06 | `[PVDP]` ignorado en modo estricto | sin cambios |
+| T07 | Ninguna región recibe puntos por datos inexistentes | sin cambios |
+| T08 | NETWORK con peso > 0 rechazado; su fila no cambia puntajes | sin cambios |
+| T09 | Validación de estados de evidencia; matriz real válida | sin cambios |
+| T10 | Dato de una sola provincia → NO_COMPARABLE | nivel `PROVINCIA_NORMA` |
+| T11 | Alerta de faltantes solo en la región afectada | códigos de la demo (8/15) |
+| T12 | `[SUPUESTO]` excluido en modo estricto | sin cambios |
+| T13 | Invariancia de unidades | sin cambios |
+| T14 | Empate y rango fijo | sin cambios |
+| T15 | Suma de contribuciones = mínimo; mínimo ≤ sobre disponible ≤ máximo | sin cambios |
+| T16 | Con datos completos la envolvente es nula | redacción |
+| T17 | Matriz real: grilla completa 13 × 48; ningún ranking (estricto ni exploratorio) | grilla con trade-offs y NETWORK |
+| T18 | Agregados provinciales excluidos por defecto en la matriz real; con autorización se cuentan; vuelco solo-BA NO_COMPARABLE | **actualizado**: antes contaba el agregado como dato de corredor |
+| T19 | Evaluar no modifica la matriz | sin cambios |
+| T20 | Sensibilidad ±50 %: detecta cambios con margen chico (A: 8/28) y estabilidad con margen amplio (C: 0/28) | **actualizado**: la demo reestructurada dejó a C estable; la prueba ahora exige ambas cosas |
+| T21 | `NO_MONOTONICO` sin min-max lineal (validación y normalizar); se informa como trade-off | nuevo |
+| T22 | Ecosistema y exposición: variables disjuntas, sentidos opuestos; densidad no puntúa | nuevo |
+| T23 | Gate condicional no elimina; duro descarta solo el terreno y solo con documento; nunca la región | nuevo |
+| T24 | Sensibilidad de cobertura 60/75/90 % (3/2/1 elegibles en la demo) | nuevo |
+| T25 | El rango nunca se denomina intervalo de confianza; cobertura junto al rango | nuevo |
+| T26 | `PROVINCIA_AGREGADO` no se usa automáticamente como dato de corredor | nuevo |
+| T27 | La proximidad al puerto no puntúa sin servicio reefer verificado | nuevo |
+| T28 | Contacto de Chaco: solo en regiones de Chaco, peso cero, no cambia puntajes | nuevo |
+
+T17 y T18 describen el estado actual de los datos: cuando la matriz se complete, deberán revisarse a propósito.
+
+## 14. Archivos
 
 | Archivo | Contenido |
 |---|---|
-| [`metodologia_localizacion.md`](metodologia_localizacion.md) | Niveles, embudo, matriz, estados de evidencia, cálculo, limitaciones, interfaces con 12B/12C |
-| [`criterios_localizacion.md`](criterios_localizacion.md) | 43 subcriterios, correlaciones, filtros eliminatorios, rúbricas 1–5, bioseguridad, exportación, NETWORK |
-| [`regiones_preliminares.md`](regiones_preliminares.md) | 13 corredores, lógicas de Buenos Aires, fichas por provincia, GTA, Chaco |
-| [`escenarios_localizacion.md`](escenarios_localizacion.md) | Distancia ≠ costo, arquetipos L1–L5, red de supermercados S0–S2, exportación X0–X5, escala, trade-offs |
-| [`terreno_ideal.md`](terreno_ideal.md) | Requisitos del terreno por función, atributos físicos, superficie (pendiente), datos de campo |
-| [`matriz_localizacion.csv`](matriz_localizacion.csv) | Matriz región × subcriterio (559 filas; vacías o `[PVDP]`) |
-| [`pesos_localizacion.csv`](pesos_localizacion.csv) | Perfiles A–D (fuente única de pesos) |
-| [`modelo_localizacion.py`](modelo_localizacion.py) | Modelo reproducible con 20 tests |
-| `resultados_localizacion.csv` | Salida generada por el modelo (no editar) |
+| [`metodologia_localizacion.md`](metodologia_localizacion.md) | Niveles, embudo, matriz, sentidos, evidencia, cálculo, envolvente, cobertura y su sensibilidad, gates, arquitecturas de red, interfaces |
+| [`criterios_localizacion.md`](criterios_localizacion.md) | Ecosistema vs exposición, subcriterios monotónicos y trade-offs, gates, correlaciones, rúbricas, bioseguridad, exportación, NETWORK |
+| [`regiones_preliminares.md`](regiones_preliminares.md) | 13 corredores, faena 2024 con año y universo, Río Negro, Buenos Aires, GTA, Chaco |
+| [`escenarios_localizacion.md`](escenarios_localizacion.md) | Distancia ≠ costo, arquetipos L1–L4, arquitecturas R1/R2, red ancla con parámetros explícitos, exportación por nodo |
+| [`terreno_ideal.md`](terreno_ideal.md) | Requisitos del terreno, gates, superficie pendiente de la reconciliación con 12C |
+| [`matriz_localizacion.csv`](matriz_localizacion.csv) | 626 filas (624 celdas + 2 NETWORK); vacías o `[PVDP]` |
+| [`pesos_localizacion.csv`](pesos_localizacion.csv) | Perfiles A–D con 14 grupos |
+| [`modelo_localizacion.py`](modelo_localizacion.py) | Modelo v1.1 con 28 tests |
+| `resultados_localizacion.csv` | Salida generada (envolvente, cobertura, elegibilidad 60/75/90) |
 | [`guia_ramiro.md`](guia_ramiro.md) | Conceptos para el promotor |
-| [`actualizaciones_gestion_12A.md`](actualizaciones_gestion_12A.md) | SUP-12A, DPV-12A, DEC-12A y anotaciones a consolidar |
-| [`fuentes_12A.csv`](fuentes_12A.csv) | 14 fuentes identificadas, no consultadas |
+| [`actualizaciones_gestion_12A.md`](actualizaciones_gestion_12A.md) | Registros provisionales (§6: auditoría) |
+| [`fuentes_12A.csv`](fuentes_12A.csv) | 17 fuentes provisionales (3 oficiales en revisión externa) |
 
-**Calidad:** MEDIA como método y modelo; **NULA como evidencia comparativa** (0 celdas verificadas). No se eligió ubicación, no se seleccionaron terrenos, no se calcularon CAPEX ni OPEX, no se modificaron `00_gestion_proyecto/`, `25_fuentes/`, `13_logistica/` ni `09_layout_obra_civil/`.
+**Calidad:** MEDIA–ALTA como método y modelo tras la auditoría; **NULA como evidencia comparativa** (0 celdas verificadas). No se eligió ubicación, no se seleccionaron terrenos, no se calcularon CAPEX ni OPEX, no se modificaron `00_gestion_proyecto/`, `25_fuentes/`, `13_logistica/` ni `09_layout_obra_civil/`.
