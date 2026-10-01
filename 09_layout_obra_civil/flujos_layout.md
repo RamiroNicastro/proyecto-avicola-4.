@@ -21,7 +21,7 @@ flowchart LR
 
 | Punto | Conflicto a evitar | Regla conceptual |
 |---|---|---|
-| Espera | Camiones al sol, sin ventilación (DOA, bienestar) | Andén **cubierto y ventilado** dimensionado por **bahías** (horas de espera × ritmo ÷ aves por camión, SUP-12C-02); en verano puede limitar la llegada |
+| Espera | Camiones al sol, sin ventilación (DOA, bienestar) | Andén **cubierto y ventilado** dimensionado por **bahías** (horas de espera × ritmo ÷ aves por camión, SUP-108); en verano puede limitar la llegada |
 | Playa de vivo | Compartir playa con despacho | Acceso y playa **exclusivos** (F5) |
 | Cajones/módulos | Cajones lavados que vuelven por zona de producto | Lavadero en zona 1 y retorno directo al camión |
 | Volumen | 2.500 → 20.000 aves/día = ~1 → 7 camiones/día con 3.000–6.000 aves por camión (**proxy**, DPV-084) | Las bahías crecen en escalón, no linealmente |
@@ -50,7 +50,7 @@ flowchart LR
 | Reproceso | Carcasa que vuelve a una zona anterior | Estación de reproceso dentro de la misma zona |
 | Patas/garras y menudencias | Tratarlas como subproductos | Son **comestibles**: van por el circuito de producto a su sala (zona 3) |
 | Salida del frío | Producto que cruza la playa de vivo o subproductos para llegar al camión | Docks en fachada propia (zona 5) |
-| Exportación | Mezcla de lotes por destino | Espacio de cámara para segregar lotes (DPV-12C-10) |
+| Exportación | Mezcla de lotes por destino | Espacio de cámara para segregar lotes (DPV-145) |
 | Producto cocido futuro | Crudo y cocido en la misma sala | Reserva de sala separada con personal propio (09A §3) — no se dimensiona |
 
 ## 3. Personal
@@ -86,7 +86,7 @@ flowchart TB
 | Inspección (2) | Decomisos | Recipiente identificado y precintado | **Sala de decomisos** (separada) | Destino según norma (DPV-066) |
 | Deshuese/CMS (3, config. C) | Hueso, residuo de CMS, piel sin comprador | Contenedores desde la sala | Cámara de subproductos | Rendering |
 
-**Regla:** los subproductos **salen lateralmente** de la línea hacia la zona 6 por canales, bombas o tornillos; **ningún contenedor atraviesa salas de producto ni comparte puertas con él**. La zona 6 tiene **playa y portón propios**. El volumen pasa de ~1,5 a ~12 t/día de sólidos (config. B; hasta ~19 t/día con deshuese), por lo que a 10.000–20.000 aves/día el retiro es un flujo industrial continuo. La **reserva de rendering** (si se decide reservarla, DEC-12C-05) debe ser contigua a la zona 6 y alejada de la zona limpia y de los vecinos.
+**Regla:** los subproductos **salen lateralmente** de la línea hacia la zona 6 por canales, bombas o tornillos; **ningún contenedor atraviesa salas de producto ni comparte puertas con él**. La zona 6 tiene **playa y portón propios**. El volumen pasa de ~1,5 a ~12 t/día de sólidos (config. B; hasta ~19 t/día con deshuese), por lo que a 10.000–20.000 aves/día el retiro es un flujo industrial continuo. La **reserva de rendering** (si se decide reservarla, DEC-066) debe ser contigua a la zona 6 y alejada de la zona limpia y de los vecinos.
 
 ## 5. Residuos (no subproductos)
 
@@ -129,7 +129,7 @@ flowchart LR
 | Alimento balanceado / pollitos | **No entran a la planta de faena** (van a granjas) | — | — | — |
 | Combustible / gas / químicos de efluentes | Portón técnico | Zona 7 | Eventual | Producto |
 
-**Regla:** **tres circuitos que no se tocan** (vivo, producto, subproductos), idealmente con portones en lados distintos del predio; la circulación pesada interna se reserva como fracción del área cubierta (25–50 %, SUP-12C-11) porque la geometría real depende del terreno (12A).
+**Regla:** **tres circuitos que no se tocan** (vivo, producto, subproductos), idealmente con portones en lados distintos del predio; la circulación pesada interna se reserva como fracción del área cubierta (25–50 %, SUP-117) porque la geometría real depende del terreno (12A).
 
 ## 9. Agua y efluentes
 

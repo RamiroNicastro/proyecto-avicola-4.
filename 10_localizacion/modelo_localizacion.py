@@ -70,8 +70,8 @@ Unidades y convenciones
 Las unidades de cada subcriterio están en la columna UNIDAD (km, h, %, n, t/año, USD/ha, escala 1-5...).
 Decimal con punto en los CSV. Los valores de la matriz real son mayoritariamente PENDIENTES o [PVDP]
 (regla 16 de CLAUDE.md): con la evidencia actual el modo estricto NO emite ranking, y eso es el resultado
-correcto. Supuestos del modelo: SUP-12A-03 a SUP-12A-07, SUP-12A-10 a SUP-12A-12
-(10_localizacion/actualizaciones_gestion_12A.md).
+correcto. Supuestos del modelo: SUP-080 a SUP-084, SUP-087 a SUP-089
+(00_gestion_proyecto/supuestos.md; mapa de IDs en 00_gestion_proyecto/reconciliacion_sesiones_12.md).
 
 Uso
 ---
@@ -113,7 +113,7 @@ NIVELES_PROVINCIALES = {"PROVINCIA_NORMA", "PROVINCIA_AGREGADO"}
 # Funciones defendibles para criterios NO_MONOTONICO (nombre -> función x -> [0,1]). Hoy NINGUNA: sin una
 # función justificada, el criterio se divide en componentes monotónicos o queda como análisis cualitativo.
 FUNCIONES_NO_MONOTONICAS = {}
-# Dependencias: un subcriterio solo es usable si su "llave" tiene valor admisible ≥ umbral (SUP-12A-11).
+# Dependencias: un subcriterio solo es usable si su "llave" tiene valor admisible ≥ umbral (SUP-088).
 UMBRAL_NODO_REEFER = 3           # escala 1-5 de EXP-04: 3 = servicio reefer regular verificado
 DEPENDENCIAS = {"EXP-01": ("EXP-04", UMBRAL_NODO_REEFER)}
 # Etiquetas de salida del rango por faltantes (no usar "intervalo de confianza": NO lo es)
@@ -124,7 +124,7 @@ COLUMNAS = ["REGION", "PROVINCIA", "CORREDOR", "CRITERIO", "SUBCRITERIO", "NOMBR
             "SENTIDO", "NIVEL_DATO", "VALOR", "TIPO_EVIDENCIA", "FUENTE", "ESTADO", "NORMALIZACION", "PESO",
             "PUNTAJE", "OBSERVACIONES"]
 
-# [SUPUESTO] SUP-12A-04 — CRITERIOS DE CONTROL DEL MODELO (supuestos metodológicos, NO estándares de análisis
+# [SUPUESTO] SUP-081 — CRITERIOS DE CONTROL DEL MODELO (supuestos metodológicos, NO estándares de análisis
 # multicriterio); editables por línea de comandos
 UMBRAL_COBERTURA = 0.75          # cobertura de información mínima para informar puntaje y entrar al orden
 UMBRALES_SENSIBILIDAD = (0.60, 0.75, 0.90)

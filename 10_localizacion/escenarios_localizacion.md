@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-01 · **Versión:** 1.1 (auditoría metodológica) · **Sesión:** 12A · Método en [`metodologia_localizacion.md`](metodologia_localizacion.md)
 
-> Escenarios para **pensar** la localización, no para elegirla. Las cifras son aritmética sobre escenarios ya existentes del proyecto (demanda de prueba de `02`, flujos de `23`) y distancias de orden de magnitud no medidas (SUP-12A-02). **No son costos** (sin CAPEX ni OPEX en esta fase) **ni pronósticos**.
+> Escenarios para **pensar** la localización, no para elegirla. Las cifras son aritmética sobre escenarios ya existentes del proyecto (demanda de prueba de `02`, flujos de `23`) y distancias de orden de magnitud no medidas (SUP-079). **No son costos** (sin CAPEX ni OPEX en esta fase) **ni pronósticos**.
 
 ---
 
@@ -32,7 +32,7 @@ Una zona más lejos del mercado puede ser más barata de operar, y una zona cerc
 | **L3 — Planta en zona de granos y baja densidad** | Planta y granjas nuevas en una zona agrícola con poca avicultura | Exposición sanitaria inicial baja, tierra, alimento cerca, espacio para crecer | Construir el ecosistema desde cero; pollito, servicios y técnicos lejos; distribución larga | BA-OESTE, BA-INTERIOR, CBA-SUR, CBA-ESTE, SF-CENTRO, CH-ESTE, CH-CENTRO |
 | **L4 — Corredor intermedio** | Planta entre el cluster y el mercado, sobre rutas troncales | Compromiso entre abastecimiento y mercado; acceso a nodos portuarios | No es óptima en nada; depende de que haya productores en radio | BA-NORTE, ER-SUR, SF-SUR |
 
-### 2.2 Arquitecturas de red (decisión abierta, DEC-12A-04)
+### 2.2 Arquitecturas de red (decisión abierta, DEC-053)
 
 "Una planta" y "faena productiva + CD en el AMBA" **no son dos localizaciones comparables en la matriz**: son **dos arquitecturas de red diferentes**.
 
@@ -59,14 +59,14 @@ La comparación posterior R1 vs R2 deberá considerar, **sin calcular costos tod
 
 | Parámetro | Valor usado |
 |---|---|
-| Origen | Centro de referencia de cada corredor (SUP-12A-01): Pilar, Gualeguaychú, Concepción del Uruguay, Río Cuarto, Resistencia |
-| Distancia por ruta | Orden de magnitud **no medido** (SUP-12A-02): ~55 / 230 / 320 / 600 / 1.020 km (medición pendiente, DPV-12A-01, con 12B) |
+| Origen | Centro de referencia de cada corredor (SUP-078): Pilar, Gualeguaychú, Concepción del Uruguay, Río Cuarto, Resistencia |
+| Distancia por ruta | Orden de magnitud **no medido** (SUP-079): ~55 / 230 / 320 / 600 / 1.020 km (medición pendiente, DPV-116, con 12B) |
 | Toneladas | Volumen de la red en cada escenario: 1,0 / 4,5 / 13,5 / 27 t/día calendario (valores de prueba) |
 | Porcentaje dirigido al AMBA | **100 %** del volumen de la red (la tabla 3.2 lo varía) |
 | Existencia de CD | Se supone una **entrega troncal a un único punto** del AMBA (CD de la red o cross-dock propio). **No está confirmado** que la red tenga CD (DPV-036) |
 | Qué se mide | t·km por día calendario = t/día × km; solo ida cargada; **no** es costo ni incluye la distribución dentro del AMBA |
 
-| km a CABA (orden, SUP-12A-02) | S1 bajo (1,0 t/día) | S1 alto (4,5 t/día) | S2 bajo (13,5 t/día) | S2 alto (27 t/día) |
+| km a CABA (orden, SUP-079) | S1 bajo (1,0 t/día) | S1 alto (4,5 t/día) | S2 bajo (13,5 t/día) | S2 alto (27 t/día) |
 |---|---|---|---|---|
 | ~55 (BA-AMBA, Pilar) | 55 | 248 | 743 | 1.485 |
 | ~230 (ER-SUR, Gualeguaychú) | 230 | 1.035 | 3.105 | 6.210 |
@@ -93,7 +93,7 @@ La comparación posterior R1 vs R2 deberá considerar, **sin calcular costos tod
 
 Exportar depende primero de habilitación, listado, producto autorizado y comprador ([`criterios_localizacion.md`](criterios_localizacion.md) §8). La exportación vale **0** en los escenarios de demanda (SUP-022).
 
-**Cercanía a puerto ≠ disponibilidad reefer ≠ servicio marítimo adecuado ≠ exportación habilitada.** Buenos Aires / Dock Sud son **nodos logísticos de referencia** para contenedores (FTE-134 `[PVDP]`) y deben compararse con otras alternativas portuarias; no se afirma que sean los únicos nodos con servicio reefer, porque no existe un inventario nacional de terminales reefer verificado. Cada nodo se releva con los mismos datos (DPV-12A-10): terminal de contenedores, enchufes y capacidad reefer, frecuencia de servicios, destinos, cut-off, costos y disponibilidad real.
+**Cercanía a puerto ≠ disponibilidad reefer ≠ servicio marítimo adecuado ≠ exportación habilitada.** Buenos Aires / Dock Sud son **nodos logísticos de referencia** para contenedores (FTE-134 `[PVDP]`) y deben compararse con otras alternativas portuarias; no se afirma que sean los únicos nodos con servicio reefer, porque no existe un inventario nacional de terminales reefer verificado. Cada nodo se releva con los mismos datos (DPV-125): terminal de contenedores, enchufes y capacidad reefer, frecuencia de servicios, destinos, cut-off, costos y disponibilidad real.
 
 | Escenario | Cómo se exporta | Qué importa de la localización | Qué **no** resuelve la localización |
 |---|---|---|---|
@@ -122,9 +122,9 @@ Por eso el orden lógico es: **demanda y abastecimiento (hitos H-A y H-B del pla
 
 | Trade-off | Lado A | Lado B | Decisión a la que alimenta |
 |---|---|---|---|
-| Mercado vs granjas | Cerca del AMBA | Cerca de las granjas | DEC-003, DEC-12A-04 |
-| Ecosistema avícola vs exposición sanitaria | Cluster avícola (más ecosistema, más exposición) | Baja densidad (menos exposición, ecosistema a construir) | DEC-025, DEC-020, DEC-12A-02 |
+| Mercado vs granjas | Cerca del AMBA | Cerca de las granjas | DEC-003, DEC-053 |
+| Ecosistema avícola vs exposición sanitaria | Cluster avícola (más ecosistema, más exposición) | Baja densidad (menos exposición, ecosistema a construir) | DEC-025, DEC-020, DEC-051 |
 | Tierra barata vs servicios | Zona remota | Parque industrial con servicios | DEC-035, DEC-043 |
 | Puerto vs granos | Cerca de nodos portuarios de referencia para contenedores (hoy, Buenos Aires / Dock Sud) | Cerca de maíz y soja (centro) | DEC-011, DEC-024 |
-| Arquitectura de red (no criterio de localización) | R1 planta única | R2 planta + CD/cross-dock en el AMBA | DEC-12A-04 |
+| Arquitectura de red (no criterio de localización) | R1 planta única | R2 planta + CD/cross-dock en el AMBA | DEC-053 |
 | Decidir ahora vs postergar | Comprometer ubicación temprano | Etapa sin planta propia (compraventa o façon) | DEC-004, DEC-018 |

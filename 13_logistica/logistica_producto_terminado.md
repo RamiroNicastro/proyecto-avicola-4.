@@ -46,13 +46,13 @@ El congelado tolera semanas a meses en cámara (`[PVDP]`, DPV-078), de modo que 
 | 10.000 | 4 (100 %) · 47,9 t | 4 (100 %) · 38,3 t | 6 (67 %) · 28,8 t | 6 (67 %) · 16,0 t |
 | 20.000 | 8 (100 %) · 95,9 t | 8 (100 %) · 76,7 t | 9 (89 %) · 57,5 t | 12 (67 %) · 32,0 t |
 
-Con P1 (solo 10 % congelado) a 2.500 aves/día, despachar el congelado a diario llenaría un camión de escenario de 12 t al **4 %** de su capacidad másica; una vez por semana, al 25 %. **El intercambio es explícito:** camiones llenos ↔ más toneladas inmovilizadas en cámara (capital de trabajo físico) — se elige por canal y producto, no por regla (DEC-12B-04).
+Con P1 (solo 10 % congelado) a 2.500 aves/día, despachar el congelado a diario llenaría un camión de escenario de 12 t al **4 %** de su capacidad másica; una vez por semana, al 25 %. **El intercambio es explícito:** camiones llenos ↔ más toneladas inmovilizadas en cámara (capital de trabajo físico) — se elige por canal y producto, no por regla (DEC-058).
 
 ## 4. Pallets, ventanas de entrega y paradas
 
-- **Pallets:** no hay base suficiente (kg por pallet, tipo de pallet, alturas, pallets por camión: DPV-12B-04). Barrido **ilustrativo**: con 500 / 750 / 1.000 kg por pallet, la salida comestible equivale a 12 / 8 / 6 pallets por día operativo a 2.500 aves/día y 96 / 64 / 48 a 20.000. No se usan para dimensionar nada.
-- **Ventana de entrega:** desconocida (DPV-036, DPV-12B-09). El modelo calcula el **tramo de entregas** de cada ruta (paradas × (tiempo de parada + traslado)) y deja `excede_ventana = PENDIENTE` hasta conocer la ventana. Con 7–10 paradas de 0,75 h, el tramo es de **8–11 h**: si las ventanas de recepción fueran cortas (dato pendiente), harían falta más rutas con menos paradas cada una.
-- **Jornada:** las rutas se limitan a las paradas que caben en **12 h útiles por camión** (SUP-12B-08) después de cargar e ir y volver; si no cabe ni una parada, la ruta es **inviable en jornada** (flag).
+- **Pallets:** no hay base suficiente (kg por pallet, tipo de pallet, alturas, pallets por camión: DPV-129). Barrido **ilustrativo**: con 500 / 750 / 1.000 kg por pallet, la salida comestible equivale a 12 / 8 / 6 pallets por día operativo a 2.500 aves/día y 96 / 64 / 48 a 20.000. No se usan para dimensionar nada.
+- **Ventana de entrega:** desconocida (DPV-036). El modelo calcula el **tramo de entregas** de cada ruta (paradas × (tiempo de parada + traslado)) y deja `excede_ventana = PENDIENTE` hasta conocer la ventana. Con 7–10 paradas de 0,75 h, el tramo es de **8–11 h**: si las ventanas de recepción fueran cortas (dato pendiente), harían falta más rutas con menos paradas cada una.
+- **Jornada:** las rutas se limitan a las paradas que caben en **12 h útiles por camión** (SUP-098) después de cargar e ir y volver; si no cabe ni una parada, la ruta es **inviable en jornada** (flag).
 
 ## 5. Red ancla: tres escenarios sin volumen asumido
 
@@ -108,11 +108,11 @@ Base: escenario C, 100 kg/local, 3 entregas/semana, 300 km, 10 paradas máx., re
 3. El **CD del cliente** minimiza km propios pero traslada la última milla al supermercado (fee de CD posible, DPV-039) y reduce el control de góndola; el **cross-dock** es el intermedio.
 4. Con 600 km, aun el troncal (≈ 17 h de ida y vuelta) excede la jornada de un chofer bajo estos supuestos: requeriría relevo, pernocte o un punto intermedio. Es un insumo para 12A, no una conclusión de localización.
 
-**No se declara ganador** entre directo, CD y cross-dock (DEC-016, DEC-12B-01): faltan la existencia y ubicación de CD de la red, ventanas, fee, costos y nivel de servicio.
+**No se declara ganador** entre directo, CD y cross-dock (DEC-016): faltan la existencia y ubicación de CD de la red, ventanas, fee, costos y nivel de servicio.
 
 ### 5.4 Asignación por canal según escala (día calendario)
 
-Producción comestible (P1, 5 días de faena): 4,1 / 8,2 / 16,4 / 32,8 t por día calendario. El resto de la red va a otros canales con el reparto **ilustrativo** de ESC-BAS de `02` (mayorista 50 %, carnicerías/pollerías 33 %, gastronomía 10 %, elaborador 7 %; SUP-12B-13):
+Producción comestible (P1, 5 días de faena): 4,1 / 8,2 / 16,4 / 32,8 t por día calendario. El resto de la red va a otros canales con el reparto **ilustrativo** de ESC-BAS de `02` (mayorista 50 %, carnicerías/pollerías 33 %, gastronomía 10 %, elaborador 7 %; SUP-102):
 
 | 10.000 aves/día | Red atendida | Participación de la red | Mayorista | Carn./pollerías | Gastronomía | Elaborador |
 |---|---|---|---|---|---|---|
@@ -139,7 +139,7 @@ Con C · 150 kg/local, a 2.500 aves/día la planta solo cubre el **30 %** de la 
 
 Se integran los dos conceptos de `23 §11` (SUP-056) y se agrega el **ciclo semanal** que el despacho impone:
 
-1. **Stock de ciclo** (lo que obliga el calendario): producción de lunes a viernes, despacho uniforme en 5, 6 o 7 días, desfase de 1 día (lo faenado hoy se despacha desde mañana; SUP-12B-09). Es el mínimo para que el despacho nunca falte.
+1. **Stock de ciclo** (lo que obliga el calendario): producción de lunes a viernes, despacho uniforme en 5, 6 o 7 días, desfase de 1 día (lo faenado hoy se despacha desde mañana; SUP-099). Es el mínimo para que el despacho nunca falte.
 2. **Stock de seguridad** (decisión comercial): N días expresados en **días de producción** (t/día operativo × N) o **días calendario** (t/día operativo × días de faena/365 × N).
 
 Comestible total, cota superior:
@@ -167,4 +167,4 @@ Comestible total, cota superior:
 
 ## 7. Faltantes que bloquean la siguiente iteración
 
-DPV-036 / DPV-12B-09 (CD de la red, ventanas, pedido mínimo, pallets), DPV-084 (capacidades), DPV-085 (refrigerado/congelado por canal), DPV-078 (vida útil), DPV-042 (costos de distribución, para la fase económica), DPV-039 (fee de CD).
+DPV-036 (CD de la red, ventanas, pedido mínimo, pallets), DPV-084 (capacidades), DPV-085 (refrigerado/congelado por canal), DPV-078 (vida útil), DPV-042 (costos de distribución, para la fase económica), DPV-039 (fee de CD).

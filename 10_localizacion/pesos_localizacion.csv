@@ -1,5 +1,5 @@
 PERFIL,NOMBRE_PERFIL,CRITERIO,PESO,OBSERVACIONES
-A,MERCADO,DEMANDA,30,Perfil ilustrativo (SUP-12A-03): prioriza cercanía al consumo y a la distribución. No es el perfil recomendado
+A,MERCADO,DEMANDA,30,Perfil ilustrativo (SUP-080): prioriza cercanía al consumo y a la distribución. No es el perfil recomendado
 A,MERCADO,ECOSISTEMA_AVICOLA,4,v1.1 (auditoría): el peso de PRODUCCION_PRIMARIA (8) se separó en ECOSISTEMA_AVICOLA 4 + EXPOSICION_SANITARIA 3 + CLIMA 1
 A,MERCADO,EXPOSICION_SANITARIA,3,
 A,MERCADO,CLIMA,1,
@@ -13,7 +13,7 @@ A,MERCADO,EXPORTACION,4,
 A,MERCADO,TERRENO,5,
 A,MERCADO,NORMATIVA,5,
 A,MERCADO,RRHH,5,
-B,PRODUCCION,DEMANDA,8,Perfil ilustrativo (SUP-12A-03): prioriza producción primaria y alimento. No es el perfil recomendado
+B,PRODUCCION,DEMANDA,8,Perfil ilustrativo (SUP-080): prioriza producción primaria y alimento. No es el perfil recomendado
 B,PRODUCCION,ECOSISTEMA_AVICOLA,13,v1.1 (auditoría): el peso de PRODUCCION_PRIMARIA (25) se separó en ECOSISTEMA_AVICOLA 13 + EXPOSICION_SANITARIA 9 + CLIMA 3
 B,PRODUCCION,EXPOSICION_SANITARIA,9,
 B,PRODUCCION,CLIMA,3,
@@ -27,7 +27,7 @@ B,PRODUCCION,EXPORTACION,3,
 B,PRODUCCION,TERRENO,5,
 B,PRODUCCION,NORMATIVA,4,
 B,PRODUCCION,RRHH,4,
-C,EQUILIBRADO,DEMANDA,12,Perfil ilustrativo (SUP-12A-03): reparto sin énfasis dominante. No es el perfil recomendado
+C,EQUILIBRADO,DEMANDA,12,Perfil ilustrativo (SUP-080): reparto sin énfasis dominante. No es el perfil recomendado
 C,EQUILIBRADO,ECOSISTEMA_AVICOLA,6,v1.1 (auditoría): el peso de PRODUCCION_PRIMARIA (12) se separó en ECOSISTEMA_AVICOLA 6 + EXPOSICION_SANITARIA 4 + CLIMA 2
 C,EQUILIBRADO,EXPOSICION_SANITARIA,4,
 C,EQUILIBRADO,CLIMA,2,
@@ -41,7 +41,7 @@ C,EQUILIBRADO,EXPORTACION,6,
 C,EQUILIBRADO,TERRENO,8,
 C,EQUILIBRADO,NORMATIVA,6,
 C,EQUILIBRADO,RRHH,6,
-D,EXPORTADOR,DEMANDA,8,Perfil adicional de sensibilidad (SUP-12A-03): prioriza condiciones para exportar. No es el perfil recomendado
+D,EXPORTADOR,DEMANDA,8,Perfil adicional de sensibilidad (SUP-080): prioriza condiciones para exportar. No es el perfil recomendado
 D,EXPORTADOR,ECOSISTEMA_AVICOLA,6,v1.1 (auditoría): el peso de PRODUCCION_PRIMARIA (14) se separó en ECOSISTEMA_AVICOLA 6 + EXPOSICION_SANITARIA 6 + CLIMA 2
 D,EXPORTADOR,EXPOSICION_SANITARIA,6,
 D,EXPORTADOR,CLIMA,2,

@@ -20,10 +20,10 @@ La localización se decide **de arriba hacia abajo**, y cada nivel usa informaci
 | **País** | ¿Argentina? | Dado (SUP-001) | Cerrado |
 | **Provincia** | ¿Qué marco normativo, fiscal, ambiental y productivo? | Faena por provincia, autoridad hídrica y ambiental, régimen de habilitación, distancia gruesa a AMBA | **Trabajado** (con datos `[PVDP]` y huecos) |
 | **Corredor / región** | ¿Qué franja de territorio sobre qué rutas, con qué ecosistema? | Granjas, incubadoras y alimento en radio; tiempos a mercado y puerto; presión urbana; acuíferos; redes de energía y gas | **Trabajado** (13 corredores definidos; datos casi todos pendientes) |
-| **Municipio / partido / departamento** | ¿Qué municipio admite la actividad y con qué reglas? | Zonificación, parques industriales, tasas, postura municipal, riesgo hídrico local | **No iniciado** (se habilita con lista corta, DEC-12A-06) |
+| **Municipio / partido / departamento** | ¿Qué municipio admite la actividad y con qué reglas? | Zonificación, parques industriales, tasas, postura municipal, riesgo hídrico local | **No iniciado** (se habilita con lista corta, DEC-055) |
 | **Terreno** | ¿Qué lote concreto? | Ficha de relevamiento ([`ficha_relevamiento_terreno.md`](ficha_relevamiento_terreno.md)), factibilidades escritas, vecinos, drenaje | **No iniciado** (ola O8 del plan de campo) |
 
-**Esta sesión llega hasta provincia + corredor.** Un corredor no es un sitio: es un ámbito de búsqueda definido por un eje vial y un ecosistema (SUP-12A-01). Su "centro de referencia" (p. ej., Pilar, Gualeguaychú, Rosario) se usa solo para medir distancias de orden de magnitud y **no** implica ubicar la planta en esa ciudad.
+**Esta sesión llega hasta provincia + corredor.** Un corredor no es un sitio: es un ámbito de búsqueda definido por un eje vial y un ecosistema (SUP-078). Su "centro de referencia" (p. ej., Pilar, Gualeguaychú, Rosario) se usa solo para medir distancias de orden de magnitud y **no** implica ubicar la planta en esa ciudad.
 
 ## 2. Embudo de decisión (etapas)
 
@@ -33,7 +33,7 @@ E0 UNIVERSO           5 provincias pedidas (BA, ER, SF, Cba, Chaco) → 13 corre
 E1 CRIBADO REGIONAL   Matriz multicriterio por corredor (este módulo). Resultado: corredores "habilitados para investigar",
    │                  nunca "elegidos". Ranking solo si la cobertura de datos lo permite (§5).
 E2 LISTA CORTA        Después de los hitos H-A (capital y ancla) y H-B (rango de escala y abastecimiento) del plan de campo:
-   │                  2–4 corredores con relevamiento dirigido (DEC-12A-06).
+   │                  2–4 corredores con relevamiento dirigido (DEC-055).
 E3 MUNICIPIOS         Plantilla jurisdiccional de 14 temas (16_normativa_senasa/habilitacion_planta.md §5) por municipio.
    │
 E4 TERRENOS           Ficha de terreno + gates duros y condicionales (criterios_localizacion.md §4) + factibilidades escritas.
@@ -50,7 +50,7 @@ Una matriz multicriterio (en inglés *MCDA*, análisis de decisión multicriteri
 **Componentes:**
 
 1. **Matriz de datos** — [`matriz_localizacion.csv`](matriz_localizacion.csv): formato largo, una fila por región × subcriterio (13 × 48 = 624 filas, más 2 filas NETWORK en Chaco). Columnas: `REGION`, `PROVINCIA`, `CORREDOR`, `CRITERIO` (grupo), `SUBCRITERIO`, `NOMBRE_SUBCRITERIO`, `UNIDAD`, `SENTIDO`, `NIVEL_DATO`, `VALOR`, `TIPO_EVIDENCIA`, `FUENTE`, `ESTADO`, `NORMALIZACION`, `PESO`, `PUNTAJE`, `OBSERVACIONES`. `PESO` y `PUNTAJE` quedan **vacíos** en la matriz: los pesos viven en un único archivo (regla 13) y los puntajes los calcula el modelo.
-2. **Perfiles de ponderación** — [`pesos_localizacion.csv`](pesos_localizacion.csv): peso por grupo de criterio (14 grupos, suma 100) para los perfiles A MERCADO, B PRODUCCIÓN, C EQUILIBRADO y D EXPORTADOR. **Ninguno es el correcto** (SUP-12A-03, DEC-12A-02).
+2. **Perfiles de ponderación** — [`pesos_localizacion.csv`](pesos_localizacion.csv): peso por grupo de criterio (14 grupos, suma 100) para los perfiles A MERCADO, B PRODUCCIÓN, C EQUILIBRADO y D EXPORTADOR. **Ninguno es el correcto** (SUP-080, DEC-051).
 3. **Modelo** — [`modelo_localizacion.py`](modelo_localizacion.py): valida, normaliza, pondera, calcula la envolvente por faltantes y la cobertura de información, y decide si corresponde emitir un orden. Resultados en `resultados_localizacion.csv` (archivo generado; no editar a mano).
 
 **Grupos ponderables (14):** DEMANDA · ECOSISTEMA_AVICOLA · EXPOSICION_SANITARIA · CLIMA · ALIMENTO · FAENA_INDUSTRIA · AGUA · EFLUENTES · ENERGIA · LOGISTICA · EXPORTACION · TERRENO · NORMATIVA · RRHH (el antiguo grupo PRODUCCION_PRIMARIA se separó en ecosistema, exposición sanitaria y clima, conservando su peso total en cada perfil). Definición, unidad, sentido y fuente de cada subcriterio en [`criterios_localizacion.md`](criterios_localizacion.md) §3.
@@ -92,13 +92,13 @@ Reglas de validación (el modelo se detiene si se violan): un dato `[PVDP]` no p
 | `rango_fijo:a:b` | igual con mín = a, máx = b y x recortado a [a, b] | ídem | Cuando el resultado no debe depender de qué regiones se agregan (evita la "inversión de ranking") |
 
 - **Empate** (todas las regiones con dato tienen el mismo valor): n = 1 para todas; no discrimina.
-- **Subcriterio NO_COMPARABLE** (no puntúa para ninguna región) si: (a) hay datos de menos de 2 unidades de observación distintas — provincias cuando el nivel es provincial, corredores cuando es `CORREDOR` —, o (b) menos del 50 % de las regiones tiene dato (SUP-12A-04). Así un dato que solo existe para una provincia (p. ej., el límite de vuelco de la Res. ADA 336/2003 de Buenos Aires) **no premia ni castiga a nadie**.
-- **Datos provinciales — dos tipos** (SUP-12A-07, revisado): `PROVINCIA_NORMA` es una regla provincial que rige igual en todo el territorio (un límite de vuelco): se aplica a cada corredor. `PROVINCIA_AGREGADO` es una estadística provincial (participación en la faena, plantas por provincia): **no se usa automáticamente como dato de corredor**; solo entra con la opción explícita `--usar-agregados-provinciales`, rotulada, y se cuenta como dato provincial (tests T18, T26).
-- **Dependencias** (SUP-12A-11): la distancia al nodo portuario (EXP-01) solo es usable si el mismo nodo tiene servicio reefer verificado (EXP-04 ≥ 3). La cercanía a un puerto sin ese servicio no genera puntaje (test T27).
+- **Subcriterio NO_COMPARABLE** (no puntúa para ninguna región) si: (a) hay datos de menos de 2 unidades de observación distintas — provincias cuando el nivel es provincial, corredores cuando es `CORREDOR` —, o (b) menos del 50 % de las regiones tiene dato (SUP-081). Así un dato que solo existe para una provincia (p. ej., el límite de vuelco de la Res. ADA 336/2003 de Buenos Aires) **no premia ni castiga a nadie**.
+- **Datos provinciales — dos tipos** (SUP-084, revisado): `PROVINCIA_NORMA` es una regla provincial que rige igual en todo el territorio (un límite de vuelco): se aplica a cada corredor. `PROVINCIA_AGREGADO` es una estadística provincial (participación en la faena, plantas por provincia): **no se usa automáticamente como dato de corredor**; solo entra con la opción explícita `--usar-agregados-provinciales`, rotulada, y se cuenta como dato provincial (tests T18, T26).
+- **Dependencias** (SUP-088): la distancia al nodo portuario (EXP-01) solo es usable si el mismo nodo tiene servicio reefer verificado (EXP-04 ≥ 3). La cercanía a un puerto sin ese servicio no genera puntaje (test T27).
 
 ### 5.2 Pesos
 
-Peso del subcriterio = peso del grupo ÷ 100 ÷ n.º de subcriterios del grupo en la matriz (SUP-12A-05). Suma = 1. Los perfiles se validan: suma exactamente 100, sin negativos, sin grupos desconocidos ni omitidos, NETWORK = 0.
+Peso del subcriterio = peso del grupo ÷ 100 ÷ n.º de subcriterios del grupo en la matriz (SUP-082). Suma = 1. Los perfiles se validan: suma exactamente 100, sin negativos, sin grupos desconocidos ni omitidos, NETWORK = 0.
 
 ### 5.3 Puntaje con envolvente por faltantes — sin imputar datos faltantes
 
@@ -116,7 +116,7 @@ sobre información disp.  = mínimo ÷ cobertura                    → solo si 
 ### 5.4 Cuándo se emite un orden
 
 - Solo entran al orden las regiones con cobertura ≥ 75 %; si califican menos de 2, **RANKING NO EMITIDO**.
-- **El 75 % es un CRITERIO DE CONTROL DEL MODELO / SUPUESTO METODOLÓGICO** (SUP-12A-04), no un estándar del análisis multicriterio. Por eso el modelo informa siempre la sensibilidad con **60 %, 75 % y 90 %** (`--umbrales-cobertura`) y la columna `ELEGIBLE_COB_60/75/90` del CSV: si el conjunto de regiones elegibles cambia con el umbral, la comparación depende de esa elección y debe decirse (test T24). Con los datos actuales, **0 regiones son elegibles en los tres umbrales, en ambos modos y en los cuatro perfiles**.
+- **El 75 % es un CRITERIO DE CONTROL DEL MODELO / SUPUESTO METODOLÓGICO** (SUP-081), no un estándar del análisis multicriterio. Por eso el modelo informa siempre la sensibilidad con **60 %, 75 % y 90 %** (`--umbrales-cobertura`) y la columna `ELEGIBLE_COB_60/75/90` del CSV: si el conjunto de regiones elegibles cambia con el umbral, la comparación depende de esa elección y debe decirse (test T24). Con los datos actuales, **0 regiones son elegibles en los tres umbrales, en ambos modos y en los cuatro perfiles**.
 - Si algunas califican y otras no, el orden es **PARCIAL** y se listan las excluidas (no se las ubica últimas).
 - Cada posición se marca **separada** del siguiente (cota inferior propia > cota superior del siguiente) o **no separada** (los faltantes podrían invertir el orden).
 - Alerta "DEMASIADOS DATOS FALTANTES" si una región tiene más del 40 % de subcriterios sin dato.
@@ -141,25 +141,25 @@ Catálogo, tipos y reglas en [`criterios_localizacion.md`](criterios_localizacio
 
 ## 8. Una planta vs planta + centro de distribución: arquitecturas de red, no criterios
 
-"Una planta" y "faena en zona productiva + centro de distribución (CD o cross-dock) en el AMBA" son **dos arquitecturas de red diferentes**, no dos valores de un criterio de localización. No se comparan en la matriz: la matriz compara corredores **para una planta**; si se adopta la arquitectura de dos nodos, el segundo nodo (AMBA) se localiza con su propia lógica (mercado, accesos, frío, habilitación) y la comparación entre arquitecturas se hará después, considerando: **inversión, inventario, frío, doble manipulación, transporte primario, distribución secundaria y nivel de servicio**. Decisión abierta (DEC-12A-04); **no se calculan costos** en esta fase. Detalle en [`escenarios_localizacion.md`](escenarios_localizacion.md) §2.
+"Una planta" y "faena en zona productiva + centro de distribución (CD o cross-dock) en el AMBA" son **dos arquitecturas de red diferentes**, no dos valores de un criterio de localización. No se comparan en la matriz: la matriz compara corredores **para una planta**; si se adopta la arquitectura de dos nodos, el segundo nodo (AMBA) se localiza con su propia lógica (mercado, accesos, frío, habilitación) y la comparación entre arquitecturas se hará después, considerando: **inversión, inventario, frío, doble manipulación, transporte primario, distribución secundaria y nivel de servicio**. Decisión abierta (DEC-053); **no se calculan costos** en esta fase. Detalle en [`escenarios_localizacion.md`](escenarios_localizacion.md) §2.
 
 ## 9. Interfaces con los módulos paralelos y con el resto del proyecto
 
 | Desde / hacia | Qué fluye | Estado |
 |---|---|---|
-| **12B Logística (`13_logistica`) → 12A** | Distancias y tiempos medidos por ruta (DEM-01, DEM-02, EXP-01, LOG-01); costo por t·km de aves vivas, alimento, refrigerado y reefer; arquitectura de distribución (directa / CD / distribuidor / cross-dock en AMBA) | 12A **no modifica** `13_logistica`; consume sus resultados cuando existan (DPV-12A-01) |
-| **12C Layout y obra civil (`09_layout_obra_civil`) → 12A** | Superficie de planta por escala y por módulo; playas, tratamiento, reserva de expansión, retiros | 12C ya está generando una estimación conceptual de superficie en su rama; 12A **no la lee ni la modifica**. La superficie del terreno queda **pendiente** en 12A. En la reconciliación 12A–12C se reemplaza ese estado genérico por el **rango conceptual de 12C más las restricciones reales municipales y del terreno** (DPV-12A-09) |
-| **12A → 12B / 12C** | Lista de corredores y centros de referencia (SUP-12A-01); requisitos de terreno por función | Este documento y [`regiones_preliminares.md`](regiones_preliminares.md) |
+| **12B Logística (`13_logistica`) → 12A** | Distancias y tiempos medidos por ruta (DEM-01, DEM-02, EXP-01, LOG-01); costo por t·km de aves vivas, alimento, refrigerado y reefer; arquitectura de distribución (directa / CD / distribuidor / cross-dock en AMBA) | 12A **no modifica** `13_logistica`; consume sus resultados cuando existan (DPV-116) |
+| **12C Layout y obra civil (`09_layout_obra_civil`) → 12A** | Superficie de planta por escala y por módulo; playas, tratamiento, reserva de expansión, retiros | 12C ya está generando una estimación conceptual de superficie en su rama; 12A **no la lee ni la modifica**. La superficie del terreno queda **pendiente** en 12A. En la reconciliación 12A–12C se reemplaza ese estado genérico por el **rango conceptual de 12C más las restricciones reales municipales y del terreno** (DPV-124). *Reconciliación 12 (2026-10-01): hecho; ver [`terreno_ideal.md`](terreno_ideal.md) §4* |
+| **12A → 12B / 12C** | Lista de corredores y centros de referencia (SUP-078); requisitos de terreno por función | Este documento y [`regiones_preliminares.md`](regiones_preliminares.md) |
 | `03`, `23` → 12A | Radio práctico de aves vivas (~2–4 h, ~120–250 km `[ESTIMACIÓN]`, [`../03_produccion_primaria/transporte_aves.md`](../03_produccion_primaria/transporte_aves.md) §4); flujos por escala ([`../23_plan_expansion/escenarios_escala.md`](../23_plan_expansion/escenarios_escala.md) §12) | Usado como contexto, sin cambios |
 | `11`, `12` → 12A | Agua, vuelco, potencia, gas y calidad de red como criterios que **pueden limitar la escala del sitio** | Incorporados como grupos AGUA, EFLUENTES, ENERGIA |
 | `16` → 12A | Plantilla jurisdiccional de 14 temas (DPV-106) | Se aplica en la etapa E3 |
-| `00_gestion_proyecto` | Registros maestros | **No modificados**; propuestas en [`actualizaciones_gestion_12A.md`](actualizaciones_gestion_12A.md) |
+| `00_gestion_proyecto` | Registros maestros | Propuestas de 12A ([`actualizaciones_gestion_12A.md`](actualizaciones_gestion_12A.md), histórico) **integradas** en la reconciliación de las sesiones 12 (2026-10-01) ([`../00_gestion_proyecto/reconciliacion_sesiones_12.md`](../00_gestion_proyecto/reconciliacion_sesiones_12.md)) |
 
 ## 10. Cómo se actualiza la matriz (procedimiento)
 
-1. Obtener el dato con su documento (descarga, factibilidad escrita, medición) y registrar la fuente (`FTE-12A-###` provisional en [`fuentes_12A.csv`](fuentes_12A.csv) hasta la consolidación).
+1. Obtener el dato con su documento (descarga, factibilidad escrita, medición) y registrar la fuente con el siguiente `FTE-###` libre en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) (desde la reconciliación de las sesiones 12 (2026-10-01) ya no se usan IDs provisionales `FTE-12A`).
 2. Completar `VALOR`, `TIPO_EVIDENCIA`, `FUENTE` y `ESTADO` de la fila; si solo se vio un extracto, `ESTADO = PVDP`.
 3. Para escalas 1–5, citar en `OBSERVACIONES` el nivel de la rúbrica y la evidencia.
 4. Correr `python3 10_localizacion/modelo_localizacion.py` (las pruebas corren primero; si fallan, el script se detiene).
 5. Leer **primero la cobertura de información y la envolvente por faltantes**, después la sensibilidad del umbral 60/75/90 %; recién entonces, si se emitió, el orden y su sensibilidad de pesos.
-6. No cambiar pesos para "acomodar" un resultado: un cambio de perfil se registra como decisión (DEC-12A-02) con su justificación.
+6. No cambiar pesos para "acomodar" un resultado: un cambio de perfil se registra como decisión (DEC-051) con su justificación.

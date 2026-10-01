@@ -28,8 +28,8 @@ Puerto de destino → inspección sanitaria y aduana → importador
 | Etapa | Qué determina su duración | Valor en el modelo | Estado |
 |---|---|---|---|
 | **Consolidación** | t exportadas por día × carga del contenedor | Días de faena = 25 t / t exportadas por día operativo | `[ESTIMACIÓN]`; carga 25 t `[PVDP · débil]` FTE-135 |
-| **Transporte terrestre** | Distancia planta–puerto (12A) | h = km / 70 km/h (barrido 30 / 150 / 300 / 600 / 1.000 km → 0,4 / 2,1 / 4,3 / 8,6 / 14,3 h) | `[SUPUESTO]` SUP-12B-01/04 |
-| **Espera** (en planta antes de la carga y en terminal) | Frecuencia de buques por destino, *cut-off*, inspección | **PENDIENTE** | DPV-027, DPV-12B-13 |
+| **Transporte terrestre** | Distancia planta–puerto (12A) | h = km / 70 km/h (barrido 30 / 150 / 300 / 600 / 1.000 km → 0,4 / 2,1 / 4,3 / 8,6 / 14,3 h) | `[SUPUESTO]` SUP-091/094 |
+| **Espera** (en planta antes de la carga y en terminal) | Frecuencia de buques por destino, *cut-off*, inspección | **PENDIENTE** | DPV-027, DPV-125 |
 | **Terminal** | Operación del puerto, disponibilidad de conexiones reefer | **PENDIENTE** | DPV-027 |
 | **Marítimo** | Ruta y trasbordos | 20–45 días (referencia brasileña y ruta inversa) | `[PVDP · débil]` (17 §4) |
 
@@ -50,11 +50,11 @@ El **lead time total** (faena → arribo) queda **PENDIENTE** en el modelo porqu
 
 Estas cifras suponen **un solo producto/destino** con toda la cuota. Para partes específicas (garras, menudencias, pata-muslo) el tiempo de llenado por parte ya está en [`../23_plan_expansion/escenarios_escala.md` §13](../23_plan_expansion/escenarios_escala.md) (p. ej. garras grado A: ~118 días de faena a 2.500 aves/día). Cada producto/destino en consolidación inmoviliza hasta ~1 contenedor (25 t) en cámara de congelado: con 3 lotes en paralelo, ~75 t.
 
-**Transporte terrestre:** 1 contenedor por camión portacontenedor (`[SUPUESTO]` SUP-12B-15, a validar) → viajes terrestres/año = contenedores/año. km/año = 2 × contenedores × distancia (el portacontenedor vuelve con el contenedor vacío o sin carga: backhaul **REQUIERE_EVIDENCIA**).
+**Transporte terrestre:** 1 contenedor por camión portacontenedor (`[SUPUESTO]` SUP-104, a validar) → viajes terrestres/año = contenedores/año. km/año = 2 × contenedores × distancia (el portacontenedor vuelve con el contenedor vacío o sin carga: backhaul **REQUIERE_EVIDENCIA**).
 
 **Lecturas:**
 1. En la sensibilidad, **a 2.500 aves/día con 20 % exportado sale un contenedor por mes** (con 25 t de payload): embarques más frecuentes requerirían porcentajes mayores o consolidar con un trader (DPV-081). No es una proyección de ventas.
-2. Con 600–1.000 km a puerto, el tramo terrestre (8,6–14,3 h) excede la jornada de un chofer (CCT 40/89, FTE-12B-002 `[PVDP]`): relevo o pernocte con genset encendido.
+2. Con 600–1.000 km a puerto, el tramo terrestre (8,6–14,3 h) excede la jornada de un chofer (CCT 40/89, FTE-287 `[PVDP]`): relevo o pernocte con genset encendido.
 3. La exportación **suma congelado y cámara**, no camiones refrigerados diarios: su logística se parece a la del congelado acumulable ([`logistica_producto_terminado.md` §3](logistica_producto_terminado.md)).
 
 ## 3. Datos requeridos para una futura cotización (plantilla)
@@ -72,7 +72,7 @@ Completar uno por combinación producto–destino. Los campos marcados ★ depen
 | **Producto y empaque** | Entero, cortes, garras; caja de ~10 kg, bloque, IQF; pallets o a piso | Sin definir | `17/productos_exportables.md` |
 | **Frecuencia** | Contenedores por mes por destino | Tabla §2 (según escala y cuota; **no es demanda**) | Este documento |
 | **Temperatura** | Consigna de transporte de congelados | −18 °C o menor `[PVDP · débil]`; norma argentina no verificada | DPV-098 |
-| **Tránsito** | Días puerto a puerto, trasbordos, tiempo total | 20–45 d `[PVDP · débil]`; por destino PENDIENTE | DPV-027, DPV-12B-13 |
+| **Tránsito** | Días puerto a puerto, trasbordos, tiempo total | 20–45 d `[PVDP · débil]`; por destino PENDIENTE | DPV-027, DPV-125 |
 | **Tramo terrestre** | km planta–puerto, horario de recepción de la terminal, *cut-off* | Barrido 30–1.000 km | 12A |
 | **Requisitos documentales** | Certificado sanitario por destino, Halal, origen | `17 §5` | DPV-034 |
 | **Servicios adicionales** | Conexión en terminal, monitoreo, inspección, seguro con cobertura de frío | No relevados | DPV-027 |

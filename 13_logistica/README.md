@@ -19,8 +19,8 @@
 | [`kpis_logistica.md`](kpis_logistica.md) | KPI físicos (calculados) y económicos (definidos, no calculados) |
 | [`conclusiones_logistica.md`](conclusiones_logistica.md) | Hallazgos, escenarios por escala, faltantes, tests, **riesgos**, interfaces con 12A y 12C |
 | [`guia_ramiro.md`](guia_ramiro.md) | Explicación sin jerga: flete vs logística, camión con poca carga, densidad, retorno sin carga comercial y backhaul, vivo vs refrigerado, red, CD |
-| [`actualizaciones_gestion_12B.md`](actualizaciones_gestion_12B.md) | Propuestas para `00_gestion_proyecto/` y `25_fuentes/` (SUP/DPV/DEC/FTE provisionales `12B`) |
-| [`fuentes_12B.csv`](fuentes_12B.csv) | Fuentes nuevas provisionales (FTE-12B-001 a 004, todas `[PVDP]`) y anotación de trazabilidad de FTE-234 (Res. SENASA 723/2025, confirmada en revisión externa) |
+| [`actualizaciones_gestion_12B.md`](actualizaciones_gestion_12B.md) | **Archivo histórico**: propuestas de la sesión 12B con IDs provisionales, ya integradas en `00_gestion_proyecto/` y `25_fuentes/` (mapa de IDs en [`../00_gestion_proyecto/reconciliacion_sesiones_12.md`](../00_gestion_proyecto/reconciliacion_sesiones_12.md)) |
+| [`fuentes_12B.csv`](fuentes_12B.csv) | **Histórico, no activo** desde la reconciliación de las sesiones 12 (2026-10-01): las fuentes están en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) (FTE-286 a FTE-289, todas `[PVDP]`; anotación de trazabilidad en FTE-234 y FTE-192) |
 | [`modelo_logistica.py`](modelo_logistica.py) | Modelo reproducible (fórmulas y supuestos documentados en el encabezado) |
 | [`escenarios_logistica.csv`](escenarios_logistica.csv) | Salida del modelo (formato largo) |
 
@@ -50,7 +50,7 @@ python3 13_logistica/modelo_logistica.py --escenario --aves-dia 7500 --radio-km 
 
 ## Preguntas clave pendientes
 
-1. ¿La red de supermercados tiene CD que reciba perecederos? ¿Ventanas, pedido mínimo, pallets, fee? (DPV-036, DPV-12B-09)
-2. ¿Cuántas aves por camión, con qué duración de cada tramo prefaena y a qué distancia real trabajan los contratistas de la zona? (DPV-054, DPV-12B-01)
-3. ¿Qué receptor retira subproductos, con qué frecuencia, vehículo y volumen (m³), qué acepta juntos y si acepta material acumulado? (DPV-065, DPV-12B-03, DPV-12B-16)
+1. ¿La red de supermercados tiene CD que reciba perecederos? ¿Ventanas, pedido mínimo, pallets, fee? (DPV-036)
+2. ¿Cuántas aves por camión, con qué duración de cada tramo prefaena y a qué distancia real trabajan los contratistas de la zona? (DPV-054, DPV-127)
+3. ¿Qué receptor retira subproductos, con qué frecuencia, vehículo y volumen (m³), qué acepta juntos y si acepta material acumulado? (DPV-065, DPV-128, DPV-135)
 4. ¿Qué proporción refrigerado/congelado pide cada canal? (DPV-085)

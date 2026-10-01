@@ -22,7 +22,7 @@
 | `GATE_DURO` / `GATE_CONDICIONAL` | Condición de viabilidad, no de preferencia | No puntúa; se evalúa a nivel municipio o terreno (§4) |
 
 - **Nivel del dato** (`NIVEL_DATO`): `CORREDOR` (medido para el corredor); `PROVINCIA_NORMA` (regla provincial que rige en todo el territorio, p. ej., un límite de vuelco: se aplica a cada corredor de la provincia); `PROVINCIA_AGREGADO` (estadística provincial, p. ej., participación en la faena: **no se usa para puntuar corredores**, porque no distingue entre corredores de la misma provincia).
-- **Radios de análisis** (SUP-12A-09): 50 km (mano de obra, IAAP), 100 km (granjas), 150 km (maíz, fábricas de alimento), 200 km (incubadoras, façon), 300 km (mercado regional). Son convenciones para levantar datos, no distancias reglamentarias ni límites de transporte. Para aves vivas, el orden de magnitud del proyecto es ~2–4 h de viaje (~120–250 km `[ESTIMACIÓN]`, [`../03_produccion_primaria/transporte_aves.md`](../03_produccion_primaria/transporte_aves.md) §4).
+- **Radios de análisis** (SUP-086): 50 km (mano de obra, IAAP), 100 km (granjas), 150 km (maíz, fábricas de alimento), 200 km (incubadoras, façon), 300 km (mercado regional). Son convenciones para levantar datos, no distancias reglamentarias ni límites de transporte. Para aves vivas, el orden de magnitud del proyecto es ~2–4 h de viaje (~120–250 km `[ESTIMACIÓN]`, [`../03_produccion_primaria/transporte_aves.md`](../03_produccion_primaria/transporte_aves.md) §4).
 
 ## 2. Densidad avícola: dos dimensiones distintas y un trade-off
 
@@ -42,22 +42,22 @@ Hoy no hay datos por corredor para ninguna de estas variables: quedan vacías (E
 
 | Código | Grupo | Subcriterio | Unidad | Sentido | Nivel | Por qué importa | Fuente sugerida · registro |
 |---|---|---|---|---|---|---|---|
-| DEM-01 | Demanda | Distancia vial del centro de referencia del corredor a CABA | km | Menor | Corredor | Proxy de costo y tiempo hacia el mayor mercado (AMBA ≈ 30 % del consumo, SUP-024) | Ruteo; 12B · DPV-12A-01 |
-| DEM-02 | Demanda | Tiempo de tránsito en camión a CABA | h | Menor | Corredor | La vida útil del fresco se mide en días | Ruteo; transportistas · DPV-12A-01 |
+| DEM-01 | Demanda | Distancia vial del centro de referencia del corredor a CABA | km | Menor | Corredor | Proxy de costo y tiempo hacia el mayor mercado (AMBA ≈ 30 % del consumo, SUP-024) | Ruteo; 12B · DPV-116 |
+| DEM-02 | Demanda | Tiempo de tránsito en camión a CABA | h | Menor | Corredor | La vida útil del fresco se mide en días | Ruteo; transportistas · DPV-116 |
 | DEM-03 | Demanda | Distancia media ponderada a locales o CD de la red | km | Menor | Corredor | Solo si la red existe y se conoce su mapa; **no se asume** que compre | Promotor · DPV-018, DPV-036 |
-| DEM-04 | Demanda | Población en radio de 300 km | hab | Mayor | Corredor | Mercado regional propio | INDEC · DPV-12A-08 |
+| DEM-04 | Demanda | Población en radio de 300 km | hab | Mayor | Corredor | Mercado regional propio | INDEC · DPV-123 |
 | DEM-05 | Demanda | Acceso a mayoristas, gastronomía y elaboradores | 1–5 | Mayor | Corredor | Canales para partes que la red no compra (SUP-013) | Relevamiento comercial · DPV-040 |
-| ECO-01 | Ecosistema avícola | Participación provincial en la faena habilitada por SENASA, **año 2024** | % | Mayor | **Provincia — agregado** | Contexto del cluster. **No puntúa corredores** por defecto | SAGyP "Faena Provincial 2024–2025" (FTE-12A-015, confirmado en revisión externa; lectura directa pendiente) |
+| ECO-01 | Ecosistema avícola | Participación provincial en la faena habilitada por SENASA, **año 2024** | % | Mayor | **Provincia — agregado** | Contexto del cluster. **No puntúa corredores** por defecto | SAGyP "Faena Provincial 2024–2025" (FTE-283, confirmado en revisión externa; lectura directa pendiente) |
 | ECO-02 | Ecosistema avícola | Productores integrables disponibles | m² de galpón | Mayor | Corredor | Lo que se puede contratar, no lo que existe | Productores, cámaras, municipios · DPV-048 |
 | ECO-03 | Ecosistema avícola | Incubadoras que venden pollito BB a terceros en radio de 200 km | n | Mayor | Corredor | Sin pollito no hay crianza | Incubadoras · DPV-047 |
-| ECO-04 | Ecosistema avícola | Servicios avícolas especializados (veterinarios y técnicos avícolas, contratistas de captura, transportistas de aves vivas, proveedores y mantenimiento de equipos de galpón) | 1–5 | Mayor | Corredor | El ecosistema que una zona nueva tendría que construir | Productores, proveedores · DPV-12A-11 |
+| ECO-04 | Ecosistema avícola | Servicios avícolas especializados (veterinarios y técnicos avícolas, contratistas de captura, transportistas de aves vivas, proveedores y mantenimiento de equipos de galpón) | 1–5 | Mayor | Corredor | El ecosistema que una zona nueva tendría que construir | Productores, proveedores · DPV-126 |
 | SAN-01 | Exposición sanitaria | Distancia mediana al establecimiento avícola comercial más cercano | km | **Mayor** | Corredor | Más distancia entre establecimientos = menos exposición y más facilidad de aislamiento | SENASA (RENSPA georreferenciado) · DPV-023 |
-| SAN-02 | Exposición sanitaria | Movimientos de tránsito de aves (DT-e) con origen o destino en el departamento o partido | n/año | Menor | Corredor | Tránsito avícola = puente sanitario entre establecimientos | SENASA · DPV-12A-12 |
-| SAN-03 | Exposición sanitaria | Eventos de IAAP en aves comerciales en radio de 50 km (2023–2026) | n | Menor | Corredor | Impacto potencial: zonas de control y cierres de exportación | SENASA · DPV-12A-05 |
-| SAN-04 | Exposición sanitaria | Lejanía de humedales y concentraciones de aves silvestres (5 = lejos) | 1–5 | Mayor | Corredor | Riesgo de introducción por aves silvestres ([`../03_produccion_primaria/bioseguridad.md`](../03_produccion_primaria/bioseguridad.md)) | INTA, organismos ambientales · DPV-12A-12 |
-| CLI-01 | Clima | Días/año con temperatura máxima ≥ 35 °C | d/año | Menor | Corredor | Tecnología de galpón, energía de cooling, mortalidad por calor | SMN · DPV-12A-07 |
-| ALI-01 | Alimento | Producción de maíz en radio de 150 km | t/año | Mayor | Corredor | El alimento es el mayor flujo físico del sistema | SAGyP · DPV-12A-02 |
-| ALI-02 | Alimento | Distancia a planta de molienda de soja | km | Menor | Corredor | Harina de soja ≈ 30 % de la dieta ilustrativa (SUP-032) | Industria aceitera · DPV-12A-02 |
+| SAN-02 | Exposición sanitaria | Movimientos de tránsito de aves (DT-e) con origen o destino en el departamento o partido | n/año | Menor | Corredor | Tránsito avícola = puente sanitario entre establecimientos | SENASA · DPV-120 |
+| SAN-03 | Exposición sanitaria | Eventos de IAAP en aves comerciales en radio de 50 km (2023–2026) | n | Menor | Corredor | Impacto potencial: zonas de control y cierres de exportación | SENASA · DPV-120 |
+| SAN-04 | Exposición sanitaria | Lejanía de humedales y concentraciones de aves silvestres (5 = lejos) | 1–5 | Mayor | Corredor | Riesgo de introducción por aves silvestres ([`../03_produccion_primaria/bioseguridad.md`](../03_produccion_primaria/bioseguridad.md)) | INTA, organismos ambientales · DPV-120 |
+| CLI-01 | Clima | Días/año con temperatura máxima ≥ 35 °C | d/año | Menor | Corredor | Tecnología de galpón, energía de cooling, mortalidad por calor | SMN · DPV-122 |
+| ALI-01 | Alimento | Producción de maíz en radio de 150 km | t/año | Mayor | Corredor | El alimento es el mayor flujo físico del sistema | SAGyP · DPV-117 |
+| ALI-02 | Alimento | Distancia a planta de molienda de soja | km | Menor | Corredor | Harina de soja ≈ 30 % de la dieta ilustrativa (SUP-032) | Industria aceitera · DPV-117 |
 | ALI-03 | Alimento | Fábricas de alimento balanceado que venden a terceros o a façon en radio de 150 km | n | Mayor | Corredor | Permite no invertir en fábrica propia al inicio (DEC-024) | Fábricas, SENASA · DPV-050 |
 | ALI-04 | Alimento | Diferencia de precio del maíz puesto en zona vs pizarra Rosario | USD/t | Menor | Corredor | Maíz más barato en origen lejos del puerto (validar) | BCR, acopios · DPV-050 |
 | IND-02 | Faena / industria | Capacidad de faena a façon disponible en radio de 200 km | aves/día | Mayor | Corredor | Habilita una etapa sin planta propia (DEC-004, DEC-018) | Frigoríficos · DPV-006 |
@@ -71,22 +71,22 @@ Hoy no hay datos por corredor para ninguna de estas variables: quedan vacías (E
 | ENE-01 | Energía | Disponibilidad de potencia en media tensión ampliable | 1–5 | Mayor | Corredor | Potencia media ~0,13–1,04 MW (pico pendiente, DPV-095) | Distribuidoras · DPV-052, DPV-087 |
 | ENE-02 | Energía | Acceso a gas natural por red para uso industrial | 1–5 | Mayor | Corredor | Escaldado, limpieza, agua caliente (DEC-045) | Distribuidoras, ENARGAS · DPV-087 |
 | ENE-03 | Energía | Duración de interrupciones (SAIDI de la distribuidora) | h/año | Menor | Corredor | Cortes = mortandad en granjas y pérdida de frío (FTE-157 `[PVDP]`) | Entes reguladores · DPV-052 |
-| LOG-01 | Logística | Proporción del trayecto a CABA en autopista o autovía | % | Mayor | Corredor | Seguridad, tiempo, previsibilidad | Vialidad, 12B · DPV-12A-01 |
+| LOG-01 | Logística | Proporción del trayecto a CABA en autopista o autovía | % | Mayor | Corredor | Seguridad, tiempo, previsibilidad | Vialidad, 12B · DPV-116 |
 | LOG-02 | Logística | Congestión y restricciones urbanas en accesos (5 = baja) | 1–5 | Mayor | Corredor | Camiones nocturnos de aves vivas, reefers, horarios | Municipios, 12B |
 | LOG-03 | Logística | Disponibilidad de transportistas refrigerados (aves vivas: ECO-04) | 1–5 | Mayor | Corredor | Sin contratistas, la flota es propia | Transportistas · DPV-042 |
-| EXP-01 | Exportación | Distancia vial al nodo portuario de contenedores de referencia | km | Menor | Corredor | **Solo usable si EXP-04 ≥ 3** (dependencia en el modelo) | Ruteo, 12B · DPV-12A-01 |
+| EXP-01 | Exportación | Distancia vial al nodo portuario de contenedores de referencia | km | Menor | Corredor | **Solo usable si EXP-04 ≥ 3** (dependencia en el modelo) | Ruteo, 12B · DPV-116 |
 | EXP-02 | Exportación | Plantas avícolas exportadoras o traders operando en el corredor | n | Mayor | Corredor | Ecosistema exportador (DPV-081) | SENASA, CEPA · DPV-024 |
 | EXP-03 | Exportación | Distancia a oficina SENASA con certificación de exportación | km | Menor | Corredor | Certificación e inspección | SENASA · DPV-101 |
-| EXP-04 | Exportación | Servicio reefer verificado en el nodo de referencia (terminal, enchufes, frecuencia, destinos, cut-off) | 1–5 | Mayor | Corredor | Lo que de verdad habilita la salida en contenedor refrigerado | Terminales, navieras · DPV-12A-10 |
-| TER-01 | Terreno | Parques o áreas industriales que admiten frigorífico avícola | n | Mayor | Corredor | Uso de suelo resuelto y servicios compartidos | Registro de parques, municipios · DPV-12A-04 |
+| EXP-04 | Exportación | Servicio reefer verificado en el nodo de referencia (terminal, enchufes, frecuencia, destinos, cut-off) | 1–5 | Mayor | Corredor | Lo que de verdad habilita la salida en contenedor refrigerado | Terminales, navieras · DPV-125 |
+| TER-01 | Terreno | Parques o áreas industriales que admiten frigorífico avícola | n | Mayor | Corredor | Uso de suelo resuelto y servicios compartidos | Registro de parques, municipios · DPV-119 |
 | TER-02 | Terreno | Precio de tierra apta para planta | USD/ha | Menor | Corredor | **Solo como DPV** hasta tener cotizaciones ([`guia_ramiro.md`](guia_ramiro.md) §6) | `[COTIZACIÓN]` · DPV-087 |
-| TER-03 | Terreno | Superficie inundable del partido o departamento | % | Menor | Corredor | Insumo regional del gate de riesgo hídrico | INA · DPV-12A-03 |
-| TER-04 | Terreno | Densidad poblacional del partido o departamento | hab/km² | Menor | Corredor | Presión urbana sobre el sitio (la mano de obra se mide aparte, RRH-01) | INDEC · DPV-12A-08 |
+| TER-03 | Terreno | Superficie inundable del partido o departamento | % | Menor | Corredor | Insumo regional del gate de riesgo hídrico | INA · DPV-118 |
+| TER-04 | Terreno | Densidad poblacional del partido o departamento | hab/km² | Menor | Corredor | Presión urbana sobre el sitio (la mano de obra se mide aparte, RRH-01) | INDEC · DPV-123 |
 | NOR-01 | Normativa | Plazo típico de aptitud o evaluación ambiental | meses | Menor | Corredor | Calendario de habilitación (DPV-086) | Organismos ambientales · DPV-106 |
 | NOR-02 | Normativa | Claridad del régimen de uso de suelo industrial | 1–5 | Mayor | Corredor | Previsibilidad, no "facilidad" negociada | Municipios · DPV-106 |
-| RRH-01 | RRHH | Población de 18 a 64 años en radio de 50 km | hab | Mayor | Corredor | Base de reclutamiento | INDEC · DPV-12A-06 |
-| RRH-02 | RRHH | Experiencia local en industria frigorífica o avícola | 1–5 | Mayor | Corredor | Curva de aprendizaje (DPV-092) | Gremios, plantas · DPV-12A-06 |
-| RRH-03 | RRHH | Oferta de técnicos y profesionales | 1–5 | Mayor | Corredor | Mantenimiento, frío, calidad, veterinarios | Escuelas técnicas, universidades · DPV-12A-06 |
+| RRH-01 | RRHH | Población de 18 a 64 años en radio de 50 km | hab | Mayor | Corredor | Base de reclutamiento | INDEC · DPV-121 |
+| RRH-02 | RRHH | Experiencia local en industria frigorífica o avícola | 1–5 | Mayor | Corredor | Curva de aprendizaje (DPV-092) | Gremios, plantas · DPV-121 |
+| RRH-03 | RRHH | Oferta de técnicos y profesionales | 1–5 | Mayor | Corredor | Mantenimiento, frío, calidad, veterinarios | Escuelas técnicas, universidades · DPV-121 |
 
 ### 3.2 No monotónicos (TRADE_OFF: no puntúan; análisis cualitativo)
 
@@ -121,7 +121,7 @@ Reglas:
 1. Un gate duro solo descarta un terreno con **imposibilidad demostrada por escrito** (factibilidad negativa, norma, dictamen). Una afirmación verbal o un `[PVDP]` deja el terreno **CONDICIONADO**, no descartado.
 2. Un gate condicional nunca descarta: marca el terreno como **CONDICIONADO** (requiere inversión, mitigación, tercerización o cambio de diseño, que se evaluarán con CAPEX/OPEX en su momento).
 3. Un condicional pasa a duro solo si la mitigación se demuestra inviable.
-4. Los umbrales concretos (caudal mínimo, potencia, distancia a viviendas) quedan **sin definir** (DEC-12A-03): dependen de la escala y de la normativa del sitio.
+4. Los umbrales concretos (caudal mínimo, potencia, distancia a viviendas) quedan **sin definir** (DEC-052): dependen de la escala y de la normativa del sitio.
 
 Regla de la ruta crítica ([`../16_normativa_senasa/ruta_critica_habilitacion.md`](../16_normativa_senasa/ruta_critica_habilitacion.md)): **no comprar ni comprometer un terreno sin verificar uso de suelo, agua y vuelco por escrito.**
 
@@ -171,7 +171,7 @@ Base técnica en [`../03_produccion_primaria/bioseguridad.md`](../03_produccion_
 | **Expansión** | Crecer exige granjas nuevas a distancia sanitaria | Productores dispuestos a ampliar | Tierra apta para granjas nuevas escasa y competida |
 | **Compartimentación futura** | Un compartimento reconocido (Res. 484/2017 `[PVDP]`) es independiente de la geografía | — | La compra spot de pollo vivo es incompatible con compartimentación (DEC-025) |
 
-**Lectura:** una zona de baja densidad ofrece mejor exposición sanitaria **inicial** pero obliga a construir el ecosistema y no garantiza baja densidad futura si el propio proyecto crece; una zona de alta densidad ofrece ecosistema inmediato a cambio de mayor exposición. Ninguna es mejor en abstracto: depende del modelo de abastecimiento (DEC-020), de la vocación exportadora (DEC-011), del nivel de bioseguridad objetivo (DEC-025) y de los pesos que los socios asignen a ECOSISTEMA_AVICOLA y EXPOSICION_SANITARIA (DEC-12A-02).
+**Lectura:** una zona de baja densidad ofrece mejor exposición sanitaria **inicial** pero obliga a construir el ecosistema y no garantiza baja densidad futura si el propio proyecto crece; una zona de alta densidad ofrece ecosistema inmediato a cambio de mayor exposición. Ninguna es mejor en abstracto: depende del modelo de abastecimiento (DEC-020), de la vocación exportadora (DEC-011), del nivel de bioseguridad objetivo (DEC-025) y de los pesos que los socios asignen a ECOSISTEMA_AVICOLA y EXPOSICION_SANITARIA (DEC-051).
 
 ## 8. Exportación: cuatro cosas distintas
 
@@ -179,7 +179,7 @@ Base técnica en [`../03_produccion_primaria/bioseguridad.md`](../03_produccion_
 
 1. **Cercanía a puerto:** km y horas al nodo (EXP-01). Reduce un costo.
 2. **Disponibilidad reefer:** terminal de contenedores con enchufes y capacidad reefer (EXP-04).
-3. **Servicio marítimo adecuado:** frecuencia, destinos, cut-off y costos del servicio (EXP-04, DPV-12A-10).
+3. **Servicio marítimo adecuado:** frecuencia, destinos, cut-off y costos del servicio (EXP-04, DPV-125).
 4. **Exportación habilitada:** país abierto (categoría A, regla 17), planta habilitada y listada, producto autorizado, comprador con contrato, volumen y congelado ([`../16_normativa_senasa/exportacion_y_certificaciones.md`](../16_normativa_senasa/exportacion_y_certificaciones.md), [`../17_exportacion/requisitos_planta_exportadora.md`](../17_exportacion/requisitos_planta_exportadora.md)). **Ninguna localización la otorga.**
 
 Buenos Aires / Dock Sud son **nodos logísticos de referencia** para contenedores (FTE-134 `[PVDP]`) y deben compararse con otras alternativas portuarias (Zárate, Gran Rosario, Concepción del Uruguay u otras) cuando se releve cada nodo; no se afirma que sean los únicos nodos reefer porque no hay un inventario nacional de terminales reefer verificado. El modelo **no da puntaje exportador por kilómetros**: EXP-01 solo es usable si el nodo tiene EXP-04 ≥ 3 (test T27).

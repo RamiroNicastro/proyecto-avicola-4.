@@ -27,7 +27,7 @@ La densidad avícola dejó de ser un criterio "menor es mejor". Ahora hay:
 | **EXPOSICION_SANITARIA** | Más exposición = desfavorable | SAN-01 distancia mediana entre establecimientos, SAN-02 movimientos de aves (DT-e), SAN-03 eventos de IAAP en 50 km, SAN-04 lejanía de humedales y aves silvestres | Vacías |
 | **TRADE_OFF** | No monotónico | TOF-01 densidad de granjas (variable de doble efecto), TOF-02 concentración industrial, TOF-03 distancia al borde urbano | Sin puntaje; análisis cualitativo |
 
-Ninguna variable representa las dos cosas a la vez (test T22). El peso entre ecosistema y exposición es una decisión estratégica (DEC-12A-02).
+Ninguna variable representa las dos cosas a la vez (test T22). El peso entre ecosistema y exposición es una decisión estratégica (DEC-051).
 
 ## 3. Criterios monotónicos vs trade-off
 
@@ -42,7 +42,7 @@ Ninguna variable representa las dos cosas a la vez (test T22). El peso entre eco
 | **Duro** (solo con imposibilidad demostrada por escrito) | G-D1 uso de suelo incompatible sin vía legal · G-D2 imposibilidad demostrada de agua mínima · G-D3 imposibilidad legal de gestionar efluentes · G-D4 imposibilidad física de energía indispensable | Descarta **ese terreno** (o municipio) |
 | **Condicional** | G-C1 riesgo hídrico mitigable · G-C2 vecinos · G-C3 receptor de subproductos · G-C4 falta inicial de gas · G-C5 potencia limitada ampliable · G-C6 agua que requiere tratamiento · G-C7 acceso | Marca el terreno **CONDICIONADO** (inversión, tratamiento, tercerización, mitigación o diseño) |
 
-Se aplican en E3/E4 (municipio/terreno). **Ningún gate de un terreno elimina una región completa**; un gate duro afirmado solo de palabra deja el terreno condicionado, no descartado (T23). Umbrales concretos: DEC-12A-03.
+Se aplican en E3/E4 (municipio/terreno). **Ningún gate de un terreno elimina una región completa**; un gate duro afirmado solo de palabra deja el terreno condicionado, no descartado (T23). Umbrales concretos: DEC-052.
 
 ## 5. Sensibilidad del umbral de cobertura 60 / 75 / 90 %
 
@@ -74,42 +74,44 @@ Cualquier orden es compatible con lo que se sabe. Respecto de la v1.0 la cobertu
 
 ## 7. Fuentes oficiales incorporadas
 
-En [`fuentes_12A.csv`](fuentes_12A.csv), con trazabilidad "**confirmado en revisión externa del proyecto; lectura directa pendiente en este entorno**" (el acceso a magyp.gob.ar y argentina.gob.ar/senasa sigue bloqueado; prueba 2026-10-01):
+En [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) (antes [`fuentes_12A.csv`](fuentes_12A.csv), conservado como histórico no activo desde la reconciliación de las sesiones 12 (2026-10-01)), con trazabilidad "**confirmado en revisión externa del proyecto; lectura directa pendiente en este entorno**" (el acceso a magyp.gob.ar y argentina.gob.ar/senasa sigue bloqueado; prueba 2026-10-01):
 
 | ID | Fuente | Universo · año | Dato | Uso en 12A |
 |---|---|---|---|---|
-| FTE-12A-015 | SAGyP, "Faena Provincial 2024–2025" | **Faena habilitada por SENASA · 2024** | ER ~50,90 %; BA ~34,89 %; SF ~5,09 %; Cba ~4,49 %; RN ~2,41 % | ECO-01 (agregado provincial: **no puntúa corredores**) y contexto en regiones |
-| FTE-12A-016 | SAGyP, "Faena Provincial 2025–2026" | Faena habilitada por SENASA · 2025–2026 | No leída | Actualización futura de ECO-01 |
-| FTE-12A-017 | SENASA, publicación del 2024-07-02 | **Actividad avícola** | Casi 90 % en Entre Ríos y Buenos Aires | Solo contexto; **no** es participación de faena |
+| FTE-283 | SAGyP, "Faena Provincial 2024–2025" | **Faena habilitada por SENASA · 2024** | ER ~50,90 %; BA ~34,89 %; SF ~5,09 %; Cba ~4,49 %; RN ~2,41 % | ECO-01 (agregado provincial: **no puntúa corredores**) y contexto en regiones |
+| FTE-284 | SAGyP, "Faena Provincial 2025–2026" | Faena habilitada por SENASA · 2025–2026 | No leída | Actualización futura de ECO-01 |
+| FTE-285 | SENASA, publicación del 2024-07-02 | **Actividad avícola** | Casi 90 % en Entre Ríos y Buenos Aires | Solo contexto; **no** es participación de faena |
 
 No se mezclan actividad avícola, producción primaria y faena; tampoco el extracto 2025 de FTE-001 con la tabla oficial 2024 (regla 18).
 
 ## 8. Corrección de Río Negro
 
-Antes: "Río Negro tiene 2,5 % de la faena". Ahora: **"Río Negro representó aproximadamente 2,4 % de la faena nacional habilitada por SENASA en 2024 según la tabla oficial de Secretaría de Agricultura"** (FTE-12A-015, confirmado en revisión externa; lectura directa pendiente). Sigue como **referencia secundaria**: no se descarta ni se incorpora automáticamente a la matriz principal.
+Antes: "Río Negro tiene 2,5 % de la faena". Ahora: **"Río Negro representó aproximadamente 2,4 % de la faena nacional habilitada por SENASA en 2024 según la tabla oficial de Secretaría de Agricultura"** (FTE-283, confirmado en revisión externa; lectura directa pendiente). Sigue como **referencia secundaria**: no se descarta ni se incorpora automáticamente a la matriz principal.
 
 ## 9. Corrección de puertos / exportación
 
 - Se eliminó "las terminales refrigeradas están en CABA y Dock Sud". Ahora: **"Buenos Aires / Dock Sud son nodos logísticos de referencia para contenedores y deben compararse con otras alternativas portuarias"**, porque no hay un inventario nacional de terminales reefer verificado.
 - **Cercanía a puerto ≠ disponibilidad reefer ≠ servicio marítimo adecuado ≠ exportación habilitada.**
-- Nuevo DPV-12A-10 **por nodo** (Buenos Aires, Dock Sud, Zárate, Gran Rosario, Concepción del Uruguay u otros): terminal de contenedores, enchufes/capacidad reefer, frecuencia, destinos, cut-off, costos y disponibilidad real.
+- Nuevo DPV-125 **por nodo** (Buenos Aires, Dock Sud, Zárate, Gran Rosario, Concepción del Uruguay u otros): terminal de contenedores, enchufes/capacidad reefer, frecuencia, destinos, cut-off, costos y disponibilidad real.
 - Nuevo subcriterio EXP-04 (servicio reefer verificado del nodo) y **dependencia**: los km al nodo (EXP-01) solo puntúan si EXP-04 ≥ 3. La proximidad a un puerto no produce por sí sola puntaje exportador (T27).
 
 ## 10. Sensibilidad t·km (red ancla)
 
-Se mantiene la sensibilidad, ahora con **todos los parámetros explícitos** ([`escenarios_localizacion.md`](escenarios_localizacion.md) §3): origen = centro de referencia del corredor; distancia por ruta = orden de magnitud no medido (SUP-12A-02); toneladas = 1,0 / 4,5 / 13,5 / 27 t/día de prueba; 100 % al AMBA (con variante 60 % y 30 %); entrega troncal a un único punto del AMBA cuya existencia (CD de la red o cross-dock) **no está confirmada** (DPV-036).
+Se mantiene la sensibilidad, ahora con **todos los parámetros explícitos** ([`escenarios_localizacion.md`](escenarios_localizacion.md) §3): origen = centro de referencia del corredor; distancia por ruta = orden de magnitud no medido (SUP-079); toneladas = 1,0 / 4,5 / 13,5 / 27 t/día de prueba; 100 % al AMBA (con variante 60 % y 30 %); entrega troncal a un único punto del AMBA cuya existencia (CD de la red o cross-dock) **no está confirmada** (DPV-036).
 
 - Con esos parámetros, Resistencia (~1.020 km) frente a Pilar (~55 km) da **≈ 18,5 veces** más t·km de traslado troncal (antes se citaba "~19 veces" sin parámetros). Ese múltiplo es **solo el cociente de dos distancias supuestas**; no es una característica de una provincia.
 - La forma de distribución puede cambiar sustancialmente el resultado: sin CD, una planta lejana no puede repartir a 90 locales desde su origen y necesita la arquitectura R2.
-- **Una planta vs planta + CD** quedan como **arquitecturas de red diferentes** (DEC-12A-04, abierta), no como criterios equivalentes de localización. La comparación futura considerará inversión, inventario, frío, doble manipulación, transporte primario, distribución secundaria y nivel de servicio, **sin calcular costos todavía**.
+- **Una planta vs planta + CD** quedan como **arquitecturas de red diferentes** (DEC-053, abierta), no como criterios equivalentes de localización. La comparación futura considerará inversión, inventario, frío, doble manipulación, transporte primario, distribución secundaria y nivel de servicio, **sin calcular costos todavía**.
 
 ## 11. Integración con 12C
 
-12C está generando una estimación conceptual de superficie en su propia rama; 12A **no la leyó ni la modificó**. La superficie del terreno sigue **pendiente** en 12A. En la reconciliación 12A–12C se reemplazará el estado genérico por **el rango conceptual de 12C + las restricciones reales municipales y del terreno** (DPV-12A-09, [`terreno_ideal.md`](terreno_ideal.md) §4).
+12C está generando una estimación conceptual de superficie en su propia rama; 12A **no la leyó ni la modificó**. La superficie del terreno sigue **pendiente** en 12A. En la reconciliación 12A–12C se reemplazará el estado genérico por **el rango conceptual de 12C + las restricciones reales municipales y del terreno** (DPV-124, [`terreno_ideal.md`](terreno_ideal.md) §4).
+
+> **Actualización (reconciliación de las sesiones 12, 2026-10-01):** existe un **rango conceptual preliminar de 12C**; la **superficie real de terreno sigue pendiente** de municipio, efluentes, footprints y estrategia de expansión. Rango de 12C (modelo `09_layout_obra_civil/modelo_superficies.py`, bajo / medio / alto, todo orden de magnitud y con 23 de 54 áreas en PROXY): terreno conceptual **0,8–5,3 / 0,9–6,5 / 1,2–8,7 / 1,7–12,8 ha** para 2.500 / 5.000 / 10.000 / 20.000 aves/día sin escala objetivo; **1,4 / 3,3 / 8,2 ha** si se supone reservada desde el inicio la superficie para 20.000 aves/día; con lagunas (medio, sin objetivo) 2,6 / 3,5 / 5,2 / 8,2 ha ([`../09_layout_obra_civil/conclusiones_layout.md`](../09_layout_obra_civil/conclusiones_layout.md) §5). En el escenario medio, retiros, buffers y franjas **supuestos** (SUP-121) representan ~50–68 % del terreno conceptual: el retiro real (DPV-141), el FOS, la zonificación, la tecnología de efluentes (DEC-043, DPV-144), las huellas de equipos (DPV-137) y la escala objetivo a reservar (DEC-063) pueden mover el resultado más que cualquier factor de proceso. El rango **no** es superficie a comprar ni criterio de descarte de terrenos; se compara con la superficie **disponible** del sitio (ficha de terreno) cuando esta exista (DPV-124, estado *En curso*). Detalle en [`../00_gestion_proyecto/reconciliacion_sesiones_12.md`](../00_gestion_proyecto/reconciliacion_sesiones_12.md) §5.
 
 ## 12. Zonas habilitadas para investigación y datos de campo
 
-Sin cambios respecto de la v1.0: **las 13 regiones siguen habilitadas para investigación**, ninguna descartada ni priorizada por preferencia; Río Negro como referencia secundaria. La lista corta (DEC-12A-06) se define después de los hitos H-A y H-B. Datos de terreno a levantar: los que alimentan los gates (uso de suelo, agua, efluentes, energía, riesgo hídrico, vecinos, subproductos), por escrito, más superficie, topografía, distancias medidas y precio como `[COTIZACIÓN]` ([`terreno_ideal.md`](terreno_ideal.md) §6). Nuevos datos regionales: servicios avícolas especializados (DPV-12A-11), exposición sanitaria por corredor (DPV-12A-12) y nodos portuarios (DPV-12A-10).
+Sin cambios respecto de la v1.0: **las 13 regiones siguen habilitadas para investigación**, ninguna descartada ni priorizada por preferencia; Río Negro como referencia secundaria. La lista corta (DEC-055) se define después de los hitos H-A y H-B. Datos de terreno a levantar: los que alimentan los gates (uso de suelo, agua, efluentes, energía, riesgo hídrico, vecinos, subproductos), por escrito, más superficie, topografía, distancias medidas y precio como `[COTIZACIÓN]` ([`terreno_ideal.md`](terreno_ideal.md) §6). Nuevos datos regionales: servicios avícolas especializados (DPV-126), exposición sanitaria por corredor (DPV-120) y nodos portuarios (DPV-125).
 
 ## 13. Tests
 
@@ -162,7 +164,7 @@ T17 y T18 describen el estado actual de los datos: cuando la matriz se complete,
 | [`modelo_localizacion.py`](modelo_localizacion.py) | Modelo v1.1 con 28 tests |
 | `resultados_localizacion.csv` | Salida generada (envolvente, cobertura, elegibilidad 60/75/90) |
 | [`guia_ramiro.md`](guia_ramiro.md) | Conceptos para el promotor |
-| [`actualizaciones_gestion_12A.md`](actualizaciones_gestion_12A.md) | Registros provisionales (§6: auditoría) |
-| [`fuentes_12A.csv`](fuentes_12A.csv) | 17 fuentes provisionales (3 oficiales en revisión externa) |
+| [`actualizaciones_gestion_12A.md`](actualizaciones_gestion_12A.md) | Registros provisionales (§6: auditoría) — **archivo histórico**, integrado en la reconciliación de las sesiones 12 (2026-10-01) |
+| [`fuentes_12A.csv`](fuentes_12A.csv) | **Histórico, no activo**: 17 fuentes integradas como FTE-269 a FTE-285 en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) (3 oficiales en revisión externa) |
 
 **Calidad:** MEDIA–ALTA como método y modelo tras la auditoría; **NULA como evidencia comparativa** (0 celdas verificadas). No se eligió ubicación, no se seleccionaron terrenos, no se calcularon CAPEX ni OPEX, no se modificaron `00_gestion_proyecto/`, `25_fuentes/`, `13_logistica/` ni `09_layout_obra_civil/`.

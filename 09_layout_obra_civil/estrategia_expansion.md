@@ -30,11 +30,11 @@ Rango del terreno con objetivo 20.000: **~1,4 / 3,3 / 8,2 ha** (bajo / medio / a
    - que no puedan tercerizarse funciones (congelado, almacenamiento, rendering, tratamiento de efluentes por vuelco a colectora, lavado de camiones) que reducirían el terreno propio;
    - que el terreno no cambie con la tecnología de efluentes, el congelado propio o tercerizado, la reserva de rendering, el diseño de accesos o la normativa del sitio (retiros, FOS, distancias): todos lo mueven y ninguno está decidido.
 3. **Bajo el supuesto de reserva total, arrancar chico no ahorra terreno; ahorra obra.** En la trayectoria A, en la etapa 1 el ~72 % de los m² operativos que la planta final necesitará (sin contar retiros, buffers ni rendering) está todavía como reserva: 3.640 m² de proceso, 4.120 m² de exteriores, 1.090 de servicios, 490 de personal, 460 de frío, 370 de efluentes y 640 de rendering.
-4. **Sin escala objetivo, la reserva es una fracción arbitraria** (25–100 % de lo operativo, SUP-12C-13, alerta `OBJETIVO_EXPANSION_NO_DEFINIDO`). Definir **para qué escala final se reserva el terreno** es una decisión nueva (DEC-12C-02) que debe tomarse **antes** de comprar terreno (ruta crítica R1 de [`../16_normativa_senasa/ruta_critica_habilitacion.md`](../16_normativa_senasa/ruta_critica_habilitacion.md)), aunque la escala inicial siga abierta.
+4. **Sin escala objetivo, la reserva es una fracción arbitraria** (25–100 % de lo operativo, SUP-119, alerta `OBJETIVO_EXPANSION_NO_DEFINIDO`). Definir **para qué escala final se reserva el terreno** es una decisión nueva (DEC-063) que debe tomarse **antes** de comprar terreno (ruta crítica R1 de [`../16_normativa_senasa/ruta_critica_habilitacion.md`](../16_normativa_senasa/ruta_critica_habilitacion.md)), aunque la escala inicial siga abierta.
 
 ## 2. Qué hacer con cada elemento físico
 
-Clasificación (hipótesis de trabajo, SUP-12C-17; complementa la de 23 y 09A):
+Clasificación (hipótesis de trabajo, SUP-123; complementa la de 23 y 09A):
 
 - **S — Sobredimensionar desde el inicio** (barato de prever, carísimo o imposible de corregir).
 - **P — Dejar preparado** (espacio, vanos, troncales con derivaciones ciegas, fundaciones), sin instalar.
@@ -63,7 +63,7 @@ Clasificación (hipótesis de trabajo, SUP-12C-17; complementa la de 23 y 09A):
 | **Vestuarios y comedor** | **M** con espacio **P** | Los vestuarios son parte del flujo higiénico; el 2.º turno los comparte en horario | Bloque de personal ampliable sin mover los filtros sanitarios |
 | **Oficinas y oficina SENASA** | **M** | Bajo costo relativo | — |
 | **Calderas, compresores de aire, generador** | **D** | Se agregan unidades | Espacio en la sala para la unidad siguiente |
-| **Rendering** | **P** (solo terreno) | No decidido (DEC-027); sin espacio la opción desaparece | Reserva contigua a subproductos, lejos de la limpia y de vecinos (DEC-12C-05) |
+| **Rendering** | **P** (solo terreno) | No decidido (DEC-027); sin espacio la opción desaparece | Reserva contigua a subproductos, lejos de la limpia y de vecinos (DEC-066) |
 
 ## 3. Dirección del crecimiento (principio de diseño preliminar)
 
@@ -80,7 +80,7 @@ flowchart LR
     RU["Reserva: utilities y efluentes"] -.-> U["UTILITIES"]
 ```
 
-> **Principio de diseño preliminar (SUP-12C-17), no regla arquitectónica universal:** *preferir expansiones que prolonguen o dupliquen secuencias funcionales sin introducir cruces ni romper la zonificación higiénica.* Un proyectista puede encontrar otras soluciones válidas (por ejemplo, una ampliación intercalada ejecutada en una parada programada con aprobación previa); el principio indica qué conviene preferir cuando el layout todavía es flexible.
+> **Principio de diseño preliminar (SUP-123), no regla arquitectónica universal:** *preferir expansiones que prolonguen o dupliquen secuencias funcionales sin introducir cruces ni romper la zonificación higiénica.* Un proyectista puede encontrar otras soluciones válidas (por ejemplo, una ampliación intercalada ejecutada en una parada programada con aprobación previa); el principio indica qué conviene preferir cuando el layout todavía es flexible.
 
 1. **Prolongar o duplicar secuencias:** líneas en paralelo, salas limpias contiguas a la zona limpia, cámaras contiguas a la zona fría, docks a lo largo de la fachada de despacho.
 2. **Evitar, en lo posible, ampliaciones que corten la secuencia** existente (p. ej., una sala nueva entre evisceración y chiller): suelen exigir parar la planta, romper barreras sanitarias y volver a presentar planos (DPV-115).
@@ -118,5 +118,5 @@ flowchart LR
 ## 6. Relación con gates y decisiones
 
 - La variable **V17 "servicios y terreno"** de [`../23_plan_expansion/gates_expansion.md`](../23_plan_expansion/gates_expansion.md) puede medirse con este modelo: m² de terreno y de reserva disponibles vs necesarios para la etapa siguiente.
-- Decisiones nuevas propuestas: escala objetivo del terreno (DEC-12C-02), forma de la nave (DEC-12C-01), reserva de rendering (DEC-12C-05). Notas a DEC-035, DEC-038 y DEC-043 en [`actualizaciones_gestion_12C.md`](actualizaciones_gestion_12C.md).
+- Decisiones abiertas: escala objetivo del terreno (DEC-063), forma de la nave (DEC-062), reserva de rendering (DEC-066). Notas de 12C a DEC-035, DEC-038 y DEC-043 integradas en [`../00_gestion_proyecto/decisiones_pendientes.md`](../00_gestion_proyecto/decisiones_pendientes.md) (reconciliación de las sesiones 12 (2026-10-01)).
 - **Planificar la expansión no es construirla:** se asegura el terreno que la estrategia elegida considere necesario (total, parcial o con opciones) y se trazan accesos, troncales y frentes; los equipos, cámaras, salas y docks se agregan cuando un gate lo justifique.

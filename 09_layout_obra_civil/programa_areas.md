@@ -4,7 +4,7 @@
 
 > **Pregunta:** ¿qué áreas necesita la planta, con qué lógica se dimensiona cada una y qué dato falta para hacerlo bien?
 > **Alcance:** lista completa de áreas funcionales (54 en el modelo + la reserva de expansión), su zona ([`zonificacion_layout.md`](zonificacion_layout.md)), su categoría de superficie, el **método** de dimensionamiento y el **dato faltante**. Las superficies por escala están en [`layouts_por_escala.md`](layouts_por_escala.md) y, completas, en [`escenarios_superficies.csv`](escenarios_superficies.csv) (bloque `detalle`). **No** es un programa arquitectónico ejecutivo: no hay alturas, terminaciones, vanos ni posiciones.
-> **Clasificación:** todas las superficies son `[ESTIMACIÓN]` construidas con factores `[SUPUESTO]` (SUP-12C-01 a SUP-12C-15), algunos `[PVDP]` (densidades de cámara, cargas de tratamiento) y algunos **PROXY** (sustitutos de datos faltantes que generan alerta). **Ningún** factor está validado en planta argentina.
+> **Clasificación:** todas las superficies son `[ESTIMACIÓN]` construidas con factores `[SUPUESTO]` (SUP-107 a SUP-121), algunos `[PVDP]` (densidades de cámara, cargas de tratamiento) y algunos **PROXY** (sustitutos de datos faltantes que generan alerta). **Ningún** factor está validado en planta argentina.
 
 ---
 
@@ -32,15 +32,15 @@ Por qué tres totales distintos: [`guia_ramiro.md` §6](guia_ramiro.md).
 
 | Método | Cuándo se usa | Fórmula | Estado que muestra |
 |---|---|---|---|
-| **F — Footprint** | Cuando el proveedor entregue la huella de equipos del área (layout de RFQ) | m² = huella de equipos × **factor de envolvente** 2,2 / 2,8 / 3,5 (pasillos, acceso de mantenimiento, buffers, higiene; SUP-12C-14) | `FOOTPRINT` |
+| **F — Footprint** | Cuando el proveedor entregue la huella de equipos del área (layout de RFQ) | m² = huella de equipos × **factor de envolvente** 2,2 / 2,8 / 3,5 (pasillos, acceso de mantenimiento, buffers, higiene; SUP-120) | `FOOTPRINT` |
 | **D — Driver físico + densidad** | Cuando la superficie depende de un stock o de un conteo que sí existe | cámaras = t (09C) × pico ÷ t/m²; andenes = posiciones × m²; vestuarios = personas × m²/persona; tratamiento = volumen ÷ profundidad | `ESTIMACION` |
-| **P — Proxy de intensidad** | Cuando falta la huella de equipos (hoy: todas) | m² = k × (driver/1.000)^0,8, con mínimo funcional; k y mínimos **sin fuente** (SUP-12C-01) | `PROXY` + alerta `FOOTPRINT_DESCONOCIDO` |
+| **P — Proxy de intensidad** | Cuando falta la huella de equipos (hoy: todas) | m² = k × (driver/1.000)^0,8, con mínimo funcional; k y mínimos **sin fuente** (SUP-107) | `PROXY` + alerta `FOOTPRINT_DESCONOCIDO` |
 | **N — No aplica** | El área no existe en la configuración | 0 declarado explícitamente | `NO_APLICA` |
 | **Estricto** | `estricto=True`: no se aceptan proxies de huella ni de dotación | El área queda `None` y todo total que la contiene también | `PENDIENTE` (estado global `INCOMPLETO`) |
 
 **Regla clave:** una huella desconocida **nunca** se convierte en cero. O se usa un proxy visible (con alerta) o el resultado queda incompleto. Una huella informada igual a 0 se rechaza como error (test T07).
 
-**Exponente 0,8 (SUP-12C-01):** expresa que al duplicar el ritmo una sala crece menos del doble (pasillos, puestos fijos y mínimos se comparten). Es un supuesto de orden de magnitud; la curva real sale de layouts de proveedores (DPV-12C-01) y de plantas existentes (DPV-12C-07).
+**Exponente 0,8 (SUP-107):** expresa que al duplicar el ritmo una sala crece menos del doble (pasillos, puestos fijos y mínimos se comparten). Es un supuesto de orden de magnitud; la curva real sale de layouts de proveedores (DPV-137) y de plantas existentes (DPV-143).
 
 ## 2 bis. Calidad de las superficies: tipo de origen (A–E)
 
@@ -124,7 +124,7 @@ Columnas: **Zona** (1 sucia · 2 transición · 3 limpia · 3b apoyo seco · 4 f
 | Área | Zona | Cat. | Método | Driver | Dato faltante / referencia |
 |---|---|---|---|---|---|
 | Porterías y seguridad (≥ 2 accesos separados) | 9 | PA | D | Número de porterías × m² | Política de seguridad; accesos reales del terreno (12A) |
-| Estacionamiento de personal y visitas | 8/EXT | E | D (PROXY de dotación) | Personas por turno × fracción motorizada | Dotación (DPV-12C-02); transporte del personal (DPV-12C-03) |
+| Estacionamiento de personal y visitas | 8/EXT | E | D (PROXY de dotación) | Personas por turno × fracción motorizada | Dotación (DPV-138); transporte del personal (DPV-139) |
 | Circulación pesada (vivo / producto / subproductos separados) | EXT | E | D | 25–50 % de los m² cubiertos | Geometría del terreno y radios de giro (12A, 12B) |
 
 ### 3.2 Recepción y faena (zona sucia)
@@ -132,17 +132,17 @@ Columnas: **Zona** (1 sucia · 2 transición · 3 limpia · 3b apoyo seco · 4 f
 | Área | Zona | Cat. | Método | Driver | Dato faltante / referencia |
 |---|---|---|---|---|---|
 | Recepción, andén de espera ventilado y descarga | 1 | P | D (PROXY de camión) | **Bahías** = ⌈ritmo × horas de espera ÷ aves por camión⌉ + 1 | Aves por camión (DPV-084); horas de espera admitidas (bienestar, DPV-090) |
-| Colgado y aturdido (eléctrico o CAS) | 1 | P | P / F | Ritmo por línea | Huella de EQ-04, 07–10 (DPV-12C-01); método de aturdido (DEC-041: CAS ocupa más) |
+| Colgado y aturdido (eléctrico o CAS) | 1 | P | P / F | Ritmo por línea | Huella de EQ-04, 07–10 (DPV-137); método de aturdido (DEC-041: CAS ocupa más) |
 | Sangrado, escaldado, desplumado, patas y cabeza | 1 | P | P / F | Ritmo por línea | Huella de EQ-11 a 18 y 20; tiempos de sangrado y escaldado (DPV-090) |
 | Lavado de cajones/módulos | 1 | P | P / F | Ritmo | Huella de EQ-05; cajones vs módulos (EQ-03) |
 | Playa de camiones de vivo | EXT | E | D | Bahías × m²/camión | DPV-084 |
-| Lavado y desinfección de camiones de vivo | EXT | E | D | Camiones/día ÷ camiones por plataforma | Requisitos de Res. SENASA 723/2025 (`[PVDP]`, DPV-12C-11) |
+| Lavado y desinfección de camiones de vivo | EXT | E | D | Camiones/día ÷ camiones por plataforma | Requisitos de Res. SENASA 723/2025 (`[PVDP]`, DPV-058) |
 
 ### 3.3 Evisceración e inspección (transición)
 
 | Área | Zona | Cat. | Método | Driver | Dato faltante / referencia |
 |---|---|---|---|---|---|
-| Evisceración, **inspección oficial post mortem**, separación de menudencias y vísceras, lavado de carcasas | 2 | P | P / F (× automatización: manual 1,20 · semi 1,00 · auto 0,90) | Ritmo por línea | **Puestos de inspección por velocidad de línea, iluminación y espacio** (DPV-090, DPV-12C-04); huella EQ-19, 21–33 |
+| Evisceración, **inspección oficial post mortem**, separación de menudencias y vísceras, lavado de carcasas | 2 | P | P / F (× automatización: manual 1,20 · semi 1,00 · auto 0,90) | Ritmo por línea | **Puestos de inspección por velocidad de línea, iluminación y espacio** (DPV-090, DPV-140); huella EQ-19, 21–33 |
 
 ### 3.4 Enfriamiento y zona limpia
 
@@ -162,8 +162,8 @@ Columnas: **Zona** (1 sucia · 2 transición · 3 limpia · 3b apoyo seco · 4 f
 
 | Área | Zona | Cat. | Método | Driver | Dato faltante / referencia |
 |---|---|---|---|---|---|
-| Congelado (túnel estático, lineal, espiral, placas) | 4 | F | P / F | **Capacidad de congelación t/día (09C)** × 6–14 m²/(t/día); espiral ×0,35 (FTE-215 `[PVDP · débil]`) | Huella de EQ-57 a 61 y tiempo de congelado (DPV-12C-01) |
-| Cámaras refrigeradas | 4 | F | D | **Stock refrigerado t (09C)** × pico 1,15–1,5 ÷ 0,5–1,0 t/m² | Densidad de estiba, racks, altura (DPV-12C-06); días de stock (DPV-078) |
+| Congelado (túnel estático, lineal, espiral, placas) | 4 | F | P / F | **Capacidad de congelación t/día (09C)** × 6–14 m²/(t/día); espiral ×0,35 (FTE-215 `[PVDP · débil]`) | Huella de EQ-57 a 61 y tiempo de congelado (DPV-137) |
+| Cámaras refrigeradas | 4 | F | D | **Stock refrigerado t (09C)** × pico 1,15–1,5 ÷ 0,5–1,0 t/m² | Densidad de estiba, racks, altura (DPV-142); días de stock (DPV-078) |
 | Cámaras congeladas (incluye lotes de exportación) | 4 | F | D | **Stock congelado t (09C)** × pico ÷ 0,9–1,75 t/m² | Idem; lotes de exportación (SUP-055 P3) |
 | Antecámaras, pasillo frío, preparación de pedidos | 4/5 | F | D | 20–40 % de cámaras | Sistema de picking (12B) |
 | Expedición: andenes refrigerados con sello | 5 | F | D (PROXY de camión) | Docks = ⌈t/día × pico ÷ (t por camión × cargas por dock)⌉ | t por camión (DPV-084), canal CD vs locales (DPV-036, 12B) |
@@ -180,7 +180,7 @@ Columnas: **Zona** (1 sucia · 2 transición · 3 limpia · 3b apoyo seco · 4 f
 | Sala/cámara de decomisos bajo control oficial | 6 | F | D | Mínimo 6–12 m² | Requisito SENASA (DPV-090) |
 | Residuos, cartón y compactación | 6 | S | D | Ritmo | — |
 | Playa de contenedores y retiro de subproductos | EXT | E | D | Base + t/día | — |
-| **Rendering futuro / tercerizado** | 6/R | R | PROXY | t/día de rendering potencial × 40–90 m² (mín. 300–600) | **Solo reserva de terreno**, no se construye (DEC-027, SUP-049, DEC-12C-05) |
+| **Rendering futuro / tercerizado** | 6/R | R | PROXY | t/día de rendering potencial × 40–90 m² (mín. 300–600) | **Solo reserva de terreno**, no se construye (DEC-027, SUP-049, DEC-066) |
 
 ### 3.7 Utilities
 
@@ -192,7 +192,7 @@ Columnas: **Zona** (1 sucia · 2 transición · 3 limpia · 3b apoyo seco · 4 f
 | Sala eléctrica, tableros, transformador | 7 | S | PROXY | Ritmo | Potencia pico PENDIENTE (DPV-095); si el transformador va a la intemperie cambia la superficie |
 | Grupo electrógeno | 7 | S | PROXY + alerta | Ritmo | Generador PENDIENTE en 09C (DEC-047) |
 | Tratamiento de agua potable | 7 | S | D | m³/día (09C) | Calidad de la fuente (DPV-053) |
-| Tanques de reserva (incluye incendio a definir) | EXT | E | D | m³/día × días ÷ altura | Reserva de incendio (DPV-12C-09, DPV-106) |
+| Tanques de reserva (incluye incendio a definir) | EXT | E | D | m³/día × días ÷ altura | Reserva de incendio (DPV-106) |
 | Mantenimiento y taller | 7 | S | D | Ritmo | Política de mantenimiento propio vs tercerizado |
 | Pañol de repuestos | 7 | S | D | Ritmo | Stock de repuestos críticos (DPV-089) |
 | Depósito de químicos (bajo llave) | 7 | S | D | Ritmo | — |
@@ -204,7 +204,7 @@ Columnas: **Zona** (1 sucia · 2 transición · 3 limpia · 3b apoyo seco · 4 f
 |---|---|---|---|---|---|
 | Pretratamiento (rejas, tamiz, desengrasador, bombeo) | 7 | EF | D | Caudal horario máximo (09C) | DPV-114 |
 | Ecualización | 7 | EF | D | 30–70 % del caudal diario ÷ 3,5–4,5 m | Perfil horario de vuelco |
-| DAF | 7 | EF | D | Caudal máx ÷ 4–6 m³/(m²·h) × 3–5 | Proveedor (DPV-12C-08) |
+| DAF | 7 | EF | D | Caudal máx ÷ 4–6 m³/(m²·h) × 3–5 | Proveedor (DPV-144) |
 | Tratamiento biológico | 7 | EF | D según tecnología (§3.8.1) | DBO/DQO (09C, el **mayor** de los dos métodos) | Límite de vuelco del sitio (DPV-106); tecnología (DEC-043) |
 | Lodos y flotados | 7 | EF | PROXY | DBO que llega al biológico | Lodos PENDIENTES (09C, DPV-114) |
 | Circulación, laboratorio y operación | 7 | EF | D | 25–40 % de lo anterior | — |
@@ -218,30 +218,30 @@ Columnas: **Zona** (1 sucia · 2 transición · 3 limpia · 3b apoyo seco · 4 f
 | **Anaerobio + aerobio** | Reactor: DQO tras DAF ÷ 3–8 kg/(m³·d) (FTE-263: 7–11 en ensayos); pulido aerobio del 20–40 % | Terreno intermedio; biogás |
 | **Lagunas** | Anaerobia: DBO ÷ 0,15–0,35 kg/(m³·d), 3–5 m; facultativa: 150–350 kg DBO/(ha·d); taludes ×1,2–1,5 | ~35–40 veces la superficie del biológico compacto — **RESULTADO DEL ESCENARIO DE SUPERFICIES ACTUAL / PROXY**, no relación general de ingeniería; más distancia a vecinos |
 
-La relación real entre tecnologías **depende de tecnología, carga, clima, tiempo de retención, profundidad, calidad de efluente, terreno y normativa**. Las cargas de diseño de §3.8.1 son reglas de manual de ingeniería sanitaria **no leídas en esta sesión** (FTE-12C-006, `[PVDP]`); sirven para el **orden de magnitud** del terreno, no para diseñar.
+La relación real entre tecnologías **depende de tecnología, carga, clima, tiempo de retención, profundidad, calidad de efluente, terreno y normativa**. Las cargas de diseño de §3.8.1 son reglas de manual de ingeniería sanitaria **no leídas en esta sesión** (FTE-294, `[PVDP]`); sirven para el **orden de magnitud** del terreno, no para diseñar.
 
 ### 3.9 Personal y administración
 
 | Área | Zona | Cat. | Método | Driver | Dato faltante / referencia |
 |---|---|---|---|---|---|
-| Vestuarios y sanitarios **separados por zona (sucia/limpia) y por sexo** | 8 | PA | D (PROXY de dotación) | Personas por turno × 1,0–1,7 m² (+ lockers del 2.º turno) | **Dotación** (DPV-12C-02, `18_recursos_humanos` no iniciado); requisitos de vestuarios (DPV-090) |
+| Vestuarios y sanitarios **separados por zona (sucia/limpia) y por sexo** | 8 | PA | D (PROXY de dotación) | Personas por turno × 1,0–1,7 m² (+ lockers del 2.º turno) | **Dotación** (DPV-138, `18_recursos_humanos` no iniciado); requisitos de vestuarios (DPV-090) |
 | Comedor y office | 8 | PA | D | Personas simultáneas × 1,2–1,8 m² | Turnos de comida |
 | Oficinas de administración | 9 | PA | D | Puestos × 8–12 m² | Organigrama |
-| Oficina del servicio oficial (SENASA) con sanitario | 9 | PA | D | Superficie base | **Requisito edilicio del SIV** (DPV-12C-04) |
-| Laboratorio de autocontrol / calidad | 9 | S | D | Ritmo; si es tercerizado: sala de muestras | Propio vs tercero (DEC-12C-04) |
+| Oficina del servicio oficial (SENASA) con sanitario | 9 | PA | D | Superficie base | **Requisito edilicio del SIV** (DPV-140) |
+| Laboratorio de autocontrol / calidad | 9 | S | D | Ritmo; si es tercerizado: sala de muestras | Propio vs tercero (DEC-065) |
 | Enfermería y capacitación | 8 | PA | D | Superficie base | Higiene y seguridad (DPV-106) |
 | Circulación de personal y filtros sanitarios | 8 | PA | D | 10–20 % de personal/admin | — |
 
-**Dotación proxy (SUP-12C-10, solo para superficies):** personas por turno = 10–20 + 0,05–0,12 × ritmo (aves/h) × factor de automatización (manual 1,35 · semi 1,0 · auto 0,75) × factor de configuración (A 0,9 · B 1,0 · C 1,3). Da ~40 / 65 / 115 / 215 personas por turno (medio) para 2.500 / 5.000 / 10.000 / 20.000 aves/día a 8 h netas. **No es dotación**: es un sustituto para que vestuarios, comedor y estacionamiento no queden en cero; se reemplaza con `18_recursos_humanos`.
+**Dotación proxy (SUP-116, solo para superficies):** personas por turno = 10–20 + 0,05–0,12 × ritmo (aves/h) × factor de automatización (manual 1,35 · semi 1,0 · auto 0,75) × factor de configuración (A 0,9 · B 1,0 · C 1,3). Da ~40 / 65 / 115 / 215 personas por turno (medio) para 2.500 / 5.000 / 10.000 / 20.000 aves/día a 8 h netas. **No es dotación**: es un sustituto para que vestuarios, comedor y estacionamiento no queden en cero; se reemplaza con `18_recursos_humanos`.
 
 ### 3.10 Reserva
 
 | Área | Cat. | Método | Referencia |
 |---|---|---|---|
-| Reserva de terreno para expansión | R | Σ max(0, área a escala objetivo − área actual) por categoría; sin objetivo: 25 / 50 / 100 % de lo operativo (alerta) | SUP-12C-13; DEC-035; [`estrategia_expansion.md`](estrategia_expansion.md) |
+| Reserva de terreno para expansión | R | Σ max(0, área a escala objetivo − área actual) por categoría; sin objetivo: 25 / 50 / 100 % de lo operativo (alerta) | SUP-119; DEC-035; [`estrategia_expansion.md`](estrategia_expansion.md) |
 | Reserva de rendering futuro | R | Ver §3.6 | DEC-027 |
 
-## 4. Huellas de equipos a pedir en el RFQ (DPV-12C-01)
+## 4. Huellas de equipos a pedir en el RFQ (DPV-137)
 
 El plan de RFQ ([`../08_maquinaria/plan_rfq.md`](../08_maquinaria/plan_rfq.md)) ya pide "dotación, superficie y servicios del núcleo de la planta" para el lote 1. Para que el método F reemplace los proxies, cada respuesta debería incluir **layout de equipos con cotas** y la huella por área:
 
