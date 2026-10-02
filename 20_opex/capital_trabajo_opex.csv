@@ -1,0 +1,616 @@
+ESCENARIO,COMPONENTE,SUBCOMPONENTE,CANTIDAD,UNIDAD,PROPIETARIO,PROPIEDAD_EMPRESA,UBICACION,ENTRA_EN_CT,PRECIO_ID,PRECIO_USD,VALOR_USD,EVIDENCIA,ESTADO,FALTA
+C0-2500,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C0-2500,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C0-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-2500,INVENTARIO,producto terminado refrigerado,6.41915,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-2500,INVENTARIO,producto terminado congelado,1.75457,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-2500,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C0-2500,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C0-2500,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C0-2500,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C0-2500,CUENTAS_POR_PAGAR,pollitos,582509,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C0-2500,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,31 de 31 compras sin costo; días de pago
+C0-2500,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C0-2500,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C0-2500,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C0-2500,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, energia)"
+C0-5000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C0-5000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C0-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-5000,INVENTARIO,producto terminado refrigerado,12.8383,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-5000,INVENTARIO,producto terminado congelado,3.50914,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-5000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C0-5000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C0-5000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C0-5000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C0-5000,CUENTAS_POR_PAGAR,pollitos,1.16502e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C0-5000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,31 de 31 compras sin costo; días de pago
+C0-5000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C0-5000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C0-5000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C0-5000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, energia)"
+C0-10000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C0-10000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C0-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-10000,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-10000,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-10000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C0-10000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C0-10000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C0-10000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C0-10000,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C0-10000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,31 de 31 compras sin costo; días de pago
+C0-10000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C0-10000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C0-10000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C0-10000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, energia)"
+C0-20000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C0-20000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C0-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-20000,INVENTARIO,producto terminado refrigerado,51.3532,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-20000,INVENTARIO,producto terminado congelado,14.0365,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-20000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C0-20000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C0-20000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C0-20000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C0-20000,CUENTAS_POR_PAGAR,pollitos,4.66008e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C0-20000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,31 de 31 compras sin costo; días de pago
+C0-20000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C0-20000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C0-20000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C0-20000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, energia)"
+C1-2500,INVENTARIO,alimento: alimento_terminado_granja,26.4902,t,empresa,TRUE,silos de granja (integrado o propia),Sí,ALI-A-PT,,,,PENDIENTE,precio
+C1-2500,INVENTARIO,alimento: alimento_terminado_planta,17.6601,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-A-PT,,,,NO_ENTRA,
+C1-2500,INVENTARIO,alimento: maiz,79.4706,t,tercero,FALSE,fábrica proveedora / su acopio,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C1-2500,INVENTARIO,alimento: harina_soja,39.7353,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C1-2500,INVENTARIO,alimento: micros_aceite_otros,26.4902,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C1-2500,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
+C1-2500,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C1-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-2500,INVENTARIO,producto terminado refrigerado,6.41915,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-2500,INVENTARIO,producto terminado congelado,1.75457,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-2500,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C1-2500,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C1-2500,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C1-2500,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C1-2500,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C1-2500,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-2500,CUENTAS_POR_PAGAR,pollitos,582509,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C1-2500,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,47 de 47 compras sin costo; días de pago
+C1-2500,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C1-2500,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-2500,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
+C1-2500,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C1-2500,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
+C1-5000,INVENTARIO,alimento: alimento_terminado_granja,52.9804,t,empresa,TRUE,silos de granja (integrado o propia),Sí,ALI-A-PT,,,,PENDIENTE,precio
+C1-5000,INVENTARIO,alimento: alimento_terminado_planta,35.3202,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-A-PT,,,,NO_ENTRA,
+C1-5000,INVENTARIO,alimento: maiz,158.941,t,tercero,FALSE,fábrica proveedora / su acopio,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C1-5000,INVENTARIO,alimento: harina_soja,79.4706,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C1-5000,INVENTARIO,alimento: micros_aceite_otros,52.9804,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C1-5000,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
+C1-5000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C1-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-5000,INVENTARIO,producto terminado refrigerado,12.8383,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-5000,INVENTARIO,producto terminado congelado,3.50914,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-5000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C1-5000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C1-5000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C1-5000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C1-5000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C1-5000,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-5000,CUENTAS_POR_PAGAR,pollitos,1.16502e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C1-5000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,47 de 47 compras sin costo; días de pago
+C1-5000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C1-5000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-5000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
+C1-5000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C1-5000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
+C1-10000,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja (integrado o propia),Sí,ALI-A-PT,,,,PENDIENTE,precio
+C1-10000,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-A-PT,,,,NO_ENTRA,
+C1-10000,INVENTARIO,alimento: maiz,317.882,t,tercero,FALSE,fábrica proveedora / su acopio,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C1-10000,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C1-10000,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C1-10000,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
+C1-10000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C1-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C1-10000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C1-10000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C1-10000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C1-10000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C1-10000,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C1-10000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,47 de 47 compras sin costo; días de pago
+C1-10000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C1-10000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
+C1-10000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C1-10000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
+C1-20000,INVENTARIO,alimento: alimento_terminado_granja,211.921,t,empresa,TRUE,silos de granja (integrado o propia),Sí,ALI-A-PT,,,,PENDIENTE,precio
+C1-20000,INVENTARIO,alimento: alimento_terminado_planta,141.281,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-A-PT,,,,NO_ENTRA,
+C1-20000,INVENTARIO,alimento: maiz,635.764,t,tercero,FALSE,fábrica proveedora / su acopio,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C1-20000,INVENTARIO,alimento: harina_soja,317.882,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C1-20000,INVENTARIO,alimento: micros_aceite_otros,211.921,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C1-20000,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
+C1-20000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C1-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-20000,INVENTARIO,producto terminado refrigerado,51.3532,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-20000,INVENTARIO,producto terminado congelado,14.0365,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-20000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C1-20000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C1-20000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C1-20000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C1-20000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C1-20000,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-20000,CUENTAS_POR_PAGAR,pollitos,4.66008e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C1-20000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,47 de 47 compras sin costo; días de pago
+C1-20000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C1-20000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-20000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
+C1-20000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C1-20000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
+C2-2500,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C2-2500,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C2-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C2-2500,INVENTARIO,producto terminado refrigerado,4.27943,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C2-2500,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C2-2500,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C2-2500,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C2-2500,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C2-2500,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C2-2500,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C2-2500,CUENTAS_POR_PAGAR,pollitos,582509,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C2-2500,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,63 de 63 compras sin costo; días de pago
+C2-2500,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C2-2500,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,11 de 11 compras sin costo; días de pago
+C2-2500,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C2-2500,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C2-2500,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, logistica, energia)"
+C2-5000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C2-5000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C2-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C2-5000,INVENTARIO,producto terminado refrigerado,8.55887,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C2-5000,INVENTARIO,producto terminado congelado,14.0365,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C2-5000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C2-5000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C2-5000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C2-5000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C2-5000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C2-5000,CUENTAS_POR_PAGAR,pollitos,1.16502e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C2-5000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,63 de 63 compras sin costo; días de pago
+C2-5000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C2-5000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,11 de 11 compras sin costo; días de pago
+C2-5000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C2-5000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C2-5000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, logistica, energia)"
+C2-10000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C2-10000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C2-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C2-10000,INVENTARIO,producto terminado refrigerado,17.1177,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C2-10000,INVENTARIO,producto terminado congelado,28.0731,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C2-10000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C2-10000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C2-10000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C2-10000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C2-10000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C2-10000,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C2-10000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,63 de 63 compras sin costo; días de pago
+C2-10000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C2-10000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,11 de 11 compras sin costo; días de pago
+C2-10000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C2-10000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C2-10000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, logistica, energia)"
+C2-20000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C2-20000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C2-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C2-20000,INVENTARIO,producto terminado refrigerado,34.2355,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C2-20000,INVENTARIO,producto terminado congelado,56.1462,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C2-20000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C2-20000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C2-20000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C2-20000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C2-20000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C2-20000,CUENTAS_POR_PAGAR,pollitos,4.66008e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C2-20000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,63 de 63 compras sin costo; días de pago
+C2-20000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C2-20000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,11 de 11 compras sin costo; días de pago
+C2-20000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C2-20000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C2-20000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, logistica, energia)"
+C3-2500,INVENTARIO,alimento: alimento_terminado_granja,26.4902,t,empresa,TRUE,silos de granja,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C3-2500,INVENTARIO,alimento: alimento_terminado_planta,17.6601,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C3-2500,INVENTARIO,alimento: maiz,79.4706,t,empresa,TRUE,planta propia,Sí,ALI-MP-MAIZ,194.35,15445.1,E4,VALORIZADO,"valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
+C3-2500,INVENTARIO,alimento: harina_soja,39.7353,t,empresa,TRUE,planta propia,Sí,ALI-MP-SOJA,,,,PENDIENTE,precio
+C3-2500,INVENTARIO,alimento: micros_aceite_otros,26.4902,t,empresa,TRUE,planta propia,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
+C3-2500,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
+C3-2500,INVENTARIO,huevo fértil en almacén,11674.5,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+C3-2500,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",48508,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+C3-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C3-2500,INVENTARIO,producto terminado refrigerado,4.27943,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C3-2500,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C3-2500,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C3-2500,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C3-2500,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C3-2500,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C3-2500,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C3-2500,CUENTAS_POR_PAGAR,pollitos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C3-2500,CUENTAS_POR_PAGAR,granos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,5 de 6 compras sin costo; días de pago
+C3-2500,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,78 de 78 compras sin costo; días de pago
+C3-2500,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,10 de 10 compras sin costo; días de pago
+C3-2500,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,45 de 45 compras sin costo; días de pago
+C3-2500,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,14 de 14 compras sin costo; días de pago
+C3-2500,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C3-2500,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (13 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, granos, servicios, packaging, logistica, energia)"
+C3-5000,INVENTARIO,alimento: alimento_terminado_granja,52.9804,t,empresa,TRUE,silos de granja,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C3-5000,INVENTARIO,alimento: alimento_terminado_planta,35.3202,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C3-5000,INVENTARIO,alimento: maiz,158.941,t,empresa,TRUE,planta propia,Sí,ALI-MP-MAIZ,194.35,30890.1,E4,VALORIZADO,"valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
+C3-5000,INVENTARIO,alimento: harina_soja,79.4706,t,empresa,TRUE,planta propia,Sí,ALI-MP-SOJA,,,,PENDIENTE,precio
+C3-5000,INVENTARIO,alimento: micros_aceite_otros,52.9804,t,empresa,TRUE,planta propia,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
+C3-5000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
+C3-5000,INVENTARIO,huevo fértil en almacén,23349.1,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+C3-5000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",97016,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+C3-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C3-5000,INVENTARIO,producto terminado refrigerado,8.55887,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C3-5000,INVENTARIO,producto terminado congelado,14.0365,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C3-5000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C3-5000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C3-5000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C3-5000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C3-5000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C3-5000,CUENTAS_POR_PAGAR,pollitos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C3-5000,CUENTAS_POR_PAGAR,granos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,5 de 6 compras sin costo; días de pago
+C3-5000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,78 de 78 compras sin costo; días de pago
+C3-5000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,10 de 10 compras sin costo; días de pago
+C3-5000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,45 de 45 compras sin costo; días de pago
+C3-5000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,14 de 14 compras sin costo; días de pago
+C3-5000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C3-5000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (13 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, granos, servicios, packaging, logistica, energia)"
+C3-10000,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C3-10000,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C3-10000,INVENTARIO,alimento: maiz,317.882,t,empresa,TRUE,planta propia,Sí,ALI-MP-MAIZ,194.35,61780.3,E4,VALORIZADO,"valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
+C3-10000,INVENTARIO,alimento: harina_soja,158.941,t,empresa,TRUE,planta propia,Sí,ALI-MP-SOJA,,,,PENDIENTE,precio
+C3-10000,INVENTARIO,alimento: micros_aceite_otros,105.961,t,empresa,TRUE,planta propia,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
+C3-10000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
+C3-10000,INVENTARIO,huevo fértil en almacén,46698.1,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+C3-10000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",194032,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+C3-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C3-10000,INVENTARIO,producto terminado refrigerado,17.1177,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C3-10000,INVENTARIO,producto terminado congelado,28.0731,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C3-10000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C3-10000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C3-10000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C3-10000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C3-10000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C3-10000,CUENTAS_POR_PAGAR,pollitos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C3-10000,CUENTAS_POR_PAGAR,granos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,5 de 6 compras sin costo; días de pago
+C3-10000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,78 de 78 compras sin costo; días de pago
+C3-10000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,10 de 10 compras sin costo; días de pago
+C3-10000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,45 de 45 compras sin costo; días de pago
+C3-10000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,14 de 14 compras sin costo; días de pago
+C3-10000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C3-10000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (13 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, granos, servicios, packaging, logistica, energia)"
+C3-20000,INVENTARIO,alimento: alimento_terminado_granja,211.921,t,empresa,TRUE,silos de granja,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C3-20000,INVENTARIO,alimento: alimento_terminado_planta,141.281,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C3-20000,INVENTARIO,alimento: maiz,635.764,t,empresa,TRUE,planta propia,Sí,ALI-MP-MAIZ,194.35,123561,E4,VALORIZADO,"valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
+C3-20000,INVENTARIO,alimento: harina_soja,317.882,t,empresa,TRUE,planta propia,Sí,ALI-MP-SOJA,,,,PENDIENTE,precio
+C3-20000,INVENTARIO,alimento: micros_aceite_otros,211.921,t,empresa,TRUE,planta propia,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
+C3-20000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
+C3-20000,INVENTARIO,huevo fértil en almacén,93396.2,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+C3-20000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",388064,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+C3-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C3-20000,INVENTARIO,producto terminado refrigerado,34.2355,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C3-20000,INVENTARIO,producto terminado congelado,56.1462,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C3-20000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C3-20000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C3-20000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C3-20000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C3-20000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C3-20000,CUENTAS_POR_PAGAR,pollitos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C3-20000,CUENTAS_POR_PAGAR,granos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,5 de 6 compras sin costo; días de pago
+C3-20000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,78 de 78 compras sin costo; días de pago
+C3-20000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,10 de 10 compras sin costo; días de pago
+C3-20000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,45 de 45 compras sin costo; días de pago
+C3-20000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,14 de 14 compras sin costo; días de pago
+C3-20000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C3-20000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (13 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, granos, servicios, packaging, logistica, energia)"
+CF-2500,INVENTARIO,alimento: alimento_terminado_granja,26.4902,t,empresa,TRUE,silos de granja,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+CF-2500,INVENTARIO,alimento: alimento_terminado_planta,17.6601,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+CF-2500,INVENTARIO,alimento: maiz,79.4706,t,empresa,TRUE,planta propia,Sí,ALI-MP-MAIZ,194.35,15445.1,E4,VALORIZADO,"valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
+CF-2500,INVENTARIO,alimento: harina_soja,39.7353,t,empresa,TRUE,planta propia,Sí,ALI-MP-SOJA,,,,PENDIENTE,precio
+CF-2500,INVENTARIO,alimento: micros_aceite_otros,26.4902,t,empresa,TRUE,planta propia,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
+CF-2500,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
+CF-2500,INVENTARIO,huevo fértil en almacén,11674.5,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+CF-2500,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",48508,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+CF-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+CF-2500,INVENTARIO,producto terminado refrigerado,4.27943,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+CF-2500,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+CF-2500,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+CF-2500,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+CF-2500,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+CF-2500,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+CF-2500,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+CF-2500,CUENTAS_POR_PAGAR,pollitos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+CF-2500,CUENTAS_POR_PAGAR,granos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,5 de 6 compras sin costo; días de pago
+CF-2500,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,78 de 78 compras sin costo; días de pago
+CF-2500,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,10 de 10 compras sin costo; días de pago
+CF-2500,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,45 de 45 compras sin costo; días de pago
+CF-2500,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,14 de 14 compras sin costo; días de pago
+CF-2500,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+CF-2500,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (13 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, granos, servicios, packaging, logistica, energia)"
+CF-5000,INVENTARIO,alimento: alimento_terminado_granja,52.9804,t,empresa,TRUE,silos de granja,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+CF-5000,INVENTARIO,alimento: alimento_terminado_planta,35.3202,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+CF-5000,INVENTARIO,alimento: maiz,158.941,t,empresa,TRUE,planta propia,Sí,ALI-MP-MAIZ,194.35,30890.1,E4,VALORIZADO,"valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
+CF-5000,INVENTARIO,alimento: harina_soja,79.4706,t,empresa,TRUE,planta propia,Sí,ALI-MP-SOJA,,,,PENDIENTE,precio
+CF-5000,INVENTARIO,alimento: micros_aceite_otros,52.9804,t,empresa,TRUE,planta propia,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
+CF-5000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
+CF-5000,INVENTARIO,huevo fértil en almacén,23349.1,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+CF-5000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",97016,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+CF-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+CF-5000,INVENTARIO,producto terminado refrigerado,8.55887,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+CF-5000,INVENTARIO,producto terminado congelado,14.0365,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+CF-5000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+CF-5000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+CF-5000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+CF-5000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+CF-5000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+CF-5000,CUENTAS_POR_PAGAR,pollitos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+CF-5000,CUENTAS_POR_PAGAR,granos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,5 de 6 compras sin costo; días de pago
+CF-5000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,78 de 78 compras sin costo; días de pago
+CF-5000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,10 de 10 compras sin costo; días de pago
+CF-5000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,45 de 45 compras sin costo; días de pago
+CF-5000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,14 de 14 compras sin costo; días de pago
+CF-5000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+CF-5000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (13 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, granos, servicios, packaging, logistica, energia)"
+CF-10000,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+CF-10000,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+CF-10000,INVENTARIO,alimento: maiz,317.882,t,empresa,TRUE,planta propia,Sí,ALI-MP-MAIZ,194.35,61780.3,E4,VALORIZADO,"valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
+CF-10000,INVENTARIO,alimento: harina_soja,158.941,t,empresa,TRUE,planta propia,Sí,ALI-MP-SOJA,,,,PENDIENTE,precio
+CF-10000,INVENTARIO,alimento: micros_aceite_otros,105.961,t,empresa,TRUE,planta propia,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
+CF-10000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
+CF-10000,INVENTARIO,huevo fértil en almacén,46698.1,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+CF-10000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",194032,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+CF-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+CF-10000,INVENTARIO,producto terminado refrigerado,17.1177,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+CF-10000,INVENTARIO,producto terminado congelado,28.0731,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+CF-10000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+CF-10000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+CF-10000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+CF-10000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+CF-10000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+CF-10000,CUENTAS_POR_PAGAR,pollitos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+CF-10000,CUENTAS_POR_PAGAR,granos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,5 de 6 compras sin costo; días de pago
+CF-10000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,78 de 78 compras sin costo; días de pago
+CF-10000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,10 de 10 compras sin costo; días de pago
+CF-10000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,45 de 45 compras sin costo; días de pago
+CF-10000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,14 de 14 compras sin costo; días de pago
+CF-10000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+CF-10000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (13 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, granos, servicios, packaging, logistica, energia)"
+CF-20000,INVENTARIO,alimento: alimento_terminado_granja,211.921,t,empresa,TRUE,silos de granja,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+CF-20000,INVENTARIO,alimento: alimento_terminado_planta,141.281,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+CF-20000,INVENTARIO,alimento: maiz,635.764,t,empresa,TRUE,planta propia,Sí,ALI-MP-MAIZ,194.35,123561,E4,VALORIZADO,"valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
+CF-20000,INVENTARIO,alimento: harina_soja,317.882,t,empresa,TRUE,planta propia,Sí,ALI-MP-SOJA,,,,PENDIENTE,precio
+CF-20000,INVENTARIO,alimento: micros_aceite_otros,211.921,t,empresa,TRUE,planta propia,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
+CF-20000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
+CF-20000,INVENTARIO,huevo fértil en almacén,93396.2,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+CF-20000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",388064,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
+CF-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+CF-20000,INVENTARIO,producto terminado refrigerado,34.2355,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+CF-20000,INVENTARIO,producto terminado congelado,56.1462,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+CF-20000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+CF-20000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+CF-20000,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+CF-20000,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+CF-20000,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+CF-20000,CUENTAS_POR_PAGAR,pollitos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+CF-20000,CUENTAS_POR_PAGAR,granos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,5 de 6 compras sin costo; días de pago
+CF-20000,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,78 de 78 compras sin costo; días de pago
+CF-20000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,10 de 10 compras sin costo; días de pago
+CF-20000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,45 de 45 compras sin costo; días de pago
+CF-20000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,14 de 14 compras sin costo; días de pago
+CF-20000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+CF-20000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (13 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, granos, servicios, packaging, logistica, energia)"
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,empresa,TRUE,elaborador (hasta el despacho),Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: maiz,317.882,t,empresa,TRUE,elaborador o acopio,Sí,ALI-MP-MAIZ,194.35,61780.3,E4,VALORIZADO,"valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: harina_soja,158.941,t,empresa,TRUE,elaborador o acopio,Sí,ALI-MP-SOJA,,,,PENDIENTE,precio
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: micros_aceite_otros,105.961,t,empresa,TRUE,elaborador,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,elaborador,Sí,,,,,PENDIENTE,cantidad
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C0-10000-FACON-MP-EMPRESA,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C0-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C0-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,granos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,5 de 6 compras sin costo; días de pago
+C0-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,32 de 32 compras sin costo; días de pago
+C0-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C0-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C0-10000-FACON-MP-EMPRESA,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C0-10000-FACON-MP-EMPRESA,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (11 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, granos, servicios, packaging, energia)"
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja,Sí,ALI-B-PTE,,,,PENDIENTE,precio
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,tercero,FALSE,elaborador,No (propiedad de tercero),ALI-B-PTE,,,,NO_ENTRA,
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,alimento: maiz,317.882,t,tercero,FALSE,elaborador,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,elaborador,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,elaborador,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,elaborador,No (propiedad de tercero),,,,,NO_ENTRA,
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C0-10000-FACON-MP-ELABORADOR,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C0-10000-FACON-MP-ELABORADOR,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C0-10000-FACON-MP-ELABORADOR,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C0-10000-FACON-MP-ELABORADOR,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,30 de 30 compras sin costo; días de pago
+C0-10000-FACON-MP-ELABORADOR,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C0-10000-FACON-MP-ELABORADOR,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C0-10000-FACON-MP-ELABORADOR,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C0-10000-FACON-MP-ELABORADOR,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, energia)"
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja,Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,empresa,TRUE,elaborador (hasta el despacho),Sí,,,,,PENDIENTE,costo de producción del alimento (MP + conversión) PENDIENTE
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: maiz,317.882,t,empresa,TRUE,elaborador o acopio,Sí,ALI-MP-MAIZ,194.35,61780.3,E4,VALORIZADO,"valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: harina_soja,158.941,t,empresa,TRUE,elaborador o acopio,Sí,ALI-MP-SOJA,,,,PENDIENTE,precio
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: micros_aceite_otros,105.961,t,empresa,TRUE,elaborador,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,elaborador,Sí,,,,,PENDIENTE,cantidad
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,producto terminado refrigerado,17.1177,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,producto terminado congelado,28.0731,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C2-10000-FACON-MP-EMPRESA,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C2-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C2-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,granos,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,5 de 6 compras sin costo; días de pago
+C2-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,64 de 64 compras sin costo; días de pago
+C2-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C2-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,11 de 11 compras sin costo; días de pago
+C2-10000-FACON-MP-EMPRESA,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C2-10000-FACON-MP-EMPRESA,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C2-10000-FACON-MP-EMPRESA,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (11 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, granos, servicios, packaging, logistica, energia)"
+C1-10000-GN-RED,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja (integrado o propia),Sí,ALI-A-PT,,,,PENDIENTE,precio
+C1-10000-GN-RED,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-A-PT,,,,NO_ENTRA,
+C1-10000-GN-RED,INVENTARIO,alimento: maiz,317.882,t,tercero,FALSE,fábrica proveedora / su acopio,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C1-10000-GN-RED,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C1-10000-GN-RED,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C1-10000-GN-RED,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
+C1-10000-GN-RED,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C1-10000-GN-RED,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-GN-RED,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-GN-RED,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-GN-RED,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C1-10000-GN-RED,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C1-10000-GN-RED,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C1-10000-GN-RED,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C1-10000-GN-RED,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C1-10000-GN-RED,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-GN-RED,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C1-10000-GN-RED,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,47 de 47 compras sin costo; días de pago
+C1-10000-GN-RED,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C1-10000-GN-RED,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-GN-RED,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
+C1-10000-GN-RED,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C1-10000-GN-RED,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
+C1-10000-LIMPIEZA-TERC,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja (integrado o propia),Sí,ALI-A-PT,,,,PENDIENTE,precio
+C1-10000-LIMPIEZA-TERC,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-A-PT,,,,NO_ENTRA,
+C1-10000-LIMPIEZA-TERC,INVENTARIO,alimento: maiz,317.882,t,tercero,FALSE,fábrica proveedora / su acopio,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C1-10000-LIMPIEZA-TERC,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C1-10000-LIMPIEZA-TERC,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C1-10000-LIMPIEZA-TERC,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
+C1-10000-LIMPIEZA-TERC,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C1-10000-LIMPIEZA-TERC,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-LIMPIEZA-TERC,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-LIMPIEZA-TERC,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-LIMPIEZA-TERC,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C1-10000-LIMPIEZA-TERC,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C1-10000-LIMPIEZA-TERC,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C1-10000-LIMPIEZA-TERC,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C1-10000-LIMPIEZA-TERC,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C1-10000-LIMPIEZA-TERC,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-LIMPIEZA-TERC,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C1-10000-LIMPIEZA-TERC,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,48 de 48 compras sin costo; días de pago
+C1-10000-LIMPIEZA-TERC,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C1-10000-LIMPIEZA-TERC,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-LIMPIEZA-TERC,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
+C1-10000-LIMPIEZA-TERC,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C1-10000-LIMPIEZA-TERC,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
+C1-10000-MANT-CONTRATO,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja (integrado o propia),Sí,ALI-A-PT,,,,PENDIENTE,precio
+C1-10000-MANT-CONTRATO,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-A-PT,,,,NO_ENTRA,
+C1-10000-MANT-CONTRATO,INVENTARIO,alimento: maiz,317.882,t,tercero,FALSE,fábrica proveedora / su acopio,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C1-10000-MANT-CONTRATO,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C1-10000-MANT-CONTRATO,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C1-10000-MANT-CONTRATO,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
+C1-10000-MANT-CONTRATO,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C1-10000-MANT-CONTRATO,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-MANT-CONTRATO,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-MANT-CONTRATO,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-MANT-CONTRATO,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C1-10000-MANT-CONTRATO,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C1-10000-MANT-CONTRATO,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C1-10000-MANT-CONTRATO,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C1-10000-MANT-CONTRATO,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C1-10000-MANT-CONTRATO,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-MANT-CONTRATO,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C1-10000-MANT-CONTRATO,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,52 de 52 compras sin costo; días de pago
+C1-10000-MANT-CONTRATO,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C1-10000-MANT-CONTRATO,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-MANT-CONTRATO,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
+C1-10000-MANT-CONTRATO,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C1-10000-MANT-CONTRATO,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja (integrado o propia),Sí,ALI-A-PT,,,,PENDIENTE,precio
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-A-PT,,,,NO_ENTRA,
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,alimento: maiz,317.882,t,tercero,FALSE,fábrica proveedora / su acopio,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C1-10000-FLETE-POR-UNIDAD,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C1-10000-FLETE-POR-UNIDAD,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-FLETE-POR-UNIDAD,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C1-10000-FLETE-POR-UNIDAD,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,47 de 47 compras sin costo; días de pago
+C1-10000-FLETE-POR-UNIDAD,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C1-10000-FLETE-POR-UNIDAD,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,7 de 7 compras sin costo; días de pago
+C1-10000-FLETE-POR-UNIDAD,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
+C1-10000-FLETE-POR-UNIDAD,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C1-10000-FLETE-POR-UNIDAD,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
+C1-10000-PAGO-KG-VIVO,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja (integrado o propia),Sí,ALI-A-PT,,,,PENDIENTE,precio
+C1-10000-PAGO-KG-VIVO,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-A-PT,,,,NO_ENTRA,
+C1-10000-PAGO-KG-VIVO,INVENTARIO,alimento: maiz,317.882,t,tercero,FALSE,fábrica proveedora / su acopio,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C1-10000-PAGO-KG-VIVO,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C1-10000-PAGO-KG-VIVO,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C1-10000-PAGO-KG-VIVO,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
+C1-10000-PAGO-KG-VIVO,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C1-10000-PAGO-KG-VIVO,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-PAGO-KG-VIVO,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-PAGO-KG-VIVO,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-PAGO-KG-VIVO,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C1-10000-PAGO-KG-VIVO,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C1-10000-PAGO-KG-VIVO,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C1-10000-PAGO-KG-VIVO,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C1-10000-PAGO-KG-VIVO,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C1-10000-PAGO-KG-VIVO,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-PAGO-KG-VIVO,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C1-10000-PAGO-KG-VIVO,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,47 de 47 compras sin costo; días de pago
+C1-10000-PAGO-KG-VIVO,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C1-10000-PAGO-KG-VIVO,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-PAGO-KG-VIVO,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
+C1-10000-PAGO-KG-VIVO,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C1-10000-PAGO-KG-VIVO,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
+C1-10000-HALAL,INVENTARIO,alimento: alimento_terminado_granja,105.961,t,empresa,TRUE,silos de granja (integrado o propia),Sí,ALI-A-PT,,,,PENDIENTE,precio
+C1-10000-HALAL,INVENTARIO,alimento: alimento_terminado_planta,70.6405,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-A-PT,,,,NO_ENTRA,
+C1-10000-HALAL,INVENTARIO,alimento: maiz,317.882,t,tercero,FALSE,fábrica proveedora / su acopio,No (propiedad de tercero),ALI-MP-MAIZ,194.35,,E4,NO_ENTRA,
+C1-10000-HALAL,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-SOJA,,,,NO_ENTRA,
+C1-10000-HALAL,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
+C1-10000-HALAL,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
+C1-10000-HALAL,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
+C1-10000-HALAL,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-HALAL,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-HALAL,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
+C1-10000-HALAL,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
+C1-10000-HALAL,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
+C1-10000-HALAL,INVENTARIO,repuestos,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_repuestos) y compras con precio
+C1-10000-HALAL,INVENTARIO,"insumos (químicos, laboratorio, combustibles)",,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_insumos) y compras con precio
+C1-10000-HALAL,CUENTAS_POR_COBRAR,ventas × días ÷ 365,,,,,,Sí,,,,,PENDIENTE,ventas (no se modelan en 20_opex) y/o días de cobro (DPV-039)
+C1-10000-HALAL,CUENTAS_POR_PAGAR,alimento,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-HALAL,CUENTAS_POR_PAGAR,pollitos,2.33004e+06,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,días de pago
+C1-10000-HALAL,CUENTAS_POR_PAGAR,servicios,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,55 de 55 compras sin costo; días de pago
+C1-10000-HALAL,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
+C1-10000-HALAL,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
+C1-10000-HALAL,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
+C1-10000-HALAL,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
+C1-10000-HALAL,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
