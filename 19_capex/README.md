@@ -4,7 +4,7 @@
 
 **Regla:** no asumir que USD 2 millones alcanza; la suficiencia es un resultado. Vacío = desconocido; 0 = costo cero real.
 
-**Estado (2026-10-02, sesión 16):** motor v1.1 construido, auditado en procedencia de drivers y probado (77 tests, 9 mutaciones detectadas). **Sin CAPEX total publicable**: 167 de 175 conceptos sin precio; cobertura por conceptos 0–2,3 %. Ver [`conclusiones_capex.md`](conclusiones_capex.md).
+**Estado (2026-10-02, sesión 16):** motor v1.2 construido, auditado en procedencia de drivers y semántica de terreno (82 tests, 10 mutaciones detectadas). **Sin CAPEX total publicable**: 167 de 175 conceptos sin precio; cobertura por conceptos 0–2,3 %. Ver [`conclusiones_capex.md`](conclusiones_capex.md).
 
 ## Archivos
 

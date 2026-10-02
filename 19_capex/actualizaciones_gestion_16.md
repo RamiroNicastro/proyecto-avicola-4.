@@ -26,14 +26,15 @@
 | SUP-16-13 | **Método escalado:** sin exponente explícito, el precio de referencia solo vale **dentro** del rango de capacidad de la referencia; con exponente es sensibilidad declarada | Criterio de modelo | `costear()` | DPV-16-01 |
 | SUP-16-14 | **Subproductos:** A = lote L9 (sangre, plumas, vísceras, contenedores) + retiro externo; B = A + acondicionamiento básico propio (tecnología PENDIENTE); C rendering = solo futuro/sensibilidad | Criterio de modelo | `generar_boq()` | DEC-027, DEC-059 |
 | SUP-16-15 | **Agua:** almacenamiento = agua captada × 0,5 / 1 / 2 días; tratamiento y bombeo con el caudal horario máximo ilustrativo de 09C. (v1.1: la ecualización ya **no** usa el volumen diario; queda PENDIENTE de tiempo de retención) | [SUPUESTO] | `generar_boq()` | SUP-070 (09C) |
-| SUP-16-16 | **Terreno (v1.1):** se separan terreno **requerido** por la fase (SUP-16-24) y terreno **adquirido**: `compra_fase`, `parque_industrial` y `rural_compatible` = requerido (+ rendering si la arquitectura lo pide); `compra_reserva` o escala objetivo explícita = 12C con escala objetivo (20.000 por defecto) + rendering. Parque y rural cambian el **tipo de precio**, no la superficie. Se verifica adquirido ≥ requerido | Criterio de modelo | `entradas_superficie()` | DEC-063, SUP-119 |
+| SUP-16-16 | **Terreno (v1.2):** la modalidad declara la **necesidad** de la arquitectura (`terreno_requerido_arquitectura`): `compra_fase`, `parque_industrial`, `rural_compatible` = mínimo físico (+ rendering si se declara); `compra_reserva` o `escala_objetivo` = superficie del escenario objetivo de 12C (crecer hasta X + rendering). Parque y rural cambian el **tipo de precio**. El terreno **a adquirir** es una decisión aparte (SUP-16-25) | Criterio de modelo | `entradas_superficie()` | DEC-063, SUP-119 |
 | SUP-16-17 | **Alerta de planta de alimento subutilizada** < 50 % de utilización (alerta, no criterio de diseño) | Criterio de control | `drivers()` | SUP-148 |
 | SUP-16-18 | Una báscula de camiones en la planta de alimento | [SUPUESTO] | BOQ ALI-BAS | — |
 | SUP-16-19 | **Rango del motor:** 2.500–20.000 aves/día, intermedias permitidas, sin extrapolación | Criterio de modelo | `validar_config()` | SUP-052 |
 | SUP-16-21 | **Capacidad nominal de línea** = ritmo nominal requerido de 05 con sensibilidad `media` (R = 0,89) y 8 h netas: **escenario etiquetado** (input `sensibilidad_rendimiento_linea`); diseño y garantizada PENDIENTES | Escenario | `drivers()` | SUP-061, DPV-097 |
 | SUP-16-22 | **CADENCIA_NACIMIENTOS** = 2 cargas/semana y margen 15 %: **escenario etiquetado** de 14B (input `cadencia_nacimientos`, `margen_capacidad_incubacion`) | Escenario | `drivers()` | SUP-146, SUP-147, DEC-060, DEC-078 |
 | SUP-16-23 | **Perfil de fabricación de alimento** = 5 d × 8 h, eficiencia 0,85, margen 15 %: **escenario etiquetado** de 14B (inputs `dias_op_planta_alimento`, `horas_dia_planta_alimento`, `eficiencia_planta_alimento`, `margen_planta_alimento`) | Escenario | `drivers()` | SUP-148 |
-| SUP-16-24 | **Terreno requerido por la fase** = función de terreno de 12C con escala objetivo = escala y sin rendering; 12C no lo publica (T16-07) | Criterio de modelo | `drivers()` | SUP-121 |
+| SUP-16-24 | **TERRENO_MINIMO_FISICO_DERIVADO** = función de terreno de 12C con escala objetivo = escala y sin rendering (huella + exteriores + efluentes + retiros/buffers); 12C no lo publica (T16-07) |
+| SUP-16-25 | **Terreno a adquirir = DECISIÓN** (`criterio_terreno`: mínimo físico / conceptual 12C / objetivo 12C / requerido por la arquitectura / valor de usuario). Sin criterio: dimensionamiento PROVISIONAL con el requerido por la arquitectura, costo no definitivo, bloque TERRENO nunca COMPLETO. Nunca un max() entre definiciones | Criterio de modelo | `drivers()` | SUP-121 |
 | SUP-16-20 | **Capacidades de vehículos** = escenarios de 12B (5.500 aves/camión; 12 t refrigerado y congelado; 28 t granelero; 10 t subproductos; pollitos PENDIENTE). No son capacidades validadas | [SUPUESTO] heredado | `config_por_defecto()` | SUP-033, SUP-096, DPV-084 |
 
 ## 2. Datos por validar propuestos (`datos_por_validar.md`)
@@ -103,13 +104,14 @@ Fuentes **existentes** reutilizadas: FTE-081 (Las Camelias, galpones; E4 en GRA-
 | T16-04 | Carga frigorífica: el cálculo físico parcial de 09C y el benchmark global difieren ×5,7 (5,2–6,2) | v1.1: FR-PAQ **sin capacidad**; se informan base, benchmark, contradicción abierta, diseño y margen PENDIENTES; no se cotiza con una sola cifra (DPV-109) |
 | T16-07 | 12C no publica el **terreno sin reserva**; su terreno publicado incluye una reserva proxy (SUP-119) y rendering | CAPEX obtiene el terreno requerido con la función de 12C (CALCULO_MODELO_FUENTE, no fórmula propia) y lo rotula. **Propuesta:** que 12C publique `terreno_sin_reserva` |
 | T16-08 | 09C publica dos métodos de DQO (A y B) que difieren ~19 % | CAPEX informa ambos y no elige (EF-BIO PENDIENTE) |
+| T16-10 | `objetivo_20000` de 12C (33.345 m² medio) < terreno conceptual que 12C publica para 20.000 (43.660 m²) | Universos distintos: el conceptual suma una reserva PROXY fraccional para crecer más allá de 20.000 (SUP-119); el objetivo no. Alerta explicativa `SUPERFICIE_OBJETIVO_MENOR_QUE_CONCEPTUAL_12C_X`; no se usa max() (§8) |
 | T16-09 | La matriz 08 define niveles de automatización solo en 4 escalas | Escalas intermedias usan la escala de referencia más cercana (SUP-16-05): es una asignación, no un dato |
 | T16-05 | La flota de subproductos suma cuatro corrientes con vehículos distintos (cisterna, contenedores) por criterio **másico** | Cantidad = cota inferior; tipo de vehículo por corriente PENDIENTE (DPV-135) |
 | T16-06 | Las acciones REEMPLAZA de la expansión salen de los niveles de automatización por escala de la matriz 08, que son hipótesis (SUP-065) | Resultado condicional, no conclusión |
 
 ## 6. Para `estado_proyecto.md` (al reconciliar)
 
-- Hito: **motor CAPEX v1.1 construido y auditado en procedencia de drivers** (`19_capex/`), 77 tests + 9 mutaciones detectadas; [`mapa_drivers_capex.csv`](mapa_drivers_capex.csv) registra el origen de cada driver. **Sin CAPEX total publicable**: cobertura por conceptos 0–2,3 % según configuración; cobertura por valor no calculable.
+- Hito: **motor CAPEX v1.1 construido y auditado en procedencia de drivers** (`19_capex/`), 82 tests + 10 mutaciones detectadas (v1.2); [`mapa_drivers_capex.csv`](mapa_drivers_capex.csv) registra el origen de cada driver. **Sin CAPEX total publicable**: cobertura por conceptos 0–2,3 % según configuración; cobertura por valor no calculable.
 - El motor queda listo para recibir cotizaciones (base de costos y capas de importación externas) sin tocar el código.
 - **Cambio de alcance de `19_capex/README.md`:** el README original incluía "capital de trabajo inicial" dentro del CAPEX; por instrucción de la sesión 16 (no mezclar capital de trabajo con CAPEX) se trasladó a `20_opex` / `21_modelo_financiero`. Confirmar en la reconciliación y, si corresponde, actualizar el README de `20_opex`.
 - Siguiente: RFQ cuando la fase lo habilite (DEC-049, hito H-B); OPEX (`20_opex`) puede iniciarse en paralelo con la misma lógica de evidencia.
@@ -120,9 +122,9 @@ Principio: CAPEX **consume** outputs de los modelos anteriores y no los recalcul
 
 | # | Inconsistencia encontrada en la v1.0 | Corrección (v1.1) | Test |
 |---|---|---|---|
-| 1 | Terreno "solo fase" (15.398–32.379 m²) presentado como terreno de 12C; 12C no publica terreno sin reserva | Separado en **requerido** (CALCULO_MODELO_FUENTE) y **adquirido**; terreno publicado de 12C informado al lado; adquirido ≥ requerido | N01, N03 |
+| 1 | Terreno "solo fase" (15.398–32.379 m²) presentado como terreno de 12C; 12C no publica terreno sin reserva | Separado en **mínimo físico** (CALCULO_MODELO_FUENTE) y terreno a adquirir (v1.2: decisión, §8); terreno publicado de 12C informado al lado; adquirido ≥ requerido | N01, N03 |
 | 2 | m² construidos de P2 (1.796 / 7.795) en tablas sin indicar el perfil | Escenario de 12C explícito (`referencia` / `perfil_P2`) | N01 |
-| 3 | OC-INF (USD/m²) aplicado a **todo** el terreno (incl. retiros, buffers, reserva); TER-PREP sobre el terreno adquirido | OC-INF = lote global; TER-PREP = terreno requerido; tipo de área por categoría | N02, N04 |
+| 3 | OC-INF (USD/m²) aplicado a **todo** el terreno (incl. retiros, buffers, reserva); TER-PREP sobre todo el terreno | OC-INF = lote global; TER-PREP = mínimo físico; tipo de área por categoría | N02, N04 |
 | 4 | Frío: "≥ X kWf" = suma CAPEX de cargas de 09C incluida una SUPUESTA ilustrativa, usada como capacidad del RFQ | FR-PAQ sin capacidad; detalle con base, benchmark, contradicción ×5,7, diseño y margen PENDIENTES | N15 |
 | 5 | FR-AGH con la carga parcial de reposición como capacidad | PENDIENTE | N15 |
 | 6 | EF-ECU = volumen diario (24 h de retención implícitas); EF-BIO = máximo de métodos A/B (elección) | Ambos PENDIENTES; valores de 09C en el texto | N16 |
@@ -135,3 +137,15 @@ Principio: CAPEX **consume** outputs de los modelos anteriores y no los recalcul
 Verificado sin cambios: agua 15/25/38 L/ave y efluente = agua × fracción (09C, N16, N19); kWh nunca tratado como kW, transformador y grupo PENDIENTES (N05, N06); setters y hatchers separados y = 14B (N07); t/h y silos = 14B (N08); plazas, m² y galpones conceptuales = 03, granjas PENDIENTE (N09); flota de aves vivas = 12B (N10); lista de equipos = matriz 08 sin duplicados (N17).
 
 Mutaciones nuevas (detectadas): D01 kWh → kVA (N05, N13), D02 cadencia cambiada en silencio (N07), D04 terreno recalculado fuera de 12C (N01), D05 área de 12C recalculada en CAPEX (N02).
+
+## 8. Semántica del terreno (cierre final de la sesión 16, v1.2)
+
+**Problema:** la v1.1 presentaba como terreno comprado con reserva (driver `terreno_adquirido`) al escenario `objetivo_20000` de 12C (33.345 m² medio), menor que el terreno que 12C publica para la configuración de 20.000 (43.660 m²).
+
+**Semántica en 12C (sin modificar 12C):** `objetivo_20000` = escenario con `escala_objetivo = 20.000`: huella + exteriores + efluentes de la escala actual + Σ max(0, áreas(20.000) − áreas actuales) por categoría + rendering + retiros/buffers. A 20.000 (medio): 7.451 + 6.147 + 592 + 0 + 640 = 14.830 de área interna + 18.515 de retiros/buffers = 33.345. El terreno publicado sin objetivo a 20.000 suma en cambio una reserva PROXY de 50 % del operativo (7.095, SUP-119) para crecer **más allá** de 20.000: 21.925 + 21.735 = 43.660. El mínimo físico (sin reserva ni rendering) es 14.190 + 18.189 = 32.379.
+
+**Corrección:** cuatro drivers separados — `terreno_minimo_fisico`, `terreno_conceptual_12c`, `superficie_escenario_objetivo_12c` (SUPERFICIE_ESCENARIO_OBJETIVO_X_12C), `terreno_requerido_arquitectura` — y `terreno_a_adquirir` como decisión (`criterio_terreno`, SUP-16-25). Alertas: `TERRENO_CRITERIO_NO_SELECCIONADO`, `TERRENO_ADQUIRIDO_MENOR_QUE_REQUERIDO_ARQUITECTURA`, `SUPERFICIE_OBJETIVO_MENOR_QUE_CONCEPTUAL_12C_X` (diferencia de universo, explicada) y `SUPERFICIE_OBJETIVO_NO_CUBRE_MINIMO_FISICO_X`. Tests N20–N24; mutación D06 (max silencioso). Decisión asociada: **DEC-16-07** (abajo).
+
+| ID provisional | Decisión | Tipo | Prioridad | Depende de | Relación |
+|---|---|---|---|---|---|
+| DEC-16-07 | **Criterio de terreno a adquirir** (mínimo físico / conceptual 12C / escenario objetivo / requerido por la arquitectura / superficie de un lote concreto) | Negocio / arquitectura | Alta (antes de costear terreno) | DEC-063, DPV-16-03, DPV-141 | SUP-16-25 |

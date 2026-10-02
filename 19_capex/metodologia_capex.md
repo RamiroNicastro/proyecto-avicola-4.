@@ -39,8 +39,8 @@ Regla: CAPEX **consume** salidas de los módulos anteriores; no produce una vers
 
 | Tipo | Significado | Ejemplos |
 |---|---|---|
-| `DIRECTO` | Salida del módulo fuente para un escenario **publicado** en su CSV; un test lo verifica contra el CSV | m² construidos (12C `referencia` / `perfil_P2`), terreno con reserva (12C `objetivo_20000`), setters y hatchers (14B), plazas (03), flota de aves vivas (12B), agua y energía (09C) |
-| `CALCULO_MODELO_FUENTE` | La **misma función** del módulo fuente con entradas que su CSV no publica (escala intermedia, perfil o modalidad no publicados). **No es interpolación** | todo driver a 7.500 o 15.000 aves/día; terreno requerido por la fase (12C no publica terreno sin reserva) |
+| `DIRECTO` | Salida del módulo fuente para un escenario **publicado** en su CSV; un test lo verifica contra el CSV | m² construidos (12C `referencia` / `perfil_P2`), superficie del escenario objetivo (12C `objetivo_20000`), setters y hatchers (14B), plazas (03), flota de aves vivas (12B), agua y energía (09C) |
+| `CALCULO_MODELO_FUENTE` | La **misma función** del módulo fuente con entradas que su CSV no publica (escala intermedia, perfil o modalidad no publicados). **No es interpolación** | todo driver a 7.500 o 15.000 aves/día; terreno mínimo físico (12C no publica terreno sin reserva) |
 | `DERIVADO_CAPEX` | Operación declarada de CAPEX sobre salidas fuente | ⌈camión-día⌉, perímetro del terreno, suma de áreas por categoría, silos de maíz + soja |
 | `SUPUESTO_CAPEX` | Parámetro propio (SUP-16-##) | reserva de flota, ciclo de vehículos de alimento, días de reserva de agua |
 | `PENDIENTE` | El módulo fuente no lo dimensiona; CAPEX no lo inventa | carga frigorífica total, pico eléctrico, transformador, grupo, caldera, lodos, granjas |
@@ -130,4 +130,4 @@ Por escenario y por bloque ([`escenarios_capex.csv`](escenarios_capex.csv)):
 
 ## 8. Ejecución
 
-Ver [`README.md`](README.md). Las pruebas (77) y las mutaciones (9) están en el mismo script; si una prueba falla, el script se detiene sin escribir CSV.
+Ver [`README.md`](README.md). Las pruebas (82) y las mutaciones (10) están en el mismo script; si una prueba falla, el script se detiene sin escribir CSV.

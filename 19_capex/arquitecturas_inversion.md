@@ -15,7 +15,7 @@
 | Logística | `flota` (+ `flota_por_flujo`) | `tercero` · `propia` · `mixto` (por flujo) | Vehículos solo en flujos propios (tests A03, A04); flujos: pollitos, alimento/granos, aves vivas, refrigerado, congelado, subproductos, servicio |
 | Frío / producto | `frio` | `A_refrigerado` · `B_refrigerado_congelado` · `C_congelado_tercero` | A → perfil P1 con congelado propio mínimo; B → P2; C → P1 sin túnel propio (SUP-16-04, test A10) |
 | Subproductos | `subproductos` (+ `rendering`) | `A_externo` · `B_basico_propio` · rendering **FUTURO** | B agrega SB-BAS; rendering = `FASE = FUTURO` (SUP-16-14) |
-| Terreno | `terreno` (+ `escala_objetivo`) | `compra_fase` · `compra_reserva` · `parque_industrial` · `rural_compatible` | Superficie (con o sin reserva para 20.000 + rendering) y tipo de precio (SUP-16-16) |
+| Terreno | `terreno` (+ `escala_objetivo`) | `compra_fase` · `compra_reserva` · `parque_industrial` · `rural_compatible` | Necesidad de terreno de la arquitectura (fase, o crecimiento hasta la escala objetivo + rendering) y tipo de precio (SUP-16-16); la superficie a comprar se elige con `criterio_terreno` |
 | Línea | `modalidad_linea` | `lotes` · `llave_en_mano` | Llave en mano: L1–L5 hijos de L11 (test A09) |
 | Automatización | `automatizacion` | `manual` · `semi` · `auto` | Nivel de cada EQ donde la matriz 08 deja "M/S" (SUP-16-05) y superficie de 12C |
 | Otros | `dias_semana`, `horas_netas`, `laboratorio_propio`, `tecnologia_efluentes`, `config_producto` (A/B/C), `fecha_base`, capacidades de vehículos, distancias | — | Pasan a los módulos de origen |
@@ -35,7 +35,7 @@ Combinaciones inválidas que el motor rechaza: reproductoras sin incubación; re
 | Subproductos | externo | externo | externo | básico propio | básico propio + rendering (FUTURO) |
 | Terreno | — | compra de la fase | compra de la fase | compra de la fase | compra de la fase |
 
-Variantes calculadas sobre C1 a 10.000 aves/día: reserva de terreno para 20.000, parque industrial, rural compatible, congelado tercerizado, congelado propio, subproductos básicos, línea llave en mano, automatización manual y automática, 6 días/semana; y C1 a 5.000 con reserva para 20.000. Resultados en [`capex_por_escala.md`](capex_por_escala.md).
+Variantes calculadas sobre C1 a 10.000 aves/día: escala objetivo de terreno 20.000, parque industrial, rural compatible, congelado tercerizado, congelado propio, subproductos básicos, línea llave en mano, automatización manual y automática, 6 días/semana; y C1 a 5.000 con escala objetivo de terreno 20.000. Resultados en [`capex_por_escala.md`](capex_por_escala.md).
 
 ## 3. Qué se construye, qué se compra, qué se terceriza
 

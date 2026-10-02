@@ -7,7 +7,7 @@
 - **Motor reproducible** ([`modelo_capex.py`](modelo_capex.py)) que arma el registro de activos (BOQ) de cualquier configuración entre 2.500 y 20.000 aves/día a partir de los modelos aprobados (12C, 09C, 12B, 14B, 09A) y lo cruza con una **base de costos externa** (175 conceptos) y una tabla de **capas de importación/instalación**.
 - **11 ejes de arquitectura** configurables (faena, granjas, pollito, reproductoras, alimento, flota por flujo, frío, subproductos, rendering, terreno, línea) + automatización, días/semana, fecha base y capacidades.
 - **5 configuraciones de referencia** (C0, C1, C2, C3, CF) × 4 escalas + 2 escalas intermedias + 11 variantes = **33 escenarios** en [`escenarios_capex.csv`](escenarios_capex.csv); **5.485 filas** de BOQ (243 activos distintos); **2.508 filas** de expansión; **13 RFQ**.
-- **77 tests** + **9 mutaciones** detectadas (v1.1).
+- **82 tests** + **10 mutaciones** detectadas (v1.2).
 - **Mapa de procedencia** de cada driver físico ([`mapa_drivers_capex.csv`](mapa_drivers_capex.csv), 1.030 filas): directo / cálculo del modelo fuente / derivado CAPEX / supuesto CAPEX / pendiente.
 
 ## 2. Resultado central
@@ -59,7 +59,7 @@ Sin cambios necesarios: agua (15/25/38 L/ave) y efluente reproducen 09C; kWh nun
 1. **C0 casi no tiene activos propios** (21 conceptos de oficina, IT, indirectos); su costo será OPEX (tarifa de façon, fletes).
 2. **C1 → C3** pasa de 76 a 138 conceptos de la empresa: incubadora (setter y hatcher por separado), planta de alimento (2,1–16,7 t/h), flota en 7 flujos y granjas (120.000–964.000 plazas).
 3. **Granjas** son, por volumen físico, el activo upstream más grande: el único precio disponible (cota de prensa) ya ubica los galpones propios en ≥ USD 1,4–11,1 M según escala.
-4. **Terreno:** reservar para 20.000 aves/día desde el inicio significa 14.069 / 33.345 / 82.253 m² (12C `objetivo_20000`) en cualquier escala; el requerido solo por la fase es 15.398–32.379 m² (medio; función de 12C, no publicado por 12C); el terreno que 12C publica en su referencia (con reserva proxy) es 19.868–43.660 m².
+4. **Terreno:** tres magnitudes distintas (medio): mínimo físico derivado 15.398–32.379 m² (2.500–20.000); conceptual publicado por 12C 19.868–43.660 m² (incluye una reserva proxy para crecer más allá de la escala); escenario `objetivo_20000` de 12C 33.345 m² (14.069 / 33.345 / 82.253) en cualquier escala: cubre crecer hasta 20.000 + rendering, **sin** reserva más allá de 20.000. El terreno a comprar es una **decisión** (`criterio_terreno`); hasta elegirla, su costo es provisional.
 5. **Expansión:** partir de 5.000 implica reemplazar ≈ 39 equipos al llegar a 20.000 (partir de 10.000: ≈ 20), según los niveles de automatización hipotéticos de la matriz 08.
 
 ## 6. Principales datos por validar

@@ -87,7 +87,7 @@ import modelo_superficies as ms   # noqa: E402  (12C → 09A, 09C, 23)
 import modelo_logistica as ml     # noqa: E402  (12B)
 import modelo_upstream as mup     # noqa: E402  (14B)
 
-VERSION = "1.1"
+VERSION = "1.2"
 FECHA = "2026-10-02"
 FUENTE = "19_capex/modelo_capex.py"
 FECHA_BASE_CAPEX = "2026-10-01"            # SUP-16-01: editable (--fecha-base)
@@ -128,6 +128,7 @@ OPCIONES = {
     "modalidad_linea": ("lotes", "llave_en_mano"),
     "tecnologia_efluentes": ("sin_definir", "cloaca", "aerobio_compacto", "anaerobio_aerobio", "lagunas"),
 }
+CRITERIOS_TERRENO = (None, "minimo_fisico", "conceptual_12c", "objetivo_12c", "requerido_arquitectura", "usuario")
 FLUJOS = ("pollitos", "alimento", "vivo", "refrigerado", "congelado", "subproductos", "servicio")
 # SUP-16-04: arquitectura de frío → perfil de destino de 09C y congelado propio
 FRIO_A_PERFIL = {"A_refrigerado": ("P1", True), "B_refrigerado_congelado": ("P2", True),
@@ -155,6 +156,9 @@ def config_por_defecto():
         "flota": "tercero", "flota_por_flujo": None,
         "frio": "A_refrigerado", "subproductos": "A_externo", "rendering": False,
         "escala_objetivo": None, "automatizacion": "semi", "terreno": "compra_fase",
+        # Terreno a adquirir = DECISIÓN: None (provisional) | minimo_fisico | conceptual_12c | objetivo_12c |
+        # requerido_arquitectura | usuario (con terreno_adquirido_m2)
+        "criterio_terreno": None, "terreno_adquirido_m2": None,
         "laboratorio_propio": True, "modalidad_linea": "lotes", "config_producto": "B",
         "tecnologia_efluentes": "sin_definir",
         "fecha_base": FECHA_BASE_CAPEX, "moneda": MONEDA_MODELO,
@@ -224,6 +228,10 @@ def validar_config(c):
             raise ErrorCapex("flota mixta: indicar propia/tercero para cada flujo " + ", ".join(FLUJOS))
     if c["escala_objetivo"] is not None and c["escala_objetivo"] < E:
         raise ErrorCapex("la escala objetivo de reserva no puede ser menor que la escala")
+    if c["criterio_terreno"] not in CRITERIOS_TERRENO:
+        raise ErrorCapex(f"criterio_terreno {c['criterio_terreno']!r} inválido {CRITERIOS_TERRENO}")
+    if c["criterio_terreno"] == "usuario" and not (c["terreno_adquirido_m2"] or 0) > 0:
+        raise ErrorCapex("criterio_terreno = usuario exige terreno_adquirido_m2 > 0")
     if c["moneda"] != MONEDA_MODELO:
         raise ErrorCapex("moneda del modelo: USD (regla 2 de CLAUDE.md); otras monedas solo como original")
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(c["fecha_base"])):
@@ -409,39 +417,90 @@ def drivers(c):
         D["reserva_ref"] = _reg(D, "m2_reserva_12c_referencia", tuple(R.totales[n].get("reserva") for n in NIVELES), "m²",
                                 "12C", "m2_reserva", t_areas, "[SUPUESTO]/PROXY (SUP-119)", esc_areas or "no publicado",
                                 "reserva fraccional sin objetivo + rendering: es terreno, NO obra")
-        D["terreno_12c_ref"] = _reg(D, "terreno_12c_referencia", t_ref, "m²", "12C", "terreno_total",
-                                    "DIRECTO" if escenario_12c_publicado(e, True) else "CALCULO_MODELO_FUENTE",
-                                    "[ESTIMACIÓN] con PROXY", escenario_12c_publicado(e, True) or "no publicado",
-                                    "contexto: terreno conceptual que 12C publica (incluye reserva proxy y rendering)")
-        # Terreno REQUERIDO por la fase (sin reserva): 12C no lo publica → misma función de 12C, entrada declarada
-        _, t_req = _terreno_12c(e, E, False)
-        D["terreno_req"] = _reg(D, "terreno_requerido_fase", t_req, "m²", "12C", "terreno_total (escala_objetivo = escala, "
-                                "sin rendering)", "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN] con PROXY", "no publicado por 12C",
-                                "terreno requerido por la fase actual (TER-PREP); T16-07")
+        # ---- TERRENO: cuatro magnitudes que NO se mezclan (cierre de la sesión 16) -------------------------------
+        #  (1) TERRENO_MINIMO_FISICO_DERIVADO   huella + exteriores + efluentes + retiros/buffers de la escala actual;
+        #                                       sin reserva ni rendering (12C no lo publica: función de 12C)
+        #  (2) TERRENO_CONCEPTUAL_12C           lo que 12C publica SIN escala objetivo: (1) + reserva PROXY fraccional
+        #                                       (25/50/100 % del operativo, SUP-119: expansión indefinida) + rendering
+        #  (3) SUPERFICIE_ESCENARIO_OBJETIVO_X_12C  12C con escala objetivo X: (1) + Σ max(0, áreas(X) − áreas actuales)
+        #                                       + rendering; SIN reserva para crecer más allá de X
+        #  (4) TERRENO_A_ADQUIRIR               DECISIÓN del escenario CAPEX (criterio_terreno); nunca un max() implícito
+        esc_t = escenario_12c_publicado(e, True)
+        D["terreno_conceptual"] = D["terreno_12c_ref"] = _reg(
+            D, "terreno_conceptual_12c", t_ref, "m²", "12C", "terreno_total (escala_objetivo = None)",
+            "DIRECTO" if esc_t else "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN] con PROXY", esc_t or "no publicado",
+            "TERRENO_CONCEPTUAL_12C: contexto; incluye reserva PROXY fraccional de expansión indefinida y rendering",
+            "huella + exteriores + efluentes + reserva sin objetivo (SUP-119) + rendering + retiros/buffers")
+        _, t_min = _terreno_12c(e, E, False)
+        D["terreno_minimo"] = D["terreno_req"] = _reg(
+            D, "terreno_minimo_fisico", t_min, "m²", "12C", "terreno_total (escala_objetivo = escala, sin rendering)",
+            "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN] con PROXY", "no publicado por 12C",
+            "TERRENO_MINIMO_FISICO_DERIVADO: preparación del sitio (TER-PREP); T16-07",
+            "huella + exteriores + efluentes + retiros/buffers; sin reserva ni rendering")
+        x = c["escala_objetivo"] or RANGO_ESCALA[1]
+        e_obj = dict(e, escala_objetivo=x, reservar_rendering=True)
+        _, t_obj = _terreno_12c(e, x, True)
+        esc_obj = escenario_12c_publicado(e_obj, True)
+        D["escala_objetivo_terreno"] = x
+        D["superficie_objetivo"] = _reg(
+            D, "superficie_escenario_objetivo_12c", t_obj, "m²", "12C", f"terreno_total (escala_objetivo = {x:g})",
+            "DIRECTO" if esc_obj else "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN] con PROXY", esc_obj or "no publicado",
+            f"SUPERFICIE_ESCENARIO_OBJETIVO_{x:g}_12C: cubre crecer hasta {x:g} + rendering; NO incluye reserva para "
+            f"crecer más allá de {x:g}", f"huella actual + Σ max(0, áreas({x:g}) − áreas actuales) + rendering + retiros/buffers")
         reserva = c["terreno"] == "compra_reserva" or c["escala_objetivo"] is not None
         if reserva:
-            obj = c["escala_objetivo"] or RANGO_ESCALA[1]
-            e_res = dict(e, escala_objetivo=obj, reservar_rendering=True)
-            _, t_adq = _terreno_12c(e, obj, True)
-            esc_res = escenario_12c_publicado(e_res, True)
-            D["terreno_adq"] = _reg(D, "terreno_adquirido", t_adq, "m²", "12C", f"terreno_total (escala_objetivo={obj:g})",
-                                    "DIRECTO" if esc_res else "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN] con PROXY",
-                                    esc_res or "no publicado", "terreno ADQUIRIDO/RESERVADO (TER-COMPRA)")
+            t_arq, def_arq, tipo_arq = t_obj, f"escala actual + crecimiento hasta {x:g} + rendering", ("DIRECTO" if esc_obj else "CALCULO_MODELO_FUENTE")
+        elif c["rendering"]:
+            _, t_arq = _terreno_12c(e, E, True)
+            def_arq, tipo_arq = "mínimo físico + reserva de rendering", "CALCULO_MODELO_FUENTE"
         else:
-            _, t_adq = _terreno_12c(e, E, c["rendering"])
-            D["terreno_adq"] = _reg(D, "terreno_adquirido", t_adq, "m²", "12C",
-                                    "terreno_total (escala_objetivo = escala" + (", con rendering)" if c["rendering"] else ")"),
-                                    "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN] con PROXY", "no publicado por 12C",
-                                    "terreno ADQUIRIDO = requerido por la fase" + (" + reserva de rendering" if c["rendering"] else ""))
-        D["terreno_reserva_adicional"] = tuple(None if a is None or r is None else a - r for a, r in zip(t_adq, t_req))
+            t_arq, def_arq, tipo_arq = t_min, "mínimo físico de la fase (sin reservas)", "CALCULO_MODELO_FUENTE"
+        D["terreno_req_arq"] = _reg(D, "terreno_requerido_arquitectura", t_arq, "m²", "12C", "según necesidades declaradas",
+                                    tipo_arq, "[ESTIMACIÓN] con PROXY", def_arq,
+                                    "lo que la arquitectura necesita; umbral de la alerta de terreno insuficiente")
+        crit = c["criterio_terreno"]
+        opciones = {"minimo_fisico": ("terreno_minimo_fisico", t_min), "conceptual_12c": ("terreno_conceptual_12c", t_ref),
+                    "objetivo_12c": ("superficie_escenario_objetivo_12c", t_obj),
+                    "requerido_arquitectura": ("terreno_requerido_arquitectura", t_arq)}
+        if crit is None:
+            drv, t_adq = opciones["requerido_arquitectura"]
+            D["alertas"].append("TERRENO_CRITERIO_NO_SELECCIONADO: el terreno a adquirir es una decisión; se dimensiona "
+                                "PROVISIONALMENTE con terreno_requerido_arquitectura y su costo no es definitivo")
+        elif crit == "usuario":
+            drv, t_adq = "terreno_adquirido_m2 (input)", _t3(float(c["terreno_adquirido_m2"]))
+        else:
+            drv, t_adq = opciones[crit]
+        if "D06" in _MUT:                                               # mutación: max() silencioso
+            t_adq = tuple(max(a_, b_, c_) for a_, b_, c_ in zip(t_min, t_ref, t_obj))
+        D["criterio_terreno"] = crit or "NO_SELECCIONADO"
+        D["terreno_driver_costeado"] = drv
+        D["terreno_a_adquirir"] = D["terreno_adq"] = _reg(
+            D, "terreno_a_adquirir", t_adq, "m²", "CAPEX", f"criterio_terreno = {D['criterio_terreno']} → {drv}",
+            "SUPUESTO_CAPEX", "DECISIÓN del escenario" if crit else "PROVISIONAL (criterio no seleccionado)",
+            f"criterio={D['criterio_terreno']}", "TER-COMPRA y cerco; decisión de arquitectura, no salida de 12C")
         for i, n in enumerate(NIVELES):
-            if t_adq[i] is not None and t_req[i] is not None and t_adq[i] < t_req[i] - TOL:
-                D["alertas"].append(f"TERRENO_ADQUIRIDO_MENOR_QUE_REQUERIDO ({n}): {t_adq[i]:.0f} < {t_req[i]:.0f} m² "
-                                    "(no se corrige; revisar entradas de 12C)")
+            if t_adq[i] is not None and t_arq[i] is not None and t_adq[i] < t_arq[i] - TOL:
+                D["alertas"].append(f"TERRENO_ADQUIRIDO_MENOR_QUE_REQUERIDO_ARQUITECTURA ({n}): {t_adq[i]:.0f} < "
+                                    f"{t_arq[i]:.0f} m² ({def_arq}); no se corrige")
+        if reserva:
+            # Comparación con lo que 12C publica para la escala X: universos distintos, se explica (no es incompatibilidad)
+            e_x = dict(e, aves_dia=x)
+            _, t_conc_x = _terreno_12c(e_x, None, True)
+            _, t_min_x = _terreno_12c(e_x, x, False)
+            for i, n in enumerate(NIVELES):
+                if t_obj[i] < t_min_x[i] - TOL:
+                    D["alertas"].append(f"SUPERFICIE_OBJETIVO_NO_CUBRE_MINIMO_FISICO_{x:g} ({n}): {t_obj[i]:.0f} < "
+                                        f"{t_min_x[i]:.0f} m²")
+                if t_obj[i] < t_conc_x[i] - TOL:
+                    D["alertas"].append(
+                        f"SUPERFICIE_OBJETIVO_MENOR_QUE_CONCEPTUAL_12C_{x:g} ({n}): {t_obj[i]:.0f} < {t_conc_x[i]:.0f} m². "
+                        f"UNIVERSOS DIFERENTES, no incompatibilidad: el conceptual de 12C a {x:g} suma una reserva PROXY "
+                        f"fraccional para crecer más allá de {x:g} (SUP-119) que el escenario objetivo no incluye; el objetivo "
+                        f"sí cubre el mínimo físico de {x:g} ({t_min_x[i]:.0f} m²) + rendering")
         rel = [ms.v("relacion_largo_ancho", i) for i in range(3)]
         D["perimetro_m"] = _reg(D, "perimetro_terreno", tuple(None if t is None else 2 * (math.sqrt(t / r) * r + math.sqrt(t / r))
                                                               for t, r in zip(t_adq, rel)), "m", "CAPEX",
-                                "2 × (largo + ancho) del rectángulo de relación 1,5 (12C) con el terreno adquirido",
+                                "2 × (largo + ancho) del rectángulo de relación 1,5 (12C) con el terreno a adquirir",
                                 "DERIVADO_CAPEX", "[ESTIMACIÓN]", uso="cerco perimetral (OC-CER)",
                                 nota="12C no publica perímetro")
         D["util"] = {n: _util_completo(e, n) for n in NIVELES}
@@ -824,16 +883,21 @@ def generar_boq(c, D=None):
         t_id = {"compra_fase": "TER-01", "compra_reserva": "TER-01", "parque_industrial": "TER-02",
                 "rural_compatible": "TER-03"}[c["terreno"]]
         reserva = c["terreno"] == "compra_reserva" or c["escala_objetivo"] is not None
-        pt = D["proc"]["terreno_adquirido"]
-        org = (f"12C terreno ADQUIRIDO ({pt['TIPO']}; {pt['ESCENARIO_FUENTE']}): " + ("con reserva para la escala objetivo y rendering"
-               if reserva else "= requerido por la fase") + "; superficie conceptual ≠ proyecto ejecutivo")
-        B.add("TER-COMPRA", "TERRENO", "compra", "TERRENO", "Compra de terreno", t_id, D["terreno_adq"], "m²", org,
-              etiqueta="REUTILIZABLE", driver="terreno_adquirido", tipo_area="terreno")
+        prov = D["criterio_terreno"] == "NO_SELECCIONADO"
+        org = (f"terreno A ADQUIRIR — criterio {D['criterio_terreno']}; costea el driver {D['terreno_driver_costeado']}"
+               + (" (PROVISIONAL: costo no definitivo hasta seleccionar el criterio)" if prov else "")
+               + "; superficie conceptual ≠ proyecto ejecutivo")
+        B.add("TER-COMPRA", "TERRENO", "compra", "TERRENO", "Compra de terreno", t_id, D["terreno_a_adquirir"], "m²", org,
+              etiqueta="REUTILIZABLE", driver="terreno_a_adquirir", tipo_area="terreno",
+              estado="PROVISIONAL_CRITERIO_NO_SELECCIONADO" if prov else None,
+              detalle=f"mínimo físico {D['terreno_minimo'][1]:,.0f} · conceptual 12C {D['terreno_conceptual'][1]:,.0f} · "
+                      f"objetivo {D['escala_objetivo_terreno']:g} (12C) {D['superficie_objetivo'][1]:,.0f} · requerido por la "
+                      f"arquitectura {D['terreno_req_arq'][1]:,.0f} m² (medio)")
         B.add("TER-GASTOS", "TERRENO", "gastos", "TERRENO", "Gastos asociados a la compra", "TER-04", 1, "%",
               "% sobre compra de terreno (no adoptado)", etiqueta="ESPECIFICO_DE_FASE")
         B.add("TER-PREP", "TERRENO", "preparacion", "TERRENO", "Preparación inicial del sitio", "TER-05",
-              D["terreno_req"], "m²", "= terreno REQUERIDO por la fase (12C, sin reserva; la reserva no se prepara)",
-              etiqueta="ESCALABLE", driver="terreno_requerido_fase", tipo_area="terreno")
+              D["terreno_minimo"], "m²", "= TERRENO_MINIMO_FISICO_DERIVADO (función 12C, sin reserva; la reserva no se prepara)",
+              etiqueta="ESCALABLE", driver="terreno_minimo_fisico", tipo_area="terreno")
         if c["terreno"] == "parque_industrial":
             B.add("TER-PARQUE", "TERRENO", "parque", "TERRENO", "Cargo de infraestructura del parque", "TER-08", 1,
                   "lote", "1 lote; alcance según parque (DPV-16-03)", etiqueta="REUTILIZABLE")
@@ -857,7 +921,7 @@ def generar_boq(c, D=None):
                   "12C Σ áreas: " + ", ".join(areas) + " (PROXY/ESTIMACIÓN; conceptual ≠ ejecutivo)",
                   etiqueta="ESCALABLE", driver="areas_12c:" + "+".join(areas), tipo_area=OC_TIPO_AREA[cid])
         B.add("OC-CER-OBRA", "OBRA_CIVIL", "OC-CER", "OBRA_CIVIL", "Cerco perimetral", "OC-CER", D["perimetro_m"], "m",
-              "perímetro del terreno ADQUIRIDO (DERIVADO_CAPEX: rectángulo de relación 1,5 de 12C)",
+              "perímetro del terreno A ADQUIRIR (DERIVADO_CAPEX: rectángulo de relación 1,5 de 12C)",
               etiqueta="REUTILIZABLE" if reserva else "ESCALABLE", driver="perimetro_terreno", tipo_area="perimetro")
         B.add("OC-INF-OBRA", "OBRA_CIVIL", "OC-INF", "OBRA_CIVIL", "Infraestructura interna del predio", "OC-INF",
               1, "lote", "1 lote: no se aplica un USD/m² al terreno (pluviales, cloaca interna, iluminación exterior; alcance PENDIENTE)",
@@ -1408,6 +1472,8 @@ def costear(filas, base, capas=None, sensibilidad=False, fecha_base=FECHA_BASE_C
             alert.append("PRECIO_ANTERIOR_A_FECHA_BASE (escalación PENDIENTE)")
         if r["CONTINGENCIA_INCLUIDA"] == "Sí":
             alert.append("CONTINGENCIA_YA_INCLUIDA")
+        if f["ESTADO_DIMENSION"].startswith("PROVISIONAL"):
+            alert.append("COSTO_PROVISIONAL: " + f["ORIGEN_DIMENSIONAMIENTO"].split(";")[1].strip())
         tiene_rango = bool(r["ORIGEN_RANGO"].strip())
         f["COSTO_INSTALADO_USD"] = inst[1]
         f["COSTO_INSTALADO_LOW_USD"] = inst[0] if tiene_rango else None
@@ -1543,6 +1609,7 @@ def resumir(filas, c):
             "ESTADO_BLOQUE": ("EXCLUIDO_POR_ARQUITECTURA" if b != "TOTAL" and not act[b] else
                               "SIN_CONCEPTOS" if not cost else
                               "COMPLETO" if not sin_mag and not any(f["ESTADO_COSTO"] == "ALCANCE_PENDIENTE" for f in emp)
+                              and not any(f["ESTADO_DIMENSION"].startswith("PROVISIONAL") for f in cost)
                               else "INCOMPLETO"),
             "CONCEPTOS_COSTEABLES": len(cost),
             "CONCEPTOS_CON_PRECIO": len(con),
@@ -1575,7 +1642,8 @@ def resumir(filas, c):
         d["TOTAL_PRELIMINAR_USD"] = tot if completo and con else (0.0 if d["ESTADO_BLOQUE"] == "EXCLUIDO_POR_ARQUITECTURA" else None)
         d["TOTAL_PRELIMINAR"] = (f"{tot:.0f}" if completo and con else
                                  "0 (excluido por arquitectura)" if d["ESTADO_BLOQUE"] == "EXCLUIDO_POR_ARQUITECTURA" else
-                                 f"NO DISPONIBLE: {len(sin_mag) + d['ALCANCE_PENDIENTE']} conceptos sin costo")
+                                 f"NO DISPONIBLE: {len(sin_mag) + d['ALCANCE_PENDIENTE']} conceptos sin costo"
+                                 + ("; terreno PROVISIONAL (criterio no seleccionado)" if any(f["ESTADO_DIMENSION"].startswith("PROVISIONAL") for f in cost) else ""))
         d["CAPEX_TERCEROS_INFORMATIVO_USD"] = sum(f["COSTO_INSTALADO_USD"] for f in fs if f["TITULAR"] == "PRODUCTOR_INTEGRADO"
                                                   and f["COSTEA"] and f["ESTADO_COSTO"] == "CON_PRECIO") or None
         d["CAPEX_FUTURO_INFORMATIVO_USD"] = sum(f["COSTO_INSTALADO_USD"] for f in fs if f["FASE"] == "FUTURO"
@@ -1736,7 +1804,7 @@ def matriz_rfq():
         _, _, D = correr(preset("C1", aves_dia=E))
         rng[E] = D
     r0, r1 = rng[2500], rng[20000]
-    res20 = correr(preset("C1", aves_dia=2500, terreno="compra_reserva"))[2]["terreno_adq"][1]
+    res20 = correr(preset("C1", aves_dia=2500, terreno="compra_reserva"))[2]["superficie_objetivo"][1]
     u0, u1 = r0["util"]["medio"], r1["util"]["medio"]
     p = "Candidatos relevados sin selección en 08_maquinaria/proveedores_preliminares.md"
     ni = "No identificados (relevar; no se inventan proveedores)"
@@ -1749,7 +1817,7 @@ def matriz_rfq():
         ("Acometida, transformación, tableros y generación de respaldo", "electrico", "Lista de cargas consolidada (DEC-048); demanda máxima; política de respaldo (DEC-047)", f"potencia media de proceso {u0.get('potencia_media_equivalente_proceso_kw_bajo_14h', 0):.0f}–{u1.get('potencia_media_equivalente_proceso_kw_bajo_14h', 0):.0f} kW (pico PENDIENTE)", "1", ni + "; distribuidora eléctrica del sitio", 3, "EL-*", "DPV-095;DPV-16-11"),
         ("Caldera / agua caliente, aire comprimido, agua", "electrico", "Fuente térmica abierta (DEC-045)", "pico PENDIENTE", "1", p, 3, "TE-*;AC-COM;AG-*", "DPV-095"),
         ("Obra civil por categoría (USD/m²)", "obra", "Precio por m² SEPARADO por categoría: proceso húmedo, frío, docks, depósitos, salas técnicas, personal, oficinas, exteriores, efluentes", f"{r0['m2_construidos'][1]:.0f}–{r1['m2_construidos'][1]:.0f} m² construidos (medio, conceptual)", "14 categorías", ni + "; constructoras con antecedentes en plantas alimentarias", 3, "OC-*", "DPV-16-02"),
-        ("Terreno por corredor", "obra", "USD/m² por tipo (industrial, parque, rural compatible) + preparación + acceso + conexiones", f"requerido por la fase {r0['terreno_req'][1]:.0f}–{r1['terreno_req'][1]:.0f} m² (medio, función 12C sin reserva); referencia publicada 12C {r0['terreno_12c_ref'][1]:.0f}–{r1['terreno_12c_ref'][1]:.0f} m²; adquirido con reserva para 20.000 {res20:.0f} m² (12C objetivo_20000)", "por corredor de la lista corta (DEC-055)", ni + "; inmobiliarias / parques industriales", 3, "TER-*", "DPV-16-03;DPV-16-11"),
+        ("Terreno por corredor", "obra", "USD/m² por tipo (industrial, parque, rural compatible) + preparación + acceso + conexiones", f"mínimo físico {r0['terreno_minimo'][1]:.0f}–{r1['terreno_minimo'][1]:.0f} m² (medio, función 12C); conceptual 12C {r0['terreno_conceptual'][1]:.0f}–{r1['terreno_conceptual'][1]:.0f} m²; SUPERFICIE_ESCENARIO_OBJETIVO_20000_12C {res20:.0f} m²; superficie a adquirir = DECISIÓN (criterio_terreno)", "por corredor de la lista corta (DEC-055)", ni + "; inmobiliarias / parques industriales", 3, "TER-*", "DPV-16-03;DPV-16-11"),
         ("Incubación (setters, hatchers, sala de huevo, HVAC)", "incubacion", "Setter y hatcher por separado; cadencia; vacunación (DEC-078)", "posiciones 14B por escala", "por escala", p, 3, "INC-*", "DPV-153;DPV-16-13"),
         ("Planta de alimento", "alimento", "t/h requerida de 14B (no catálogo sobredimensionado); forma física DEC-076", "0,9–41 t/h según escala y factores (SUP-148)", "1", p, 3, "ALI-*", "DPV-158;DPV-16-15"),
         ("Vehículos por flujo (chasis, carrocería, frío, cajones)", "vehiculos", "Capacidad útil validada por flujo (DPV-084); separar chasis / carrocería / equipo de frío / jaulas", "flota por flujo de 12B", "por flujo", ni + "; concesionarios y carroceros", 3, "VEH-*;CAR-*;FRI-*;AUX-*;JAU-*", "DPV-084;DPV-16-10"),
@@ -2231,9 +2299,9 @@ def ejecutar_tests(verbose=True):
         ok &= iguales(d1["retiros_buffers_ref"], v12("referencia", E, "retiros_buffers"))
         ok &= iguales(d1["reserva_ref"], v12("referencia", E, "m2_reserva"))
         ok &= iguales(d3["m2_construidos"], v12("perfil_P2", E, "m2_construido"))
-        ok &= iguales(dr["terreno_adq"], v12("objetivo_20000", E, "terreno_total"))
+        ok &= iguales(dr["superficie_objetivo"], v12("objetivo_20000", E, "terreno_total"))
         ok &= d1["proc"]["m2_construido"]["TIPO"] == "DIRECTO" and d1["proc"]["m2_construido"]["ESCENARIO_FUENTE"] == "referencia"
-        ok &= dr["proc"]["terreno_adquirido"]["ESCENARIO_FUENTE"] == "objetivo_20000"
+        ok &= dr["proc"]["superficie_escenario_objetivo_12c"]["ESCENARIO_FUENTE"] == "objetivo_20000"
     chk("N01", "Superficies CAPEX = 12C publicado (construido, operativo, exteriores, efluentes, terreno, reserva, retiros) "
                "en las 4 escalas; P2 = 'perfil_P2'; reserva 20.000 = 'objetivo_20000'", ok)
     ok = True
@@ -2253,10 +2321,12 @@ def ejecutar_tests(verbose=True):
             for t in OPCIONES["terreno"]:
                 _, _, d_ = run(nombre, aves_dia=E, terreno=t)
                 for i in range(3):
-                    if d_["terreno_adq"][i] < d_["terreno_req"][i] - TOL:
+                    if d_["terreno_a_adquirir"][i] < d_["terreno_req_arq"][i] - TOL or \
+                            d_["terreno_req_arq"][i] < d_["terreno_minimo"][i] - TOL:
                         viol.append((nombre, E, t, NIVELES[i]))
                 ok &= not any(a.startswith("TERRENO_ADQUIRIDO_MENOR") for a in d_["alertas"])
-    chk("N03", "Terreno adquirido (con o sin reserva) ≥ terreno requerido por la fase, por nivel y combinación", ok and not viol, str(viol[:3]))
+    chk("N03", "Con el criterio provisional: terreno a adquirir ≥ requerido por la arquitectura ≥ mínimo físico, por nivel y combinación",
+        ok and not viol, str(viol[:3]))
     f1, _, d1 = run("C1", aves_dia=10000)
     oc = [x for x in f1 if x["BLOQUE"] == "OBRA_CIVIL"]
     chk("N04", "Terreno no se mezcla con m² construidos: ninguna obra usa m² de terreno; OC-INF es lote; TER fuera de la obra",
@@ -2319,7 +2389,7 @@ def ejecutar_tests(verbose=True):
     chk("N10", "Flota reproduce 12B (aves vivas = flota mínima publicada; refrigerado = ⌈camión-día⌉ declarado DERIVADO; "
                "pollitos PENDIENTE)", ok)
     _, ri, di = run("C1", aves_dia=7500)
-    dep = ("m2_construido", "terreno_requerido_fase", "plazas_alojamiento", "ritmo_operativo_requerido", "agua_captada_m3_dia")
+    dep = ("m2_construido", "terreno_minimo_fisico", "plazas_alojamiento", "ritmo_operativo_requerido", "agua_captada_m3_dia")
     chk("N11", "Escala intermedia (7.500): alerta ESCALA_INTERMEDIA; drivers = CALCULO_MODELO_FUENTE (nunca DIRECTO ni INTERPOLADO)",
         any(a.startswith("ESCALA_INTERMEDIA") for a in di["alertas"]) and
         all(di["proc"][k]["TIPO"] == "CALCULO_MODELO_FUENTE" for k in dep) and
@@ -2364,6 +2434,50 @@ def ejecutar_tests(verbose=True):
         abs(pq["CAPACIDAD"] - round(d1["ritmo_nominal_sel"], 1)) < 1e-9 and abs(pq["CAPACIDAD"] - 10000 / 8) > 1 and
         "diseño PENDIENTE" in pq["CAPACIDAD_DETALLE"] and "garantizada PENDIENTE" in pq["CAPACIDAD_DETALLE"] and
         set(eqs_boq) <= set(ids08) and len(eqs_boq) == len(set(eqs_boq)))
+    # ---- Terreno: semántica de las definiciones (cierre de la sesión 16) ----
+    prohib = re.compile(r"adquirido con reserva para 20[.]?000|reserva suficiente|suficiente para 20[.]?000|"
+                        r"terreno adquirido con reserva", re.I)
+    textos = []
+    for nm, kw in (("C1", {}), ("C1", {"terreno": "compra_reserva"}), ("C3", {"terreno": "compra_reserva"})):
+        f_, _, d_ = run(nm, aves_dia=5000, **kw)
+        textos += [x["ORIGEN_DIMENSIONAMIENTO"] + x["CAPACIDAD_DETALLE"] for x in f_]
+        textos += [p_["USO_EN_CAPEX"] + p_["NOTA"] + p_["ESCENARIO_FUENTE"] for p_ in d_["proc"].values()] + d_["alertas"]
+    for fn in os.listdir(AQUI):
+        if fn.endswith(".md") or fn in ("matriz_rfq_capex.csv",):
+            with open(os.path.join(AQUI, fn), encoding="utf-8") as fh:
+                textos.append(fh.read())
+    malos = [t_[:80] for t_ in textos if prohib.search(t_)]
+    chk("N20", "Ninguna etiqueta afirma 'reserva suficiente / adquirido con reserva para 20.000' sin demostrarlo", not malos, str(malos[:2]))
+    _, _, da = run("C1", aves_dia=5000, terreno="compra_reserva", criterio_terreno="minimo_fisico")
+    _, _, du = run("C1", aves_dia=5000, criterio_terreno="usuario", terreno_adquirido_m2=10000)
+    _, _, dd = run("C1", aves_dia=5000, terreno="compra_reserva")
+    chk("N21", "Terreno a adquirir < requerido por la arquitectura ⇒ alerta (mínimo físico con reserva declarada; valor de usuario chico)",
+        any(a.startswith("TERRENO_ADQUIRIDO_MENOR_QUE_REQUERIDO_ARQUITECTURA") for a in da["alertas"]) and
+        any(a.startswith("TERRENO_ADQUIRIDO_MENOR_QUE_REQUERIDO_ARQUITECTURA") for a in du["alertas"]) and
+        not any(a.startswith("TERRENO_ADQUIRIDO_MENOR") for a in dd["alertas"]))
+    _, _, d20 = run("C1", aves_dia=20000, terreno="compra_reserva")
+    claves = ("terreno_minimo_fisico", "terreno_conceptual_12c", "superficie_escenario_objetivo_12c")
+    vals = [d20["proc"][k]["VALOR"][1] for k in claves]
+    f_sin, r_sin, _ = correr(preset("C1", aves_dia=10000), _base_sintetica(pct=10), {})
+    f_con, r_con, _ = correr(preset("C1", aves_dia=10000, criterio_terreno="minimo_fisico"), _base_sintetica(pct=10), {})
+    chk("N22", "Las tres definiciones de terreno quedan separadas (≈32.379 / 43.660 / 33.345 a 20.000) y el terreno a adquirir es "
+               "una decisión: sin criterio el bloque TERRENO no puede quedar COMPLETO (costo provisional)",
+        len(set(round(v_) for v_ in vals)) == 3 and abs(vals[0] - 32379) < 1 and abs(vals[1] - 43660) < 1 and abs(vals[2] - 33345) < 1
+        and d20["proc"]["terreno_a_adquirir"]["TIPO"] == "SUPUESTO_CAPEX"
+        and r_sin["TERRENO"]["ESTADO_BLOQUE"] == "INCOMPLETO" and r_con["TERRENO"]["ESTADO_BLOQUE"] == "COMPLETO"
+        and "COSTO_PROVISIONAL" in [x for x in f_sin if x["ACTIVO_ID"] == "TER-COMPRA"][0]["ALERTAS"])
+    ok = True
+    for crit, clave in (("minimo_fisico", "terreno_minimo_fisico"), ("conceptual_12c", "terreno_conceptual_12c"),
+                        ("objetivo_12c", "superficie_escenario_objetivo_12c"), ("requerido_arquitectura", "terreno_requerido_arquitectura")):
+        _, _, d_ = run("C1", aves_dia=5000, terreno="compra_reserva", criterio_terreno=crit)
+        ok &= d_["terreno_a_adquirir"] == d_["proc"][clave]["VALOR"] and d_["terreno_driver_costeado"] == clave
+    chk("N23", "Sin MAX silencioso: el terreno a adquirir es exactamente el driver del criterio elegido (aunque sea menor)",
+        ok and da["terreno_a_adquirir"] == da["terreno_minimo"] and da["terreno_a_adquirir"][1] < da["superficie_objetivo"][1])
+    obj_alert = [a for a in dd["alertas"] if a.startswith("SUPERFICIE_OBJETIVO_MENOR_QUE_CONCEPTUAL_12C")]
+    chk("N24", "Superficie objetivo < conceptual 12C de la escala objetivo ⇒ alerta propia que explica los universos (no incompatibilidad); "
+               "el objetivo cubre el mínimo físico de 20.000",
+        obj_alert and all("UNIVERSOS DIFERENTES" in a and "incompatibilidad" in a for a in obj_alert)
+        and not any(a.startswith("SUPERFICIE_OBJETIVO_NO_CUBRE") for a in dd["alertas"]))
     u09 = _csv_09c()
     ok = True
     for E in ESCALAS_REF:
@@ -2397,7 +2511,8 @@ MUTACIONES = {"B01": "duplica m² de depósitos en el BOQ", "C01": "infla 10 % e
               "C02": "trata cualquier precio (FOB) como instalado", "V01": "acepta nivel sin precio",
               "V02": "acepta E1–E3 sin lectura primaria", "D01": "interpreta kWh/día como kVA del transformador",
               "D02": "cambia en silencio la cadencia de nacimientos", "D04": "recalcula el terreno (×0,9) fuera de 12C",
-              "D05": "recalcula un área de 12C dentro de CAPEX"}
+              "D05": "recalcula un área de 12C dentro de CAPEX",
+              "D06": "elige el terreno a adquirir con un max() silencioso"}
 
 
 def prueba_mutaciones():
@@ -2446,7 +2561,7 @@ def imprimir_tablas():
         _, _, D3 = correr(preset("C3", aves_dia=E), base)
         print(f"| {_m(E)} | {tri(D['m2_construidos'])} | {tri(D3['m2_construidos'])} | {tri(D['m2_operativo'])} | "
               f"{tri(D['m2_exteriores'])} | {tri(D['retiros_buffers_ref'])} | {tri(D['reserva_ref'])} | {tri(D['terreno_12c_ref'])} | "
-              f"{tri(D['terreno_req'])} | {tri(Dr['terreno_adq'])} |")
+              f"{tri(D['terreno_minimo'])} | {tri(Dr['superficie_objetivo'])} |")
 
 
 def escenario_cli(a):

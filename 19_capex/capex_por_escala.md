@@ -65,7 +65,7 @@ Todas tienen el mismo monto con precio (USD 119.200, E4) porque **los conceptos 
 
 | Variante | Cambio físico en el BOQ |
 |---|---|
-| Reserva de terreno para 20.000 | Terreno adquirido 23.372 → 33.345 m² (medio; 12C `objetivo_20000`); el requerido por la fase sigue en 23.372 m² |
+| Escala objetivo 20.000 (`compra_reserva`) | Terreno requerido por la arquitectura 23.372 → 33.345 m² (medio; = SUPERFICIE_ESCENARIO_OBJETIVO_20000_12C); el mínimo físico sigue en 23.372 m²; terreno a adquirir PROVISIONAL hasta elegir criterio |
 | Parque industrial | Precio TER-02; cargo de parque en lugar de acceso y conexiones (1 concepto menos) |
 | Rural compatible | Precio TER-03 |
 | Congelado tercerizado | Sin túnel de congelado (3 filas menos); áreas no publicadas por 12C (alerta) |
@@ -77,11 +77,11 @@ Todas tienen el mismo monto con precio (USD 119.200, E4) porque **los conceptos 
 
 ## 5. Cantidades físicas por escala (utilizables como orden de magnitud, con su procedencia)
 
-| Escala (aves/día) | m² construidos 12C `referencia` (C1, P1) | m² construidos 12C `perfil_P2` (C2/C3) | Terreno requerido por la fase (C1) | Terreno publicado por 12C (referencia) | Terreno con reserva 20.000 (12C) | Ritmo operativo / nominal requerido (aves/h, 05) | Flota propia vivo / refrig. / alim. (C3) | Setter / hatcher (cadencia 2) | Planta de alimento t/h (5 × 8, η 0,85) | Plazas de galpón |
+| Escala (aves/día) | m² construidos 12C `referencia` (C1, P1) | m² construidos 12C `perfil_P2` (C2/C3) | Terreno mínimo físico derivado (C1) | Terreno conceptual 12C (`referencia`) | SUPERFICIE_ESCENARIO_OBJETIVO_20000_12C | Ritmo operativo / nominal requerido (aves/h, 05) | Flota propia vivo / refrig. / alim. (C3) | Setter / hatcher (cadencia 2) | Planta de alimento t/h (5 × 8, η 0,85) | Plazas de galpón |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 2.500 | 1.777 | 1.796 | 15.398 | 19.868 | 33.345 | 312 / 351 | 2 / 2 / 2 | 55.824 / 18.515 | 2,1 | 120.507 |
 | 5.000 | 2.597 | 2.664 | 18.029 | 23.431 | 33.345 | 625 / 702 | 2 / 2 / 2 | 111.648 / 37.030 | 4,2 | 241.014 |
 | 10.000 | 4.306 | 4.454 | 23.372 | 30.768 | 33.345 | 1.250 / 1.404 | 3 / 2 / 2 | 223.296 / 74.060 | 8,4 | 482.029 |
 | 20.000 | 7.451 | 7.795 | 32.379 | 43.660 | 33.345 | 2.500 / 2.809 | 4 / 3 / 3 | 446.593 / 148.120 | 16,7 | 964.058 |
 
-Valores medios; bajo/alto en [`obra_civil_capex.md`](obra_civil_capex.md) §2 y en el mapa de drivers. Procedencia: m² y terreno de referencia/reserva y plazas, setters, hatchers, t/h, flota de aves vivas = **DIRECTO**; terreno requerido = **CALCULO_MODELO_FUENTE** (12C no lo publica); flota refrigerada y de alimento = **DERIVADO_CAPEX**. La v1.0 mostraba en esta tabla los m² de P2 y el terreno sin reserva sin indicarlo (ver `obra_civil_capex.md` §2). El CAPEX **no** está obligado a escalar linealmente con estas cantidades (test S02).
+Valores medios; bajo/alto en [`obra_civil_capex.md`](obra_civil_capex.md) §2 y en el mapa de drivers. Procedencia: m², terreno conceptual, superficie objetivo y plazas, setters, hatchers, t/h, flota de aves vivas = **DIRECTO**; mínimo físico = **CALCULO_MODELO_FUENTE** (12C no lo publica); el terreno a adquirir es una **decisión** (`criterio_terreno`, ver `obra_civil_capex.md` §3); flota refrigerada y de alimento = **DERIVADO_CAPEX**. La v1.0 mostraba en esta tabla los m² de P2 y el terreno sin reserva sin indicarlo (ver `obra_civil_capex.md` §2). El CAPEX **no** está obligado a escalar linealmente con estas cantidades (test S02).

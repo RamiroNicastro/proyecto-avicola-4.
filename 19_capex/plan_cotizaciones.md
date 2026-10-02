@@ -16,7 +16,7 @@
 | RFQ-16-06 | Acometida, transformación, tableros, respaldo | demanda máxima PENDIENTE (lista de cargas) | EL-* | ≥ 3 |
 | RFQ-16-07 | Caldera, aire comprimido, agua | pico PENDIENTE | TE-*, AC-COM, AG-* | ≥ 3 |
 | RFQ-16-08 | Obra civil: USD/m² por categoría | 1.796–7.795 m² construidos | OC-* | ≥ 3 |
-| RFQ-16-09 | Terreno por corredor | requerido por la fase 15.398–32.379 m² (medio, función 12C sin reserva); publicado por 12C 19.868–43.660 m²; con reserva para 20.000: 14.069 / 33.345 / 82.253 m² (12C) | TER-* | por corredor |
+| RFQ-16-09 | Terreno por corredor | mínimo físico 15.398–32.379 m² (medio, función 12C); conceptual 12C 19.868–43.660 m²; SUPERFICIE_ESCENARIO_OBJETIVO_20000_12C 14.069 / 33.345 / 82.253 m²; superficie a cotizar = criterio de terreno elegido (decisión) | TER-* | por corredor |
 | RFQ-16-10 | Incubación | posiciones de setter y hatcher de 14B | INC-* | ≥ 3 |
 | RFQ-16-11 | Planta de alimento | 2,1–16,7 t/h (14B) | ALI-* | ≥ 3 |
 | RFQ-16-12 | Vehículos por flujo | unidades de `logistica_capex.md` | VEH/CAR/FRI/AUX/JAU | ≥ 3 |
