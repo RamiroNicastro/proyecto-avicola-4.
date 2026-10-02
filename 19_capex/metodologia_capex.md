@@ -1,6 +1,6 @@
 # Metodología del motor CAPEX
 
-**Versión:** 1.0 · **Fecha:** 2026-10-02 · **Modelo:** [`modelo_capex.py`](modelo_capex.py) · **Sesión:** 16
+**Versión:** 1.1 (auditoría de procedencia de drivers) · **Fecha:** 2026-10-02 · **Modelo:** [`modelo_capex.py`](modelo_capex.py) · **Sesión:** 16
 
 > Pregunta que responde: **¿cuánto capital requiere construir y poner operativa cada configuración del proyecto?**
 > El motor **no** elige escala, arquitectura, tecnología ni proveedor, y **no** calcula OPEX, ingresos, EBITDA, VAN/TIR/payback ni capital de trabajo.
@@ -32,6 +32,38 @@ RESUMEN por bloque: con precio / sin precio / sin cantidad / alcance pendiente, 
 | Equipos EQ-01…EQ-76, nivel de automatización por escala, modularidad | `08_maquinaria/matriz_equipos.csv` (09A) | Hijos de los lotes RFQ, etiquetas de expansión |
 
 **Superficie conceptual ≠ proyecto ejecutivo.** Los m² de 12C son órdenes de magnitud (muchos en estado PROXY); el costo de obra hereda esa incertidumbre.
+
+## 2 bis. Procedencia de los drivers: consumir, no recalcular
+
+Regla: CAPEX **consume** salidas de los módulos anteriores; no produce una versión alternativa del mismo dimensionamiento. Cada driver queda registrado en [`mapa_drivers_capex.csv`](mapa_drivers_capex.csv) con valor (bajo/medio/alto), unidad, archivo y variable de origen, escenario fuente, tipo y estado de evidencia.
+
+| Tipo | Significado | Ejemplos |
+|---|---|---|
+| `DIRECTO` | Salida del módulo fuente para un escenario **publicado** en su CSV; un test lo verifica contra el CSV | m² construidos (12C `referencia` / `perfil_P2`), terreno con reserva (12C `objetivo_20000`), setters y hatchers (14B), plazas (03), flota de aves vivas (12B), agua y energía (09C) |
+| `CALCULO_MODELO_FUENTE` | La **misma función** del módulo fuente con entradas que su CSV no publica (escala intermedia, perfil o modalidad no publicados). **No es interpolación** | todo driver a 7.500 o 15.000 aves/día; terreno requerido por la fase (12C no publica terreno sin reserva) |
+| `DERIVADO_CAPEX` | Operación declarada de CAPEX sobre salidas fuente | ⌈camión-día⌉, perímetro del terreno, suma de áreas por categoría, silos de maíz + soja |
+| `SUPUESTO_CAPEX` | Parámetro propio (SUP-16-##) | reserva de flota, ciclo de vehículos de alimento, días de reserva de agua |
+| `PENDIENTE` | El módulo fuente no lo dimensiona; CAPEX no lo inventa | carga frigorífica total, pico eléctrico, transformador, grupo, caldera, lodos, granjas |
+| `INTERPOLADO` | No se usa en ningún driver | — |
+
+Escenarios **etiquetados** (inputs explícitos, no verdades): horas netas (8), sensibilidad de rendimiento de línea (`media` de 05), cadencia de nacimientos (2/semana), margen de incubación (15 %), perfil de fabricación de alimento (5 d × 8 h, η 0,85, margen 15 %), días de stock y densidades de silos (14B), capacidades de vehículos (12B). Se listan en `escenarios_referencia` y en el mapa de drivers.
+
+Consistencias entre fuentes que dos módulos calculan por separado (efluente 12C vs 09C, plazas 14B vs 03, ritmo 05 vs 23) se verifican en cada corrida: una diferencia genera `DRIVER_INCONSISTENTE` y **no se corrige** (test N13).
+
+Escala intermedia: alerta `ESCALA_INTERMEDIA`; todos los drivers son `CALCULO_MODELO_FUENTE`; los niveles de automatización de los equipos (matriz 08, solo en 4 escalas) se toman de la escala de referencia más cercana (SUP-16-05).
+
+## 2 ter. Capacidad de planta ≠ capacidad de línea
+
+| Magnitud | Fuente | Uso |
+|---|---|---|
+| Capacidad de **planta** (aves/día) | input de escala (SUP-052) | escala del escenario |
+| Ritmo **operativo** requerido (aves/h) = aves/día ÷ horas netas | 05 `ritmo_operativo_requerido` | referencia; **no** es capacidad comercial |
+| Ritmo **nominal** requerido (aves/h) = aves/día ÷ (h × R) | 05, R = 0,95 / 0,89 / 0,82 (SUP-061) | capacidad de los lotes de línea en el BOQ (sensibilidad `media` por defecto, input) |
+| Capacidad de **diseño** | — | PENDIENTE (margen no adoptado) |
+| Capacidad **garantizada** | cotización | PENDIENTE (DPV-097) |
+| Líneas | 12C (1) | capacidad por línea = nominal ÷ líneas |
+
+La v1.0 usaba el ritmo operativo (aves/día ÷ horas) como capacidad de los lotes; la v1.1 usa el nominal de 05 y muestra todas las capas en `CAPACIDAD_DETALLE`.
 
 ## 3. Fórmulas
 
@@ -80,7 +112,8 @@ RESUMEN por bloque: con precio / sin precio / sin cantidad / alcance pendiente, 
 
 Por escenario y por bloque ([`escenarios_capex.csv`](escenarios_capex.csv)):
 
-- **CAPEX con precio** (USD), desagregado por nivel de evidencia E1…E5; **conocido** = E1 + E2; **estimado** = E3 + E4 + E5.
+- **Monto con precio** (USD), siempre **separado por evidencia**: `CAPEX_E1_E2_USD`, `CAPEX_E3_USD`, `CAPEX_E4_USD`, `CAPEX_E5_USD`; los faltantes como conteo (`CAPEX_PENDIENTE_CONCEPTOS`). `CALIDAD_MONTO` dice qué es ese número (`MONTO_CON_REFERENCIAS_DEBILES_E4` cuando solo hay E4). No existe una columna "CAPEX conocido".
+- **Cobertura por nivel de evidencia** (conteos, no %): `N_CONCEPTOS_E1_E2`, `N_CONCEPTOS_E3`, `N_CONCEPTOS_E4`, `N_CONCEPTOS_E5`, `N_CONCEPTOS_PENDIENTES`.
 - **Conceptos** costeables, con precio, sin precio, sin cantidad, con precio parcial y con alcance pendiente.
 - **Cobertura por conceptos** = con precio ÷ costeables.
 - **Cobertura por valor**: solo si todos los faltantes tienen una magnitud estimada; si no, "NO CALCULABLE" (hoy, en todos los escenarios).
@@ -97,4 +130,4 @@ Por escenario y por bloque ([`escenarios_capex.csv`](escenarios_capex.csv)):
 
 ## 8. Ejecución
 
-Ver [`README.md`](README.md). Las pruebas (58) y las mutaciones (5) están en el mismo script; si una prueba falla, el script se detiene sin escribir CSV.
+Ver [`README.md`](README.md). Las pruebas (77) y las mutaciones (9) están en el mismo script; si una prueba falla, el script se detiene sin escribir CSV.

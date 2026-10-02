@@ -1,6 +1,6 @@
 # Costo de expansión — construir 20.000 de entrada vs crecer por etapas
 
-**Fecha:** 2026-10-02 · Datos: [`expansion_capex.csv`](expansion_capex.csv) (2.508 filas) · Función: `expansion()` en [`modelo_capex.py`](modelo_capex.py) · Configuración: C1 (planta de faena; upstream externo)
+**Fecha:** 2026-10-02 (v1.1) · Datos: [`expansion_capex.csv`](expansion_capex.csv) (2.508 filas) · Función: `expansion()` en [`modelo_capex.py`](modelo_capex.py) · Configuración: C1 (planta de faena; upstream externo)
 
 > **El motor no dice que construir por etapas sea más barato ni más caro.** Con la base actual, casi todo el costo de ampliar está PENDIENTE. Lo que sí entrega es el mapa físico de qué se reutiliza, qué se amplía, qué se duplica y qué se reemplaza en cada trayectoria.
 
@@ -32,17 +32,17 @@ Los lotes y paquetes se comparan por **capacidad** (aves/h, kWf, m³/d, t/d), no
 
 | Trayectoria / terreno | REUTILIZA | AMPLIA (incl. reutilizable) | DUPLICA | REEMPLAZA | NUEVO | Por fase | PENDIENTE |
 |---|---|---|---|---|---|---|---|
-| B 5.000 → 20.000, solo fase | 2 | 45 | 10 | 39 | 3 | 19 | 39 |
-| B 5.000 → 20.000, con reserva | 6 | 41 | 10 | 39 | 3 | 19 | 39 |
-| C 10.000 → 20.000, solo fase | 2 | 56 | 19 | 20 | 2 | 19 | 39 |
-| C 10.000 → 20.000, con reserva | 6 | 52 | 19 | 20 | 2 | 19 | 39 |
-| B2 (dos expansiones), solo fase | 4 | 102 | 31 | 56 | 3 | 38 | 78 |
+| B 5.000 → 20.000, solo fase | 2 | 40 | 10 | 39 | 3 | 19 | 44 |
+| B 5.000 → 20.000, con reserva | 4 | 38 | 10 | 39 | 3 | 19 | 44 |
+| C 10.000 → 20.000, solo fase | 2 | 51 | 19 | 20 | 2 | 19 | 44 |
+| C 10.000 → 20.000, con reserva | 4 | 49 | 19 | 20 | 2 | 19 | 44 |
+| B2 (dos expansiones), solo fase | 4 | 92 | 31 | 56 | 3 | 38 | 88 |
 
-Lectura (física, no económica):
-- **Terreno.** Sin reserva, crecer de 5.000 a 20.000 exige comprar ≈ 14.350 m² adicionales (medio) **contiguos**: riesgo si no hay lote vecino (DEC-063). Con reserva para 20.000 desde el inicio, el terreno se **reutiliza** (Δ = 0; test X02), a cambio de comprar ≈ 33.345 m² en la etapa 1.
+Conteos v1.1 (tras la auditoría de drivers: frío y algunos componentes pasaron a PENDIENTE). Lectura (física, no económica):
+- **Terreno.** Sin reserva, crecer de 5.000 a 20.000 exige comprar ≈ 14.350 m² adicionales (medio; diferencia de terrenos requeridos, función de 12C sin reserva) **contiguos**: riesgo si no hay lote vecino (DEC-063). Con reserva para 20.000 desde el inicio, el terreno se **reutiliza** (Δ = 0; test X02), a cambio de comprar ≈ 33.345 m² en la etapa 1.
 - **Obra.** Proceso húmedo +3.170 m², pavimentos +2.172 m², etc. (B, medio): se amplía; la prima de ampliar con la planta operando es PENDIENTE (DPV-16-14).
 - **Equipos.** Partiendo de 5.000, 39 EQ cambian de nivel de automatización al llegar a 20.000 (reemplazo); partiendo de 10.000, 20. Es la mayor diferencia física entre trayectorias, y depende de una hipótesis.
-- **Utilities.** Frío +368 kWf (cota), efluente +330 m³/d, agua +375 m³/d (B): ampliables si se reservó espacio; transformación, respaldo y térmico quedan PENDIENTES por falta de demanda máxima.
+- **Utilities.** Efluente +330 m³/d, agua +375 m³/d (B): ampliables si se reservó espacio. Frío, transformación, respaldo y térmico quedan PENDIENTES (v1.1: el paquete de frío ya no tiene una capacidad propia de CAPEX; la carga de diseño es PENDIENTE, contradicción ×5,7 abierta).
 
 ## 4. Resultado económico: lo poco que hay
 

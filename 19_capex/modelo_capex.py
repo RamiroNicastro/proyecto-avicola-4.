@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-MOTOR CAPEX INTEGRAL — versión 1.0 (2026-10-02, sesión 16)
-==========================================================
+MOTOR CAPEX INTEGRAL — versión 1.1 (2026-10-02, sesión 16 + auditoría de procedencia de drivers)
+=================================================================================================
 
 ¿CUÁNTO CAPITAL REQUIERE CONSTRUIR Y PONER OPERATIVA CADA CONFIGURACIÓN DEL PROYECTO?
 
@@ -13,6 +13,12 @@ sigue PENDIENTE. Si faltan conceptos, NO publica un "CAPEX total": publica CAPEX
 QUÉ NO HACE: OPEX, ingresos, EBITDA, VAN/TIR/payback, capital de trabajo, depreciación fiscal, IVA
 definitivo, aranceles, valor residual, reemplazos futuros (solo deja los campos), recomendación de escala o
 de integración.
+
+v1.1 (auditoría de cierre): CAPEX CONSUME drivers; no los recalcula. Cada driver queda registrado con su
+procedencia (DIRECTO / CALCULO_MODELO_FUENTE / DERIVADO_CAPEX / SUPUESTO_CAPEX / PENDIENTE) en
+`mapa_drivers_capex.csv`; los escenarios de referencia (horas netas, rendimiento de línea, cadencia de nacimientos,
+perfil de planta de alimento) son inputs etiquetados; terreno requerido ≠ terreno adquirido; frío sin capacidad
+elegida; montos separados por evidencia (CAPEX_E1_E2/E3/E4/E5, CALIDAD_MONTO). Tests N01–N19 reproducen los CSV fuente.
 
 INSUMOS IMPORTADOS (no se recalculan; se llaman las funciones de cada módulo):
   * 09_layout_obra_civil/modelo_superficies.py (12C): m² por área (bajo/medio/alto), terreno conceptual,
@@ -81,7 +87,7 @@ import modelo_superficies as ms   # noqa: E402  (12C → 09A, 09C, 23)
 import modelo_logistica as ml     # noqa: E402  (12B)
 import modelo_upstream as mup     # noqa: E402  (14B)
 
-VERSION = "1.0"
+VERSION = "1.1"
 FECHA = "2026-10-02"
 FUENTE = "19_capex/modelo_capex.py"
 FECHA_BASE_CAPEX = "2026-10-01"            # SUP-16-01: editable (--fecha-base)
@@ -93,6 +99,7 @@ SALIDA_BOQ = os.path.join(AQUI, "boq_capex.csv")
 SALIDA_ESC = os.path.join(AQUI, "escenarios_capex.csv")
 SALIDA_EXP = os.path.join(AQUI, "expansion_capex.csv")
 SALIDA_RFQ = os.path.join(AQUI, "matriz_rfq_capex.csv")
+SALIDA_MAPA = os.path.join(AQUI, "mapa_drivers_capex.csv")
 
 ESCALAS_REF = (2500, 5000, 10000, 20000)
 RANGO_ESCALA = (2500, 20000)               # intermedias sí; extrapolación fuera del rango estudiado no
@@ -151,8 +158,12 @@ def config_por_defecto():
         "laboratorio_propio": True, "modalidad_linea": "lotes", "config_producto": "B",
         "tecnologia_efluentes": "sin_definir",
         "fecha_base": FECHA_BASE_CAPEX, "moneda": MONEDA_MODELO,
-        "cadencia_incubacion": 2, "dias_op_planta_alimento": 5, "horas_dia_planta_alimento": 8,
+        # Escenarios ETIQUETADOS (no verdades): se informan en D["escenarios_referencia"]
+        "cadencia_nacimientos": 2, "margen_capacidad_incubacion": 0.15,          # 14B CADENCIAS, SUP-146
+        "dias_op_planta_alimento": 5, "horas_dia_planta_alimento": 8,            # 14B SUP-148
+        "eficiencia_planta_alimento": 0.85, "margen_planta_alimento": 0.15,      # 14B SUP-148, SUP-146
         "capacidad_nominal_planta_alimento_t_h": None,
+        "sensibilidad_rendimiento_linea": "media",                               # 05 SENSIBILIDAD (SUP-061)
         "aves_camion_vivo": 5500, "cap_camion_refrigerado_t": 12, "cap_camion_congelado_t": 12,
         "cap_camion_pollitos": None, "cap_granelero_t": 28, "cap_vehiculo_subproductos_t": 10,
         "dist_mercado_km": 300, "dist_fabrica_granja_km": 75, "dist_receptor_subproductos_km": 50,
@@ -240,10 +251,43 @@ def etiqueta_arquitectura(c):
 
 
 # ---------------------------------------------------------------------------------------------
-# 2. DRIVERS FÍSICOS (importados)
+# 2. DRIVERS FÍSICOS (consumidos de los módulos fuente; procedencia registrada)
 # ---------------------------------------------------------------------------------------------
+# Tipos de procedencia (auditoría de cierre de la sesión 16):
+#   DIRECTO               = salida del módulo fuente para un escenario PUBLICADO en su CSV (tests de reproducción)
+#   CALCULO_MODELO_FUENTE = la MISMA función del módulo fuente con entradas que su CSV no publica
+#                           (escala intermedia u otra combinación). No es interpolación.
+#   DERIVADO_CAPEX        = operación de CAPEX sobre salidas fuente (suma, redondeo, perímetro), declarada
+#   SUPUESTO_CAPEX        = parámetro propio de CAPEX (SUP-16-##)
+#   PENDIENTE             = el módulo fuente no lo dimensiona; CAPEX no lo inventa
+# INTERPOLADO no se usa en ningún driver (todas las fuentes son funciones evaluables a cualquier escala).
+TIPOS_DRIVER = ("DIRECTO", "CALCULO_MODELO_FUENTE", "DERIVADO_CAPEX", "SUPUESTO_CAPEX", "INTERPOLADO", "PENDIENTE")
+ARCH = {"12C": "09_layout_obra_civil/escenarios_superficies.csv (modelo_superficies.py)",
+        "09C": "11_agua_efluentes/escenarios_utilities.csv (modelo_utilities.py, vía 12C)",
+        "12B": "13_logistica/escenarios_logistica.csv (modelo_logistica.py)",
+        "14B": "14_alimento_balanceado/escenarios_upstream.csv (modelo_upstream.py)",
+        "03": "03_produccion_primaria/escenarios_produccion.csv (modelo_escenarios_produccion.py, vía 14B)",
+        "05": "05_proceso_industrial/capacidad_proceso.csv (modelo_capacidad_proceso.py)",
+        "08": "08_maquinaria/matriz_equipos.csv",
+        "CAPEX": "19_capex/modelo_capex.py"}
+CLAVES_TERRENO_12C = ("escala_objetivo", "reservar_rendering")
+
+
 def _tri(x):
     return tuple(x[n] for n in NIVELES)
+
+
+def _t3(v):
+    return v if isinstance(v, tuple) else (v, v, v)
+
+
+def _reg(D, driver, valor, unidad, fuente, variable, tipo, estado, escenario="", uso="", nota=""):
+    if tipo not in TIPOS_DRIVER:
+        raise ErrorCapex(f"tipo de driver inválido: {tipo}")
+    D["proc"][driver] = {"DRIVER": driver, "VALOR": _t3(valor), "UNIDAD": unidad, "ARCHIVO_ORIGEN": ARCH.get(fuente, fuente),
+                         "VARIABLE_ORIGEN": variable, "TIPO": tipo, "ESTADO_EVIDENCIA": estado,
+                         "ESCENARIO_FUENTE": escenario, "USO_EN_CAPEX": uso, "NOTA": nota}
+    return _t3(valor)
 
 
 def _util_completo(e, nivel):
@@ -258,16 +302,28 @@ def _util_completo(e, nivel):
 
 
 def entradas_superficie(c):
+    """Entradas de 12C para la arquitectura. Las ÁREAS no dependen de la reserva; el terreno sí."""
     perfil, congelado = FRIO_A_PERFIL[c["frio"]]
-    if c["terreno"] == "compra_reserva" or c["escala_objetivo"] is not None:   # SUP-16-16: reserva explícita
-        obj, rend = (c["escala_objetivo"] or RANGO_ESCALA[1]), True
-    else:                                                  # solo la fase (sin reserva)
-        obj, rend = c["aves_dia"], c["rendering"]
     return dict(ms.entradas_por_defecto(), aves_dia=c["aves_dia"], horas_netas=c["horas_netas"],
                 dias_anio=dias_anio(c), config=c["config_producto"], perfil=perfil,
                 congelado_propio=congelado, laboratorio_propio=c["laboratorio_propio"],
                 automatizacion=c["automatizacion"], tecnologia_efluentes=c["tecnologia_efluentes"],
-                escala_objetivo=obj, reservar_rendering=rend)
+                escala_objetivo=None, reservar_rendering=True)
+
+
+def escenario_12c_publicado(e, con_terreno):
+    """Nombre del escenario de 12C publicado en su CSV con las mismas entradas (áreas: sin mirar la reserva)."""
+    def igual(a, b):
+        return all(a.get(k) == b.get(k) for k in set(a) | set(b) if con_terreno or k not in CLAVES_TERRENO_12C)
+    base = ms.entradas_por_defecto()
+    if e["aves_dia"] in ms.ESCALAS:
+        for nombre, ep in ms.escenarios_sensibilidad():
+            if ep["aves_dia"] == e["aves_dia"] and igual(ep, e):
+                return nombre
+        for t in ms.TECNOLOGIAS:
+            if igual(dict(base, aves_dia=e["aves_dia"], tecnologia_efluentes=t), e):
+                return f"detalle_{e['aves_dia']}_{t}"
+    return None
 
 
 def _vehiculos(viajes_semana, dist_km, vel, horas_dia, dias_semana):
@@ -279,89 +335,308 @@ def _vehiculos(viajes_semana, dist_km, vel, horas_dia, dias_semana):
     return math.ceil(viajes_semana / (ciclos_dia * dias_semana) - TOL)
 
 
+def _terreno_12c(e, objetivo, rendering):
+    R = ms.calcular(dict(e, escala_objetivo=objetivo, reservar_rendering=rendering))
+    if "D04" in _MUT:
+        return R, tuple(R.terreno[n]["terreno_total"] * 0.9 for n in NIVELES)
+    return R, tuple(None if R.terreno[n] is None else R.terreno[n]["terreno_total"] for n in NIVELES)
+
+
 def drivers(c):
-    """Cantidades físicas por escala y arquitectura. Nada económico."""
+    """Cantidades físicas por escala y arquitectura, CONSUMIDAS de los módulos fuente. Nada económico."""
     E, ds = c["aves_dia"], c["dias_semana"]
-    D = {"E": E, "ds": ds, "dias_anio": dias_anio(c), "ritmo_aves_h": E / c["horas_netas"], "alertas": []}
+    base_esc = E in ESCALAS_REF
+    D = {"E": E, "ds": ds, "dias_anio": dias_anio(c), "alertas": [], "proc": {}, "escenarios_referencia": []}
+    if not base_esc:
+        D["alertas"].append(f"ESCALA_INTERMEDIA: {E:g} aves/día no está publicada en los CSV fuente; los drivers son "
+                            "CALCULO_MODELO_FUENTE (mismas funciones, no interpolación) y los niveles de EQ se toman "
+                            "de la escala de referencia más cercana (SUP-16-05)")
+    tipo_fuente = "DIRECTO" if base_esc else "CALCULO_MODELO_FUENTE"
     perfil, _ = FRIO_A_PERFIL[c["frio"]]
+    h = c["horas_netas"]
+    # ---- Proceso (05): capacidad de PLANTA ≠ capacidad de LÍNEA; operativo ≠ nominal ≠ diseño ≠ garantizado ----
+    mc = ms.mc
+    D["capacidad_planta_aves_dia"] = _reg(D, "capacidad_planta", E, "aves/día", "CAPEX", "escala (input)", "SUPUESTO_CAPEX",
+                                          "ESCENARIO (SUP-052)", uso="escala de planta = aves faenadas por día operativo")
+    op = mc.ritmo_operativo(E, h)
+    D["ritmo_operativo"] = _reg(D, "ritmo_operativo_requerido", op, "aves/h", "05", "ritmo_operativo_requerido",
+                                tipo_fuente if h in (6, 8, 10, 16) else "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN]",
+                                f"horas_netas={h:g} (escenario de referencia CAPEX)", "capacidad OPERATIVA de planta (no comercial)")
+    nom = tuple(mc.ritmo_nominal_requerido(E, h, mc.SENSIBILIDAD[s]["R"]) for s in ("alta", "media", "baja"))
+    D["ritmo_nominal"] = _reg(D, "ritmo_nominal_requerido", nom, "aves/h", "05", "ritmo_nominal_requerido_h_netas",
+                              tipo_fuente if h in (6, 8, 10, 16) else "CALCULO_MODELO_FUENTE", "[SUPUESTO] R (SUP-061)",
+                              "sensibilidad alta/media/baja (R = 0,95/0,89/0,82)",
+                              "capacidad NOMINAL requerida; en la BOQ se usa la sensibilidad indicada en el input")
+    D["sens_linea"] = c["sensibilidad_rendimiento_linea"]
+    D["ritmo_nominal_sel"] = {"alta": nom[0], "media": nom[1], "baja": nom[2]}[D["sens_linea"]]
+    D["escenarios_referencia"].append(f"rendimiento de línea = sensibilidad '{D['sens_linea']}' de 05 (ESCENARIO, no verdad)")
+    lineas = 1
+    _reg(D, "lineas", lineas, "líneas", "12C", "entradas_por_defecto()['lineas']", "DIRECTO", "[SUPUESTO] 12C",
+         uso="capacidad por LÍNEA = nominal ÷ líneas")
+    _reg(D, "capacidad_diseno_linea", None, "aves/h", "CAPEX", "—", "PENDIENTE", "PENDIENTE",
+         uso="margen de diseño no adoptado", nota="DEC-038")
+    _reg(D, "capacidad_garantizada_linea", None, "aves/h", "CAPEX", "—", "PENDIENTE", "PENDIENTE (DPV-097)",
+         uso="solo de cotización")
     if c["faena"] == "propia":
         e = entradas_superficie(c)
-        R = ms.calcular(e)
+        esc_areas = escenario_12c_publicado(e, con_terreno=False)
+        t_areas = "DIRECTO" if esc_areas else "CALCULO_MODELO_FUENTE"
+        if not esc_areas:
+            D["alertas"].append("12C_ESCENARIO_NO_PUBLICADO: áreas calculadas con la función de 12C para entradas que su "
+                                "CSV no publica (no es una definición nueva de superficie)")
+        R, t_ref = _terreno_12c(e, None, True)                       # referencia de 12C (reserva proxy + rendering)
         s = ms.salida_interfaz(R)
         D["areas"] = {a: (x["bajo"], x["medio"], x["alto"]) for a, x in s["areas_por_funcion"].items()}
-        D["terreno_m2"] = _tri(s["m2_terreno"])
-        D["m2_construidos"] = _tri(s["m2_construidos"])
+        if "D05" in _MUT:
+            D["areas"]["empaque"] = tuple(x * 1.1 for x in D["areas"]["empaque"])
+        tot = {k: tuple(R.totales[n][k] for n in NIVELES) for k in ("construido", "operativo", "exteriores", "efluentes",
+                                                                    "proceso", "frio", "servicios", "personal_admin")}
+        D["m2_construidos"] = _reg(D, "m2_construido", tot["construido"], "m²", "12C", "m2_construido", t_areas,
+                                   "[ESTIMACIÓN]/PROXY", esc_areas or "no publicado", "obra cubierta (edificio)")
+        D["m2_operativo"] = _reg(D, "m2_operativo", tot["operativo"], "m²", "12C", "m2_operativo", t_areas,
+                                 "[ESTIMACIÓN]/PROXY", esc_areas or "no publicado", "control (construido + exteriores + efluentes)")
+        D["m2_exteriores"] = _reg(D, "m2_exteriores", tot["exteriores"], "m²", "12C", "m2_exteriores", t_areas,
+                                  "[ESTIMACIÓN]/PROXY", esc_areas or "no publicado", "pavimentos, playas, circulación, plataformas")
+        D["m2_efluentes"] = _reg(D, "m2_efluentes", tot["efluentes"], "m²", "12C", "m2_efluentes", t_areas,
+                                 "[ESTIMACIÓN]/PROXY", esc_areas or "no publicado", "obra de efluentes")
+        for k in ("proceso", "frio", "servicios", "personal_admin"):
+            _reg(D, f"m2_{k}", tot[k], "m²", "12C", f"m2_{k}", t_areas, "[ESTIMACIÓN]/PROXY", esc_areas or "no publicado",
+                 "control de categorías")
+        D["retiros_buffers_ref"] = _reg(D, "retiros_buffers_12c_referencia",
+                                        tuple(R.terreno[n]["retiros_buffers"] for n in NIVELES), "m²", "12C",
+                                        "retiros_buffers", t_areas, "[SUPUESTO]/PROXY (SUP-121)", esc_areas or "no publicado",
+                                        "terreno no construido (retiro + buffer): NO es obra")
+        D["reserva_ref"] = _reg(D, "m2_reserva_12c_referencia", tuple(R.totales[n].get("reserva") for n in NIVELES), "m²",
+                                "12C", "m2_reserva", t_areas, "[SUPUESTO]/PROXY (SUP-119)", esc_areas or "no publicado",
+                                "reserva fraccional sin objetivo + rendering: es terreno, NO obra")
+        D["terreno_12c_ref"] = _reg(D, "terreno_12c_referencia", t_ref, "m²", "12C", "terreno_total",
+                                    "DIRECTO" if escenario_12c_publicado(e, True) else "CALCULO_MODELO_FUENTE",
+                                    "[ESTIMACIÓN] con PROXY", escenario_12c_publicado(e, True) or "no publicado",
+                                    "contexto: terreno conceptual que 12C publica (incluye reserva proxy y rendering)")
+        # Terreno REQUERIDO por la fase (sin reserva): 12C no lo publica → misma función de 12C, entrada declarada
+        _, t_req = _terreno_12c(e, E, False)
+        D["terreno_req"] = _reg(D, "terreno_requerido_fase", t_req, "m²", "12C", "terreno_total (escala_objetivo = escala, "
+                                "sin rendering)", "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN] con PROXY", "no publicado por 12C",
+                                "terreno requerido por la fase actual (TER-PREP); T16-07")
+        reserva = c["terreno"] == "compra_reserva" or c["escala_objetivo"] is not None
+        if reserva:
+            obj = c["escala_objetivo"] or RANGO_ESCALA[1]
+            e_res = dict(e, escala_objetivo=obj, reservar_rendering=True)
+            _, t_adq = _terreno_12c(e, obj, True)
+            esc_res = escenario_12c_publicado(e_res, True)
+            D["terreno_adq"] = _reg(D, "terreno_adquirido", t_adq, "m²", "12C", f"terreno_total (escala_objetivo={obj:g})",
+                                    "DIRECTO" if esc_res else "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN] con PROXY",
+                                    esc_res or "no publicado", "terreno ADQUIRIDO/RESERVADO (TER-COMPRA)")
+        else:
+            _, t_adq = _terreno_12c(e, E, c["rendering"])
+            D["terreno_adq"] = _reg(D, "terreno_adquirido", t_adq, "m²", "12C",
+                                    "terreno_total (escala_objetivo = escala" + (", con rendering)" if c["rendering"] else ")"),
+                                    "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN] con PROXY", "no publicado por 12C",
+                                    "terreno ADQUIRIDO = requerido por la fase" + (" + reserva de rendering" if c["rendering"] else ""))
+        D["terreno_reserva_adicional"] = tuple(None if a is None or r is None else a - r for a, r in zip(t_adq, t_req))
+        for i, n in enumerate(NIVELES):
+            if t_adq[i] is not None and t_req[i] is not None and t_adq[i] < t_req[i] - TOL:
+                D["alertas"].append(f"TERRENO_ADQUIRIDO_MENOR_QUE_REQUERIDO ({n}): {t_adq[i]:.0f} < {t_req[i]:.0f} m² "
+                                    "(no se corrige; revisar entradas de 12C)")
         rel = [ms.v("relacion_largo_ancho", i) for i in range(3)]
-        D["perimetro_m"] = tuple(None if t is None else 2 * (math.sqrt(t / r) * r + math.sqrt(t / r))
-                                 for t, r in zip(D["terreno_m2"], rel))
+        D["perimetro_m"] = _reg(D, "perimetro_terreno", tuple(None if t is None else 2 * (math.sqrt(t / r) * r + math.sqrt(t / r))
+                                                              for t, r in zip(t_adq, rel)), "m", "CAPEX",
+                                "2 × (largo + ancho) del rectángulo de relación 1,5 (12C) con el terreno adquirido",
+                                "DERIVADO_CAPEX", "[ESTIMACIÓN]", uso="cerco perimetral (OC-CER)",
+                                nota="12C no publica perímetro")
         D["util"] = {n: _util_completo(e, n) for n in NIVELES}
+        u = D["util"]
+        t09 = "DIRECTO" if (base_esc and perfil == "P1" and h == 8 and c["config_producto"] == "B") else "CALCULO_MODELO_FUENTE"
+        esc09 = f"perfil {perfil}, {h:g} h netas, config. {c['config_producto']}, nivel bajo/medio/alto"
+        for var, un, uso, est in [
+                ("agua_utilizada_l_ave", "L/ave", "sensibilidad de consumo (15/25/38 L/ave)", "[ESTIMACIÓN] con rangos [PVDP]"),
+                ("agua_captada_m3_dia", "m³/d", "AG-CAP", "[ESTIMACIÓN] con rechazo [SUPUESTO]"),
+                ("caudal_horario_maximo_ilustrativo_m3_h", "m³/h", "AG-TRA, AG-BOM (parámetro)", "[SUPUESTO] factor ilustrativo"),
+                ("fraccion_agua_a_efluente_supuesta", "fracción", "control: efluente = agua × fracción", "[SUPUESTO]"),
+                ("agua_descargada_m3_dia", "m³/d", "EF-PAQ, ecualización (volumen diario)", "[ESTIMACIÓN]"),
+                ("caudal_efluente_horario_maximo_ilustrativo_m3_h", "m³/h", "EF-PRE, EF-DAF (parámetro)", "[SUPUESTO] factor ilustrativo"),
+                ("metodoA_carga_DQO_kg_dia", "kg DQO/d", "EF-BIO (método A, no se elige)", "[ESTIMACIÓN] [PVDP]"),
+                ("metodoB_carga_DQO_kg_dia", "kg DQO/d", "EF-BIO (método B, no se elige)", "[ESTIMACIÓN] [PVDP]"),
+                ("masa_biologica_potencialmente_segregable_en_origen_t_dia", "t/d",
+                 "SB-L9 (manejo de subproductos); NO son sólidos del efluente", "[ESTIMACIÓN] balance v1.1"),
+                ("solidos_que_entran_efectivamente_al_efluente_t_dia", "t/d", "EF-LOD: PENDIENTE", "PENDIENTE"),
+                ("kwh_total_dia_operativo", "kWh/d", "CONSUMO de energía: no es potencia (OPEX)", "[ESTIMACIÓN]"),
+                ("potencia_media_equivalente_proceso_kw_bajo_14h", "kW", "potencia MEDIA (cota informativa; no dimensiona)", "[ESTIMACIÓN]"),
+                ("potencia_pico_demanda_maxima_kw", "kW", "pico requerido: PENDIENTE → transformador y grupo PENDIENTES", "PENDIENTE"),
+                ("carga_critica_ilustrativa_camaras_frio_kw", "kW", "respaldo (ilustrativo; DEC-047)", "[SUPUESTO] proxy"),
+                ("carga_critica_ilustrativa_efluentes_minimo_kw", "kW", "respaldo (ilustrativo)", "[SUPUESTO] proxy"),
+                ("carga_critica_ilustrativa_control_it_seguridad_kw", "kW", "respaldo (ilustrativo)", "[SUPUESTO] proxy"),
+                ("carga_critica_ilustrativa_iluminacion_emergencia_kw", "kW", "respaldo (ilustrativo)", "[SUPUESTO] proxy"),
+                ("potencia_termica_media_equivalente_escaldado_kw_bajo_8h", "kWt", "térmico MEDIO (cota informativa)", "[ESTIMACIÓN]"),
+                ("potencia_termica_pico_kw", "kWt", "pico térmico PENDIENTE → caldera PENDIENTE", "PENDIENTE"),
+                ("carga_sensible_preliminar_producto_kwf_bajo_8h", "kWf", "FRÍO: carga física parcial (producto)", "[ESTIMACIÓN] con [SUPUESTO]"),
+                ("carga_enfriamiento_agua_reposicion_chiller_kwf_bajo_8h", "kWf", "FRÍO: carga física parcial (agua de chiller)", "[ESTIMACIÓN] con [SUPUESTO]"),
+                ("cargas_adicionales_ilustrativas_kwf", "kWf", "FRÍO: SUPUESTO ilustrativo de 09C (no se suma como capacidad)", "[SUPUESTO] ilustrativo"),
+                ("carga_media_congelacion_producto_kwf_bajo_20h", "kWf", "FRÍO: congelación (media 20 h)", "[ESTIMACIÓN] con [SUPUESTO]"),
+                ("carga_frigorifica_total_kwf", "kWf", "FRÍO: carga total PENDIENTE (balance frigorífico)", "PENDIENTE"),
+                ("kwh_proceso_frio_de_proceso_agua_helada_hielo_dia", "kWh/d", "FRÍO: benchmark global top-down (energía, no kWf)", "[SUPUESTO] reparto ilustrativo [PVDP]"),
+                ("brecha_frio_fisico_vs_reparto_indicador_ratio", "ratio", "FRÍO: contradicción ABIERTA física vs benchmark", "[ESTIMACIÓN]"),
+                ("capacidad_congelacion_t_dia", "t/día", "FR-TUN", "[ESTIMACIÓN]")]:
+            val = tuple(u[n].get(var) for n in NIVELES)
+            _reg(D, var, val, un, "09C", var, "PENDIENTE" if all(x is None for x in val) else t09, est, esc09, uso)
+        _reg(D, "capacidad_diseno_frio", None, "kWf", "CAPEX", "—", "PENDIENTE", "PENDIENTE (DPV-109)",
+             uso="no se elige entre carga física y benchmark (contradicción ×5,7 abierta)")
+        _reg(D, "margen_diseno_frio", None, "%", "CAPEX", "—", "PENDIENTE", "PENDIENTE", uso="no adoptado")
+        _reg(D, "transformador_kva", None, "kVA", "CAPEX", "—", "PENDIENTE", "PENDIENTE (DPV-095)",
+             uso="no se dimensiona desde kWh ni desde potencia media")
+        _reg(D, "grupo_electrogeno_kva", None, "kVA", "CAPEX", "—", "PENDIENTE", "PENDIENTE (DEC-047)",
+             uso="no se dimensiona desde consumo medio")
         D["alertas"] += [f"12C:{a}" for a in s["alertas"]]
-    # Logística (12B): solo flujos con flota propia
+    # ---- Logística (12B): solo flujos con flota propia -----------------------------------------
     D["flota"] = {}
     vel, hcd = ml.VEL_TRONCAL, ml.HORAS_CAMION_DIA
     res = c["reserva_flota_unidades"]
     for fl in FLUJOS:
         if flota_de(c, fl) != "propia":
             continue
-        base, origen = None, ""
+        base, origen, tipo, var, est = None, "", "PENDIENTE", "—", "PENDIENTE"
         if fl == "vivo":
             v = ml.aves_vivas(E, ds, radio_km=c["radio_granjas_km"], aves_camion=c["aves_camion_vivo"])
-            base, origen = v["flota_minima"], f"12B aves_vivas: flota mínima ({c['aves_camion_vivo']} aves/camión SUP-033)"
+            base, var = v["flota_minima"], "flota_minima (bloque aves_vivas)"
+            pub = base_esc and c["radio_granjas_km"] in ml.RADIOS_KM and c["aves_camion_vivo"] in ml.AVES_CAMION
+            tipo, est = ("DIRECTO" if pub else "CALCULO_MODELO_FUENTE"), "[ESTIMACIÓN] con payload de ESCENARIO (SUP-033)"
+            origen = f"12B flota mínima = {base} (radio {c['radio_granjas_km']} km, {c['aves_camion_vivo']} aves/camión)"
         elif fl in ("refrigerado", "congelado"):
             p = ml.producto(E, ds, perfil=perfil, dias_despacho=6, cap_refrigerado=c["cap_camion_refrigerado_t"],
                             cap_congelado=c["cap_camion_congelado_t"], dist_km=c["dist_mercado_km"],
                             despachos_congelado=2)
             cd = p.get(f"{fl}_camion_dia")
-            base = None if cd is None else math.ceil(cd - TOL) if cd > TOL else 0
-            origen = f"12B producto: camión-día {fl} (troncal {c['dist_mercado_km']} km; reparto capilar PENDIENTE DEC-053)"
+            base = None if cd is None else (math.ceil(cd - TOL) if cd > TOL else 0)
+            var, tipo = f"{fl}_camion_dia → ⌈ ⌉", "DERIVADO_CAPEX"
+            est = "[ESTIMACIÓN] con payload de ESCENARIO (DPV-084)"
+            origen = (f"12B camión-día {fl} = {cd:.2f} → ⌈⌉ = {base} (troncal {c['dist_mercado_km']} km; reparto capilar "
+                      "PENDIENTE DEC-053)") if cd is not None else "12B: capacidad PENDIENTE"
         elif fl == "alimento":
             i = ml.insumos(E, ds, cap_granelero=c["cap_granelero_t"], dist_fabrica=c["dist_fabrica_granja_km"])
             base = _vehiculos(i["alimento_viajes_semana"], c["dist_fabrica_granja_km"], vel, hcd, DIAS_ENTREGA_SEMANA)
-            origen = f"12B insumos: {i['alimento_viajes_semana']} viajes/sem ÷ ciclos (SUP-16-03)"
+            var, tipo, est = "alimento_viajes_semana ÷ ciclos (SUP-16-03)", "DERIVADO_CAPEX", "[SUPUESTO] ciclo y payload de ESCENARIO"
+            origen = f"12B {i['alimento_viajes_semana']} viajes/sem ÷ ciclos CAPEX (SUP-16-03)"
         elif fl == "pollitos":
             i = ml.insumos(E, ds, cap_granelero=c["cap_granelero_t"], cap_pollitos=c["cap_camion_pollitos"])
             vs = i["pollitos_viajes_semana"]
             base = None if vs is None else _vehiculos(vs, 150, vel, hcd, DIAS_ENTREGA_SEMANA)
-            origen = "12B insumos: capacidad de camión de pollitos PENDIENTE (DPV-047, DPV-084)" if vs is None \
-                else f"12B insumos: {vs} viajes/sem"
+            var = "pollitos_viajes_semana"
+            tipo, est = ("PENDIENTE", "PENDIENTE (DPV-047, DPV-084)") if vs is None else ("DERIVADO_CAPEX", "[SUPUESTO]")
+            origen = "12B: capacidad de camión de pollitos PENDIENTE (DPV-047, DPV-084)" if vs is None else f"12B {vs} viajes/sem"
         elif fl == "subproductos":
             tot = 0
             for g in ("G1-plumas", "G2-sangre", "G3-visceras", "G4-decomisos"):
                 s_ = ml.subproductos(E, ds, c["config_producto"], "E1", cap=c["cap_vehiculo_subproductos_t"], corriente=g)
                 tot += s_["viajes_semana_criterio_masa"]
             base = _vehiculos(tot, c["dist_receptor_subproductos_km"], vel, hcd, ds)
-            origen = f"12B subproductos: {tot} viajes/sem por criterio MÁSICO (volumétrico PENDIENTE DPV-135) = cota inferior"
-        else:   # servicio
+            var, tipo, est = "Σ viajes_semana_criterio_masa (4 grupos) ÷ ciclos", "DERIVADO_CAPEX", "COTA INFERIOR (volumétrico PENDIENTE)"
+            origen = f"12B {tot} viajes/sem por criterio MÁSICO (volumétrico PENDIENTE DPV-135) = cota inferior"
+        else:
             origen = "Sin driver físico: cantidad PENDIENTE (no se fijan cantidades arbitrarias)"
-        D["flota"][fl] = {"base": base, "unidades": None if base is None else (base + res if base > 0 else 0),
+        unidades = None if base is None else (base + res if base > 0 else 0)
+        D["flota"][fl] = {"base": base, "unidades": unidades,
                           "origen": origen + ("" if base is None else f"; + reserva {res} (SUP-16-02)")}
-    # Upstream (14B)
+        _reg(D, f"flota_base_{fl}", base, "vehículos", "12B", var, tipo, est,
+             f"capacidades de ESCENARIO de 12B (SUP-16-20)", f"VEH/CAR/FRI/AUX-{fl.upper()} (antes de la reserva)", origen)
+        _reg(D, f"flota_reserva_{fl}", None if base is None else unidades - base, "vehículos", "CAPEX", "reserva_flota_unidades",
+             "SUPUESTO_CAPEX", "[SUPUESTO] SUP-16-02", uso="reserva de flota")
+    # ---- Upstream (14B, que consume 03) ---------------------------------------------------------
+    t14 = "DIRECTO" if base_esc else "CALCULO_MODELO_FUENTE"
+    pr = mup.produccion(E, ds)
     po = mup.pollitos(E, ds)
-    D["pollitos_semana"] = po["pollitos_a_recibir_semana_plena"]
-    D["plazas_alojamiento"] = po["capacidad_alojamiento_pollitos"]
-    D["m2_galpon"] = po["m2_galpon"]
+    D["pollitos_semana"] = _reg(D, "pollitos_a_recibir_semana_plena", po["pollitos_a_recibir_semana_plena"], "pollitos/sem",
+                                "14B", "pollitos_a_recibir_semana_plena", t14, "[ESTIMACIÓN]", "nivel medio")[1]
+    D["plazas_alojamiento"] = _reg(D, "plazas_alojamiento", pr["capacidad_alojamiento_pollitos"], "plazas", "03",
+                                   "capacidad_alojamiento_pollitos", t14, "[ESTIMACIÓN]", "perfil medio, desempeño medio",
+                                   "GRA-GAL (plazas totales; NO es capacidad de una granja)")[1]
+    D["m2_galpon"] = _reg(D, "m2_galpon", pr["m2_galpon"], "m²", "03", "m2_galpon", t14, "[ESTIMACIÓN]",
+                          "perfil medio, desempeño medio", "superficie productiva (contexto)")[1]
+    D["galpones_conceptuales"] = {t: pr[f"galpones_{t}m2"] for t in mp_tamanos()}
+    for t, v in D["galpones_conceptuales"].items():
+        _reg(D, f"galpones_{t}m2", v, "galpones", "03", f"galpones_{t}m2", t14, "[ESTIMACIÓN] sin redondear",
+             "m² ÷ tamaño de galpón", "número CONCEPTUAL de galpones (no es diseño)")
+    _reg(D, "granjas", None, "granjas", "CAPEX", "—", "PENDIENTE", "PENDIENTE (DPV-048)",
+         uso="número real de granjas; plazas ≠ granja", nota="12B usa plazas_granja como escenario, no dato")
     if c["pollito"] == "incubacion":
-        inc = mup.incubacion(D["pollitos_semana"], cadencia=c["cadencia_incubacion"])
+        cad, mg = c["cadencia_nacimientos"], c["margen_capacidad_incubacion"]
+        D["escenarios_referencia"].append(f"CADENCIA_NACIMIENTOS = {cad} cargas/semana (ESCENARIO etiquetado de 14B, no verdad); "
+                                          f"margen de capacidad {mg:.0%} (SUP-146)")
+        inc = mup.incubacion(D["pollitos_semana"], cadencia=(3 if "D02" in _MUT else cad), margen_cap=mg)
         D["incubacion"] = {k: inc[k] for k in ("posiciones_setter_diseno", "posiciones_hatcher_diseno",
                                                "capacidad_almacen_huevos", "huevos_recibidos_semana")}
+        pub = base_esc and cad in mup.CADENCIAS and mg in mup.MARGEN_CAPACIDAD
+        for k, un in (("posiciones_setter_diseno", "posiciones"), ("posiciones_hatcher_diseno", "posiciones"),
+                      ("capacidad_almacen_huevos", "huevos")):
+            _reg(D, k, inc[k], un, "14B", k, "DIRECTO" if pub else "CALCULO_MODELO_FUENTE", "[ESTIMACIÓN] con [SUPUESTO]",
+                 f"cadencia={cad}; margen_cap={mg}; nivel medio; días de almacén {mup.D_ALMACEN_BASE}",
+                 "INC-SET / INC-HAT (separados) / INC-HUE")
     if c["reproductoras"]:
-        D["reproductoras"] = mup.reproductoras_fase_futura(D["pollitos_semana"], "FF")["reproductoras_hembras_postura_equiv"]
+        D["reproductoras"] = _reg(D, "reproductoras_hembras_postura_equiv",
+                                  mup.reproductoras_fase_futura(D["pollitos_semana"], "FF")["reproductoras_hembras_postura_equiv"],
+                                  "reproductoras", "14B", "reproductoras_hembras_postura_equiv", t14, "[ESTIMACIÓN] (DPV-045)",
+                                  "FF", "REP-GAL (FUTURO)")[1]
     if c["alimento"] == "propia":
         al = mup.alimento(E, ds)
-        pa = mup.planta_alimento(al["alimento_t_semana_plena"], dias_op=c["dias_op_planta_alimento"],
-                                 horas_dia=c["horas_dia_planta_alimento"])
+        do, hd, ef, mgp = (c["dias_op_planta_alimento"], c["horas_dia_planta_alimento"], c["eficiencia_planta_alimento"],
+                           c["margen_planta_alimento"])
+        D["escenarios_referencia"].append(f"PERFIL de planta de alimento = {do} d/sem × {hd} h, eficiencia {ef}, margen {mgp:.0%} "
+                                          "(ESCENARIO de 14B, SUP-148; no verdad)")
+        pa = mup.planta_alimento(al["alimento_t_semana_plena"], dias_op=do, horas_dia=hd, eficiencia=ef, margen=mgp)
         st = mup.almacenamiento(E, "C_planta_propia", ds)
-        cap = c["capacidad_nominal_planta_alimento_t_h"] or pa["t_h_requerida"]
-        util = al["alimento_t_semana_plena"] / (cap * c["dias_op_planta_alimento"] * c["horas_dia_planta_alimento"] * pa["eficiencia"])
-        D["alimento"] = {"t_h_requerida": pa["t_h_requerida"], "t_h_instalada": cap, "utilizacion": util,
-                         "m3_silos_mp": st["maiz_m3_brutos"] + st["soja_m3_brutos"],
+        cap = c["capacidad_nominal_planta_alimento_t_h"]
+        util = pa["utilizacion"] if cap is None else al["alimento_t_semana_plena"] / (cap * do * hd * ef)
+        D["alimento"] = {"t_h_requerida": pa["t_h_requerida"], "t_h_instalada": cap or pa["t_h_requerida"],
+                         "utilizacion": util, "m3_silos_mp": st["maiz_m3_brutos"] + st["soja_m3_brutos"],
                          "m3_silos_pt": st["alim_planta_m3_brutos"], "m3_silos_granja": st["granja_m3_brutos"]}
+        pub = base_esc and do in mup.DIAS_OPERACION_PLANTA and hd in mup.HORAS_DIA_PLANTA and ef in mup.EFICIENCIA_PLANTA \
+            and abs(mgp - mup.MARGEN_CAPACIDAD_BASE) < TOL
+        tp = "DIRECTO" if pub else "CALCULO_MODELO_FUENTE"
+        for k, v, un, uso in (("alimento_t_anio", al["alimento_t_anio"], "t/año", "contexto"),
+                              ("alimento_t_dia_entrega_7d", al["alimento_t_dia_entrega_7d"], "t/d", "contexto"),
+                              ("alimento_t_semana_plena", al["alimento_t_semana_plena"], "t/sem", "base de la t/h"),
+                              ("t_h_requerida", pa["t_h_requerida"], "t/h", "ALI-REC/MOL/DOS/MEZ/PEL/ENF"),
+                              ("utilizacion_planta_alimento", util, "ratio", "alerta de subutilización")):
+            _reg(D, k, v, un, "14B", k if k != "utilizacion_planta_alimento" else "utilizacion",
+                 tp if not (k == "utilizacion_planta_alimento" and cap is not None) else "DERIVADO_CAPEX",
+                 "[ESTIMACIÓN] con [SUPUESTO]", f"{do} d × {hd} h, η {ef}, margen {mgp}", uso)
+        for k, v in (("maiz_m3_brutos + soja_m3_brutos", D["alimento"]["m3_silos_mp"]),
+                     ("alim_planta_m3_brutos", D["alimento"]["m3_silos_pt"]), ("granja_m3_brutos", D["alimento"]["m3_silos_granja"])):
+            _reg(D, f"silos:{k}", v, "m³", "14B", k, "DERIVADO_CAPEX" if "+" in k else t14, "[SUPUESTO] días de stock y densidad (SUP-149/150)",
+                 "15 d maíz y soja, 2 d planta, 3 d granja; densidad alimento 0,60", "ALI-SIL / ALI-SPT / GRA-SIL (desde volumen, no por catálogo)")
         if util < c["umbral_utilizacion_planta_alimento"]:
             D["alertas"].append(f"PLANTA_ALIMENTO_SUBUTILIZADA: utilización {util:.0%} < "
                                 f"{c['umbral_utilizacion_planta_alimento']:.0%} (SUP-16-17); no elegir por catálogo")
     else:
-        D["alimento_granja_m3"] = mup.almacenamiento(E, "A_compra", ds)["granja_m3_brutos"]
+        D["alimento_granja_m3"] = _reg(D, "silos:granja_m3_brutos", mup.almacenamiento(E, "A_compra", ds)["granja_m3_brutos"],
+                                       "m³", "14B", "granja_m3_brutos", t14, "[SUPUESTO] días de stock y densidad",
+                                       "A_compra; 3 d granja; densidad 0,60", "GRA-SIL")[1]
+    D["consistencia"] = verificar_consistencia(D, c)
+    D["alertas"] += [a for a in D["consistencia"]]
     return D
+
+
+def mp_tamanos():
+    return tuple(mup.mp.TAMANOS_GALPON_M2)
+
+
+def verificar_consistencia(D, c, fuentes=None):
+    """Compara drivers que dos módulos calculan por separado. NUNCA corrige: solo alerta (DRIVER_INCONSISTENTE)."""
+    al = []
+    f = fuentes or {}
+    pares = []
+    if "util" in D:
+        # 12C importa de 09C el efluente: la cifra que usa 12C debe coincidir con la de 09C
+        pares.append(("agua_descargada 12C vs 09C",
+                      f.get("efluente_12c", tuple(ms.utilities(entradas_superficie(c), n)["agua_descargada_m3_dia"] for n in NIVELES)),
+                      tuple(D["util"][n]["agua_descargada_m3_dia"] for n in NIVELES)))
+    po = mup.pollitos(D["E"], D["ds"])
+    pares.append(("plazas 14B vs 03", (f.get("plazas_14b", po["capacidad_alojamiento_pollitos"]),) * 3,
+                  (D["plazas_alojamiento"],) * 3))
+    pares.append(("ritmo operativo 05 vs 23", (f.get("ritmo_23", D["E"] / c["horas_netas"]),) * 3, (D["ritmo_operativo"][1],) * 3))
+    for nombre, a, b in pares:
+        if any(x is not None and y is not None and abs(x - y) > 1e-6 * max(1, abs(y)) for x, y in zip(a, b)):
+            al.append(f"DRIVER_INCONSISTENTE: {nombre} ({a[1]} vs {b[1]}); se usa la fuente declarada, no se corrige")
+    return al
 
 
 # ---------------------------------------------------------------------------------------------
@@ -389,6 +664,27 @@ OC_MAP = {
     "OC-EF": ("efl_pretratamiento", "efl_ecualizacion", "efl_daf", "efl_biologico", "efl_lodos", "efl_circulacion"),
 }
 AREAS_NO_OBRA = ("reserva_expansion",)    # reserva = terreno, no obra
+# Tipo de área (auditoría 16): solo "edificio" recibe un USD/m² de construcción cubierta; el resto tiene su propio
+# precio por tipo (pavimento, playa, plataforma, efluentes). Terreno, retiros/buffers, reserva y área verde NO son obra.
+OC_TIPO_AREA = {"OC-RS": "edificio", "OC-PH": "edificio", "OC-FR": "edificio", "OC-DK": "edificio", "OC-DP": "edificio",
+                "OC-ST": "edificio", "OC-LB": "edificio", "OC-VC": "edificio", "OC-OF": "edificio",
+                "OC-EP": "playa_circulacion", "OC-EL": "pavimento", "OC-LV": "pavimento", "OC-IP": "infraestructura_exterior",
+                "OC-EF": "efluentes"}
+TIPO_AREA_12C = {"edificio": "m2_construido", "playa_circulacion": "m2_exteriores", "pavimento": "m2_exteriores",
+                 "infraestructura_exterior": "m2_exteriores", "efluentes": "m2_efluentes"}
+
+
+def detalle_frio(D):
+    """Texto de capacidad de frío para BOQ y RFQ: base física, benchmark, diseño, margen, estado, contradicción."""
+    p = D["proc"]
+    v = lambda k: p[k]["VALOR"][1]
+    return (f"BASE física 09C (parcial, no total): producto {v('carga_sensible_preliminar_producto_kwf_bajo_8h'):.0f} kWf + "
+            f"agua de chiller {v('carga_enfriamiento_agua_reposicion_chiller_kwf_bajo_8h'):.0f} kWf + congelación "
+            f"{v('carga_media_congelacion_producto_kwf_bajo_20h'):.0f} kWf (adicionales ilustrativas {v('cargas_adicionales_ilustrativas_kwf'):.0f} "
+            f"kWf = SUPUESTO, no sumadas) · BENCHMARK global 09C {v('kwh_proceso_frio_de_proceso_agua_helada_hielo_dia'):.0f} kWh/d "
+            f"(energía, no kWf) · CONTRADICCIÓN ABIERTA física vs benchmark ×{v('brecha_frio_fisico_vs_reparto_indicador_ratio'):.1f} · "
+            "carga total PENDIENTE · capacidad de DISEÑO PENDIENTE · MARGEN PENDIENTE (no adoptado) · ESTADO: no cotizable "
+            "con una sola cifra (DPV-109)")
 
 # Lote de RFQ de cada EQ (08 requerimientos_cotizacion.md §3) y su costeador en el CAPEX.
 # EQ-28 y EQ-33 figuran en L3 y en L6: se asignan SOLO a L3 (T16-01). EQ-03 → logística (cajones),
@@ -459,7 +755,7 @@ BLOQUES = ("TERRENO", "OBRA_CIVIL", "PROCESO", "SUBPRODUCTOS", "FRIO", "UTILITIE
            "SERVICIOS_GENERALES", "LOGISTICA", "INCUBACION", "ALIMENTO", "GRANJAS", "INDIRECTOS",
            "PREOPERATIVOS", "CONTINGENCIA")
 CAMPOS_BOQ = ["ESCENARIO", "ACTIVO_ID", "ARQUITECTURA", "MODULO", "SUBMODULO", "BLOQUE", "CATEGORIA_CAPEX",
-              "ACTIVO", "CAPACIDAD", "UNIDAD_CAPACIDAD", "CANTIDAD_BAJO", "CANTIDAD", "CANTIDAD_ALTO", "UNIDAD",
+              "ACTIVO", "CAPACIDAD", "UNIDAD_CAPACIDAD", "CAPACIDAD_DETALLE", "DRIVER_ID", "TIPO_AREA", "CANTIDAD_BAJO", "CANTIDAD", "CANTIDAD_ALTO", "UNIDAD",
               "ORIGEN_DIMENSIONAMIENTO", "COSTO_ID", "INCLUIDO_EN_PAQUETE", "ACTIVO_PADRE", "COSTEA",
               "ETIQUETA_EXPANSION", "REUTILIZABLE", "ESCALABLE", "FASE", "TITULAR", "NIVEL_AUTOMATIZACION",
               "ESTADO_DIMENSION", "ESTADO_COSTO", "NIVEL_EVIDENCIA", "MONEDA_ORIGINAL", "PRECIO_UNITARIO_USD",
@@ -474,7 +770,7 @@ class Boq:
 
     def add(self, aid, modulo, sub, bloque, activo, costo_id, cant=None, unidad="lote", origen="",
             cat="DIRECTO", capacidad="", ucap="", padre="", incluido="No", etiqueta="ESCALABLE",
-            fase="INICIAL", titular="EMPRESA", nivel="", estado=None):
+            fase="INICIAL", titular="EMPRESA", nivel="", estado=None, driver="", tipo_area="", detalle=""):
         if aid in self.ids:
             raise ErrorCapex(f"ACTIVO_ID duplicado: {aid}")
         if "B01" in _MUT and aid.startswith("OC-DP"):
@@ -487,7 +783,8 @@ class Boq:
         costea = not (padre and incluido in ("Sí", "PENDIENTE"))
         self.filas.append({
             "ACTIVO_ID": aid, "MODULO": modulo, "SUBMODULO": sub, "BLOQUE": bloque, "CATEGORIA_CAPEX": cat,
-            "ACTIVO": activo, "CAPACIDAD": capacidad, "UNIDAD_CAPACIDAD": ucap,
+            "ACTIVO": activo, "CAPACIDAD": capacidad, "UNIDAD_CAPACIDAD": ucap, "CAPACIDAD_DETALLE": detalle,
+            "DRIVER_ID": driver, "TIPO_AREA": tipo_area,
             "CANTIDAD_BAJO": None if cant is None else cant[0], "CANTIDAD": None if cant is None else cant[1],
             "CANTIDAD_ALTO": None if cant is None else cant[2], "UNIDAD": unidad,
             "ORIGEN_DIMENSIONAMIENTO": origen, "COSTO_ID": costo_id, "INCLUIDO_EN_PAQUETE": incluido,
@@ -518,20 +815,25 @@ def generar_boq(c, D=None):
     B = Boq(c)
     autom = c["automatizacion"]
     propia = c["faena"] == "propia"
-    ritmo = D["ritmo_aves_h"]
     if propia:
+        nom_linea = D["ritmo_nominal_sel"]
+        det_linea = (f"PLANTA {D['E']:g} aves/día · LÍNEA: operativo {D['ritmo_operativo'][1]:.0f} aves/h (05) · nominal requerido "
+                     f"{D['ritmo_nominal'][0]:.0f}/{D['ritmo_nominal'][1]:.0f}/{D['ritmo_nominal'][2]:.0f} aves/h (05, R alta/media/baja; "
+                     f"se usa '{D['sens_linea']}') · diseño PENDIENTE (margen no adoptado) · garantizada PENDIENTE (DPV-097) · 1 línea")
         # ---- A. TERRENO -------------------------------------------------------------------------
         t_id = {"compra_fase": "TER-01", "compra_reserva": "TER-01", "parque_industrial": "TER-02",
                 "rural_compatible": "TER-03"}[c["terreno"]]
         reserva = c["terreno"] == "compra_reserva" or c["escala_objetivo"] is not None
-        org = ("12C terreno conceptual " + ("con reserva para la escala objetivo y rendering" if reserva
-               else "sin reserva (solo la fase)") + "; superficie conceptual ≠ proyecto ejecutivo")
-        B.add("TER-COMPRA", "TERRENO", "compra", "TERRENO", "Compra de terreno", t_id, D["terreno_m2"], "m²", org,
-              etiqueta="REUTILIZABLE")
+        pt = D["proc"]["terreno_adquirido"]
+        org = (f"12C terreno ADQUIRIDO ({pt['TIPO']}; {pt['ESCENARIO_FUENTE']}): " + ("con reserva para la escala objetivo y rendering"
+               if reserva else "= requerido por la fase") + "; superficie conceptual ≠ proyecto ejecutivo")
+        B.add("TER-COMPRA", "TERRENO", "compra", "TERRENO", "Compra de terreno", t_id, D["terreno_adq"], "m²", org,
+              etiqueta="REUTILIZABLE", driver="terreno_adquirido", tipo_area="terreno")
         B.add("TER-GASTOS", "TERRENO", "gastos", "TERRENO", "Gastos asociados a la compra", "TER-04", 1, "%",
               "% sobre compra de terreno (no adoptado)", etiqueta="ESPECIFICO_DE_FASE")
         B.add("TER-PREP", "TERRENO", "preparacion", "TERRENO", "Preparación inicial del sitio", "TER-05",
-              D["terreno_m2"], "m²", "= terreno conceptual 12C", etiqueta="ESCALABLE")
+              D["terreno_req"], "m²", "= terreno REQUERIDO por la fase (12C, sin reserva; la reserva no se prepara)",
+              etiqueta="ESCALABLE", driver="terreno_requerido_fase", tipo_area="terreno")
         if c["terreno"] == "parque_industrial":
             B.add("TER-PARQUE", "TERRENO", "parque", "TERRENO", "Cargo de infraestructura del parque", "TER-08", 1,
                   "lote", "1 lote; alcance según parque (DPV-16-03)", etiqueta="REUTILIZABLE")
@@ -549,24 +851,23 @@ def generar_boq(c, D=None):
                    "OC-IP": "Infraestructura pesada (bases, tanques)", "OC-EF": "Obra civil de efluentes"}
         for cid, areas in OC_MAP.items():
             q = _sum_areas(D, areas)
-            if q is None or q[1] is None:
-                continue
-            if cid == "OC-LB" and not c["laboratorio_propio"]:
+            if q is None or q[1] is None or q[2] <= TOL:
                 continue
             B.add(f"{cid}-OBRA", "OBRA_CIVIL", cid, "OBRA_CIVIL", nombres[cid], cid, q, "m²",
                   "12C Σ áreas: " + ", ".join(areas) + " (PROXY/ESTIMACIÓN; conceptual ≠ ejecutivo)",
-                  etiqueta="ESCALABLE")
+                  etiqueta="ESCALABLE", driver="areas_12c:" + "+".join(areas), tipo_area=OC_TIPO_AREA[cid])
         B.add("OC-CER-OBRA", "OBRA_CIVIL", "OC-CER", "OBRA_CIVIL", "Cerco perimetral", "OC-CER", D["perimetro_m"], "m",
-              "perímetro del rectángulo de terreno 12C (relación 1,5)",
-              etiqueta="REUTILIZABLE" if reserva else "ESCALABLE")
+              "perímetro del terreno ADQUIRIDO (DERIVADO_CAPEX: rectángulo de relación 1,5 de 12C)",
+              etiqueta="REUTILIZABLE" if reserva else "ESCALABLE", driver="perimetro_terreno", tipo_area="perimetro")
         B.add("OC-INF-OBRA", "OBRA_CIVIL", "OC-INF", "OBRA_CIVIL", "Infraestructura interna del predio", "OC-INF",
-              D["terreno_m2"], "m²", "= terreno conceptual 12C; alcance PENDIENTE", etiqueta="ESCALABLE")
+              1, "lote", "1 lote: no se aplica un USD/m² al terreno (pluviales, cloaca interna, iluminación exterior; alcance PENDIENTE)",
+              etiqueta="ESCALABLE", tipo_area="lote")
         # ---- C. PROCESO (lotes RFQ + EQ hijos) --------------------------------------------------
         llave = c["modalidad_linea"] == "llave_en_mano"
         if llave:
             B.add("PQ-L11", "PROCESO", "linea", "PROCESO", "Línea completa llave en mano (L1–L5)", "PQ-L11",
-                  1, "lote", "ritmo operativo = aves/día ÷ horas netas", capacidad=round(ritmo, 1), ucap="aves/h",
-                  etiqueta="MIXTA")
+                  1, "lote", "capacidad NOMINAL requerida de 05 (no aves/día ÷ horas)", capacidad=round(nom_linea, 1), ucap="aves/h",
+                  etiqueta="MIXTA", driver="ritmo_nominal_requerido", detalle=det_linea)
         lotes = {"PQ-L1": "Recepción de vivo", "PQ-L2": "Faena", "PQ-L3": "Evisceración", "PQ-L4": "Enfriamiento",
                  "PQ-L5": "Clasificación, trozado y deshuese", "PQ-L6": "Coproductos", "PQ-L7": "Packaging"}
         eqs = leer_equipos()
@@ -576,41 +877,37 @@ def generar_boq(c, D=None):
             nv = nivel_eq(f, c["aves_dia"], autom)
             if eq_aplica(n, nv, c):
                 hijos.setdefault(padre_de_eq(n), []).append((f, nv))
-        for l, nom in lotes.items():
+        for l, nom_l in lotes.items():
             if l not in hijos:
                 continue
             en_l11 = llave and l in ("PQ-L1", "PQ-L2", "PQ-L3", "PQ-L4", "PQ-L5")
-            B.add(l, "PROCESO", "linea", "PROCESO", f"Lote {l[3:]} — {nom}", l, 1, "lote",
-                  "ritmo operativo = aves/día ÷ horas netas (capacidad contractual DPV-097)",
-                  capacidad=round(ritmo, 1), ucap="aves/h", padre="PQ-L11" if en_l11 else "",
-                  incluido="Sí" if en_l11 else "No", etiqueta="MIXTA")
+            B.add(l, "PROCESO", "linea", "PROCESO", f"Lote {l[3:]} — {nom_l}", l, 1, "lote",
+                  "capacidad NOMINAL requerida de 05 (no aves/día ÷ horas); garantizada por contrato (DPV-097)",
+                  capacidad=round(nom_linea, 1), ucap="aves/h", padre="PQ-L11" if en_l11 else "",
+                  incluido="Sí" if en_l11 else "No", etiqueta="MIXTA", driver="ritmo_nominal_requerido", detalle=det_linea)
         B.add("EQ-LIM", "PROCESO", "higiene", "PROCESO", "Limpieza e higiene (espuma, esterilizadores)", "EQ-LIM",
               1, "lote", "1 lote; puestos según 12C/14A", etiqueta="ESCALABLE")
         # ---- SUBPRODUCTOS ----------------------------------------------------------------------
-        sub_t = sum(D["util"]["medio"].get(k, 0) or 0 for k in ("segregable_sangre_recuperada_t_dia",
-                                                                "segregable_plumas_t_dia",
-                                                                "segregable_visceras_t_dia",
-                                                                "segregable_cabeza_t_dia"))
+        sub_t = D["util"]["medio"]["masa_biologica_potencialmente_segregable_en_origen_t_dia"]
         B.add("SB-L9", "SUBPRODUCTOS", "lote", "SUBPRODUCTOS", "Lote L9 — sangre, plumas, vísceras, contenedores",
-              "SB-L9", 1, "lote", "09C masa segregable (sangre+plumas+vísceras+cabeza)", capacidad=round(sub_t, 2),
-              ucap="t/d", etiqueta="ESCALABLE")
+              "SB-L9", 1, "lote", "09C masa biológica segregable en origen (subproductos; NO sólidos del efluente)",
+              capacidad=round(sub_t, 2), ucap="t/d", etiqueta="ESCALABLE",
+              driver="masa_biologica_potencialmente_segregable_en_origen_t_dia")
         if c["subproductos"] == "B_basico_propio":
             B.add("SB-BAS", "SUBPRODUCTOS", "basico", "SUBPRODUCTOS", "Tratamiento básico propio de subproductos",
                   "SB-BAS", 1, "lote", "09C masa segregable; tecnología PENDIENTE (DEC-027)",
-                  capacidad=round(sub_t, 2), ucap="t/d", etiqueta="ESCALABLE")
+                  capacidad=round(sub_t, 2), ucap="t/d", etiqueta="ESCALABLE",
+                  driver="masa_biologica_potencialmente_segregable_en_origen_t_dia")
         if c["rendering"]:
             B.add("SB-REN", "SUBPRODUCTOS", "rendering", "SUBPRODUCTOS", "Rendering propio (FUTURO)", "SB-REN", 1,
                   "lote", "solo arquitectura futura / sensibilidad", capacidad=round(sub_t, 2), ucap="t/d",
                   fase="FUTURO", etiqueta="ESPECIFICO_DE_FASE")
         # ---- D. FRÍO ---------------------------------------------------------------------------
         u = D["util"]
-        kwf_parcial = tuple(sum((u[n].get(k) or 0) for k in (
-            "carga_sensible_preliminar_producto_kwf_bajo_8h", "carga_enfriamiento_agua_reposicion_chiller_kwf_bajo_8h",
-            "cargas_adicionales_ilustrativas_kwf", "carga_media_congelacion_producto_kwf_bajo_20h")) for n in NIVELES)
         congela = FRIO_A_PERFIL[c["frio"]][1]
         B.add("FR-PAQ", "FRIO", "paquete", "FRIO", "Paquete de frío (RFQ 2)", "FR-PAQ", 1, "lote",
-              "carga total PENDIENTE (DPV-109); cota inferior = Σ cargas preliminares 09C",
-              capacidad=f"≥ {kwf_parcial[1]:.0f}", ucap="kWf", etiqueta="ESCALABLE", estado="COTA_INFERIOR")
+              "capacidad de diseño PENDIENTE (DPV-109): no se elige entre carga física y benchmark", capacidad="",
+              ucap="kWf", etiqueta="ESCALABLE", estado="PENDIENTE", driver="capacidad_diseno_frio", detalle=detalle_frio(D))
         camaras = _sum_areas(D, ("camaras_refrigeradas", "camaras_congeladas", "tunel_congelado",
                                  "antecamaras_preparacion", "camara_subproductos", "camara_decomisos"))
         hijos_frio = [("FR-PAN", "Paneles aislantes de cámaras", camaras, "m²", "12C m² de cámaras", "ESCALABLE"),
@@ -620,9 +917,9 @@ def generar_boq(c, D=None):
                       ("FR-PIP", "Piping y aislación", 1, "lote", "alcance del paquete", "ESCALABLE"),
                       ("FR-REF", "Refrigerante / fluido secundario", 1, "lote", "tecnología abierta (DEC-046)", "ESCALABLE"),
                       ("FR-CTL", "Controles de frío", 1, "lote", "alcance del paquete", "ESCALABLE"),
-                      ("FR-AGH", "Agua helada / hielo para chiller (EQ-37)", _escalar(
-                          tuple(u[n].get("carga_enfriamiento_agua_reposicion_chiller_kwf_bajo_8h") for n in NIVELES), 1),
-                       "kWf", "09C carga de reposición del chiller (preliminar)", "ESCALABLE"),
+                      ("FR-AGH", "Agua helada / hielo para chiller (EQ-37)", None, "kWf",
+                       "capacidad PENDIENTE; 09C solo da la carga parcial de reposición del chiller "
+                       f"({u['medio']['carga_enfriamiento_agua_reposicion_chiller_kwf_bajo_8h']:.0f} kWf, no es capacidad)", "ESCALABLE"),
                       ("FR-DCK", "Equipamiento de docks (EQ-65)", None, "unidad", "posiciones de dock PENDIENTES (D12-01)", "DUPLICABLE")]
         if congela:
             hijos_frio.append(("FR-TUN", "Túnel de congelado (EQ-57/58)",
@@ -631,56 +928,65 @@ def generar_boq(c, D=None):
         for cid, nom, q, un, org, et in hijos_frio:
             B.add(cid, "FRIO", "componente", "FRIO", nom, cid, q, un, org, padre="FR-PAQ", incluido="Sí", etiqueta=et)
         # ---- E. AGUA ---------------------------------------------------------------------------
-        cap = _u(D, "agua_captada_m3_dia")
+        cap = D["proc"]["agua_captada_m3_dia"]["VALOR"]
         qmax = _u(D, "caudal_horario_maximo_ilustrativo_m3_h")
         B.add("AG-CAP", "AGUA", "captacion", "UTILITIES", "Captación o conexión de agua", "AG-CAP", cap, "m³/d",
-              "09C agua captada (m³/d); fuente según sitio", etiqueta="ESCALABLE")
+              "09C agua captada (m³/d; 15/25/38 L/ave); fuente según sitio", etiqueta="ESCALABLE", driver="agua_captada_m3_dia")
         B.add("AG-ALM", "AGUA", "almacenamiento", "UTILITIES", "Almacenamiento de agua (EQ-72)", "AG-ALM",
               tuple(cap[i] * DIAS_RESERVA_AGUA[i] for i in range(3)), "m³",
-              "agua captada × días de reserva 0,5/1/2 (SUP-16-15)", etiqueta="DUPLICABLE")
+              "DERIVADO_CAPEX: agua captada × días de reserva 0,5/1/2 (SUP-16-15)", etiqueta="DUPLICABLE",
+              driver="agua_captada_m3_dia×SUP-16-15")
         B.add("AG-TRA", "AGUA", "tratamiento", "UTILITIES", "Tratamiento de agua", "AG-TRA", qmax, "m³/h",
-              "09C caudal horario máximo ilustrativo [SUPUESTO]", etiqueta="ESCALABLE")
-        B.add("AG-BOM", "AGUA", "bombeo", "UTILITIES", "Bombeo", "AG-BOM", qmax, "m³/h", "ídem", etiqueta="DUPLICABLE")
+              "09C caudal horario máximo ilustrativo [SUPUESTO] (parámetro, sin tecnología)", etiqueta="ESCALABLE",
+              driver="caudal_horario_maximo_ilustrativo_m3_h")
+        B.add("AG-BOM", "AGUA", "bombeo", "UTILITIES", "Bombeo", "AG-BOM", qmax, "m³/h", "ídem", etiqueta="DUPLICABLE",
+              driver="caudal_horario_maximo_ilustrativo_m3_h")
         B.add("AG-DIS", "AGUA", "distribucion", "UTILITIES", "Distribución interna de agua", "AG-DIS",
-              D["m2_construidos"], "m²", "12C m² construidos", etiqueta="ESCALABLE")
+              D["m2_construidos"], "m²", "12C m² construidos", etiqueta="ESCALABLE", driver="m2_construido")
         # ---- F. EFLUENTES ----------------------------------------------------------------------
         desc = _u(D, "agua_descargada_m3_dia")
         qef = _u(D, "caudal_efluente_horario_maximo_ilustrativo_m3_h")
-        dqo = tuple(max(D["util"][n].get("metodoA_carga_DQO_kg_dia") or 0, D["util"][n].get("metodoB_carga_DQO_kg_dia") or 0)
-                    for n in NIVELES)
+        dqo_a, dqo_b = _u(D, "metodoA_carga_DQO_kg_dia"), _u(D, "metodoB_carga_DQO_kg_dia")
         B.add("EF-PAQ", "EFLUENTES", "paquete", "EFLUENTES", "Paquete de tratamiento de efluentes (RFQ 3)", "EF-PAQ",
-              1, "lote", "09C agua descargada; tecnología abierta (DEC-043)", capacidad=round(desc[1], 1), ucap="m³/d",
-              etiqueta="ESCALABLE")
+              1, "lote", "09C agua descargada (= agua × fracción a efluente); tecnología abierta (DEC-043)",
+              capacidad=round(desc[1], 1), ucap="m³/d", etiqueta="ESCALABLE", driver="agua_descargada_m3_dia",
+              detalle=f"efluente {desc[0]:.0f}/{desc[1]:.0f}/{desc[2]:.0f} m³/d; DQO A {dqo_a[1]:.0f} / B {dqo_b[1]:.0f} kg/d; "
+                      "lodos PENDIENTES; tecnología NO elegida")
         bio_aplica = c["tecnologia_efluentes"] != "cloaca"
-        for cid, nom, q, un, org in [("EF-PRE", "Pretratamiento (EQ-70)", qef, "m³/h", "09C caudal máx. ilustrativo"),
-                                     ("EF-ECU", "Ecualización", desc, "m³", "09C volumen diario descargado (tiempo de retención PENDIENTE)"),
-                                     ("EF-DAF", "Separación fisicoquímica", qef, "m³/h", "09C caudal máx. ilustrativo"),
-                                     ("EF-BIO", "Tratamiento biológico", dqo, "kg DQO/d", "09C carga DQO (máx. de métodos A/B)"),
+        for cid, nom, q, un, org in [("EF-PRE", "Pretratamiento (EQ-70)", qef, "m³/h", "09C caudal máx. ilustrativo (parámetro)"),
+                                     ("EF-ECU", "Ecualización", None, "m³", f"volumen PENDIENTE: tiempo de retención no definido "
+                                      f"(09C: {desc[1]:.0f} m³/d descargados; no se asumen 24 h)"),
+                                     ("EF-DAF", "Separación fisicoquímica", qef, "m³/h", "09C caudal máx. ilustrativo (parámetro)"),
+                                     ("EF-BIO", "Tratamiento biológico", None, "kg DQO/d",
+                                      f"carga parametrizada, no elegida: método A {dqo_a[1]:.0f} / método B {dqo_b[1]:.0f} kg DQO/d (09C)"),
                                      ("EF-LOD", "Manejo de lodos", None, "kg MS/d", "lodos PENDIENTES (DPV-114)"),
                                      ("EF-INF", "Infraestructura asociada", 1, "lote", "alcance del paquete")]:
             if cid == "EF-BIO" and not bio_aplica:
                 continue
             B.add(cid, "EFLUENTES", "componente", "EFLUENTES", nom, cid, q, un, org, padre="EF-PAQ", incluido="Sí")
         # ---- G/H/I. ELECTRICIDAD, TÉRMICO, AIRE ------------------------------------------------
-        kwm = _u(D, "potencia_media_equivalente_proceso_kw_bajo_14h")
+        kwm = _u(D, "potencia_media_equivalente_proceso_kw_bajo_14h")      # potencia MEDIA (texto); nunca kWh→kW
+        if "D01" in _MUT:
+            kwm_q = _u(D, "kwh_total_dia_operativo")
         crit = tuple(sum((D["util"][n].get(k) or 0) for k in (
             "carga_critica_ilustrativa_camaras_frio_kw", "carga_critica_ilustrativa_efluentes_minimo_kw",
             "carga_critica_ilustrativa_control_it_seguridad_kw", "carga_critica_ilustrativa_iluminacion_emergencia_kw"))
             for n in NIVELES)
         B.add("EL-ACO", "ELECTRICIDAD", "acometida", "UTILITIES", "Acometida de media tensión", "EL-ACO", 1, "lote",
               "alcance según distribuidora", etiqueta="REUTILIZABLE")
-        B.add("EL-TRA", "ELECTRICIDAD", "transformacion", "UTILITIES", "Transformación", "EL-TRA", None, "kVA",
-              f"demanda máxima PENDIENTE (09C); cota inferior: potencia media de proceso ≈ {kwm[1]:.0f} kW",
-              etiqueta="ESCALABLE", estado="PENDIENTE")
+        B.add("EL-TRA", "ELECTRICIDAD", "transformacion", "UTILITIES", "Transformación", "EL-TRA",
+              kwm_q if "D01" in _MUT else None, "kVA",
+              f"pico PENDIENTE (09C); NO se dimensiona con la potencia media ({kwm[1]:.0f} kW) ni con kWh/día",
+              etiqueta="ESCALABLE", estado="PENDIENTE", driver="transformador_kva")
         B.add("EL-TAB", "ELECTRICIDAD", "tableros", "UTILITIES", "Tableros", "EL-TAB", 1, "lote", "alcance según ingeniería",
               etiqueta="ESCALABLE")
         B.add("EL-DIS", "ELECTRICIDAD", "distribucion", "UTILITIES", "Distribución eléctrica e iluminación", "EL-DIS",
-              D["m2_construidos"], "m²", "12C m² construidos", etiqueta="ESCALABLE")
+              D["m2_construidos"], "m²", "12C m² construidos", etiqueta="ESCALABLE", driver="m2_construido")
         B.add("EL-UPS", "ELECTRICIDAD", "ups", "UTILITIES", "UPS y control", "EL-UPS", None, "kVA",
               "carga de control/IT PENDIENTE", etiqueta="DUPLICABLE")
         B.add("EL-GEN", "ELECTRICIDAD", "respaldo", "UTILITIES", "Generación de respaldo (EQ-73)", "EL-GEN", None, "kVA",
-              f"política de respaldo abierta (DEC-047); carga crítica ilustrativa ≈ {crit[1]:.0f} kW (cota inferior)",
-              etiqueta="DUPLICABLE")
+              f"PENDIENTE: política de respaldo abierta (DEC-047); 09C da cargas críticas ILUSTRATIVAS (Σ ≈ {crit[1]:.0f} kW, "
+              "derivado CAPEX, no dimensiona)", etiqueta="DUPLICABLE", driver="grupo_electrogeno_kva")
         kwt = tuple(sum((D["util"][n].get(k) or 0) for k in (
             "potencia_termica_media_equivalente_escaldado_kw_bajo_8h",)) for n in NIVELES)
         B.add("TE-GEN", "TERMICO", "generacion", "UTILITIES", "Caldera / generador de agua caliente (EQ-14)", "TE-GEN",
@@ -721,7 +1027,7 @@ def generar_boq(c, D=None):
                 B.add(f["id"], "PROCESO" if padre.startswith("PQ") else B.filas[[x["ACTIVO_ID"] for x in B.filas].index(padre)]["MODULO"],
                       f["grupo"], [x for x in B.filas if x["ACTIVO_ID"] == padre][0]["BLOQUE"], f["equipo"], "",
                       1, "unidad", "08 matriz_equipos.csv (nivel por escala)", padre=padre, incluido="Sí",
-                      capacidad=round(ritmo, 1), ucap="aves/h",
+                      capacidad=round(nom_linea, 1), ucap="aves/h", driver="08:" + f["id"],
                       etiqueta=etiqueta_modularidad(f["modularidad"]), nivel=nv, estado="INFORMATIVO")
     else:
         B.add("OC-ADM-OBRA", "OBRA_CIVIL", "OC-ADM", "OBRA_CIVIL", "Oficina comercial / administrativa (asset-light)",
@@ -765,8 +1071,10 @@ def generar_boq(c, D=None):
                 ("INC-TER", "Terreno de incubadora", None, "m²", "sitio separado; m² PENDIENTES", "REUTILIZABLE"),
                 ("INC-EDI", "Edificio de incubación", None, "m²", "sin programa de áreas (DPV-16-13)", "ESCALABLE"),
                 ("INC-HUE", "Sala de huevo fértil", I["capacidad_almacen_huevos"], "huevos", "14B capacidad de almacén (con margen SUP-146)", "ESCALABLE"),
-                ("INC-SET", "Setters", I["posiciones_setter_diseno"], "posiciones", "14B posiciones de setter por cadencia (SUP-147)", "DUPLICABLE"),
-                ("INC-HAT", "Hatchers", I["posiciones_hatcher_diseno"], "posiciones", "14B posiciones de hatcher por cadencia (SUP-147)", "DUPLICABLE"),
+                ("INC-SET", "Setters", I["posiciones_setter_diseno"], "posiciones",
+                 f"14B posiciones de setter, CADENCIA_NACIMIENTOS = {c['cadencia_nacimientos']} (escenario), margen {c['margen_capacidad_incubacion']:.0%}", "DUPLICABLE"),
+                ("INC-HAT", "Hatchers", I["posiciones_hatcher_diseno"], "posiciones",
+                 f"14B posiciones de hatcher, CADENCIA_NACIMIENTOS = {c['cadencia_nacimientos']} (escenario), margen {c['margen_capacidad_incubacion']:.0%}", "DUPLICABLE"),
                 ("INC-TRF", "Transferencia", 1, "lote", "DEC-078", "REEMPLAZABLE"),
                 ("INC-CLA", "Clasificación y conteo", 1, "lote", "14B pollitos/h PENDIENTE (horas de ventana)", "REEMPLAZABLE"),
                 ("INC-VAC", "Vacunación", 1, "lote", "DEC-078", "REEMPLAZABLE"),
@@ -777,7 +1085,9 @@ def generar_boq(c, D=None):
                 ("INC-RES", "Respaldo eléctrico", None, "kVA", "carga PENDIENTE", "DUPLICABLE"),
                 ("INC-EXP", "Expedición de pollitos", 1, "lote", "alcance PENDIENTE", "ESCALABLE"),
                 ("INC-AUX", "Equipamiento auxiliar", 1, "lote", "alcance PENDIENTE", "ESCALABLE")]:
-            B.add(cid, "INCUBACION", "incubacion", "INCUBACION", nom, cid, q, un, org, etiqueta=et)
+            B.add(cid, "INCUBACION", "incubacion", "INCUBACION", nom, cid, q, un, org, etiqueta=et,
+                  driver={"INC-HUE": "capacidad_almacen_huevos", "INC-SET": "posiciones_setter_diseno",
+                          "INC-HAT": "posiciones_hatcher_diseno"}.get(cid, ""))
     if c["reproductoras"]:
         B.add("REP-GAL", "REPRODUCTORAS", "galpones", "INCUBACION", "Galpones de reproductoras (FUTURO)", "REP-GAL",
               D["reproductoras"], "plaza_reproductora", "14B hembras en postura equivalentes (DPV-045); recría y machos PENDIENTES",
@@ -817,9 +1127,13 @@ def generar_boq(c, D=None):
         sfx = "" if titular == "EMPRESA" else "-INT"
         plazas = D["plazas_alojamiento"] * frac
         org = f"14B/03 plazas de alojamiento × {frac:.2f} ({'propias' if titular == 'EMPRESA' else 'integrados: NO es CAPEX de la empresa'})"
+        gc = D["galpones_conceptuales"]
         B.add("GRA-GAL" + sfx, "GRANJAS", "galpones", "GRANJAS", "Galpones de engorde (alcance de equipamiento PENDIENTE)",
               "GRA-GAL", plazas, "plaza", org, capacidad=round(D["m2_galpon"] * frac), ucap="m²", titular=titular,
-              etiqueta="DUPLICABLE")
+              etiqueta="DUPLICABLE", driver="plazas_alojamiento",
+              detalle=f"plazas TOTALES {plazas:,.0f} (03) · m² productivos {D['m2_galpon'] * frac:,.0f} (03) · galpones conceptuales "
+                      + " / ".join(f"{gc[t] * frac:.1f} de {t} m²" for t in gc) + " (03, sin redondear) · granjas: PENDIENTE "
+                      "(plazas ≠ capacidad de una granja; DPV-048)")
         B.add("GRA-TER" + sfx, "GRANJAS", "terreno", "GRANJAS", "Terreno de granjas", "GRA-TER", None, "m²",
               f"m² de galpón {D['m2_galpon'] * frac:,.0f} = cota inferior; distancias de bioseguridad PENDIENTES",
               titular=titular, etiqueta="DUPLICABLE")
@@ -1194,6 +1508,24 @@ def bloques_activos(c):
     return act
 
 
+GRUPOS_EVIDENCIA = {"E1_E2": ("E1", "E2"), "E3": ("E3",), "E4": ("E4",), "E5": ("E5",)}
+
+
+def calidad_monto(niveles):
+    """Etiqueta del monto con precio según la evidencia que lo compone (auditoría 16)."""
+    if not niveles:
+        return "SIN_MONTO"
+    if niveles <= {"E1", "E2"}:
+        return "MONTO_COTIZADO_E1_E2"
+    if niveles & {"E1", "E2"}:
+        return "MONTO_MIXTO_CON_COTIZACIONES"
+    if "E3" in niveles:
+        return "MONTO_MIXTO_SIN_COTIZACIONES"
+    if "E4" in niveles:
+        return "MONTO_CON_REFERENCIAS_DEBILES_E4"
+    return "MONTO_SOLO_SUPUESTOS_E5"
+
+
 def resumir(filas, c):
     act = bloques_activos(c)
     out = {}
@@ -1222,12 +1554,15 @@ def resumir(filas, c):
             "CONCEPTOS_PRECIO_PARCIAL": sum(1 for f in cost if f["ESTADO_COSTO"] in ("PRECIO_PARCIAL", "IVA_NO_SEPARADO")),
             "ALCANCE_PENDIENTE": sum(1 for f in emp if f["ESTADO_COSTO"] == "ALCANCE_PENDIENTE"),
             "ACTIVOS_BOQ": len(fs),
-            **{f"CAPEX_{e}_USD": por_e[e] if con else None for e in EVIDENCIAS},
-            "CAPEX_CONOCIDO_USD": (por_e["E1"] + por_e["E2"]) if con else None,
-            "CAPEX_ESTIMADO_USD": (por_e["E3"] + por_e["E4"] + por_e["E5"]) if con else None,
-            "CAPEX_CON_PRECIO_USD": tot if con else None,
-            "CAPEX_CON_PRECIO_LOW_USD": sum(f["COSTO_INSTALADO_LOW_USD"] for f in con) if rango_ok else None,
-            "CAPEX_CON_PRECIO_HIGH_USD": sum(f["COSTO_INSTALADO_HIGH_USD"] for f in con) if rango_ok else None,
+            # Montos SEPARADOS por nivel de evidencia: nunca se llama "CAPEX conocido" a referencias E4
+            **{f"CAPEX_{g}_USD": (sum(por_e[e] for e in GRUPOS_EVIDENCIA[g]) if con else None) for g in GRUPOS_EVIDENCIA},
+            **{f"N_CONCEPTOS_{g}": sum(1 for f in con if f["NIVEL_EVIDENCIA"] in GRUPOS_EVIDENCIA[g]) for g in GRUPOS_EVIDENCIA},
+            "N_CONCEPTOS_PENDIENTES": len(cost) - len(con),
+            "CAPEX_PENDIENTE_CONCEPTOS": len(cost) - len(con),     # conteo: los faltantes no tienen monto
+            "MONTO_CON_PRECIO_USD": tot if con else None,
+            "MONTO_CON_PRECIO_LOW_USD": sum(f["COSTO_INSTALADO_LOW_USD"] for f in con) if rango_ok else None,
+            "MONTO_CON_PRECIO_HIGH_USD": sum(f["COSTO_INSTALADO_HIGH_USD"] for f in con) if rango_ok else None,
+            "CALIDAD_MONTO": calidad_monto({f["NIVEL_EVIDENCIA"] for f in con}),
             "COBERTURA_CONCEPTOS_PCT": (100 * len(con) / len(cost)) if cost else None,
         }
         if not cost:
@@ -1396,25 +1731,25 @@ def expansion(cfg_nombre="C1", terreno="compra_fase", base=None):
 # 10. MATRIZ RFQ
 # ---------------------------------------------------------------------------------------------
 def matriz_rfq():
-    rng, frio = {}, {}
+    rng = {}
     for E in (2500, 20000):
-        fl, _, D = correr(preset("C3", aves_dia=E))
+        _, _, D = correr(preset("C1", aves_dia=E))
         rng[E] = D
-        frio[E] = [x for x in fl if x["ACTIVO_ID"] == "FR-PAQ"][0]["CAPACIDAD"].replace("≥", "").strip()
     r0, r1 = rng[2500], rng[20000]
+    res20 = correr(preset("C1", aves_dia=2500, terreno="compra_reserva"))[2]["terreno_adq"][1]
     u0, u1 = r0["util"]["medio"], r1["util"]["medio"]
     p = "Candidatos relevados sin selección en 08_maquinaria/proveedores_preliminares.md"
     ni = "No identificados (relevar; no se inventan proveedores)"
     filas = [
-        ("Línea de faena, evisceración y enfriamiento (L1–L4 y L11)", "linea_faena", "Base de diseño y 31 campos de 08 requerimientos_cotizacion.md; capacidad garantizada (DPV-097); inmersión y aire por separado; desglose por capas C01–C19", f"{r0['ritmo_aves_h']:.0f}–{r1['ritmo_aves_h']:.0f} aves/h (2.500–20.000 aves/día, 8 h netas)", "2 escalas del rango + cómo se amplía", p, 3, "PQ-L1;PQ-L2;PQ-L3;PQ-L4;PQ-L11", "DPV-097;DPV-095;DPV-16-01;DPV-16-05"),
+        ("Línea de faena, evisceración y enfriamiento (L1–L4 y L11)", "linea_faena", "Base de diseño y 31 campos de 08 requerimientos_cotizacion.md; capacidad garantizada (DPV-097); inmersión y aire por separado; desglose por capas C01–C19", f"OPERATIVO {r0['ritmo_operativo'][1]:.0f}–{r1['ritmo_operativo'][1]:.0f} aves/h; NOMINAL requerido {r0['ritmo_nominal'][0]:.0f}–{r1['ritmo_nominal'][2]:.0f} aves/h (05, R 0,95–0,82); diseño y garantizada PENDIENTES (2.500–20.000 aves/día, 8 h netas, 1 línea)", "2 escalas del rango + cómo se amplía", p, 3, "PQ-L1;PQ-L2;PQ-L3;PQ-L4;PQ-L11", "DPV-097;DPV-095;DPV-16-01;DPV-16-05"),
         ("Trozado, deshuese y packaging (L5, L7)", "linea_faena", "Mix por configuración A/B/C", "ídem", "por configuración", p, 3, "PQ-L5;PQ-L7", "DPV-037;DPV-16-01"),
-        ("Coproductos (L6) y subproductos (L9)", "linea_faena", "Garras, CMS solo con comprador; sangre, plumas, vísceras", f"{sum((u0.get(k) or 0) for k in ('segregable_sangre_recuperada_t_dia','segregable_plumas_t_dia','segregable_visceras_t_dia','segregable_cabeza_t_dia')):.1f}–{sum((u1.get(k) or 0) for k in ('segregable_sangre_recuperada_t_dia','segregable_plumas_t_dia','segregable_visceras_t_dia','segregable_cabeza_t_dia')):.1f} t/d", "1", p, 3, "PQ-L6;SB-L9;SB-BAS", "DEC-027;DPV-16-01"),
-        ("Paquete de frío (cámaras, túneles, sala de máquinas, agua helada)", "frio", "Balance frigorífico por escala y perfil P1–P3; verano de diseño del sitio; refrigerante abierto", f"≥ {frio[2500]}–{frio[20000]} kWf (cota inferior = FR-PAQ del BOQ, C3 perfil P2)", "1 paquete por escala", p, 3, "FR-PAQ;FR-*", "DPV-109;DPV-096;DEC-046"),
+        ("Coproductos (L6) y subproductos (L9)", "linea_faena", "Garras, CMS solo con comprador; sangre, plumas, vísceras", f"{u0['masa_biologica_potencialmente_segregable_en_origen_t_dia']:.1f}–{u1['masa_biologica_potencialmente_segregable_en_origen_t_dia']:.1f} t/d de masa biológica segregable (09C; no son sólidos de efluente)", "1", p, 3, "PQ-L6;SB-L9;SB-BAS", "DEC-027;DPV-16-01"),
+        ("Paquete de frío (cámaras, túneles, sala de máquinas, agua helada)", "frio", "Balance frigorífico por escala y perfil P1–P3; verano de diseño del sitio; refrigerante abierto", "2.500: " + detalle_frio(r0) + " || 20.000: " + detalle_frio(r1), "1 paquete por escala", p, 3, "FR-PAQ;FR-*", "DPV-109;DPV-096;DEC-046"),
         ("Pretratamiento y tratamiento de efluentes", "efluentes", "Por escenario de carga; límites de vuelco del sitio (DPV-106); superficie (DPV-144)", f"{u0.get('agua_descargada_m3_dia', 0):.0f}–{u1.get('agua_descargada_m3_dia', 0):.0f} m³/d", "por tecnología", p, 3, "EF-PAQ;EF-*;OC-EF", "DPV-114;DPV-144;DEC-043"),
         ("Acometida, transformación, tableros y generación de respaldo", "electrico", "Lista de cargas consolidada (DEC-048); demanda máxima; política de respaldo (DEC-047)", f"potencia media de proceso {u0.get('potencia_media_equivalente_proceso_kw_bajo_14h', 0):.0f}–{u1.get('potencia_media_equivalente_proceso_kw_bajo_14h', 0):.0f} kW (pico PENDIENTE)", "1", ni + "; distribuidora eléctrica del sitio", 3, "EL-*", "DPV-095;DPV-16-11"),
         ("Caldera / agua caliente, aire comprimido, agua", "electrico", "Fuente térmica abierta (DEC-045)", "pico PENDIENTE", "1", p, 3, "TE-*;AC-COM;AG-*", "DPV-095"),
         ("Obra civil por categoría (USD/m²)", "obra", "Precio por m² SEPARADO por categoría: proceso húmedo, frío, docks, depósitos, salas técnicas, personal, oficinas, exteriores, efluentes", f"{r0['m2_construidos'][1]:.0f}–{r1['m2_construidos'][1]:.0f} m² construidos (medio, conceptual)", "14 categorías", ni + "; constructoras con antecedentes en plantas alimentarias", 3, "OC-*", "DPV-16-02"),
-        ("Terreno por corredor", "obra", "USD/m² por tipo (industrial, parque, rural compatible) + preparación + acceso + conexiones", f"{r0['terreno_m2'][1]:.0f}–{r1['terreno_m2'][1]:.0f} m² (fase, medio)", "por corredor de la lista corta (DEC-055)", ni + "; inmobiliarias / parques industriales", 3, "TER-*", "DPV-16-03;DPV-16-11"),
+        ("Terreno por corredor", "obra", "USD/m² por tipo (industrial, parque, rural compatible) + preparación + acceso + conexiones", f"requerido por la fase {r0['terreno_req'][1]:.0f}–{r1['terreno_req'][1]:.0f} m² (medio, función 12C sin reserva); referencia publicada 12C {r0['terreno_12c_ref'][1]:.0f}–{r1['terreno_12c_ref'][1]:.0f} m²; adquirido con reserva para 20.000 {res20:.0f} m² (12C objetivo_20000)", "por corredor de la lista corta (DEC-055)", ni + "; inmobiliarias / parques industriales", 3, "TER-*", "DPV-16-03;DPV-16-11"),
         ("Incubación (setters, hatchers, sala de huevo, HVAC)", "incubacion", "Setter y hatcher por separado; cadencia; vacunación (DEC-078)", "posiciones 14B por escala", "por escala", p, 3, "INC-*", "DPV-153;DPV-16-13"),
         ("Planta de alimento", "alimento", "t/h requerida de 14B (no catálogo sobredimensionado); forma física DEC-076", "0,9–41 t/h según escala y factores (SUP-148)", "1", p, 3, "ALI-*", "DPV-158;DPV-16-15"),
         ("Vehículos por flujo (chasis, carrocería, frío, cajones)", "vehiculos", "Capacidad útil validada por flujo (DPV-084); separar chasis / carrocería / equipo de frío / jaulas", "flota por flujo de 12B", "por flujo", ni + "; concesionarios y carroceros", 3, "VEH-*;CAR-*;FRI-*;AUX-*;JAU-*", "DPV-084;DPV-16-10"),
@@ -1454,8 +1789,9 @@ def escribir(ruta, filas, campos):
 CAMPOS_ESC = ["ESCENARIO", "CONFIGURACION", "ESCALA_AVES_DIA", "DIAS_ANIO", "ARQUITECTURA", "FECHA_BASE", "MONEDA",
               "BLOQUE", "ESTADO_BLOQUE", "ACTIVOS_BOQ", "CONCEPTOS_COSTEABLES", "CONCEPTOS_CON_PRECIO",
               "CONCEPTOS_SIN_PRECIO", "CONCEPTOS_SIN_CANTIDAD", "CONCEPTOS_PRECIO_PARCIAL", "ALCANCE_PENDIENTE",
-              "CAPEX_E1_USD", "CAPEX_E2_USD", "CAPEX_E3_USD", "CAPEX_E4_USD", "CAPEX_E5_USD", "CAPEX_CONOCIDO_USD",
-              "CAPEX_ESTIMADO_USD", "CAPEX_CON_PRECIO_USD", "CAPEX_CON_PRECIO_LOW_USD", "CAPEX_CON_PRECIO_HIGH_USD",
+              "CAPEX_E1_E2_USD", "CAPEX_E3_USD", "CAPEX_E4_USD", "CAPEX_E5_USD", "N_CONCEPTOS_E1_E2", "N_CONCEPTOS_E3",
+              "N_CONCEPTOS_E4", "N_CONCEPTOS_E5", "N_CONCEPTOS_PENDIENTES", "CAPEX_PENDIENTE_CONCEPTOS", "CALIDAD_MONTO",
+              "MONTO_CON_PRECIO_USD", "MONTO_CON_PRECIO_LOW_USD", "MONTO_CON_PRECIO_HIGH_USD",
               "COBERTURA_CONCEPTOS_PCT", "COBERTURA_VALOR", "TOTAL_PRELIMINAR", "CAPEX_TERCEROS_INFORMATIVO_USD",
               "CAPEX_FUTURO_INFORMATIVO_USD", "ALERTAS"]
 CAMPOS_EXP = ["TRAYECTORIA", "ETAPA", "ESCALA", "CONFIGURACION", "TERRENO", "ACTIVO_ID", "BLOQUE", "ETIQUETA_EXPANSION",
@@ -1489,7 +1825,32 @@ def construir_salidas():
                      CONFIGURACION="C1") for r in rs]
     escribir(SALIDA_EXP, exp, CAMPOS_EXP)
     escribir(SALIDA_RFQ, matriz_rfq(), CAMPOS_RFQ)
+    escribir(SALIDA_MAPA, mapa_drivers(), CAMPOS_MAPA)
     return boq, esc, exp
+
+
+CAMPOS_MAPA = ["CONFIGURACION", "ESCALA_AVES_DIA", "DRIVER", "VALOR_BAJO", "VALOR", "VALOR_ALTO", "UNIDAD", "ARCHIVO_ORIGEN",
+               "VARIABLE_ORIGEN", "ESCENARIO_FUENTE", "TIPO", "ESTADO_EVIDENCIA", "USO_EN_CAPEX", "NOTA"]
+
+
+def mapa_drivers():
+    """Procedencia de cada driver físico usado por CAPEX (C1, C1 con reserva, C3; 4 escalas base + 7.500)."""
+    out = []
+    for etq, nombre, kw in (("C1", "C1", {}), ("C1-reserva20000", "C1", {"terreno": "compra_reserva"}), ("C3", "C3", {})):
+        for E in ESCALAS_REF + (7500,):
+            c = validar_config(preset(nombre, aves_dia=E, **kw))
+            D = drivers(c)
+            for p_ in D["proc"].values():
+                v = p_["VALOR"]
+                out.append({"CONFIGURACION": etq, "ESCALA_AVES_DIA": E, "DRIVER": p_["DRIVER"], "VALOR_BAJO": v[0], "VALOR": v[1],
+                            "VALOR_ALTO": v[2], **{k: p_[k] for k in ("UNIDAD", "ARCHIVO_ORIGEN", "VARIABLE_ORIGEN",
+                                                                       "ESCENARIO_FUENTE", "TIPO", "ESTADO_EVIDENCIA",
+                                                                       "USO_EN_CAPEX", "NOTA")}})
+            for a in D["escenarios_referencia"]:
+                out.append({"CONFIGURACION": etq, "ESCALA_AVES_DIA": E, "DRIVER": "ESCENARIO_DE_REFERENCIA", "UNIDAD": "-",
+                            "ARCHIVO_ORIGEN": ARCH["CAPEX"], "VARIABLE_ORIGEN": "input", "TIPO": "SUPUESTO_CAPEX",
+                            "ESTADO_EVIDENCIA": "ESCENARIO etiquetado", "USO_EN_CAPEX": a})
+    return out
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1511,6 +1872,61 @@ def _base_sintetica(precio=100.0, nivel="E5", fuente="TEST", rango=True, pct=Non
                  CAPACIDAD_REFERENCIA="1000" if r["METODO_COSTEO"] == "escalado" else r["CAPACIDAD_REFERENCIA"],
                  ESTADO="CON_PRECIO")
     return base
+
+
+def _csv_12c():
+    out = {}
+    with open(os.path.join(RAIZ, "09_layout_obra_civil", "escenarios_superficies.csv"), encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if r["bloque"] == "sensibilidad":
+                out[(r["escenario"], r["escala_aves_dia"], r["variable"])] = r
+    return out
+
+
+def _csv_14b():
+    out = {}
+    with open(os.path.join(RAIZ, "14_alimento_balanceado", "escenarios_upstream.csv"), encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if r["dias_faena_semana"] != "5" or r["nivel_produccion"] != "medio" or r["valor"] in ("", "None", "PENDIENTE"):
+                continue
+            if r["bloque"] == "2_incubacion_cadencia":
+                cad = r["parametros"].split(" ")[0] + " "
+                mg = r["parametros"].split("; ")[-1]
+                out[(r["bloque"], r["escala_aves_faenadas_dia"], cad, mg, r["variable"])] = float(r["valor"])
+            elif r["bloque"] == "6_planta_alimento":
+                out[(r["bloque"], r["escala_aves_faenadas_dia"], r["parametros"], "", r["variable"])] = float(r["valor"])
+            elif r["bloque"] == "7_silos":
+                par = r["parametros"].replace("dias_stock ", "")
+                par = par[:par.index("alim=") + len("alim=0.6") + 1] if "alim=0.6;" in par else par
+                out[(r["bloque"], r["escala_aves_faenadas_dia"], r["opcion"], par, r["variable"])] = float(r["valor"])
+    return out
+
+
+def _csv_09c():
+    out = {}
+    with open(os.path.join(RAIZ, "11_agua_efluentes", "escenarios_utilities.csv"), encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if r["dias_semana"] == "5" and r["valor"] not in ("", "None") and (r["escala_aves_dia"], r["nivel"], r["variable"]) not in out:
+                try:
+                    out[(r["escala_aves_dia"], r["nivel"], r["variable"])] = float(r["valor"])
+                except ValueError:
+                    pass
+    return out
+
+
+def _csv_03():
+    with open(os.path.join(RAIZ, "03_produccion_primaria", "escenarios_produccion.csv"), encoding="utf-8") as f:
+        return {r["aves_faenadas_dia"]: r for r in csv.DictReader(f) if r["perfil_mercado"] == "medio"
+                and r["nivel_desempeno"] == "medio" and r["dias_faena_semana"] == "5"}
+
+
+def _csv_12b():
+    out = {}
+    with open(os.path.join(RAIZ, "13_logistica", "escenarios_logistica.csv"), encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if r["bloque"] == "aves_vivas" and r["dias_semana"] == "5" and r["escenario"] == "normal":
+                out[(r["escala_aves_dia"], r["parametros"], r["variable"])] = r["valor"]
+    return out
 
 
 def ejecutar_tests(verbose=True):
@@ -1540,9 +1956,9 @@ def ejecutar_tests(verbose=True):
     fs, Rs, _ = correr(preset("C1", aves_dia=10000), bs, {})
     tot_filas = sum(x["COSTO_INSTALADO_USD"] for x in fs if x["COSTEA"] and x["FASE"] == "INICIAL"
                     and x["TITULAR"] == "EMPRESA" and x["ESTADO_COSTO"] == "CON_PRECIO")
-    tot_bloq = sum(Rs[b]["CAPEX_CON_PRECIO_USD"] or 0 for b in BLOQUES)
+    tot_bloq = sum(Rs[b]["MONTO_CON_PRECIO_USD"] or 0 for b in BLOQUES)
     chk("M03", "Total = suma de componentes incluidos (filas = bloques = TOTAL)",
-        abs(tot_filas - tot_bloq) < 1e-6 and abs(tot_bloq - (Rs["TOTAL"]["CAPEX_CON_PRECIO_USD"] or 0)) < 1e-6,
+        abs(tot_filas - tot_bloq) < 1e-6 and abs(tot_bloq - (Rs["TOTAL"]["MONTO_CON_PRECIO_USD"] or 0)) < 1e-6,
         f"{tot_filas:.2f} / {tot_bloq:.2f}")
     chk("M04", "Sin doble conteo: filas incluidas en paquete no se costean",
         all(x["COSTO_INSTALADO_USD"] is None for x in fs if x["INCLUIDO_EN_PAQUETE"] in ("Sí", "PENDIENTE") and x["ACTIVO_PADRE"]))
@@ -1656,7 +2072,7 @@ def ejecutar_tests(verbose=True):
     gal_int = [x for x in fs2 if x["ACTIVO_ID"] == "GRA-GAL-INT"][0]
     chk("A05", "Granjas integradas no cargan sus galpones al CAPEX de la empresa (se informan aparte)",
         gal_int["TITULAR"] == "PRODUCTOR_INTEGRADO" and rs2["GRANJAS"]["CAPEX_TERCEROS_INFORMATIVO_USD"] and
-        abs(rs2["GRANJAS"]["CAPEX_CON_PRECIO_USD"] - sum(x["COSTO_INSTALADO_USD"] for x in fs2 if x["BLOQUE"] == "GRANJAS"
+        abs(rs2["GRANJAS"]["MONTO_CON_PRECIO_USD"] - sum(x["COSTO_INSTALADO_USD"] for x in fs2 if x["BLOQUE"] == "GRANJAS"
             and x["TITULAR"] == "EMPRESA" and x["COSTEA"] and x["ESTADO_COSTO"] == "CON_PRECIO")) < 1e-6)
     fc0, rc0, _ = run("C0", aves_dia=10000)
     chk("A06", "Façon no carga planta de faena propia (ni terreno, ni proceso, ni frío, ni efluentes)",
@@ -1692,7 +2108,7 @@ def ejecutar_tests(verbose=True):
     # ---- Escala ----
     drv = {E: run("C3", aves_dia=E)[2] for E in ESCALAS_REF}
     mon = []
-    for k in ("terreno_m2", "m2_construidos"):
+    for k in ("terreno_req", "m2_construidos"):
         mon.append(all(drv[a][k][1] <= drv[b][k][1] + TOL for a, b in zip(ESCALAS_REF, ESCALAS_REF[1:])))
     for k in ("posiciones_setter_diseno", "posiciones_hatcher_diseno"):
         mon.append(all(drv[a]["incubacion"][k] <= drv[b]["incubacion"][k] + TOL for a, b in zip(ESCALAS_REF, ESCALAS_REF[1:])))
@@ -1734,7 +2150,7 @@ def ejecutar_tests(verbose=True):
     bs_mix["OC-DP"].update(NIVEL_EVIDENCIA="E4")
     fm, rm, _ = correr(preset("C1", aves_dia=10000), bs_mix, {})
     chk("E03", "E1–E5 no se mezclan: Σ por nivel = total; cada fila conserva su nivel",
-        abs(sum(rm["TOTAL"][f"CAPEX_{e}_USD"] for e in EVIDENCIAS) - rm["TOTAL"]["CAPEX_CON_PRECIO_USD"]) < 1e-6 and
+        abs(sum(rm["TOTAL"][f"CAPEX_{g}_USD"] for g in GRUPOS_EVIDENCIA) - rm["TOTAL"]["MONTO_CON_PRECIO_USD"]) < 1e-6 and
         rm["TOTAL"]["CAPEX_E4_USD"] == [x for x in fm if x["ACTIVO_ID"] == "OC-DP-OBRA"][0]["COSTO_INSTALADO_USD"])
     b13 = copy.deepcopy(base)
     b13["TER-05"].update(PRECIO_UNITARIO="10", PRECIO_BAJO="5", NIVEL_EVIDENCIA="E5", FUENTE="t", ORIGEN_RANGO="")
@@ -1793,6 +2209,174 @@ def ejecutar_tests(verbose=True):
     salida = [d for d in R.values()]
     chk("G07", "Sin palabras de recomendación en salidas", not any(re.search(r"recomendad|ganador|mejor opci|conviene", str(d), re.I)
                                                                    for d in salida))
+    # ================= AUDITORÍA DE PROCEDENCIA DE DRIVERS (cierre de la sesión 16) =================
+    c12 = _csv_12c()
+
+    def v12(esc, E, var):
+        x = c12[(esc, str(E), var)]
+        return tuple(float(x[n]) for n in NIVELES)
+
+    def iguales(a, b, tol=0.01):
+        return all(x is not None and y is not None and abs(x - y) <= tol for x, y in zip(a, b))
+    ok = True
+    for E in ESCALAS_REF:
+        _, _, d1 = run("C1", aves_dia=E)
+        _, _, d3 = run("C3", aves_dia=E)
+        _, _, dr = run("C1", aves_dia=E, terreno="compra_reserva")
+        ok &= iguales(d1["m2_construidos"], v12("referencia", E, "m2_construido"))
+        ok &= iguales(d1["m2_operativo"], v12("referencia", E, "m2_operativo"))
+        ok &= iguales(d1["m2_exteriores"], v12("referencia", E, "m2_exteriores"))
+        ok &= iguales(d1["m2_efluentes"], v12("referencia", E, "m2_efluentes"))
+        ok &= iguales(d1["terreno_12c_ref"], v12("referencia", E, "terreno_total"))
+        ok &= iguales(d1["retiros_buffers_ref"], v12("referencia", E, "retiros_buffers"))
+        ok &= iguales(d1["reserva_ref"], v12("referencia", E, "m2_reserva"))
+        ok &= iguales(d3["m2_construidos"], v12("perfil_P2", E, "m2_construido"))
+        ok &= iguales(dr["terreno_adq"], v12("objetivo_20000", E, "terreno_total"))
+        ok &= d1["proc"]["m2_construido"]["TIPO"] == "DIRECTO" and d1["proc"]["m2_construido"]["ESCENARIO_FUENTE"] == "referencia"
+        ok &= dr["proc"]["terreno_adquirido"]["ESCENARIO_FUENTE"] == "objetivo_20000"
+    chk("N01", "Superficies CAPEX = 12C publicado (construido, operativo, exteriores, efluentes, terreno, reserva, retiros) "
+               "en las 4 escalas; P2 = 'perfil_P2'; reserva 20.000 = 'objetivo_20000'", ok)
+    ok = True
+    for nombre in ("C1", "C3"):
+        for E in ESCALAS_REF:
+            f_, _, d_ = run(nombre, aves_dia=E)
+            for tipo, var in (("edificio", "m2_construido"), ("exterior", "m2_exteriores"), ("efluentes", "m2_efluentes")):
+                filas_t = [x for x in f_ if x["BLOQUE"] == "OBRA_CIVIL" and x["UNIDAD"] == "m²" and
+                           (TIPO_AREA_12C.get(x["TIPO_AREA"]) == var)]
+                suma = tuple(sum(x[k] for x in filas_t) for k in ("CANTIDAD_BAJO", "CANTIDAD", "CANTIDAD_ALTO"))
+                ok &= iguales(suma, d_["proc"][var]["VALOR"], 1e-6)
+    chk("N02", "Σ categorías de obra por tipo de área = superficie fuente de 12C (edificio = construido; "
+               "pavimento/playa/infraestructura = exteriores; efluentes)", ok)
+    ok, viol = True, []
+    for nombre in ("C1", "C2", "C3", "CF"):
+        for E in ESCALAS_REF + (7500,):
+            for t in OPCIONES["terreno"]:
+                _, _, d_ = run(nombre, aves_dia=E, terreno=t)
+                for i in range(3):
+                    if d_["terreno_adq"][i] < d_["terreno_req"][i] - TOL:
+                        viol.append((nombre, E, t, NIVELES[i]))
+                ok &= not any(a.startswith("TERRENO_ADQUIRIDO_MENOR") for a in d_["alertas"])
+    chk("N03", "Terreno adquirido (con o sin reserva) ≥ terreno requerido por la fase, por nivel y combinación", ok and not viol, str(viol[:3]))
+    f1, _, d1 = run("C1", aves_dia=10000)
+    oc = [x for x in f1 if x["BLOQUE"] == "OBRA_CIVIL"]
+    chk("N04", "Terreno no se mezcla con m² construidos: ninguna obra usa m² de terreno; OC-INF es lote; TER fuera de la obra",
+        not any(x["DRIVER_ID"].startswith("terreno") for x in oc) and
+        [x for x in oc if x["ACTIVO_ID"] == "OC-INF-OBRA"][0]["UNIDAD"] == "lote" and
+        all(x["TIPO_AREA"] != "edificio" or x["COSTO_ID"] in OC_TIPO_AREA for x in f1) and
+        all(OC_TIPO_AREA[x["COSTO_ID"]] == x["TIPO_AREA"] for x in oc if x["COSTO_ID"] in OC_TIPO_AREA) and
+        not any(x["BLOQUE"] == "OBRA_CIVIL" for x in f1 if x["ACTIVO_ID"].startswith("TER-")))
+    kwh = [v for k, p_ in d1["proc"].items() if p_["UNIDAD"].startswith("kWh") for v in p_["VALOR"] if v]
+    pot = [x for x in f1 if x["UNIDAD"] in ("kVA", "kW", "kWf", "kWt")]
+    chk("N05", "kWh no se interpreta como kW: ninguna cantidad de potencia del BOQ proviene de un consumo kWh",
+        all(x["CANTIDAD"] is None or all(abs(x["CANTIDAD"] - k) > 1e-6 for k in kwh) for x in pot) and
+        all([x for x in f1 if x["ACTIVO_ID"] == a][0]["CANTIDAD"] is None for a in ("EL-TRA", "EL-GEN", "EL-UPS", "TE-GEN")))
+    chk("N06", "Pico eléctrico, transformador y grupo no se inventan (PENDIENTE en driver y BOQ)",
+        d1["proc"]["potencia_pico_demanda_maxima_kw"]["TIPO"] == "PENDIENTE" and
+        d1["proc"]["transformador_kva"]["TIPO"] == "PENDIENTE" and d1["proc"]["grupo_electrogeno_kva"]["TIPO"] == "PENDIENTE")
+    u14 = _csv_14b()
+    ok = True
+    for E in ESCALAS_REF:
+        for cad in (2, 3):
+            _, _, d_ = run("C3", aves_dia=E, cadencia_nacimientos=cad)
+            for k in ("posiciones_setter_diseno", "posiciones_hatcher_diseno"):
+                ref = u14.get(("2_incubacion_cadencia", str(E), f"cadencia={cad} ", "margen_cap=0.15", k))
+                ok &= ref is not None and abs(d_["incubacion"][k] - ref) < 0.01
+            ok &= any(f"CADENCIA_NACIMIENTOS = {cad}" in s_ for s_ in d_["escenarios_referencia"])
+    chk("N07", "Setter y hatcher reproducen 14B (cadencias 2 y 3, margen 15 %) por separado; la cadencia es un input etiquetado", ok)
+    ok = True
+    for E in ESCALAS_REF:
+        for do, hd, ef in ((5, 8, 0.85), (3, 16, 0.75)):
+            _, _, d_ = run("C3", aves_dia=E, dias_op_planta_alimento=do, horas_dia_planta_alimento=hd, eficiencia_planta_alimento=ef)
+            ref = u14.get(("6_planta_alimento", str(E), f"dias_op={do}; horas={hd}; eficiencia={ef}; margen=0.15", "", "t_h_requerida"))
+            ok &= ref is not None and abs(d_["alimento"]["t_h_requerida"] - ref) < 1e-3
+        _, _, d_ = run("C3", aves_dia=E)
+        ref_g = u14.get(("7_silos", str(E), "C_planta_propia", "maiz=15 soja=15 alim_planta=2 granja=3; dens maiz=0.72 soja=0.60 alim=0.6;", "granja_m3_brutos"))
+        ref_m = u14.get(("7_silos", str(E), "C_planta_propia", "maiz=15 soja=15 alim_planta=2 granja=3; dens maiz=0.72 soja=0.60 alim=0.6;", "maiz_m3_brutos"))
+        ref_s = u14.get(("7_silos", str(E), "C_planta_propia", "maiz=15 soja=15 alim_planta=2 granja=3; dens maiz=0.72 soja=0.60 alim=0.6;", "soja_m3_brutos"))
+        ok &= None not in (ref_g, ref_m, ref_s) and abs(d_["alimento"]["m3_silos_granja"] - ref_g) < 1e-3 and \
+            abs(d_["alimento"]["m3_silos_mp"] - ref_m - ref_s) < 1e-2
+    chk("N08", "Alimento reproduce 14B: t/h por perfil de fabricación (5×8 η0,85 y 3×16 η0,75) y silos por días de stock", ok)
+    p03 = _csv_03()
+    ok = True
+    for E in ESCALAS_REF:
+        _, _, d_ = run("C3", aves_dia=E)
+        r03 = p03[str(E)]
+        ok &= abs(d_["plazas_alojamiento"] - float(r03["capacidad_alojamiento_pollitos"])) < 1 and \
+            abs(d_["m2_galpon"] - float(r03["m2_galpon"])) < 1 and \
+            abs(d_["galpones_conceptuales"][1800] - float(r03["galpones_1800m2"])) < 0.01 and \
+            d_["proc"]["granjas"]["TIPO"] == "PENDIENTE"
+    chk("N09", "Plazas, m² productivos y galpones conceptuales reproducen 03; número de granjas PENDIENTE", ok)
+    l12 = _csv_12b()
+    ok = True
+    for E in ESCALAS_REF:
+        _, _, d_ = run("C3", aves_dia=E)
+        ok &= d_["flota"]["vivo"]["base"] == int(float(l12[(str(E), "radio_km=100; aves_por_camion=5500 (barrido)", "flota_minima")]))
+        ok &= d_["flota"]["vivo"]["unidades"] == d_["flota"]["vivo"]["base"] + 1
+        p_ = ml.producto(E, 5, perfil="P2", dias_despacho=6, cap_refrigerado=12, cap_congelado=12, dist_km=300, despachos_congelado=2)
+        ok &= d_["flota"]["refrigerado"]["base"] == math.ceil(p_["refrigerado_camion_dia"] - TOL)
+        ok &= d_["proc"]["flota_base_vivo"]["TIPO"] == "DIRECTO" and d_["proc"]["flota_base_refrigerado"]["TIPO"] == "DERIVADO_CAPEX"
+        ok &= d_["proc"]["flota_base_pollitos"]["TIPO"] == "PENDIENTE"
+    chk("N10", "Flota reproduce 12B (aves vivas = flota mínima publicada; refrigerado = ⌈camión-día⌉ declarado DERIVADO; "
+               "pollitos PENDIENTE)", ok)
+    _, ri, di = run("C1", aves_dia=7500)
+    dep = ("m2_construido", "terreno_requerido_fase", "plazas_alojamiento", "ritmo_operativo_requerido", "agua_captada_m3_dia")
+    chk("N11", "Escala intermedia (7.500): alerta ESCALA_INTERMEDIA; drivers = CALCULO_MODELO_FUENTE (nunca DIRECTO ni INTERPOLADO)",
+        any(a.startswith("ESCALA_INTERMEDIA") for a in di["alertas"]) and
+        all(di["proc"][k]["TIPO"] == "CALCULO_MODELO_FUENTE" for k in dep) and
+        not any(p_["TIPO"] == "INTERPOLADO" for p_ in di["proc"].values()))
+    t1 = R["TOTAL"]
+    chk("N12", "E4 no se etiqueta como cotización: MONTO_CON_REFERENCIAS_DEBILES_E4, CAPEX_E1_E2 = 0, sin columna 'CAPEX conocido'",
+        t1["CALIDAD_MONTO"] == "MONTO_CON_REFERENCIAS_DEBILES_E4" and t1["CAPEX_E1_E2_USD"] == 0 and t1["N_CONCEPTOS_E1_E2"] == 0
+        and "CAPEX_CONOCIDO_USD" not in CAMPOS_ESC and calidad_monto({"E1"}) == "MONTO_COTIZADO_E1_E2")
+    ok = True
+    for nombre in ("C1", "C3"):
+        f_, _, d_ = run(nombre, aves_dia=10000)
+        for x in f_:
+            dr_ = x["DRIVER_ID"]
+            if dr_ in d_["proc"] and d_["proc"][dr_]["UNIDAD"] == x["UNIDAD"] and x["CANTIDAD"] is not None:
+                ok &= iguales((x["CANTIDAD_BAJO"], x["CANTIDAD"], x["CANTIDAD_ALTO"]), d_["proc"][dr_]["VALOR"], 1e-9)
+    alt = verificar_consistencia(d1, preset("C1", aves_dia=10000), {"plazas_14b": d1["plazas_alojamiento"] * 1.05})
+    chk("N13", "Ninguna inconsistencia se corrige en silencio: la BOQ usa el valor del driver registrado y una discrepancia entre "
+               "fuentes genera alerta DRIVER_INCONSISTENTE sin cambiar el valor",
+        ok and any(a.startswith("DRIVER_INCONSISTENTE") for a in alt) and not d1["consistencia"])
+    tt = rs2["TOTAL"]
+    chk("N14", "Cobertura por evidencia: N E1_E2 + E3 + E4 + E5 + pendientes = costeables (conteos, no %)",
+        sum(tt[f"N_CONCEPTOS_{g}"] for g in GRUPOS_EVIDENCIA) + tt["N_CONCEPTOS_PENDIENTES"] == tt["CONCEPTOS_COSTEABLES"]
+        and t1["N_CONCEPTOS_E4"] == 1)
+    frp = [x for x in f1 if x["ACTIVO_ID"] == "FR-PAQ"][0]
+    chk("N15", "Frío: sin capacidad elegida; detalle con base física, benchmark, contradicción abierta y margen PENDIENTE",
+        frp["CAPACIDAD"] == "" and all(t_ in frp["CAPACIDAD_DETALLE"] for t_ in ("BASE física", "BENCHMARK", "CONTRADICCIÓN ABIERTA",
+                                                                                 "MARGEN PENDIENTE", "DISEÑO PENDIENTE"))
+        and d1["proc"]["capacidad_diseno_frio"]["TIPO"] == "PENDIENTE"
+        and [x for x in f1 if x["ACTIVO_ID"] == "FR-AGH"][0]["CANTIDAD"] is None)
+    la = d1["proc"]["agua_utilizada_l_ave"]["VALOR"]
+    chk("N16", "Agua 15/25/38 L/ave (09C); efluente = agua × fracción; masa segregable solo para subproductos (lodos y ecualización PENDIENTES)",
+        iguales(la, (15, 25, 38), 1e-9) and
+        iguales(d1["proc"]["agua_descargada_m3_dia"]["VALOR"],
+                tuple(d1["util"][n]["agua_utilizada_m3_dia"] * d1["util"][n]["fraccion_agua_a_efluente_supuesta"] for n in NIVELES), 1e-6)
+        and [x for x in f1 if x["ACTIVO_ID"] == "SB-L9"][0]["DRIVER_ID"] == "masa_biologica_potencialmente_segregable_en_origen_t_dia"
+        and all([x for x in f1 if x["ACTIVO_ID"] == a][0]["CANTIDAD"] is None for a in ("EF-LOD", "EF-ECU", "EF-BIO")))
+    pq = [x for x in f1 if x["ACTIVO_ID"] == "PQ-L2"][0]
+    ids08 = [x["id"] for x in leer_equipos()]
+    eqs_boq = [x["ACTIVO_ID"] for x in f1 if x["ESTADO_DIMENSION"] == "INFORMATIVO"]
+    chk("N17", "Proceso: capacidad de línea = nominal requerido de 05 (≠ aves/día ÷ h); planta ≠ línea; diseño y garantizada PENDIENTES; "
+               "EQ solo de la matriz 08, sin duplicados",
+        abs(pq["CAPACIDAD"] - round(d1["ritmo_nominal_sel"], 1)) < 1e-9 and abs(pq["CAPACIDAD"] - 10000 / 8) > 1 and
+        "diseño PENDIENTE" in pq["CAPACIDAD_DETALLE"] and "garantizada PENDIENTE" in pq["CAPACIDAD_DETALLE"] and
+        set(eqs_boq) <= set(ids08) and len(eqs_boq) == len(set(eqs_boq)))
+    u09 = _csv_09c()
+    ok = True
+    for E in ESCALAS_REF:
+        _, _, d_ = run("C1", aves_dia=E)
+        for var in ("agua_captada_m3_dia", "agua_descargada_m3_dia", "kwh_total_dia_operativo",
+                    "carga_sensible_preliminar_producto_kwf_bajo_8h", "potencia_media_equivalente_proceso_kw_bajo_14h"):
+            for i, n in enumerate(NIVELES):
+                ref = u09.get((str(E), n, var))
+                ok &= ref is not None and abs(d_["proc"][var]["VALOR"][i] - ref) < 1e-3 * max(1, abs(ref))
+    chk("N19", "Agua, efluente, energía y frío de CAPEX (C1) reproducen el CSV publicado de 09C en las 4 escalas y 3 niveles", ok)
+    tipos = {p_["TIPO"] for nm in ("C0", "C1", "C3", "CF") for p_ in run(nm, aves_dia=5000)[2]["proc"].values()}
+    chk("N18", "Todo driver tiene tipo de procedencia válido y archivo de origen", tipos <= set(TIPOS_DRIVER) and
+        all(p_["ARCHIVO_ORIGEN"] for p_ in d1["proc"].values()))
     ok = all(r[2] for r in res)
     if verbose:
         for cod, desc, o, det in res:
@@ -1811,7 +2395,9 @@ def _lanza(fn, *a, **k):
 
 MUTACIONES = {"B01": "duplica m² de depósitos en el BOQ", "C01": "infla 10 % el costo unitario",
               "C02": "trata cualquier precio (FOB) como instalado", "V01": "acepta nivel sin precio",
-              "V02": "acepta E1–E3 sin lectura primaria"}
+              "V02": "acepta E1–E3 sin lectura primaria", "D01": "interpreta kWh/día como kVA del transformador",
+              "D02": "cambia en silencio la cadencia de nacimientos", "D04": "recalcula el terreno (×0,9) fuera de 12C",
+              "D05": "recalcula un área de 12C dentro de CAPEX"}
 
 
 def prueba_mutaciones():
@@ -1843,27 +2429,24 @@ def _m(x, d=0):
 def imprimir_tablas():
     base = leer_base()
     pend = sum(1 for r in base.values() if r["NIVEL_EVIDENCIA"] == "PENDIENTE")
-    print(f"Base de costos: {len(base)} conceptos; por nivel:",
-          {e: sum(1 for r in base.values() if r["NIVEL_EVIDENCIA"] == e) for e in NIVELES_EVIDENCIA},
-          "; por estado:", {s: sum(1 for r in base.values() if r["ESTADO"] == s) for s in {r["ESTADO"] for r in base.values()}})
-    print("\n| Escenario | Activos BOQ | Costeables | Con precio | Sin precio | Sin cantidad | Precio parcial | Alcance pend. | CAPEX con precio USD (E4) | Cobertura conceptos | Total |")
-    print("|---|---|---|---|---|---|---|---|---|---|---|")
+    print(f"Base: {len(base)} conceptos; {pend} PENDIENTES")
+    print("\n| Escenario | Costeables | Con precio | N E1_E2/E3/E4/E5 | Pendientes | Monto con precio USD | Calidad | Cobertura | Total |")
+    print("|---|---|---|---|---|---|---|---|---|")
     for nombre, c in escenarios_referencia():
         _, R, _ = correr(c, base)
         t = R["TOTAL"]
-        print(f"| {nombre} | {t['ACTIVOS_BOQ']} | {t['CONCEPTOS_COSTEABLES']} | {t['CONCEPTOS_CON_PRECIO']} | "
-              f"{t['CONCEPTOS_SIN_PRECIO']} | {t['CONCEPTOS_SIN_CANTIDAD']} | {t['CONCEPTOS_PRECIO_PARCIAL']} | {t['ALCANCE_PENDIENTE']} | "
-              f"{_m(t['CAPEX_CON_PRECIO_USD'])} ({_m(t['CAPEX_CON_PRECIO_LOW_USD'])}–{_m(t['CAPEX_CON_PRECIO_HIGH_USD'])}) | "
-              f"{_m(t['COBERTURA_CONCEPTOS_PCT'], 1)} % | {t['TOTAL_PRELIMINAR']} |")
-    print("\n| Escala | m² construidos (medio) | Terreno fase m² (medio) | Ritmo aves/h | Flota vivo / refrig. / alim. (C3) | Setter / hatcher (posiciones) | Planta alimento t/h | Plazas de galpón |")
-    print("|---|---|---|---|---|---|---|---|")
+        print(f"| {nombre} | {t['CONCEPTOS_COSTEABLES']} | {t['CONCEPTOS_CON_PRECIO']} | {t['N_CONCEPTOS_E1_E2']}/{t['N_CONCEPTOS_E3']}/"
+              f"{t['N_CONCEPTOS_E4']}/{t['N_CONCEPTOS_E5']} | {t['N_CONCEPTOS_PENDIENTES']} | {_m(t['MONTO_CON_PRECIO_USD'])} | "
+              f"{t['CALIDAD_MONTO']} | {_m(t['COBERTURA_CONCEPTOS_PCT'], 1)} % | {t['TOTAL_PRELIMINAR']} |")
+    print("\n12C vs CAPEX (C1, perfil P1) — bajo / medio / alto")
+    tri = lambda x: " / ".join(_m(v) for v in x)
     for E in ESCALAS_REF:
-        _, _, D = correr(preset("C3", aves_dia=E), base)
-        fl = D["flota"]
-        print(f"| {_m(E)} | {_m(D['m2_construidos'][1])} | {_m(D['terreno_m2'][1])} | {_m(D['ritmo_aves_h'])} | "
-              f"{fl['vivo']['unidades']} / {fl['refrigerado']['unidades']} / {fl['alimento']['unidades']} | "
-              f"{_m(D['incubacion']['posiciones_setter_diseno'])} / {_m(D['incubacion']['posiciones_hatcher_diseno'])} | "
-              f"{_m(D['alimento']['t_h_requerida'], 1)} | {_m(D['plazas_alojamiento'])} |")
+        _, _, D = correr(preset("C1", aves_dia=E), base)
+        _, _, Dr = correr(preset("C1", aves_dia=E, terreno="compra_reserva"), base)
+        _, _, D3 = correr(preset("C3", aves_dia=E), base)
+        print(f"| {_m(E)} | {tri(D['m2_construidos'])} | {tri(D3['m2_construidos'])} | {tri(D['m2_operativo'])} | "
+              f"{tri(D['m2_exteriores'])} | {tri(D['retiros_buffers_ref'])} | {tri(D['reserva_ref'])} | {tri(D['terreno_12c_ref'])} | "
+              f"{tri(D['terreno_req'])} | {tri(Dr['terreno_adq'])} |")
 
 
 def escenario_cli(a):
@@ -1876,7 +2459,7 @@ def escenario_cli(a):
     print(etiqueta_arquitectura(c))
     for b, d in R.items():
         print(f"{b:20s} {d['ESTADO_BLOQUE']:26s} conceptos={d['CONCEPTOS_COSTEABLES']:3d} con_precio={d['CONCEPTOS_CON_PRECIO']:3d} "
-              f"USD={_m(d['CAPEX_CON_PRECIO_USD'])} total={d['TOTAL_PRELIMINAR']}")
+              f"USD={_m(d['MONTO_CON_PRECIO_USD'])} total={d['TOTAL_PRELIMINAR']}")
     for al in D["alertas"]:
         print("ALERTA", al)
 

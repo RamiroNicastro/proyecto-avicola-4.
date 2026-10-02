@@ -8,15 +8,15 @@
 
 | RFQ | Categoría | Capacidad a pedir | Conceptos del motor | Cotizaciones |
 |---|---|---|---|---|
-| RFQ-16-01 | Línea de faena, evisceración y enfriamiento (L1–L4, L11) | 312–2.500 aves/h (2.500–20.000 aves/día, 8 h) — **dos escalas** del rango | PQ-L1…L4, PQ-L11 | ≥ 3 |
+| RFQ-16-01 | Línea de faena, evisceración y enfriamiento (L1–L4, L11) | operativo 312–2.500 aves/h; **nominal requerido** 329–3.049 aves/h (05, R 0,95–0,82); diseño y garantizada PENDIENTES — **dos escalas** del rango | PQ-L1…L4, PQ-L11 | ≥ 3 |
 | RFQ-16-02 | Trozado, deshuese, packaging (L5, L7) | ídem, por configuración de producto | PQ-L5, PQ-L7 | ≥ 3 |
-| RFQ-16-03 | Coproductos (L6) y subproductos (L9) | 1,3–10,6 t/d de masa segregable | PQ-L6, SB-L9, SB-BAS | ≥ 3 |
-| RFQ-16-04 | Paquete de frío | ≥ 69–550 kWf (cota inferior, perfil P2; pedir balance) | FR-PAQ y componentes | ≥ 3 |
+| RFQ-16-03 | Coproductos (L6) y subproductos (L9) | 1,5–12,2 t/d de masa biológica segregable (09C; no son sólidos de efluente) | PQ-L6, SB-L9, SB-BAS | ≥ 3 |
+| RFQ-16-04 | Paquete de frío | **sin capacidad única**: BASE física parcial de 09C (p. ej. 99 + 69 + 10 kWf a 10.000), BENCHMARK 634–5.075 kWh/d, CONTRADICCIÓN ABIERTA ×5,7, diseño y margen PENDIENTES; pedir balance frigorífico (DPV-109) | FR-PAQ y componentes | ≥ 3 |
 | RFQ-16-05 | Efluentes | 55–440 m³/d | EF-PAQ, EF-*, OC-EF | ≥ 3 |
 | RFQ-16-06 | Acometida, transformación, tableros, respaldo | demanda máxima PENDIENTE (lista de cargas) | EL-* | ≥ 3 |
 | RFQ-16-07 | Caldera, aire comprimido, agua | pico PENDIENTE | TE-*, AC-COM, AG-* | ≥ 3 |
 | RFQ-16-08 | Obra civil: USD/m² por categoría | 1.796–7.795 m² construidos | OC-* | ≥ 3 |
-| RFQ-16-09 | Terreno por corredor | 15.400–33.100 m² (fase, medio) o ≈ 33.300 m² (reserva) | TER-* | por corredor |
+| RFQ-16-09 | Terreno por corredor | requerido por la fase 15.398–32.379 m² (medio, función 12C sin reserva); publicado por 12C 19.868–43.660 m²; con reserva para 20.000: 14.069 / 33.345 / 82.253 m² (12C) | TER-* | por corredor |
 | RFQ-16-10 | Incubación | posiciones de setter y hatcher de 14B | INC-* | ≥ 3 |
 | RFQ-16-11 | Planta de alimento | 2,1–16,7 t/h (14B) | ALI-* | ≥ 3 |
 | RFQ-16-12 | Vehículos por flujo | unidades de `logistica_capex.md` | VEH/CAR/FRI/AUX/JAU | ≥ 3 |

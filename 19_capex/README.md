@@ -4,7 +4,7 @@
 
 **Regla:** no asumir que USD 2 millones alcanza; la suficiencia es un resultado. Vacío = desconocido; 0 = costo cero real.
 
-**Estado (2026-10-02, sesión 16):** motor v1.0 construido y probado (58 tests, 5 mutaciones detectadas). **Sin CAPEX total publicable**: 167 de 175 conceptos sin precio; cobertura por conceptos 0–2,3 %. Ver [`conclusiones_capex.md`](conclusiones_capex.md).
+**Estado (2026-10-02, sesión 16):** motor v1.1 construido, auditado en procedencia de drivers y probado (77 tests, 9 mutaciones detectadas). **Sin CAPEX total publicable**: 167 de 175 conceptos sin precio; cobertura por conceptos 0–2,3 %. Ver [`conclusiones_capex.md`](conclusiones_capex.md).
 
 ## Archivos
 
@@ -17,6 +17,7 @@
 | [`escenarios_capex.csv`](escenarios_capex.csv) | Salida: resumen por escenario y bloque (528 filas) |
 | [`expansion_capex.csv`](expansion_capex.csv) | Salida: trayectorias 20.000 directo / 5.000 → 20.000 / 5.000 → 10.000 → 20.000 / 10.000 → 20.000 (2.508 filas) |
 | [`matriz_rfq_capex.csv`](matriz_rfq_capex.csv) | Salida: 13 cotizaciones necesarias |
+| [`mapa_drivers_capex.csv`](mapa_drivers_capex.csv) | Salida: procedencia de cada driver físico (valor, unidad, archivo y variable de origen, escenario, tipo, evidencia) |
 | [`fuentes_16.csv`](fuentes_16.csv) | Fuentes provisionales FTE-16-001…007 (todas `[PVDP]`) |
 | [`metodologia_capex.md`](metodologia_capex.md) | Método, fórmulas, separaciones, reglas contra el doble conteo |
 | [`estructura_capex.md`](estructura_capex.md) | Bloques, conceptos, columnas, qué entra y qué no |
@@ -37,7 +38,7 @@
 ## Uso
 
 ```bash
-python3 19_capex/modelo_capex.py                 # tests + regenera los 4 CSV de salida
+python3 19_capex/modelo_capex.py                 # tests + regenera los 5 CSV de salida
 python3 19_capex/modelo_capex.py --solo-tests
 python3 19_capex/modelo_capex.py --mutaciones
 python3 19_capex/modelo_capex.py --tablas

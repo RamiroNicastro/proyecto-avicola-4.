@@ -1,6 +1,6 @@
 # Logística propia — CAPEX de flota
 
-**Fecha:** 2026-10-02 · Drivers: `13_logistica/modelo_logistica.py` (12B) · Decisión abierta: DEC-056 (modalidad de flota por flujo)
+**Fecha:** 2026-10-02 (v1.1, auditoría de procedencia) · Drivers: `13_logistica/modelo_logistica.py` (12B) · Decisión abierta: DEC-056 (modalidad de flota por flujo)
 
 > Con flota **tercerizada** no hay CAPEX de vehículos (test A03); el costo del transporte será OPEX. Con flota **propia** o **mixta**, el motor calcula unidades por flujo desde el volumen; **no fija cantidades arbitrarias**. Ningún vehículo tiene precio.
 
@@ -21,6 +21,21 @@ unidades = ⌈ VIAJES (volumen ÷ capacidad del vehículo) ÷ CICLOS DISPONIBLES
 | Servicio | sin driver físico | — | — | **PENDIENTE** |
 
 Reserva: +1 unidad por flujo propio (SUP-16-02, barrido 0/1). Las capacidades son de **escenario** (SUP-16-20), no validadas.
+
+### Procedencia por tipo de vehículo (auditoría v1.1; detalle en [`mapa_drivers_capex.csv`](mapa_drivers_capex.csv))
+
+| Flujo | Volumen | Payload | Ciclo y frecuencia | Unidades base | Tipo de procedencia |
+|---|---|---|---|---|---|
+| Aves vivas | aves/día (12B) | 5.500 aves/camión (escenario SUP-033) | ventana prefaena, radio 100 km, horas útiles (12B) | `flota_minima` de 12B, sin cambios | **DIRECTO** (reproduce `escenarios_logistica.csv`, test N10) |
+| Refrigerado | t/día por perfil (12B) | 12 t (escenario DPV-084) | 6 despachos/sem, troncal 300 km (12B) | ⌈`refrigerado_camion_dia`⌉ | **DERIVADO_CAPEX** (redondeo hacia arriba de una salida de 12B) |
+| Congelado | ídem | 12 t | 2 despachos/sem | ⌈`congelado_camion_dia`⌉ | DERIVADO_CAPEX |
+| Alimento / granos | t/sem (12B) | 28 t (SUP-096) | ciclo CAPEX: 2 × 75 km ÷ 70 km/h + 2 h; 12 h/día; 6 d/sem | viajes/sem ÷ ciclos | DERIVADO_CAPEX + SUPUESTO_CAPEX (SUP-16-03) |
+| Subproductos | t/día por corriente (12B) | 10 t másica (volumétrica PENDIENTE) | retiro diario; ciclo CAPEX a 50 km | Σ viajes de 4 grupos ÷ ciclos | DERIVADO_CAPEX, **cota inferior** |
+| Pollitos | pollitos/sem (14B) | **PENDIENTE** | — | — | PENDIENTE |
+| Servicio | sin driver | — | — | — | PENDIENTE |
+| Reserva | — | — | — | +1 por flujo | SUPUESTO_CAPEX (SUP-16-02) |
+
+Ningún payload ni tiempo de ciclo se trata como capacidad validada: todos son escenarios de 12B o supuestos de CAPEX.
 
 ## 2. Unidades por escala (C3, flota propia en todos los flujos, perfil P2)
 

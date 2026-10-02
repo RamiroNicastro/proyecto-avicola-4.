@@ -20,7 +20,9 @@ Reglas verificadas por `validar_base()` y los tests E01–E08:
 3. E1, E2 y E3 exigen `LECTURA_PRIMARIA = Sí`; un extracto o una URL bloqueada queda en E4 `[PVDP]` (regla 16 de CLAUDE.md).
 4. Un rango (bajo/alto) exige `ORIGEN_RANGO`: no hay ±20 % automático.
 5. Un precio en ARS u otra moneda exige tipo de cambio, fecha y tipo de TC.
-6. Los niveles **no se mezclan**: cada fila conserva el suyo y el resumen suma por nivel (test E03). "CAPEX conocido" = E1 + E2; "CAPEX estimado" = E3 + E4 + E5.
+6. Los niveles **no se mezclan**: cada fila conserva el suyo y el resumen informa montos separados `CAPEX_E1_E2_USD`, `CAPEX_E3_USD`, `CAPEX_E4_USD`, `CAPEX_E5_USD` (tests E03, N12). La v1.0 publicaba "CAPEX conocido" (E1+E2) y "CAPEX estimado" (E3+E4+E5); se eliminaron para no presentar referencias E4 como parte de un CAPEX económico.
+7. `CALIDAD_MONTO` etiqueta el monto con precio: `SIN_MONTO`, `MONTO_COTIZADO_E1_E2`, `MONTO_MIXTO_CON_COTIZACIONES`, `MONTO_MIXTO_SIN_COTIZACIONES`, `MONTO_CON_REFERENCIAS_DEBILES_E4`, `MONTO_SOLO_SUPUESTOS_E5`. Hoy todos los escenarios con monto son **`MONTO_CON_REFERENCIAS_DEBILES_E4`**.
+8. **Cobertura por nivel de evidencia** = conteo de conceptos E1/E2, E3, E4, E5 y pendientes (test N14). Es un conteo de conceptos, **no** un porcentaje económico.
 
 ## 2. Estado de la base (2026-10-02)
 
@@ -46,6 +48,17 @@ Reglas verificadas por `validar_base()` y los tests E01–E08:
 | REF-RAFS | USD 17.401–52.501 equipos de unidades móviles de 350–1.200 aves/h (EE. UU., 2015) | FTE-16-004 | E4; no comparable con una planta SENASA |
 | REF-SOY | ~USD 300.000 por galpón | FTE-043 | E4; sin m² ni plazas |
 | REF-EDI | USD 90–130/m² galpón cerrado estándar | FTE-16-001 | E4; no aplicable a áreas sanitarias ni de frío |
+
+## 3 bis. Cobertura por nivel de evidencia (conteo de conceptos costeables de la empresa)
+
+| Configuración (cualquier escala) | E1/E2 | E3 | E4 | E5 | Pendientes | Calidad del monto |
+|---|---|---|---|---|---|---|
+| C0 | 0 | 0 | 0 | 0 | 21 | SIN_MONTO |
+| C1 | 0 | 0 | 1 (OC-DP) | 0 | 75 | MONTO_CON_REFERENCIAS_DEBILES_E4 |
+| C2 | 0 | 0 | 2 (OC-DP, GRA-GAL) | 0 | 86 | MONTO_CON_REFERENCIAS_DEBILES_E4 |
+| C3 / CF | 0 | 0 | 2 | 0 | 136 | MONTO_CON_REFERENCIAS_DEBILES_E4 |
+
+Cuando entren cotizaciones, el mismo resumen mostrará cuánto del monto es E1/E2 sin mezclarlo con E4.
 
 ## 4. Por qué hay tan pocos precios
 

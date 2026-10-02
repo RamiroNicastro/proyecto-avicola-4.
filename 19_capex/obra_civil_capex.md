@@ -1,78 +1,85 @@
 # Obra civil y terreno — CAPEX paramétrico
 
-**Fecha:** 2026-10-02 · Superficies: `09_layout_obra_civil/modelo_superficies.py` (12C) · Precios: [`base_costos_capex.csv`](base_costos_capex.csv)
+**Fecha:** 2026-10-02 (v1.1, auditoría de procedencia de drivers) · Superficies: `09_layout_obra_civil/modelo_superficies.py` (12C) · Precios: [`base_costos_capex.csv`](base_costos_capex.csv) · Procedencia: [`mapa_drivers_capex.csv`](mapa_drivers_capex.csv)
 
-> **Superficie conceptual ≠ proyecto ejecutivo.** Los m² son rangos de 12C (muchos en estado PROXY, sin footprint de proveedor). No hay un USD/m² único para la planta: cada categoría tiene su precio, hoy casi todos **PENDIENTES**.
+> **Superficie conceptual ≠ proyecto ejecutivo.** CAPEX **consume** las superficies de 12C (no las recalcula ni crea otra definición): para la escala y arquitectura pedidas llama a la misma función de 12C y, cuando las entradas coinciden con un escenario publicado en `escenarios_superficies.csv`, la salida es **idéntica** a ese escenario (test N01). Cada categoría tiene su propio USD/m², hoy casi todos **PENDIENTES**.
 
 ## 1. Fórmula
 
 ```
 COSTO_OBRA(categoría) = m²(categoría, bajo/medio/alto de 12C) × USD/m²(categoría, bajo/medio/alto)
-TERRENO              = m² necesarios × USD/m² (por tipo) + gastos de compra (%) + preparación (m² × USD/m²)
+TERRENO              = m² ADQUIRIDOS × USD/m² (por tipo) + gastos de compra (%) + preparación (m² REQUERIDOS × USD/m²)
                        + infraestructura de acceso (lote) + conexiones extraordinarias (lote)   [o cargo de parque]
 ```
 
-## 2. Categorías de obra (mapeo de áreas de 12C, cada área en una sola categoría)
+## 2. 12C publicado vs CAPEX (auditoría)
 
-| ID | Categoría | Áreas de 12C | USD/m² | Evidencia |
-|---|---|---|---|---|
-| OC-PH | Proceso húmedo | colgado/aturdido, sangrado/escaldado/desplumado, evisceración, enfriamiento, clasificación, trozado, deshuese, CMS, coproductos, empaque, lavado de cajones, circulación de proceso, sala de subproductos | PENDIENTE | — |
-| OC-RS | Recepción semicubierta | recepción y espera | PENDIENTE | — |
-| OC-FR | Envolvente de frío (losa, estructura; paneles en FR-PAN) | cámaras refrigeradas/congeladas, túnel, antecámaras, cámaras de subproductos y decomisos | PENDIENTE | — |
-| OC-DK | Docks y expedición | expedición/docks | PENDIENTE | — |
-| OC-DP | Depósitos y talleres secos | residuos/cartón, envases, taller, repuestos, químicos | **250 / 300 / 350** | **E4 `[PVDP]`** FTE-16-001 |
-| OC-ST | Salas técnicas | máquinas de frío, caldera, aire, generador, eléctrica, tratamiento de agua | PENDIENTE | — |
-| OC-LB | Laboratorio | laboratorio de calidad (si es propio) | PENDIENTE | — |
-| OC-VC | Personal | vestuarios, comedor, lavandería | PENDIENTE | — |
-| OC-OF | Administración | oficinas, oficina SENASA, enfermería, porterías, circulación de personal | PENDIENTE | — |
-| OC-EP | Pavimento pesado | playas de aves vivas, despacho, subproductos; circulación pesada | PENDIENTE | — |
-| OC-EL | Estacionamiento | estacionamiento | PENDIENTE | — |
-| OC-LV | Lavado de camiones | plataforma de lavado | PENDIENTE | — |
-| OC-IP | Infraestructura pesada | bases de tanques de agua | PENDIENTE | — |
-| OC-EF | Obra de efluentes | pretratamiento, ecualización, DAF, biológico, lodos, circulación | PENDIENTE | — |
-| OC-CER | Cerco perimetral (m) | perímetro del terreno conceptual | PENDIENTE | — |
-| OC-INF | Infraestructura del predio | m² de terreno (pluviales, cloaca interna, iluminación exterior) | PENDIENTE | — |
-| OC-ADM | Oficina asset-light | m² PENDIENTES (DPV-16-12) | PENDIENTE | — |
+Valores bajo / medio / alto en m². Fuente: 12C, bloque `sensibilidad` de `escenarios_superficies.csv`; CAPEX los reproduce exactamente (test N01).
 
-La reserva de expansión de 12C es **terreno**, no obra (no se construye). Los paneles aislantes están en el paquete de frío (FR-PAN), no en OC-FR, para no contarlos dos veces (confirmar alcance en el RFQ: DPV-16-06).
+| Escala | m² construidos 12C `referencia` (P1) = CAPEX C1 | m² construidos 12C `perfil_P2` = CAPEX C2/C3 | m² operativos (12C) | Exteriores (12C) | Retiros + buffers (12C, referencia) | Reserva (12C, referencia) |
+|---|---|---|---|---|---|---|
+| 2.500 | 1.226 / 1.777 / 2.707 | 1.237 / 1.796 / 2.735 | 2.505 / 4.027 / 6.840 | 1.151 / 2.030 / 3.613 | 4.487 / 13.428 / 38.932 | 926 / 2.413 / 7.440 |
+| 5.000 | 1.702 / 2.597 / 4.077 | 1.738 / 2.664 / 4.193 | 3.177 / 5.416 / 9.992 | 1.344 / 2.565 / 5.138 | 4.902 / 14.907 / 44.314 | 1.094 / 3.108 / 10.592 |
+| 10.000 | 2.730 / 4.306 / 6.850 | 2.823 / 4.454 / 7.136 | 4.617 / 8.489 / 16.568 | 1.749 / 3.857 / 8.203 | 5.672 / 17.635 / 53.341 | 1.454 / 4.644 / 17.168 |
+| 20.000 | 4.655 / 7.451 / 12.260 | 4.847 / 7.795 / 12.852 | 7.344 / 14.190 / 29.807 | 2.527 / 6.147 / 14.517 | 6.902 / 21.735 / 67.363 | 2.263 / 7.735 / 30.768 |
 
-## 3. Superficies por categoría — C1 (perfil P1, semi, 8 h netas), m² medio (bajo–alto)
+| Escala | Terreno 12C `referencia` (publicado; incluye reserva proxy y rendering) | Terreno REQUERIDO por la fase (función 12C, sin reserva) | Terreno ADQUIRIDO con reserva para 20.000 = 12C `objetivo_20000` |
+|---|---|---|---|
+| 2.500 | 7.918 / 19.868 / 53.212 | 6.470 / 15.398 / 37.510 | 14.069 / 33.345 / 82.253 |
+| 5.000 | 9.173 / 23.431 / 64.897 | 7.528 / 18.029 / 44.536 | 14.069 / 33.345 / 82.253 |
+| 10.000 | 11.743 / 30.768 / 87.077 | 9.678 / 23.372 / 57.569 | 14.069 / 33.345 / 82.253 |
+| 20.000 | 16.509 / 43.660 / 127.938 | 13.492 / 32.379 / 80.673 | 14.069 / 33.345 / 82.253 |
 
-| Categoría | 2.500 | 5.000 | 10.000 | 20.000 |
-|---|---|---|---|---|
-| OC-RS | 180 (140–240) | 180 (140–240) | 180 (140–240) | 180 (140–360) |
-| OC-PH | 859 (573–1.302) | 1.477 (979–2.245) | 2.609 (1.725–3.979) | 4.647 (3.060–7.155) |
-| OC-FR | 98 (68–157) | 137 (89–225) | 241 (144–421) | 466 (274–829) |
-| OC-DK | 45 (35–60) | 45 (35–120) | 90 (35–240) | 135 (35–480) |
-| OC-DP | 146 (103–209) | 214 (138–317) | 397 (255–590) | 741 (475–1.102) |
-| OC-ST | 155 (115–215) | 182 (127–258) | 267 (177–399) | 432 (276–716) |
-| OC-LB | 15 (12–20) | 17 (12–27) | 30 (18–48) | 52 (31–83) |
-| OC-VC | 96 (70–175) | 154 (71–288) | 272 (116–516) | 508 (217–971) |
-| OC-OF | 182 (110–330) | 192 (111–355) | 220 (120–417) | 290 (147–564) |
-| OC-EP | 1.384 (864–2.322) | 1.683 (991–3.275) | 2.506 (1.263–5.198) | 3.855 (1.774–9.226) |
-| OC-EL | 500 (182–1.085) | 719 (245–1.610) | 1.156 (370–2.660) | 2.031 (620–4.760) |
-| OC-LV | 130 (100–160) | 130 (100–160) | 130 (100–160) | 130 (100–160) |
-| OC-IP | 16 (4–46) | 32 (8–93) | 65 (16–185) | 130 (32–370) |
-| OC-EF | 220 (128–519) | 254 (132–777) | 326 (138–1.515) | 592 (163–3.030) |
-| OC-CER (m) | 507 (328–791) | 548 (354–862) | 624 (402–980) | 735 (474–1.160) |
+### De dónde salían las cifras aproximadas de la v1.0
 
-El rango de OC-EF depende de la tecnología de efluentes, todavía abierta (DEC-043; el biológico con lagunas ocupa mucho más: DPV-144).
+| Cifra citada | Origen exacto | ¿Coincide con 12C? | Corrección |
+|---|---|---|---|
+| ≈ 1.800 m² a 2.500 | 1.796 = m² construidos medio de 12C `perfil_P2` (CAPEX C3 usa P2) | Sí, pero de un escenario distinto de la referencia de 12C (1.777, P1) y sin decirlo | Las tablas indican ahora el escenario (P1 `referencia` o `perfil_P2`) |
+| ≈ 7.800 m² a 20.000 | 7.795 = 12C `perfil_P2` medio | Ídem (referencia P1: 7.451) | Ídem |
+| ≈ 15.400 m² de terreno a 2.500 | 15.398 = función de terreno de 12C con escala objetivo = escala y sin rendering | **No**: 12C no publica un terreno sin reserva (su terreno publicado incluye una reserva proxy y rendering: 19.868) | Se rotula **"terreno requerido por la fase"** = CALCULO_MODELO_FUENTE (misma fórmula de 12C, entrada no publicada); se informa al lado el terreno publicado de 12C. Tensión T16-07 |
+| ≈ 32.400 m² de terreno a 20.000 | 32.379, ídem | **No** (12C publica 43.660) | Ídem |
+| ≈ 33.300 m² con reserva para 20.000 | 33.345 = 12C `objetivo_20000` | **Sí, directo** | Ninguna; es el único valor de terreno que CAPEX toma tal cual de un escenario publicado |
 
-**Costo de OC-DP (único con precio, E4):** USD 43.779 (2.500) · 64.186 (5.000) · 119.200 (10.000) · 222.431 (20.000), con envolvente LOW–HIGH en [`capex_por_escala.md`](capex_por_escala.md). Es una **nave seca**; usar ese USD/m² para proceso húmedo o frío sería un error de categoría.
+Ninguna de esas cifras provenía de una fórmula alternativa de CAPEX, pero dos se presentaban como "terreno de 12C" cuando eran una entrada que 12C no publica, y dos no decían que correspondían al perfil P2.
 
-## 4. Terreno (sin elegir sitio)
+## 3. Terreno requerido vs terreno adquirido
 
-| Modalidad | Superficie (m² medio; bajo–alto) | Precio |
-|---|---|---|
-| Solo la fase (`compra_fase`) | 15.398 (6.470–37.510) a 2.500 · 18.029 (7.528–44.536) a 5.000 · 23.372 (9.678–57.569) a 10.000 · 32.379 (13.492–80.673) a 20.000 | TER-01 PENDIENTE |
-| Con reserva para 20.000 + rendering (`compra_reserva`) | 33.345 (14.069–82.253) en **todas** las escalas | TER-01 PENDIENTE |
-| Parque industrial | Igual superficie; cargo de parque (TER-08) en lugar de acceso y conexiones | TER-02 PENDIENTE |
-| Rural / industrial compatible | Igual superficie | TER-03 PENDIENTE |
+- **Requerido por la fase** (`terreno_requerido_fase`): superficie de la fase actual sin reserva. Driver de **preparación del sitio** (TER-PREP): la reserva no se prepara.
+- **Adquirido / reservado** (`terreno_adquirido`): lo que se compra. `compra_fase`, `parque_industrial`, `rural_compatible` = requerido (+ reserva de rendering si la arquitectura lo pide); `compra_reserva` = 12C con escala objetivo 20.000 + rendering. Driver de **TER-COMPRA** y del **cerco** (perímetro derivado del terreno adquirido, DERIVADO_CAPEX: 12C no publica perímetro).
+- **Regla verificada:** adquirido ≥ requerido en cada nivel (bajo/medio/alto) y en todas las combinaciones de configuración, escala y modalidad (test N03). Si no se cumpliera, el motor emite `TERRENO_ADQUIRIDO_MENOR_QUE_REQUERIDO` y **no corrige**.
+- Reservar para 20.000 **no** es un número único: 14.069 / 33.345 / 82.253 m² según el nivel de 12C, porque retiros (5/10/15 m), buffers (10/20/40 m, PROXY) y FOS son desconocidos (DPV-106, DPV-141).
 
-El rango de terreno es amplio porque retiros (5/10/15 m), buffers (10/20/40 m, PROXY) y FOS son desconocidos (DPV-106, DPV-141). Gastos de compra: % PENDIENTE (TER-04). Preparación del sitio, acceso y conexiones: PENDIENTES (DPV-16-03, DPV-16-11). **No hay ninguna referencia válida de precio de suelo por corredor**: no se asigna precio.
+## 4. Categorías de obra y tipo de área
+
+Cada área de 12C pertenece a una sola categoría (test M06), y la suma por tipo reproduce la superficie fuente (test N02): Σ categorías **edificio** = m² construidos; Σ **pavimento / playa-circulación / infraestructura exterior** = m² exteriores; **efluentes** = m² de efluentes.
+
+| ID | Categoría | Tipo de área | Áreas de 12C | USD/m² | Evidencia |
+|---|---|---|---|---|---|
+| OC-PH | Proceso húmedo | edificio | colgado/aturdido, sangrado/escaldado/desplumado, evisceración, enfriamiento, clasificación, trozado, deshuese, CMS, coproductos, empaque, lavado de cajones, circulación de proceso, sala de subproductos | PENDIENTE | — |
+| OC-RS | Recepción semicubierta | edificio | recepción y espera | PENDIENTE | — |
+| OC-FR | Envolvente de frío (paneles en FR-PAN) | edificio | cámaras refrigeradas/congeladas, túnel, antecámaras, cámaras de subproductos y decomisos | PENDIENTE | — |
+| OC-DK | Docks y expedición | edificio | expedición/docks | PENDIENTE | — |
+| OC-DP | Depósitos y talleres secos | edificio | residuos/cartón, envases, taller, repuestos, químicos | **250 / 300 / 350** | **E4 `[PVDP]`** FTE-16-001 |
+| OC-ST | Salas técnicas | edificio | máquinas de frío, caldera, aire, generador, eléctrica, tratamiento de agua | PENDIENTE | — |
+| OC-LB | Laboratorio | edificio | laboratorio de calidad | PENDIENTE | — |
+| OC-VC | Personal | edificio | vestuarios, comedor, lavandería | PENDIENTE | — |
+| OC-OF | Administración | edificio | oficinas, oficina SENASA, enfermería, porterías, circulación de personal | PENDIENTE | — |
+| OC-EP | Pavimento pesado | playa / circulación | playas de aves vivas, despacho, subproductos; circulación pesada | PENDIENTE | — |
+| OC-EL | Estacionamiento | pavimento | estacionamiento | PENDIENTE | — |
+| OC-LV | Lavado de camiones | pavimento (plataforma) | plataforma de lavado | PENDIENTE | — |
+| OC-IP | Infraestructura pesada | infraestructura exterior | bases de tanques de agua | PENDIENTE | — |
+| OC-EF | Obra de efluentes | efluentes | pretratamiento, ecualización, DAF, biológico, lodos, circulación | PENDIENTE | — |
+| OC-CER | Cerco perimetral (m) | perímetro | perímetro del terreno adquirido | PENDIENTE | — |
+| OC-INF | Infraestructura del predio | **lote** (corrección v1.1) | pluviales, cloaca interna, iluminación exterior | PENDIENTE | — |
+| OC-ADM | Oficina asset-light | — | m² PENDIENTES (DPV-16-12) | PENDIENTE | — |
+
+**No son obra** (no reciben ningún USD/m²): terreno, retiros y buffers, reserva de expansión, área verde (12C no la modela: PENDIENTE). La v1.0 aplicaba un USD/m² de infraestructura a **todo** el terreno (incluidos retiros, buffers y reserva); en la v1.1 OC-INF es un lote global y la preparación del sitio usa el terreno **requerido**.
+
+**Costo de OC-DP (único con precio, E4):** USD 43.779 (2.500) · 64.186 (5.000) · 119.200 (10.000) · 222.431 (20.000) para C1. Es una **nave seca**; usar ese USD/m² para proceso húmedo o frío sería un error de categoría.
 
 ## 5. Qué falta para costear la obra
 
-1. USD/m² por categoría con fecha, TC, IVA y alcance (DPV-16-02): constructoras con antecedentes en plantas alimentarias o licitaciones públicas con cómputo y presupuesto leídos en original.
-2. Programa de áreas de proveedor (footprints) para salir de PROXY (DPV-090, SUP-107).
+1. USD/m² por categoría con fecha, TC, IVA y alcance (DPV-16-02).
+2. Footprints de proveedor para salir de PROXY (DPV-090, SUP-107).
 3. Sitio: retiros, FOS, suelo, cota, accesos (DPV-106, DPV-141).
+4. Que 12C publique el **terreno sin reserva** como salida propia (propuesta T16-07), para que CAPEX lo consuma en lugar de pedírselo a la función.
