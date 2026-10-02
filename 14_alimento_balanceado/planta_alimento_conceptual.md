@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-01 · **Versión:** 1.1 (capacidad horaria con sus factores explícitos) · Sesión 14B · Modelo: [`modelo_upstream.py`](modelo_upstream.py) (bloque `6_planta_alimento`)
 
-> **Conceptual.** Describe las etapas de una planta de alimento para pollo parrillero y calcula la **capacidad de producción requerida** (t/h de alimento terminado) para cada escala. **No** elige fabricante, tecnología, número de líneas ni proveedor (regla del proyecto y DEC-049), **no** decide construir la planta (DEC-024 abierta) y **no** contiene CAPEX ni OPEX. Las descripciones de etapas son de práctica general de la industria (fuentes comerciales y técnicas `[PVDP · débil]`, FTE-14B-005) a validar con visitas (DPV-14B-07).
+> **Conceptual.** Describe las etapas de una planta de alimento para pollo parrillero y calcula la **capacidad de producción requerida** (t/h de alimento terminado) para cada escala. **No** elige fabricante, tecnología, número de líneas ni proveedor (regla del proyecto y DEC-049), **no** decide construir la planta (DEC-024 abierta) y **no** contiene CAPEX ni OPEX. Las descripciones de etapas son de práctica general de la industria (fuentes comerciales y técnicas `[PVDP · débil]`, FTE-309) a validar con visitas (DPV-158).
 
 ---
 
@@ -37,10 +37,10 @@
 
 | Tema | Opciones | Depende de | Registro |
 |---|---|---|---|
-| Forma física | Pellet + migaja (inicio) / harina | Nutricionista, desempeño (FCR), costo de energía | DEC-14B-03 |
-| Línea | Una línea / dos líneas (redundancia) | Escala, criticidad (sin alimento no hay crianza) | DEC-14B-02 |
-| Ubicación | Junto a la planta de faena / en zona de granos / cerca de las granjas | Localización (DEC-003), flujo de granos vs alimento | DEC-14B-04 |
-| Medicados | Elaborar o no alimentos con medicación | Registro SENASA, segregación, retiro | DPV-14B-06 |
+| Forma física | Pellet + migaja (inicio) / harina | Nutricionista, desempeño (FCR), costo de energía | DEC-076 |
+| Línea | Una línea / dos líneas (redundancia) | Escala, criticidad (sin alimento no hay crianza) | DEC-075 |
+| Ubicación | Junto a la planta de faena / en zona de granos / cerca de las granjas | Localización (DEC-003), flujo de granos vs alimento | DEC-077 |
+| Medicados | Elaborar o no alimentos con medicación | Registro SENASA, segregación, retiro | DPV-007 |
 | Elaboración para terceros | Prestar servicio con capacidad no usada por la demanda propia | Mercado regional, habilitación | No se supone |
 
 ---
@@ -52,10 +52,10 @@
 | Factor | Valores del modelo | Clasificación | Efecto sobre la t/h |
 |---|---|---|---|
 | **Escala** (t/semana plena de alimento) | 62 / 124 / 247 / 494 t (medio, 5 d de faena); 81 / 162 / 324 / 647 t (desfavorable, 6 d) | `[ESTIMACIÓN]` de `03` | Proporcional |
-| **Días de fabricación por semana** | 3 / 5 / 6 | `[SUPUESTO]` SUP-14B-07 (escenario) | Inverso: 3 días exigen el doble de t/h que 6 |
-| **Horas por día** | 8 / 16 | `[SUPUESTO]` SUP-14B-07 | Inverso: un turno exige el doble que dos |
-| **Eficiencia** (fracción de horas programadas con producción efectiva; también llamada utilización horaria) | 0,75 / 0,85 | `[SUPUESTO]` SUP-14B-07, sin fuente | Inverso (±13 %) |
-| **Margen de capacidad** | 15 % (10–20 %) | `[SUPUESTO]` SUP-14B-05 | ×1,15 |
+| **Días de fabricación por semana** | 3 / 5 / 6 | `[SUPUESTO]` SUP-148 (escenario) | Inverso: 3 días exigen el doble de t/h que 6 |
+| **Horas por día** | 8 / 16 | `[SUPUESTO]` SUP-148 | Inverso: un turno exige el doble que dos |
+| **Eficiencia** (fracción de horas programadas con producción efectiva; también llamada utilización horaria) | 0,75 / 0,85 | `[SUPUESTO]` SUP-148, sin fuente | Inverso (±13 %) |
+| **Margen de capacidad** | 15 % (10–20 %) | `[SUPUESTO]` SUP-146 | ×1,15 |
 | Factor de pico | 1,0 (estacionalidad PENDIENTE) | `[SUPUESTO]` | Proporcional |
 
 ### 2.1 t/h de alimento terminado requeridas (rango por eficiencia 0,85–0,75; margen 15 %)
@@ -91,14 +91,14 @@ Con una planta de capacidad dada, las horas de fabricación necesarias son t/sem
 
 `[ESTIMACIÓN]` (bloque `6_planta_horas` del CSV).
 
-**Lectura (reformulada en v1.1):** con la demanda propia de 2.500 aves/día, una planta de una capacidad determinada tendría **baja utilización si se opera todos los días bajo la cadencia asumida**. No es por sí una conclusión negativa: la misma planta podría **fabricar menos días** (p. ej. 3 d × 8 h requieren 3,5–3,9 t/h), **concentrar lotes por fórmula**, **prestar servicio a terceros** (no se supone; requiere mercado y habilitación) u operar con **capacidad ociosa estratégica** como reserva para crecer. Cuál de esas alternativas tiene sentido es una pregunta económica y de mercado (fase CAPEX/OPEX; DEC-14B-01, DEC-14B-02).
+**Lectura (reformulada en v1.1):** con la demanda propia de 2.500 aves/día, una planta de una capacidad determinada tendría **baja utilización si se opera todos los días bajo la cadencia asumida**. No es por sí una conclusión negativa: la misma planta podría **fabricar menos días** (p. ej. 3 d × 8 h requieren 3,5–3,9 t/h), **concentrar lotes por fórmula**, **prestar servicio a terceros** (no se supone; requiere mercado y habilitación) u operar con **capacidad ociosa estratégica** como reserva para crecer. Cuál de esas alternativas tiene sentido es una pregunta económica y de mercado (fase CAPEX/OPEX; DEC-074, DEC-075).
 
-- Las capacidades nominales de catálogo (t/h) suelen referirse a un producto y una forma (harina vs pellet) concretos; **no son capacidad del proyecto**. Comparar siempre en t/h de **pellet terminado** con la fórmula y el diámetro reales (DPV-14B-07).
+- Las capacidades nominales de catálogo (t/h) suelen referirse a un producto y una forma (harina vs pellet) concretos; **no son capacidad del proyecto**. Comparar siempre en t/h de **pellet terminado** con la fórmula y el diámetro reales (DPV-158).
 - La fabricación concentrada en pocos días aumenta el **inventario de alimento terminado** necesario para abastecer granjas que comen los 7 días ([`almacenamiento_silos.md` §5](almacenamiento_silos.md)).
 
 ### 2.3 Consumo de servicios y personal
 
-**PENDIENTE.** Energía (kWh/t; molienda + pellet), vapor (kg/t), agua y dotación por turno requieren datos de proveedores o plantas en operación (DPV-14B-07). No se estiman en esta fase.
+**PENDIENTE.** Energía (kWh/t; molienda + pellet), vapor (kg/t), agua y dotación por turno requieren datos de proveedores o plantas en operación (DPV-158). No se estiman en esta fase.
 
 ---
 
@@ -106,11 +106,11 @@ Con una planta de capacidad dada, las horas de fabricación necesarias son t/sem
 
 | Elemento | Cómo se dimensiona | Dónde se calcula |
 |---|---|---|
-| Recepción de granos | t/semana de maíz + harina de soja (~56 / 111 / 223 / 445 t/semana medio) y camiones/semana (2 / 4 / 8 / 16 con un barrido de 28 t, SUP-14B-13) | [`integracion_upstream.md` §4](integracion_upstream.md) y CSV bloque `10_logistica` |
+| Recepción de granos | t/semana de maíz + harina de soja (~56 / 111 / 223 / 445 t/semana medio) y camiones/semana (2 / 4 / 8 / 16 con un barrido de 28 t, SUP-096) | [`integracion_upstream.md` §4](integracion_upstream.md) y CSV bloque `10_logistica` |
 | Silos de materias primas | consumo × días de stock / densidad | [`almacenamiento_silos.md`](almacenamiento_silos.md) |
 | Celdas de producto terminado | ≥ 1 por fórmula (3–4) + días de stock | [`almacenamiento_silos.md`](almacenamiento_silos.md) |
 | Despacho | t/semana plena / capacidad del granelero (3 / 5 / 9 / 18 viajes/semana con 28 t de escenario, SUP-096) | CSV bloque `10_logistica` |
 
 ## 4. Requisitos regulatorios a verificar
 
-La elaboración de alimentos para animales requiere inscripción y registro ante SENASA (establecimiento y productos), con requisitos adicionales para alimentos medicados; también habilitaciones municipales, ambientales (polvo, ruido) y de seguridad (atmósferas explosivas). **Nada de esto se leyó en el original** (DPV-009): se registra como DPV-14B-06.
+La elaboración de alimentos para animales requiere inscripción y registro ante SENASA (establecimiento y productos), con requisitos adicionales para alimentos medicados; también habilitaciones municipales, ambientales (polvo, ruido) y de seguridad (atmósferas explosivas). **Nada de esto se leyó en el original** (DPV-009): se registra como DPV-007.

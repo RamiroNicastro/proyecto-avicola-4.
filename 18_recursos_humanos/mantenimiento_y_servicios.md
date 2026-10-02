@@ -3,8 +3,8 @@
 **Fecha:** 2026-10-01 · **Versión:** 1.1 (sesión 14A; auditoría de unidades laborales) · Fase 0
 
 > **Alcance:** estructura conceptual de mantenimiento (preventivo, correctivo, eléctrico, mecánico, frío, automatización) con **cobertura operativa** y **carga de mantenimiento** separadas; comparación propio / tercerizado / mixto; limpieza y sanitización como **función crítica** con dotación simultánea, horas-persona, FTE y horas contratadas; utilities, HyS, lavandería.
-> **No** se elige modalidad (DEC-14A-01, DEC-14A-02, DEC-040), proveedor ni contratista; **no** se calculan costos.
-> **Clasificación:** cantidades `[ESTIMACIÓN]` de [`modelo_rrhh.py`](modelo_rrhh.py) v1.1 con coeficientes `[SUPUESTO]` (SUP-14A-06, SUP-14A-09, SUP-14A-16); activos de [`../08_maquinaria/matriz_equipos.csv`](../08_maquinaria/matriz_equipos.csv) (sin modificarla).
+> **No** se elige modalidad (DEC-067, DEC-068, DEC-040), proveedor ni contratista; **no** se calculan costos.
+> **Clasificación:** cantidades `[ESTIMACIÓN]` de [`modelo_rrhh.py`](modelo_rrhh.py) v1.1 con coeficientes `[SUPUESTO]` (SUP-129, SUP-132, SUP-139); activos de [`../08_maquinaria/matriz_equipos.csv`](../08_maquinaria/matriz_equipos.csv) (sin modificarla).
 
 ---
 
@@ -27,7 +27,7 @@
 | | **Cobertura operativa** | **Carga de mantenimiento** |
 |---|---|---|
 | Pregunta | ¿Cuántos técnicos deben estar **presentes** mientras funcionan los activos críticos? | ¿Cuántas **horas de trabajo** de mantenimiento exigen los activos? |
-| Naturaleza | **Política de cobertura de referencia** (SUP-14A-16), **no requisito técnico universal** | Estimación por activos (SUP-14A-09) |
+| Naturaleza | **Política de cobertura de referencia** (SUP-139), **no requisito técnico universal** | Estimación por activos (SUP-132) |
 | Fórmula | (técnicos simultáneos × horas con activos en marcha + 1 de guardia × horas de limpieza, sanitización y mantenimiento) ÷ 8 h | Σ equipos presentes × h/semana por nivel (Mc 0,75 · S 1,5 · A 3, media) × criticidad (1,5 / 1 / 0,5) × unidades ÷ días ÷ (8 h × fracción productiva 0,8) |
 | Supuestos | Técnicos simultáneos: 1; +1 desde 5.000; +1 desde 10.000; +1 si automático ≥ 10.000. Una planta puede elegir otra política (técnico de respuesta en minutos, contratista residente, operador polivalente) | Horas por equipo y criticidad sin dato argentino; equipos "duplicables" 1 cada 1.250 aves/h |
 | Cambia con | Horas de operación, turnos, política de riesgo | Número de activos, nivel de automatización, criticidad |
@@ -54,7 +54,7 @@ Más jefe de mantenimiento (desde 5.000; coordinador de contratos si se terceriz
 
 Las horas de mantenimiento son las mismas en las tres modalidades (test R17): tercerizar las convierte en **horas contratadas**, no las elimina.
 
-**Lecturas:** (1) con la política de referencia, entre 5.000 y 10.000 manda la cobertura (mantenimiento casi fijo por turno); con otra política podría mandar la carga; (2) a 20.000 automático manda la carga (7,5 vs 6,4 FTE), con un rango muy amplio (3,3–17,1) porque las horas por equipo son el supuesto menos respaldado (DPV-14A-10); (3) dos cuadrillas extienden las horas con activos en marcha y aumentan la cobertura; (4) la automatización nunca reduce técnicos (test R03).
+**Lecturas:** (1) con la política de referencia, entre 5.000 y 10.000 manda la cobertura (mantenimiento casi fijo por turno); con otra política podría mandar la carga; (2) a 20.000 automático manda la carga (7,5 vs 6,4 FTE), con un rango muy amplio (3,3–17,1) porque las horas por equipo son el supuesto menos respaldado (DPV-150); (3) dos cuadrillas extienden las horas con activos en marcha y aumentan la cobertura; (4) la automatización nunca reduce técnicos (test R03).
 
 ### 1.4 Propio vs tercerizado vs mixto (sin elección)
 
@@ -65,7 +65,7 @@ Las horas de mantenimiento son las mismas en las tres modalidades (test R17): te
 | Especialidades (frío con amoníaco, PLC, media tensión) | ▼ difícil en escalas chicas | ▲ | ▲ |
 | Dependencia | De retener técnicos | Del contratista y del proveedor de equipos | Repartida |
 | Función interna que **no** se terceriza | — | Coordinación, planificación del preventivo, repuestos críticos (DEC-040) | Jefe de mantenimiento |
-| Datos faltantes | Técnicos por corredor (DPV-14A-08) | Contratistas y servicio técnico local (DPV-089) | Ambos |
+| Datos faltantes | Técnicos por corredor (DPV-121) | Contratistas y servicio técnico local (DPV-089) | Ambos |
 
 ## 2. Limpieza y sanitización — función crítica
 
@@ -103,10 +103,10 @@ Rango de dotación simultánea (alta–media–baja): 5–7–11 / 7–11–18 /
 
 **Lecturas:**
 
-1. **35 personas durante 4 h = 140 horas-persona = 17,5 FTE**, no 35 FTE (test R16). Cuántas personas hay que contratar depende del esquema laboral (jornada parcial, jornada completa con otras tareas, limpieza por sectores que alargue la ventana): **headcount contractual PENDIENTE** (DPV-14A-06).
+1. **35 personas durante 4 h = 140 horas-persona = 17,5 FTE**, no 35 FTE (test R16). Cuántas personas hay que contratar depende del esquema laboral (jornada parcial, jornada completa con otras tareas, limpieza por sectores que alargue la ventana): **headcount contractual PENDIENTE** (DPV-091).
 2. **Tercerizar no hace desaparecer el recurso:** las 140 horas-persona pasan de FTE interno a **servicio tercerizado / horas contratadas** (test R17), y la cuadrilla sigue presente en el sitio (cuenta para vestuarios). Se mantienen internos el supervisor de saneamiento / verificación POES y la limpieza operativa en turno.
 3. **Limpieza por sectores** (empezar cada sala cuando termina) alarga la ventana efectiva y reduce la dotación simultánea sin cambiar las horas-persona; cambia el pico de vestuarios. Pregunta prioritaria de campo.
-4. **Nocturnidad:** una cuadrilla que trabaja de noche puede caer en régimen de jornada nocturna (`[PVDP]`); el convenio puede fijar condiciones (DPV-14A-01).
+4. **Nocturnidad:** una cuadrilla que trabaja de noche puede caer en régimen de jornada nocturna (`[PVDP]`); el convenio puede fijar condiciones (DPV-146).
 
 ### 2.4 Propia vs tercerizada vs híbrida (sin elección)
 
@@ -123,8 +123,8 @@ Rango de dotación simultánea (alta–media–baja): 5–7–11 / 7–11–18 /
 
 | Servicio | Tratamiento en el modelo | Pendiente |
 |---|---|---|
-| **Higiene y seguridad laboral y medicina del trabajo** | Servicio externo en todas las escalas (horas **PENDIENTES**); técnico interno desde 10.000 | Horas-profesional por cantidad de trabajadores y riesgo (Ley 19.587, Decreto 1338/96, `[PVDP]`; DPV-14A-07) |
-| **Lavandería y ropería por zona** | 0,5 → 2 FTE internos | Propio vs tercerizado (DEC-14A-07) |
+| **Higiene y seguridad laboral y medicina del trabajo** | Servicio externo en todas las escalas (horas **PENDIENTES**); técnico interno desde 10.000 | Horas-profesional por cantidad de trabajadores y riesgo (Ley 19.587, Decreto 1338/96, `[PVDP]`; DPV-149) |
+| **Lavandería y ropería por zona** | 0,5 → 2 FTE internos | Propio vs tercerizado (DEC-073) |
 | **Seguridad patrimonial y portería** | No modelada (habitualmente tercerizada) | Puestos según sitio |
 | **Utilities y PTE** | Dentro de la cobertura técnica (3.er técnico simultáneo desde 10.000) | Operador de PTE según tecnología (DEC-043) |
 | **Laboratorio de autocontrol** | Servicio externo por análisis (no por horas) | DEC-065 |

@@ -14,7 +14,7 @@
 4. **Setter y hatcher por separado (corregido en v1.1):** las cifras v1.0 (50.508 / 101.015 / 202.030 / 404.060) eran solo setter en flujo continuo × margen; se retiran. Con cadencia por lotes y margen de 15 %: **setter 55.824 / 111.648 / 223.296 / 446.593 posiciones** (igual para las cinco cadencias ilustrativas) y **hatcher 12.343–18.515 / 24.687–37.030 / 49.373–74.060 / 98.747–148.120** según 3 o 1–2 nacimientos por semana. Utilización media de diseño: setter 79 %, hatcher 50–75 %.
 5. **Demanda media semanal ≠ lote de nacimiento:** con N nacimientos por semana, el lote es la demanda / N (a 10.000 aves/día: 52.790 / 26.395 / 17.597 / 10.558 pollitos con 1 / 2 / 3 / 5 nacimientos). La cadencia **no se elige**: define el tamaño del hatcher, los camiones, el llenado de galpones y la dispersión de edad a faena.
 6. **Fertilidad e incubabilidad tienen la misma elasticidad (−1)** (corregido en v1.1): ninguna es "más sensible" por la fórmula. En el modelo, la fertilidad mueve más los huevos (+4,5 % / −3,2 % en sus extremos, contra +3,4 % / −2,2 % de la incubabilidad) **solo porque su rango supuesto es más ancho** (7,6 % vs 5,6 % del valor medio). En la opción B, la fertilidad depende del proveedor del huevo.
-7. **Incubar huevo comprado sustituye la dependencia** de proveedores de pollito por dependencia de proveedores de huevo fértil; la concentración y disponibilidad real de esa oferta es **DPV-14B-02** (no hay evidencia de que sea mayor o menor que la de pollito). La independencia de suministro solo llega con reproductoras (C), la opción más intensiva en capital, know-how y plazo.
+7. **Incubar huevo comprado sustituye la dependencia** de proveedores de pollito por dependencia de proveedores de huevo fértil; la concentración y disponibilidad real de esa oferta es **DPV-154** (no hay evidencia de que sea mayor o menor que la de pollito). La independencia de suministro solo llega con reproductoras (C), la opción más intensiva en capital, know-how y plazo.
 8. **Sincronización con galpones y faena (reformulado en v1.1):** existe un **posible problema de sincronización** entre tamaño de lote de nacimiento, capacidad de galpones y cadencia de faena, más visible a escala chica (a 2.500 aves/día, un galpón equivalente de 1.800 m² necesita ~1,7–8,7 nacimientos para llenarse según la cadencia y ~8,7 días de faena para cosecharse). **No demuestra incompatibilidad:** debe validarse con la arquitectura real de las granjas (galpones por granja, plazas por galpón, tolerancia de edad, cosecha escalonada). Detalle: [`../14_alimento_balanceado/integracion_upstream.md` §4](../14_alimento_balanceado/integracion_upstream.md).
 9. **Escala relativa:** las demandas de 2.500–10.000 aves/día equivalen a una planta de incubación chica o a una fracción de una industrial (ejemplos de 80.000–400.000/semana citados, `[PVDP]`); la escala mínima eficiente **no se infiere** sin costos.
 
@@ -33,12 +33,12 @@ Las arquitecturas son **referencias de madurez**, no un recorrido obligatorio: s
 
 | Dato | Registro |
 |---|---|
-| Oferta de pollito para terceros: volumen, **días de nacimiento**, **tamaño mínimo de lote**, mínimo contractual semanal/mensual, flexibilidad de programación, uniformidad, ventana de entrega, estacionalidad, capacidad futura | DPV-006, DPV-047, DPV-14B-10 |
-| Fertilidad e incubabilidad reales (por edad de reproductoras), descarte, pérdidas | DPV-14B-01, DPV-045 |
-| Oferta de huevo fértil para terceros (concentración y disponibilidad) | DPV-14B-02 |
-| Habilitación SENASA de planta de incubación | DPV-14B-06 |
-| Horas de selección, vacunación, expedición y viaje; capacidad de camiones de pollitos y huevos | DPV-14B-09, DPV-084 |
-| Arquitectura real de granjas: galpones por granja, plazas por galpón, llenado por galpón o granja, tolerancia de edad, cosecha escalonada | DPV-048, DPV-133, DPV-14B-10 |
+| Oferta de pollito para terceros: volumen, **días de nacimiento**, **tamaño mínimo de lote**, mínimo contractual semanal/mensual, flexibilidad de programación, uniformidad, ventana de entrega, estacionalidad, capacidad futura | DPV-006, DPV-047, DPV-133 |
+| Fertilidad e incubabilidad reales (por edad de reproductoras), descarte, pérdidas | DPV-153, DPV-045 |
+| Oferta de huevo fértil para terceros (concentración y disponibilidad) | DPV-154 |
+| Habilitación SENASA de planta de incubación | DPV-007 |
+| Horas de selección, vacunación, expedición y viaje; capacidad de camiones de pollitos y huevos | DPV-047, DPV-084 |
+| Arquitectura real de granjas: galpones por granja, plazas por galpón, llenado por galpón o granja, tolerancia de edad, cosecha escalonada | DPV-048, DPV-133 |
 
 ## 4. Calidad
 

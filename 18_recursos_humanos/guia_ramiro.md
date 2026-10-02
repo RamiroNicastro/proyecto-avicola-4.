@@ -37,20 +37,20 @@ Complementa [`../05_proceso_industrial/guia_visita_planta.md`](../05_proceso_ind
 
 | Tema | Preguntas | Para qué (ID) |
 |---|---|---|
-| **Dotación real** | ¿Cuántos puestos por sector y por turno? ¿Cuántas personas en nómina en total? ¿Qué parte es tercerizada? | DPV-14A-04, DPV-092 |
-| **Presencia** | ¿A qué hora entra y sale cada grupo (línea, limpieza, mantenimiento, oficinas)? ¿Cuándo hay más gente en la planta? | Pico en sitio (SUP-14A-18) |
+| **Dotación real** | ¿Cuántos puestos por sector y por turno? ¿Cuántas personas en nómina en total? ¿Qué parte es tercerizada? | DPV-092 |
+| **Presencia** | ¿A qué hora entra y sale cada grupo (línea, limpieza, mantenimiento, oficinas)? ¿Cuándo hay más gente en la planta? | Pico en sitio (SUP-141) |
 | **Productividad** | ¿Cuántas aves cuelga una persona por minuto? ¿Cuántos kg trocea o deshuesa por hora? ¿Cuántos puestos tiene la evisceración? | DPV-092 |
-| **Cobertura de nómina** | ¿Cuántas personas en nómina por cada puesto a cubrir? ¿Ausentismo típico? ¿Cuántos reemplazos por turno? | FACTOR_COBERTURA_NOMINA (DPV-14A-02) |
-| **Turnos y jornada** | ¿Cuántas horas netas faenan por turno? ¿Cómo cubren arranque, pausas y cierre? ¿Hacen horas extra, relevos o turnos escalonados? ¿Qué convenio aplica? | DPV-082, DPV-14A-01 |
-| **Mantenimiento** | ¿Cuántos técnicos propios y por especialidad? ¿Hay un técnico en planta todo el tiempo que corre la línea? ¿Qué se terceriza? ¿Horas de preventivo por semana? | DPV-14A-10, DPV-089 |
-| **Limpieza** | ¿Propia o tercerizada? ¿Cuántas personas a la vez y cuántas horas? ¿Limpian por sectores? ¿Jornada completa o parcial? | DPV-091, DPV-14A-06 |
-| **Supervisión** | ¿Cuántos operarios por supervisor? ¿Hay jefe de turno? | DPV-14A-11 |
-| **Inspección oficial** | ¿Cuántos inspectores oficiales por turno y por línea? ¿La planta aporta auxiliares o paga algún arancel? | DPV-14A-05 |
-| **Mano de obra local** | ¿Cuesta conseguir operarios y técnicos (frigoristas, electricistas, PLC)? ¿Cuánto tarda en aprender un operario de evisceración o deshuese? | DPV-14A-08, DPV-121 |
+| **Cobertura de nómina** | ¿Cuántas personas en nómina por cada puesto a cubrir? ¿Ausentismo típico? ¿Cuántos reemplazos por turno? | FACTOR_COBERTURA_NOMINA (DPV-147) |
+| **Turnos y jornada** | ¿Cuántas horas netas faenan por turno? ¿Cómo cubren arranque, pausas y cierre? ¿Hacen horas extra, relevos o turnos escalonados? ¿Qué convenio aplica? | DPV-082, DPV-146 |
+| **Mantenimiento** | ¿Cuántos técnicos propios y por especialidad? ¿Hay un técnico en planta todo el tiempo que corre la línea? ¿Qué se terceriza? ¿Horas de preventivo por semana? | DPV-150, DPV-089 |
+| **Limpieza** | ¿Propia o tercerizada? ¿Cuántas personas a la vez y cuántas horas? ¿Limpian por sectores? ¿Jornada completa o parcial? | DPV-091 |
+| **Supervisión** | ¿Cuántos operarios por supervisor? ¿Hay jefe de turno? | DPV-151 |
+| **Inspección oficial** | ¿Cuántos inspectores oficiales por turno y por línea? ¿La planta aporta auxiliares o paga algún arancel? | DPV-101 |
+| **Mano de obra local** | ¿Cuesta conseguir operarios y técnicos (frigoristas, electricistas, PLC)? ¿Cuánto tarda en aprender un operario de evisceración o deshuese? | DPV-121 |
 
 ## 5. Qué no hacer todavía
 
 - No convertir FTE en personas de nómina ni comparar "personas" de dos fuentes sin saber qué unidad usan.
 - No comprometer una estructura gerencial antes de saber la escala y el modelo (asset-light o planta propia).
 - No suponer que el segundo turno duplica la capacidad ni que las horas extra resuelven la jornada.
-- No cargar sueldos: la plantilla de costos ([`plantilla_costo_laboral.csv`](plantilla_costo_laboral.csv)) está vacía a propósito (DPV-14A-01, DPV-14A-03).
+- No cargar sueldos: la plantilla de costos ([`plantilla_costo_laboral.csv`](plantilla_costo_laboral.csv)) está vacía a propósito (DPV-146, DPV-148).

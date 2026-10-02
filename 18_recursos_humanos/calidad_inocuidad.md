@@ -4,7 +4,7 @@
 
 > **Alcance:** qué funciones de calidad e inocuidad necesita la empresa, quién las hace y cuánta gente implican por escala. Separa control operativo, QA, inocuidad, trazabilidad, APPCC y documentación.
 > **Regla:** **no** se afirma una cantidad obligatoria de profesionales sin respaldo normativo leído. Ninguna norma pudo leerse en su original desde la sesión (DPV-009); las referencias normativas son `[PVDP]` y vienen de [`../16_normativa_senasa/`](../16_normativa_senasa/README.md).
-> **Clasificación:** cantidades `[ESTIMACIÓN]` de [`modelo_rrhh.py`](modelo_rrhh.py) con coeficientes `[SUPUESTO]` (SUP-14A-08, SUP-14A-13).
+> **Clasificación:** cantidades `[ESTIMACIÓN]` de [`modelo_rrhh.py`](modelo_rrhh.py) con coeficientes `[SUPUESTO]` (SUP-131, SUP-136).
 
 ---
 
@@ -15,8 +15,8 @@
 | BPM y POES | Obligatorios (Res. SENASA 233/1998): procedimientos escritos con responsables, frecuencias, verificación y acciones correctivas | Cantidad ni perfil del personal que los ejecuta y verifica |
 | Plan APPCC | Obligatorio para establecimientos SENASA que faenen, elaboren, fraccionen o depositen alimentos, salvo excepciones (Res. SENASA 205/2014, cap. XXXI del Decreto 4238/68) | Si exige un responsable con título o dedicación específicos |
 | Director Técnico | **Obligación reglamentaria derogada** por Res. SENASA 592/2026 (FTE-229) | Si clientes, destinos o la autoridad local exigen igualmente un profesional responsable |
-| Inspección oficial | Ante y post mortem, decomisos y dictamen a cargo del servicio veterinario oficial | Inspectores y auxiliares por velocidad de línea; si la empresa aporta auxiliares o paga aranceles (DPV-090, DPV-14A-05) |
-| Exportación | Requisitos adicionales del destino sobre APPCC, microbiología, bienestar, trazabilidad por lote | Por destino; p. ej., la UE exige un responsable de bienestar animal en mataderos de su territorio (Reg. CE 1099/2009, `[PVDP]`, FTE-14A-007) — su aplicación a plantas de terceros países exportadoras está por verificar (DPV-14A-12) |
+| Inspección oficial | Ante y post mortem, decomisos y dictamen a cargo del servicio veterinario oficial | Inspectores y auxiliares por velocidad de línea; si la empresa aporta auxiliares o paga aranceles (DPV-090, DPV-101) |
+| Exportación | Requisitos adicionales del destino sobre APPCC, microbiología, bienestar, trazabilidad por lote | Por destino; p. ej., la UE exige un responsable de bienestar animal en mataderos de su territorio (Reg. CE 1099/2009, `[PVDP]`, FTE-304) — su aplicación a plantas de terceros países exportadoras está por verificar (DPV-152) |
 
 **Consecuencia:** las cantidades de abajo son **organizacionales** (lo necesario para que las funciones se cumplan con orden de magnitud razonable), no requisitos legales.
 
@@ -44,7 +44,7 @@ Unidades: **puestos por turno** para QC (presencia en línea) y **FTE** (dedicac
 | **Trazabilidad** | Registros y trazabilidad | — (QA) | 0,5 | 1,0 | 1,0 | Estructura |
 | **Laboratorio** | Servicio externo por análisis | externo | externo | externo | externo | Opción propia: +1 / +1 / +2 / +3 FTE (DEC-065) |
 | **Total empresa (FTE)** | | **~4,0** | **~5,0** | **~5,5** | **~8,7** | |
-| **Inspección oficial (SENASA)** | Ante/post mortem, decomisos | **No es personal de la empresa** | | | | Cantidad, auxiliares y eventual tasa **PENDIENTES** (DPV-090, DPV-14A-05) |
+| **Inspección oficial (SENASA)** | Ante/post mortem, decomisos | **No es personal de la empresa** | | | | Cantidad, auxiliares y eventual tasa **PENDIENTES** (DPV-090, DPV-101) |
 
 **SENASA no se presupuesta dentro de la nómina** de la empresa ni se suma a FTE, puestos ni pico en sitio (test R23). Si la normativa o los costos reales indican un cargo, tasa o auxiliares a cargo de la empresa, se incorporará como partida específica, no como dotación propia.
 

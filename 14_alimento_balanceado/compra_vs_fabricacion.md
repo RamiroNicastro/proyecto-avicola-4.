@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-01 · **Versión:** 1.1 (façon con dos variantes de propiedad; capacidad horaria e inventarios corregidos) · Sesión 14B · Marco general del upstream: [`integracion_upstream.md` §2](integracion_upstream.md)
 
-> **Marco de comparación, sin costos ni decisión.** DEC-024 (estrategia de alimento) sigue **abierta**. Las tres opciones son **escenarios de comparación** con el mismo estatus; la compra es solo el **benchmark de comparación**, no una preferencia. No se elige fabricante ni proveedor. La comparación económica (precio del alimento comprado vs costo de materias primas + elaboración + capital) requiere datos de campo (DPV-050, DPV-14B-03, DPV-14B-05) y corresponde a la fase de CAPEX/OPEX.
+> **Marco de comparación, sin costos ni decisión.** DEC-024 (estrategia de alimento) sigue **abierta**. Las tres opciones son **escenarios de comparación** con el mismo estatus; la compra es solo el **benchmark de comparación**, no una preferencia. No se elige fabricante ni proveedor. La comparación económica (precio del alimento comprado vs costo de materias primas + elaboración + capital) requiere datos de campo (DPV-050, DPV-155, DPV-157) y corresponde a la fase de CAPEX/OPEX.
 
 ---
 
@@ -36,9 +36,9 @@
 | Dato | Para qué | Registro |
 |---|---|---|
 | Precio del alimento por fase puesto en granja (fecha, moneda, IVA, flete) | Costo de A | DPV-050 |
-| Tarifa de façon, lote mínimo, plazo y capacidad libre de elaboradores; **quién compra las materias primas y quién mantiene stocks**; servicio nutricional; mermas; frecuencia de producción | Costo de B, variante B1/B2 y viabilidad | DPV-14B-03 |
-| Precio y flete de maíz, harina de soja, aceite, premezcla, aminoácidos; condiciones de contrato | Costo de B y C | DPV-050, DPV-14B-05 |
-| Capacidad real, consumo de energía y vapor, dotación y eficiencia de plantas en operación | Costo operativo de C | DPV-14B-07 |
+| Tarifa de façon, lote mínimo, plazo y capacidad libre de elaboradores; **quién compra las materias primas y quién mantiene stocks**; servicio nutricional; mermas; frecuencia de producción | Costo de B, variante B1/B2 y viabilidad | DPV-155 |
+| Precio y flete de maíz, harina de soja, aceite, premezcla, aminoácidos; condiciones de contrato | Costo de B y C | DPV-050, DPV-157 |
+| Capacidad real, consumo de energía y vapor, dotación y eficiencia de plantas en operación | Costo operativo de C | DPV-158 |
 | CAPEX de planta por escala (fase CAPEX) | Inversión de C | Fase posterior (sin RFQ en esta fase) |
 | Diferencia de desempeño (FCR) atribuible a la calidad del alimento | Beneficio de controlar la fórmula | DPV-044 |
 
@@ -50,4 +50,4 @@
 - **Señales hacia façon:** se quiere controlar fórmula y compra de granos sin CAPEX; existe un elaborador con capacidad libre en el radio; volumen intermedio.
 - **Señales hacia planta propia:** volumen estable que llena al menos un turno, localización en zona de granos, capital disponible, know-how incorporado, proveedores de alimento que son competidores o poco confiables.
 
-Umbral de volumen a partir del cual conviene cada opción: **PENDIENTE** (requiere costos; DEC-14B-01).
+Umbral de volumen a partir del cual conviene cada opción: **PENDIENTE** (requiere costos; DEC-074).

@@ -3,9 +3,9 @@
 **Fecha:** 2026-10-01 · **Versión:** 1.1 (sesión 14A; auditoría de unidades laborales) · Fase 0
 
 > **Pregunta:** ¿cuántas horas netas de faena caben en la jornada de una cuadrilla y en las 24 h del establecimiento, quién está presente en cada momento y cómo se mide la productividad sin elegir un único KPI?
-> **Integra** la ecuación de 24 h de 09A ([`../05_proceso_industrial/modelo_capacidad_proceso.py`](../05_proceso_industrial/modelo_capacidad_proceso.py), `ventana_24h`) **sin modificarla** (test R12). **No** se asume que dos turnos sean viables ni se elige organización horaria (DEC-036, DEC-14A-03).
-> **v1.1:** se eliminaron las "horas extra" calculadas por el modelo y el tope de 30 h/mes como restricción. El modelo informa una **brecha de jornada**; cómo se organiza esa brecha (turnos, relevos, escalonamiento, personal adicional, horas extraordinarias u otra forma) **no** está demostrado y depende del convenio, la legislación y la forma de contratación (DPV-14A-01).
-> **Clasificación:** presencia y brecha `[ESTIMACIÓN]`; jornada de referencia de 8 h `[PVDP]` (FTE-14A-001); D, pausas y limpieza intermedia `[SUPUESTO]` de sensibilidad (SUP-061, SUP-062).
+> **Integra** la ecuación de 24 h de 09A ([`../05_proceso_industrial/modelo_capacidad_proceso.py`](../05_proceso_industrial/modelo_capacidad_proceso.py), `ventana_24h`) **sin modificarla** (test R12). **No** se asume que dos turnos sean viables ni se elige organización horaria (DEC-036, DEC-069).
+> **v1.1:** se eliminaron las "horas extra" calculadas por el modelo y el tope de 30 h/mes como restricción. El modelo informa una **brecha de jornada**; cómo se organiza esa brecha (turnos, relevos, escalonamiento, personal adicional, horas extraordinarias u otra forma) **no** está demostrado y depende del convenio, la legislación y la forma de contratación (DPV-146).
+> **Clasificación:** presencia y brecha `[ESTIMACIÓN]`; jornada de referencia de 8 h `[PVDP]` (FTE-298); D, pausas y limpieza intermedia `[SUPUESTO]` de sensibilidad (SUP-061, SUP-062).
 
 ---
 
@@ -29,7 +29,7 @@ No toda persona está presente en todas las ventanas: la preparación, el cierre
 - dos cuadrillas o turnos escalonados;
 - relevos para pausas sin detener la línea;
 - personal adicional que cubra el arranque o el cierre;
-- jornada extendida u horas extraordinarias, **si el convenio y la ley lo permiten** (DPV-14A-01; referencias legales `[PVDP]` FTE-14A-001/002, sin usarse como restricción del modelo);
+- jornada extendida u horas extraordinarias, **si el convenio y la ley lo permiten** (DPV-146; referencias legales `[PVDP]` FTE-298/299, sin usarse como restricción del modelo);
 - otra organización (horas netas menores, 6 días con menos horas, etc.).
 
 **Horas netas que entran en la jornada de referencia sin organización adicional** (sensibilidades de 09A):
@@ -40,7 +40,7 @@ No toda persona está presente en todas las ventanas: la preparación, el cierre
 | Media (0,90) | **6,4 h** | **12,4 h** | 13,8 h |
 | Conservadora (0,85) | **5,9 h** | **11,4 h** | 10,0 h |
 
-**Tensiones registradas (no resueltas):** T-14A-1 — la referencia de 8 h netas de 23/05/12B (SUP-053) implica una organización adicional para el personal de línea; T-14A-2 — "16 h = 2 × 8 h netas" choca con la jornada de referencia (presencia de 10,2 h por cuadrilla) y con la ecuación de 24 h (holgura +0,9 / −2,8 / −8,3 h). Dos cuadrillas dentro de la jornada de referencia dan ~11,4–13,5 h netas.
+**Tensiones registradas (no resueltas):** T14-02 — la referencia de 8 h netas de 23/05/12B (SUP-053) implica una organización adicional para el personal de línea; T14-03 — "16 h = 2 × 8 h netas" choca con la jornada de referencia (presencia de 10,2 h por cuadrilla) y con la ecuación de 24 h (holgura +0,9 / −2,8 / −8,3 h). Dos cuadrillas dentro de la jornada de referencia dan ~11,4–13,5 h netas.
 
 ## 3. Matriz conceptual de presencia
 
@@ -60,7 +60,7 @@ Pico en sitio: **72** personas a la hora 0,75 (línea 44 + diurna 25 + técnicos
 
 **Dos cuadrillas de 6 h netas (12 h/día):** la cuadrilla 1 entra a las 0,75 y sale a las 8,48; la cuadrilla 2 entra a las 8,23 (0,25 h de traspaso) y sale a las 15,95; limpieza de 16,70 a 20,70; mantenimiento hasta 21,70. Pico en sitio: **96** a la hora 8,25 (las dos cuadrillas en el traspaso más la jornada diurna). **El pico ocurre en el cambio de turno**: es el dato que define vestuarios y circuitos de cambio.
 
-La matriz se genera para cada escenario (`modelo_rrhh.matriz_presencia`; `--detalle 10000`). Supuestos de horario (diurna desde el fin de la preparación; limpieza sin solaparse con la línea) en SUP-14A-18; una limpieza por sectores que empiece antes cambia el pico.
+La matriz se genera para cada escenario (`modelo_rrhh.matriz_presencia`; `--detalle 10000`). Supuestos de horario (diurna desde el fin de la preparación; limpieza sin solaparse con la línea) en SUP-141; una limpieza por sectores que empiece antes cambia el pico.
 
 ## 4. Turnos por escala
 
@@ -91,7 +91,7 @@ Automatización de referencia de 09A, config. B, propios, productividad media.
 
 1. **Más horas netas con la misma cuadrilla:** menos puestos por turno (la línea corre más lento), FTE casi iguales (la carga de trabajo no desaparece) y más horas-persona a organizar por encima de la jornada.
 2. **Dos cuadrillas de 6 h netas** caben en la jornada de referencia y, salvo en el escenario conservador, en las 24 h; requieren más FTE (supervisión, jefes de turno, técnicos en ambos turnos) y **elevan el pico en sitio** por el traspaso (p. ej., 72 → 96 a 10.000).
-3. **Dos cuadrillas de 8 h netas** muestran alertas de jornada y de 24 h salvo en el escenario optimista: no se descartan, pero exigen demostrar en plantas reales limpieza más corta o por sectores (DPV-091) y una organización laboral admitida (DPV-082, DPV-14A-01).
+3. **Dos cuadrillas de 8 h netas** muestran alertas de jornada y de 24 h salvo en el escenario optimista: no se descartan, pero exigen demostrar en plantas reales limpieza más corta o por sectores (DPV-091) y una organización laboral admitida (DPV-082, DPV-146).
 
 ## 5. Productividad: indicadores con denominador declarado
 
@@ -112,7 +112,7 @@ Escenario de referencia; productividad media (entre paréntesis, alta–baja). N
 
 ## 6. Automatización
 
-**Resultados del modelo basados en sus supuestos, no ahorro industrial validado.** El modelo trabaja **por tarea** (colgado, descarga, faena, evisceración, enfriamiento, clasificación, trozado, deshuese, empaque, cámaras, subproductos), cada una con su coeficiente por nivel (M / Mc / S / A; SUP-14A-04/05). Dos factores son **supuestos de sensibilidad genéricos**, no tareas medidas: el factor de limpieza por automatización (1,0 / 1,0 / 1,1 / 1,25) y la fracción interna de la limpieza híbrida (30 %).
+**Resultados del modelo basados en sus supuestos, no ahorro industrial validado.** El modelo trabaja **por tarea** (colgado, descarga, faena, evisceración, enfriamiento, clasificación, trozado, deshuese, empaque, cámaras, subproductos), cada una con su coeficiente por nivel (M / Mc / S / A; SUP-127/128). Dos factores son **supuestos de sensibilidad genéricos**, no tareas medidas: el factor de limpieza por automatización (1,0 / 1,0 / 1,1 / 1,25) y la fracción interna de la limpieza híbrida (30 %).
 
 Mismo escenario (1 cuadrilla, 8 h netas, config. B, propios, media): directos/turno · FTE totales · FTE de mantenimiento · pico en sitio.
 

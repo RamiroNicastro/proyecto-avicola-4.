@@ -4,7 +4,7 @@
 
 > **Pregunta:** ¿qué funciones necesita la empresa, quién las cubre (interno, externo, compartido), dónde trabaja cada persona y cómo cambia la estructura al crecer?
 > **No** se elige escala, automatización, turnos, modalidad de limpieza, mantenimiento ni flota; **no** se calculan salarios ni OPEX. Las cantidades salen de [`modelo_rrhh.py`](modelo_rrhh.py) y se analizan en [`dotacion_por_escala.md`](dotacion_por_escala.md).
-> **Clasificación:** estructura y asignación de funciones `[SUPUESTO]` de trabajo (SUP-14A-01, SUP-14A-13); ninguna es recomendación.
+> **Clasificación:** estructura y asignación de funciones `[SUPUESTO]` de trabajo (SUP-124, SUP-136); ninguna es recomendación.
 
 ---
 
@@ -14,8 +14,8 @@
 2. **No inflar la estructura chica.** En 2.500 aves/día un gerente general cubre también lo comercial y lo administrativo-financiero; el gerente de operaciones cubre la jefatura de producción; un técnico líder cubre la jefatura de mantenimiento. Un rol combinado se expresa como **dedicación en FTE** (0,5 de un rol), no como una persona más; el número de personas de nómina que resulta queda PENDIENTE hasta validar el factor de cobertura (v1.1).
 3. **Calidad independiente de producción.** El responsable de calidad e inocuidad no reporta a quien es medido por volumen; en escalas chicas reporta al gerente general, en la escalada se vuelve gerencia.
 4. **Producción primaria: sólo coordinación.** No se cuenta personal de granjas de terceros (integrados o proveedores de pollo vivo); se cuentan coordinación, veterinaria, técnicos de campo y planificación ([`../03_produccion_primaria/modelos_integracion.md`](../03_produccion_primaria/modelos_integracion.md)).
-5. **Zonas higiénicas mandan sobre la polivalencia.** Una persona de zona sucia no pasa a zona limpia dentro de la jornada sin el circuito de cambio previsto ([`../05_proceso_industrial/zonificacion_higienica.md`](../05_proceso_industrial/zonificacion_higienica.md)); la polivalencia se diseña **dentro** de cada zona (DEC-14A-05).
-6. **La inspección oficial no es dotación de la empresa.** El servicio veterinario oficial (SENASA) realiza ante y post mortem; cuántos inspectores y eventuales auxiliares requiere cada línea y quién los provee y paga **no está leído en la norma** (DPV-090, DPV-14A-05): queda PENDIENTE, no se rellena.
+5. **Zonas higiénicas mandan sobre la polivalencia.** Una persona de zona sucia no pasa a zona limpia dentro de la jornada sin el circuito de cambio previsto ([`../05_proceso_industrial/zonificacion_higienica.md`](../05_proceso_industrial/zonificacion_higienica.md)); la polivalencia se diseña **dentro** de cada zona (DEC-071).
+6. **La inspección oficial no es dotación de la empresa.** El servicio veterinario oficial (SENASA) realiza ante y post mortem; cuántos inspectores y eventuales auxiliares requiere cada línea y quién los provee y paga **no está leído en la norma** (DPV-090, DPV-101): queda PENDIENTE, no se rellena.
 
 ## 2. Mapa de funciones
 
@@ -34,23 +34,23 @@ Códigos de modalidad: **I** interno · **C** rol compartido · **E** externo/te
 | Cámaras, congelado y expedición | Ingreso a cámaras, túneles, preparación de pedidos, carga | F | t/día | I | Poco |
 | Subproductos y decomisos | Manejo, contenedores, despacho a receptores | SP | t/día de sólidos | I | Sí (vacío/bombas) |
 | Limpieza operativa en turno | Pisos, derrames, recipientes, limpieza intermedia | T | aves/h | I (siempre) | Poco |
-| Limpieza y sanitización post-producción | Desarme, lavado, espuma, desinfección, preoperacional | T | m² de salas de proceso (12C) × complejidad de equipos | I / E / híbrida (DEC-14A-01) | **Aumenta** (más equipos que desarmar) |
+| Limpieza y sanitización post-producción | Desarme, lavado, espuma, desinfección, preoperacional | T | m² de salas de proceso (12C) × complejidad de equipos | I / E / híbrida (DEC-067) | **Aumenta** (más equipos que desarmar) |
 
 ### 2.2 Soporte industrial
 
 | Función | Qué hace | Zona | Modalidad | Nota |
 |---|---|---|---|---|
-| Mantenimiento mecánico | Preventivo y correctivo de línea, transportadores, desplumadoras, evisceradoras | T | I / E / mixto (DEC-14A-02) | Ver [`mantenimiento_y_servicios.md`](mantenimiento_y_servicios.md) |
+| Mantenimiento mecánico | Preventivo y correctivo de línea, transportadores, desplumadoras, evisceradoras | T | I / E / mixto (DEC-068) | Ver [`mantenimiento_y_servicios.md`](mantenimiento_y_servicios.md) |
 | Electricidad | Tableros, motores, iluminación, media tensión | T | I / E | Media tensión casi siempre externa |
-| Frío | Sala de máquinas, cámaras, túneles | T | I / E | Refrigerante sin decidir (DEC-046); con amoníaco la competencia técnica es específica (DPV-14A-08) |
+| Frío | Sala de máquinas, cámaras, túneles | T | I / E | Refrigerante sin decidir (DEC-046); con amoníaco la competencia técnica es específica (DPV-121) |
 | Utilities | Caldera/agua caliente, aire comprimido, agua, tratamiento de efluentes | T | I / E | Operan más horas que la línea |
 | Automatización / PLC | Programación, sensores, balanzas de línea | T | E en escalas chicas; I en automático ≥ 10.000 | Crece con la automatización |
 | Control de calidad operativo | Controles en recepción, línea, temperaturas, empaque; registros del APPCC | T | I (por turno) | Ver [`calidad_inocuidad.md`](calidad_inocuidad.md) |
 | QA / inocuidad / APPCC / documentación | Plan APPCC, POES, BPM, auditorías, reclamos, documentación | O | I | APPCC obligatorio (Res. SENASA 205/2014, `[PVDP]`) |
 | Trazabilidad | Lote de granja ↔ lote de faena ↔ producto ↔ cliente | O | I / C | |
 | Laboratorio | Autocontrol microbiológico y fisicoquímico | O | E (base) / I (opción) | DEC-065 |
-| Inspección oficial | Ante/post mortem, decomisos, dictamen | EV | **Externo oficial — P** | DPV-090, DPV-14A-05 |
-| Higiene y seguridad laboral, medicina laboral | Programa HyS, ART, exámenes, capacitación | T | E en chicas; I + E en grandes | Horas mínimas por norma PENDIENTE (DPV-14A-07) |
+| Inspección oficial | Ante/post mortem, decomisos, dictamen | EV | **Externo oficial — P** | DPV-090, DPV-101 |
+| Higiene y seguridad laboral, medicina laboral | Programa HyS, ART, exámenes, capacitación | T | E en chicas; I + E en grandes | Horas mínimas por norma PENDIENTE (DPV-149) |
 | Lavandería y ropería | Ropa por color de zona | personal | I / E | 12C dejó abierto propio vs tercerizado |
 
 ### 2.3 Logística
@@ -63,7 +63,7 @@ Códigos de modalidad: **I** interno · **C** rol compartido · **E** externo/te
 | Carga física y cámaras | I | Contada en operación industrial (directos) |
 | Choferes de aves vivas | **Sólo si la flota es propia** (DEC-056) | Flota mínima de 12B con capacidad de **escenario** |
 | Choferes de producto terminado | Sólo si la flota es propia | **PENDIENTE**: capacidad de camión, distancia y modelo de distribución no definidos (DPV-084, DPV-036, DEC-016) |
-| Cuadrillas de captura en granja | Integrado o contratista | **PENDIENTE** (DPV-14A-09); no se cuenta |
+| Cuadrillas de captura en granja | Integrado o contratista | **PENDIENTE** (DPV-054); no se cuenta |
 
 ### 2.4 Producción primaria (sólo coordinación)
 
@@ -71,7 +71,7 @@ Códigos de modalidad: **I** interno · **C** rol compartido · **E** externo/te
 |---|---|---|
 | Coordinación de integrados / abastecimiento | I (C en 2.500) | I (C en 2.500) |
 | Veterinaria | I (C en 2.500) | I parcial (recepción, bienestar, sanidad de proveedores) |
-| Técnicos de campo | 1 cada 10–20 granjas equivalentes (SUP-14A-10) | No |
+| Técnicos de campo | 1 cada 10–20 granjas equivalentes (SUP-133) | No |
 | Planificación de crianza (pollito BB, alimento, cosecha) | I desde 5.000 | No |
 | Personal de granjas | **No se cuenta** (terceros) | **No se cuenta** |
 
@@ -170,4 +170,4 @@ Lo que **no** crece proporcionalmente (FTE): dirección (2 → 5), supervisión 
 
 ## 5. Decisiones abiertas que esta estructura no toma
 
-DEC-14A-01 (limpieza), DEC-14A-02 (mantenimiento), DEC-14A-03 (organización de la jornada), DEC-14A-04 (estructura de dirección inicial), DEC-14A-05 (polivalencia entre zonas), DEC-14A-06 (HyS y medicina laboral), DEC-14A-07 (lavandería); y las existentes DEC-004, DEC-018, DEC-020, DEC-036, DEC-037, DEC-056, DEC-065. Detalle en [`actualizaciones_gestion_14A.md`](actualizaciones_gestion_14A.md).
+DEC-067 (limpieza), DEC-068 (mantenimiento), DEC-069 (organización de la jornada), DEC-070 (estructura de dirección inicial), DEC-071 (polivalencia entre zonas), DEC-072 (HyS y medicina laboral), DEC-073 (lavandería); y las existentes DEC-004, DEC-018, DEC-020, DEC-036, DEC-037, DEC-056, DEC-065. Detalle en [`actualizaciones_gestion_14A.md`](actualizaciones_gestion_14A.md).

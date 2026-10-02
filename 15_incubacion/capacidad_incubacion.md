@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-01 · **Versión:** 1.1 (auditoría de sincronización: setter y hatcher por separado, cadencia de cargas/nacimientos) · Cálculo reproducible: `python3 ../14_alimento_balanceado/modelo_upstream.py --tablas` (tablas A–D) · Método: [`modelo_incubacion.md`](modelo_incubacion.md)
 
-> **Solo aplica a las opciones B (huevo fértil comprado + incubación propia) y C (reproductoras, arquitectura futura).** En la opción A (compra de pollito) la capacidad propia de incubación es **0**. Ninguna escala, opción ni cadencia está elegida. Parámetros = supuestos (SUP-14B-02 a SUP-14B-06).
+> **Solo aplica a las opciones B (huevo fértil comprado + incubación propia) y C (reproductoras, arquitectura futura).** En la opción A (compra de pollito) la capacidad propia de incubación es **0**. Ninguna escala, opción ni cadencia está elegida. Parámetros = supuestos (SUP-143 a SUP-147).
 
 ---
 
@@ -35,7 +35,7 @@ CADENCIA: N cargas = N nacimientos por semana, en días fijos de la semana, lote
 
 - **Setter y hatcher no se suman como capacidad:** son etapas y máquinas distintas, con flujos distintos (cargados vs transferidos) y permanencias distintas. La suma solo se informa como **posiciones físicas instaladas** (inventario de máquinas), no como capacidad de producción.
 - **Huevos en proceso (WIP)** = cargados × 18/7 + transferidos × 3/7: huevos físicamente en máquinas en un momento medio (sin días de limpieza). Aquí sí tiene sentido sumar.
-- Patrones de cadencia **ilustrativos** (SUP-14B-06): 1 = lunes; 2 = lunes y jueves; 3 = lunes, miércoles, viernes; 4 = lunes, martes, jueves, viernes; 5 = lunes a viernes. La granularidad real de las máquinas (tamaño de cada incubadora o sala) **no se modela** (sin fabricante): se supone que las posiciones son divisibles.
+- Patrones de cadencia **ilustrativos** (SUP-147): 1 = lunes; 2 = lunes y jueves; 3 = lunes, miércoles, viernes; 4 = lunes, martes, jueves, viernes; 5 = lunes a viernes. La granularidad real de las máquinas (tamaño de cada incubadora o sala) **no se modela** (sin fabricante): se supone que las posiciones son divisibles.
 - **Tests:** U12 (setter y hatcher con permanencias y flujos propios; cambiar el hatcher no cambia el setter), U13 (la media temporal simulada coincide exactamente con Little; los huevos cargados en régimen igualan la demanda; la ocupación máxima nunca supera las posiciones de diseño), U02 (diseño ≥ continuo × (1 + margen)).
 
 ## 3. Resultados (perfil y desempeño de granja medios, 5 d de faena, incubación media)
@@ -92,7 +92,7 @@ El tamaño de lote importa para:
 | Llenado de galpones | Si el lote de nacimiento es menor que el galpón, un galpón se llena con varios nacimientos (edades distintas) |
 | Sincronización con faena | La edad de las aves a la faena hereda la dispersión de edad de la colocación |
 
-Selección, vacunación y expedición por nacimiento (pollitos/h con 10 h – 6 h de ventana, SUP-14B-06):
+Selección, vacunación y expedición por nacimiento (pollitos/h con 10 h – 6 h de ventana, SUP-147):
 
 | Planta | 1 nacimiento/semana | 2 | 3 | 5 |
 |---|---|---|---|---|
@@ -100,7 +100,7 @@ Selección, vacunación y expedición por nacimiento (pollitos/h con 10 h – 6 
 | 10.000 | 52.790 (5.279–8.798/h) | 26.395 (2.639–4.399/h) | 17.597 (1.760–2.933/h) | 10.558 (1.056–1.760/h) |
 | 20.000 | 105.580 (10.558–17.597/h) | 52.790 (5.279–8.798/h) | 35.193 (3.519–5.866/h) | 21.116 (2.112–3.519/h) |
 
-**No se selecciona cadencia.** La cadencia real la fija la incubadora (si se compra pollito) o la operación (si se incuba): DPV-14B-10.
+**No se selecciona cadencia.** La cadencia real la fija la incubadora (si se compra pollito) o la operación (si se incuba): DPV-133.
 
 ## 5. Sensibilidad a fertilidad e incubabilidad
 
@@ -109,7 +109,7 @@ Huevos recibidos = demanda / (fertilidad × incubabilidad de fértiles × otros 
 | (10.000 aves/día, medio) | Fertilidad | Incubabilidad de fértiles |
 |---|---|---|
 | Elasticidad de huevos recibidos | −1,000 | −1,000 |
-| Rango de supuesto (SUP-14B-02) | 0,88–0,95 (7,6 % del valor medio) | 0,87–0,92 (5,6 %) |
+| Rango de supuesto (SUP-143) | 0,88–0,95 (7,6 % del valor medio) | 0,87–0,92 (5,6 %) |
 | Variación de huevos en el extremo bajo / alto | +4,5 % / −3,2 % | +3,4 % / −2,2 % |
 
 Otras variaciones (10.000, medio): descarte en selección 3 % → +2,1 % de huevos; pérdida en recepción 3 % → +2,1 % (no cambia el setter, porque se pierde antes de cargar).
@@ -129,6 +129,6 @@ Otras variaciones (10.000, medio): descarte en selección 3 % → +2,1 % de huev
 
 ## 7. Escala relativa (contexto, `[PVDP]`)
 
-Ejemplos de capacidad de plantas de incubación citados en extractos: una planta de **80.000 huevos/semana en dos nacimientos** (tesis de UNCuyo) y una de **~400.000 pollitos/semana en cuatro nacimientos** (FTE-14B-004 `[PVDP]`, contexto y fecha a verificar). La producción nacional se estima en ~18–20 M pollitos/semana (FTE-071 `[PVDP]`). **No se infiere la escala mínima eficiente** (requiere datos de incubadoras y costos: DPV-14B-01, fase económica).
+Ejemplos de capacidad de plantas de incubación citados en extractos: una planta de **80.000 huevos/semana en dos nacimientos** (tesis de UNCuyo) y una de **~400.000 pollitos/semana en cuatro nacimientos** (FTE-308 `[PVDP]`, contexto y fecha a verificar). La producción nacional se estima en ~18–20 M pollitos/semana (FTE-071 `[PVDP]`). **No se infiere la escala mínima eficiente** (requiere datos de incubadoras y costos: DPV-153, fase económica).
 
 Sincronización con granjas y faena: [`../14_alimento_balanceado/integracion_upstream.md` §4](../14_alimento_balanceado/integracion_upstream.md).

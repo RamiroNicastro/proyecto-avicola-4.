@@ -25,8 +25,8 @@ Versión 1.1 · 2026-10-01 (auditoría de sincronización productiva e inventari
   - inventarios de alimento por categoría y por propiedad (propio / en tercero / cadena);
   - opciones make-or-buy como escenarios de comparación (sin "caso base"); fases como
     arquitecturas de referencia sin orden obligatorio.
-IDs provisionales SUP-14B-## / DPV-14B-## / DEC-14B-## / FTE-14B-### (registros centrales NO
-modificados; ver actualizaciones_gestion_14B.md).
+IDs definitivos de los registros centrales (00_gestion_proyecto/, 25_fuentes/); mapa de IDs
+provisionales 14B → definitivos en 00_gestion_proyecto/reconciliacion_sesiones_14.md (2026-10-02).
 
 ------------------------------------------------------------------------------------------------
 ORIGEN DE LOS DATOS
@@ -44,16 +44,16 @@ granja (base del FCR de campo de 03); materias primas = t de ingrediente tal cua
 1. POLLITOS BB (demanda; viene de 03)
 ------------------------------------------------------------------------------------------------
   margen_mortalidad_pollitos = pollitos_alojados − aves_faenadas   (granja + transporte)
-  pollitos_a_recibir         = pollitos_alojados × (1 + margen_pedido)   (SUP-14B-01; base 0)
+  pollitos_a_recibir         = pollitos_alojados × (1 + margen_pedido)   (SUP-142; base 0)
 
 ------------------------------------------------------------------------------------------------
 2. CADENA TEMPORAL (día 0 = CARGA / SETTING)
 ------------------------------------------------------------------------------------------------
-  recepción del huevo    = −días_almacenamiento                (SUP-14B-04: 3 / 5 / 7)
+  recepción del huevo    = −días_almacenamiento                (SUP-145: 3 / 5 / 7)
   carga (setting)        = 0
   transferencia          = D_SETTER (18)
   nacimiento             = D_SETTER + D_HATCHER (21)          → período de incubación (setting→nacimiento)
-  selección/vacunación/expedición/llegada a granja = nacimiento + horas PENDIENTES (DPV-14B-09)
+  selección/vacunación/expedición/llegada a granja = nacimiento + horas PENDIENTES (DPV-047)
   colocación             = llegada a granja
   retiro (carga de aves) = colocación + edad de faena (03)
   faena                  = retiro + ventana prefaena (13: 10 h de escenario)
@@ -72,7 +72,7 @@ granja (base del FCR de campo de 03); materias primas = t de ingrediente tal cua
   Con CADENCIA (N cargas = N nacimientos por semana, días de la semana dados; lotes iguales):
     lote_carga = cargados_sem / N ; lote_nacimiento = vendibles_sem / N
     posiciones_X_cadencia = ocupación MÁXIMA simulada en régimen (varias semanas)
-    posiciones_X_diseño   = posiciones_X_cadencia × (1 + margen)          (SUP-14B-05)
+    posiciones_X_diseño   = posiciones_X_cadencia × (1 + margen)          (SUP-146)
   huevos_en_proceso (WIP) = setter_continuo_sin_limpieza + hatcher_continuo_sin_limpieza
   Setter y hatcher NO se suman como "capacidad": son máquinas/etapas distintas; la suma de
   posiciones solo se informa como posiciones físicas instaladas.
@@ -131,7 +131,7 @@ TOL = 1e-9
 SEMANAS_ANIO = mp.SEMANAS_ANIO
 
 # ------------------------------------------------------------------------------------------------
-# 1. PARÁMETROS (importados cuando existen; propios con ID provisional SUP-14B-##)
+# 1. PARÁMETROS (importados cuando existen; propios con ID central SUP-142 a SUP-154)
 # ------------------------------------------------------------------------------------------------
 ESCALAS = list(mp.PLANTAS_AVES_FAENADAS_DIA)       # 2.500 / 5.000 / 10.000 / 20.000 (escenarios)
 CALENDARIOS = dict(mp.DIAS_FAENA_ANIO)             # {5: 250, 6: 300} (SUP-025)
@@ -139,35 +139,35 @@ PERFIL = "medio"                                   # 47 d, 2,9 kg (SUP-027)
 NIVELES = tuple(mp.DESEMPENO)                      # favorable / medio / desfavorable (SUP-026)
 
 # Pollitos
-MARGEN_PEDIDO_BASE = 0.0                           # SUP-14B-01: valor de parámetro (no opción)
-MARGEN_PEDIDO_BARRIDO = (0.0, 0.01, 0.02)          # SUP-14B-01: barrido, sin fuente
+MARGEN_PEDIDO_BASE = 0.0                           # SUP-142: valor de parámetro (no opción)
+MARGEN_PEDIDO_BARRIDO = (0.0, 0.01, 0.02)          # SUP-142: barrido, sin fuente
 CAP_CAMION_POLLITOS = None                         # PENDIENTE (DPV-047, DPV-084)
 CAP_CAMION_POLLITOS_BARRIDO = (20000, 40000, 80000)  # SUP-096: barrido ilustrativo, NO capacidad
 
-# Incubación: niveles de SUPUESTO (SUP-14B-02 / 03). Referencia de PICO (FTE-14B-001 [PVDP]):
+# Incubación: niveles de SUPUESTO (SUP-143 / 03). Referencia de PICO (FTE-305 [PVDP]):
 # fertilidad ≥ 96,7 %, incubabilidad de fértiles 93,5 %; los promedios de vida del lote son menores.
 INCUBACION = {
     "favorable":    {"fertilidad": 0.95, "hof": 0.92, "perdida_alm": 0.005, "perdida_tr": 0.003, "descarte": 0.005},
     "medio":        {"fertilidad": 0.92, "hof": 0.90, "perdida_alm": 0.010, "perdida_tr": 0.005, "descarte": 0.010},
     "desfavorable": {"fertilidad": 0.88, "hof": 0.87, "perdida_alm": 0.020, "perdida_tr": 0.010, "descarte": 0.020},
 }
-# Tiempos (SUP-14B-04): 18 d setter + 3 d hatcher = 21 d de incubación (práctica general; transferencia
-# e in ovo a 18-19 d citada, FTE-14B-002 [PVDP]); limpieza por carga: sin fuente.
+# Tiempos (SUP-145): 18 d setter + 3 d hatcher = 21 d de incubación (práctica general; transferencia
+# e in ovo a 18-19 d citada, FTE-306 [PVDP]); limpieza por carga: sin fuente.
 D_SETTER = 18.0
 D_HATCHER = 3.0
 D_LIMPIEZA_SETTER = 1.0
 D_LIMPIEZA_HATCHER = 1.0
-D_ALMACEN_HUEVO = (3, 5, 7)                        # barrido; óptimo 3-6 d citado (FTE-14B-001 [PVDP])
+D_ALMACEN_HUEVO = (3, 5, 7)                        # barrido; óptimo 3-6 d citado (FTE-305 [PVDP])
 D_ALMACEN_BASE = 5
-H_NACIMIENTO_A_GRANJA = None                       # PENDIENTE: selección + vacunación + carga + viaje (DPV-14B-09)
+H_NACIMIENTO_A_GRANJA = None                       # PENDIENTE: selección + vacunación + carga + viaje (DPV-047)
 VENTANA_PREFAENA_H = 10.0                          # 13 (SUP-095): parámetro de escenario, no norma
 OVOSCOPIA_RETIRA_INFERTILES = False                # base: no se retiran infértiles al transferir
-MARGEN_CAPACIDAD = (0.10, 0.15, 0.20)              # SUP-14B-05 (reserva de diseño, no óptimo)
+MARGEN_CAPACIDAD = (0.10, 0.15, 0.20)              # SUP-146 (reserva de diseño, no óptimo)
 MARGEN_CAPACIDAD_BASE = 0.15
-# CADENCIA (SUP-14B-06): cargas = nacimientos por semana y días de la semana (0 = lunes). Patrones
-# ILUSTRATIVOS, no seleccionados; lotes iguales. La cadencia real la fija la incubadora (DPV-14B-10).
+# CADENCIA (SUP-147): cargas = nacimientos por semana y días de la semana (0 = lunes). Patrones
+# ILUSTRATIVOS, no seleccionados; lotes iguales. La cadencia real la fija la incubadora (DPV-133).
 CADENCIAS = {1: (0,), 2: (0, 3), 3: (0, 2, 4), 4: (0, 1, 3, 4), 5: (0, 1, 2, 3, 4)}
-HORAS_VENTANA_PROCESO = (6, 10)                    # SUP-14B-06: horas para seleccionar/vacunar/expedir un nacimiento
+HORAS_VENTANA_PROCESO = (6, 10)                    # SUP-147: horas para seleccionar/vacunar/expedir un nacimiento
 POLLITOS_REPRODUCTORA_SEMANA = 3.6                 # 03 §4.2 [ESTIMACIÓN], solo fase futura (DPV-045)
 
 # Granjas y galpones (granja ≠ galpón)
@@ -189,20 +189,20 @@ COMPOSICION = {   # categoría: (mín, máx, punto ilustrativo o None)
 }
 FRACCION_MICROS = 1 - COMPOSICION["maiz"][2] - COMPOSICION["harina_soja"][2]   # 10 % agregado (SUP-032)
 
-# Planta de alimento (SUP-14B-07): parámetros operativos de ESCENARIO
+# Planta de alimento (SUP-148): parámetros operativos de ESCENARIO
 DIAS_OPERACION_PLANTA = (3, 5, 6)
 HORAS_DIA_PLANTA = (8, 16)
 EFICIENCIA_PLANTA = (0.75, 0.85)
 FACTOR_PICO_ALIMENTO = 1.0         # semana plena ya es el ritmo nominal; estacionalidad: PENDIENTE
 N_TIPOS_ALIMENTO = (3, 4)          # inicio / crecimiento / terminación (+ retiro), 03 §3
 
-# Silos e inventarios (SUP-14B-09 / 10): densidades y días de stock = VARIABLES
+# Silos e inventarios (SUP-149 / 10): densidades y días de stock = VARIABLES
 DENSIDAD_T_M3 = {"maiz": (0.72,), "harina_soja": (0.56, 0.60, 0.67), "alimento": (0.55, 0.60, 0.65)}
 FACTOR_LLENADO = 0.90
 DIAS_STOCK = {                     # días calendario de consumo; SUPUESTOS hasta validación
     "maiz": (7, 15, 30),
     "harina_soja": (7, 15),
-    "micros": (15, 30, 60),        # aceite + minerales + vitaminas + otros (SUP-14B-10, v1.1)
+    "micros": (15, 30, 60),        # aceite + minerales + vitaminas + otros (SUP-150, v1.1)
     "alimento_planta": (1, 2, 3),
     "alimento_granja": (2, 3, 5),
 }
@@ -212,8 +212,8 @@ VOLUMEN_UNITARIO_SILO_M3 = None    # PENDIENTE: no se inventa un silo estándar
 
 # Logística (capacidades de ESCENARIO de SUP-096; sin elección explícita → PENDIENTE)
 CAP_GRANELERO_T = 28.0
-CAP_CAMION_GRANO_BARRIDO = (25.0, 28.0, 30.0)  # SUP-14B-13
-CAP_CAMION_HUEVOS = None           # PENDIENTE (DPV-14B-09)
+CAP_CAMION_GRANO_BARRIDO = (25.0, 28.0, 30.0)  # SUP-096
+CAP_CAMION_HUEVOS = None           # PENDIENTE (DPV-047)
 
 # Make or buy: TODAS las opciones son escenarios de comparación con el mismo estatus.
 # "benchmark" = punto de comparación para medir diferencias; NO implica preferencia.
@@ -225,7 +225,7 @@ OPCIONES = {
 }
 BENCHMARK = {"pollito": "A_compra", "alimento": "A_compra", "granjas": "A_terceros"}
 
-# Arquitecturas de madurez de REFERENCIA (SUP-14B-12): sin orden obligatorio; una función puede
+# Arquitecturas de madurez de REFERENCIA (SUP-152): sin orden obligatorio; una función puede
 # integrarse antes si hay demanda, capital y ventaja económica (a demostrar en fase económica).
 FASES = {
     "F0": {"nombre": "Arquitectura de referencia 0: pollito comprado + alimento comprado + granjas de terceros + faena a façon posible",
@@ -927,7 +927,7 @@ def construir():
                       "Demanda física MEDIA de pollitos; igual para todas las opciones de abastecimiento",
                       claves=[k for k in po if k != "viajes_pollitos_semana"])
                 for mpd in MARGEN_PEDIDO_BARRIDO[1:]:
-                    t.add("1_pollitos", E, ds, nv, "-", f"margen_pedido={mpd} (SUP-14B-01)",
+                    t.add("1_pollitos", E, ds, nv, "-", f"margen_pedido={mpd} (SUP-142)",
                           pollitos(E, ds, nv, margen_pedido=mpd), "[SUPUESTO]", FUENTE,
                           "Sensibilidad del pedido; no es mortalidad",
                           claves=["pollitos_a_recibir_semana_plena", "pollitos_a_recibir_anio"])
@@ -951,7 +951,7 @@ def construir():
                         t.add("2_incubacion_cadencia", E, ds, nv, "B_huevo_fertil",
                               f"cadencia={n} cargas=nacimientos/semana dias={CADENCIAS[n]}; margen_cap={mc}",
                               q, "[SUPUESTO]", FUENTE,
-                              "Setter y hatcher por separado; ocupación máxima simulada × (1+margen); patrón ilustrativo (SUP-14B-06)",
+                              "Setter y hatcher por separado; ocupación máxima simulada × (1+margen); patrón ilustrativo (SUP-147)",
                               claves=["cargas_semana", "lote_carga_huevos", "lote_nacimiento_pollitos",
                                       "intervalo_medio_carga_d", "posiciones_setter_cadencia", "posiciones_hatcher_cadencia",
                                       "posiciones_setter_diseno", "posiciones_hatcher_diseno",
@@ -960,18 +960,18 @@ def construir():
                     for h in HORAS_VENTANA_PROCESO:
                         q = incubacion(dem, cadencia=n, horas_ventana=h)
                         t.add("2_incubacion_expedicion", E, ds, nv, "B_huevo_fertil",
-                              f"cadencia={n}; horas_ventana={h} (SUP-14B-06)", q, "[SUPUESTO]", FUENTE,
+                              f"cadencia={n}; horas_ventana={h} (SUP-147)", q, "[SUPUESTO]", FUENTE,
                               "Tamaño de lote de nacimiento ≠ demanda media semanal",
                               claves=["lote_nacimiento_pollitos", "pollitos_h_seleccion_vacunacion"])
                 for da in D_ALMACEN_HUEVO:
                     t.add("2_incubacion_almacen", E, ds, nv, "B_huevo_fertil", f"dias_almacen={da}",
                           incubacion(dem, dias_almacen=da), "[SUPUESTO]", FUENTE,
-                          "Flujo continuo de recepción; óptimo 3-6 d citado (FTE-14B-001 [PVDP])",
+                          "Flujo continuo de recepción; óptimo 3-6 d citado (FTE-305 [PVDP])",
                           claves=["capacidad_almacen_huevos"])
                 t.add("2_incubacion_logistica", E, ds, nv, "B_huevo_fertil", "cap_camion_huevos=None", incubacion(dem),
-                      "[PENDIENTE DE VALIDACIÓN]", FUENTE, "DPV-14B-09", claves=["viajes_huevos_semana"])
+                      "[PENDIENTE DE VALIDACIÓN]", FUENTE, "DPV-047", claves=["viajes_huevos_semana"])
                 if nv == "medio":
-                    t.add("2_incubacion_elasticidad", E, ds, nv, "B_huevo_fertil", "diferencias centradas; rangos SUP-14B-02",
+                    t.add("2_incubacion_elasticidad", E, ds, nv, "B_huevo_fertil", "diferencias centradas; rangos SUP-143",
                           elasticidades(dem), "[ESTIMACIÓN]", FUENTE,
                           "Elasticidad −1 para ambos factores; la variación depende del rango de incertidumbre")
                 t.add("2_reproductoras_fase_futura", E, ds, nv, "C_reproductoras", "pollitos_reproductora_semana=3.6",
@@ -1008,7 +1008,7 @@ def construir():
                             t.add("6_planta_alimento", E, ds, nv, "C_planta_propia",
                                   f"dias_op={dop}; horas={h}; eficiencia={ef}; margen=0.15",
                                   planta_alimento(al["alimento_t_semana_plena"], dop, h, ef), "[SUPUESTO]", FUENTE,
-                                  "Capacidad requerida para esa cadencia de fabricación; sin fabricante (SUP-14B-07)",
+                                  "Capacidad requerida para esa cadencia de fabricación; sin fabricante (SUP-148)",
                                   claves=["t_dia_operacion", "t_h_neta", "t_h_requerida", "capacidad_ociosa_t_semana",
                                           "utilizacion"])
                 if nv == "medio":
@@ -1050,7 +1050,7 @@ def construir():
                           logistica(E, ds, nv, modo), "[SUPUESTO]", FUENTE, "Sin capacidad explícita → PENDIENTE")
                     if modo != "A_compra":
                         for cg in CAP_CAMION_GRANO_BARRIDO:
-                            t.add("10_logistica", E, ds, nv, modo, f"cap_grano={cg} (SUP-14B-13 barrido)",
+                            t.add("10_logistica", E, ds, nv, modo, f"cap_grano={cg} (SUP-096 barrido)",
                                   logistica(E, ds, nv, modo, cap_grano=cg), "[SUPUESTO]", FUENTE,
                                   "Barrido ilustrativo, no capacidad legal", claves=["viajes_grano_semana"])
     for f, d in FASES.items():
@@ -1058,7 +1058,7 @@ def construir():
             t.add("9_arquitecturas_referencia", E, 5, "medio",
                   f"{f}: pollito={d['pollito']}; alimento={d['alimento']}; granjas={d['granjas']}",
                   d["nombre"], reproductoras_fase_futura(pollitos(E)["pollitos_a_recibir_semana_plena"], f),
-                  "[SUPUESTO]", FUENTE, "Arquitectura de madurez de referencia (SUP-14B-12); orden NO obligatorio")
+                  "[SUPUESTO]", FUENTE, "Arquitectura de madurez de referencia (SUP-152); orden NO obligatorio")
     return t
 
 

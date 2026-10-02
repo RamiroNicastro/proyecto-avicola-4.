@@ -12,9 +12,9 @@
 2. **Maíz + harina de soja ≈ 85–95 % del tonelaje.** No hay fórmula: eso es del nutricionista.
 3. **Capacidad de una planta propia (corregido en v1.1):** la t/h requerida es el producto de cinco factores explícitos: escala, días de fabricación, horas por día, eficiencia y margen. El rango "~1–25 t/h" de la v1.0 iba de 2.500 aves/día con 6 d × 16 h (0,9 t/h) a 20.000 desfavorable con 5 d × 8 h y eficiencia 0,75 (24,8 t/h); con fabricación concentrada en 3 días llega a ~41 t/h. Con la demanda propia de 2.500 aves/día, una planta de 2,1 t/h trabajaría ~35 h por semana: **baja utilización si se opera todos los días bajo la cadencia asumida**, lo que podría resolverse fabricando menos días, concentrando lotes, sirviendo a terceros o manteniendo capacidad estratégica (decisión económica, no tomada).
 4. **Silos ≠ inventario (corregido en v1.1):** los silos dependen de días de stock, densidad y número de materias primas (los días mueven el volumen más de 3 veces); no hay silo estándar. El **inventario** se separa por categoría (alimento terminado en granja y en planta, maíz, soja, micros-aceite-otros, material en proceso) y por propiedad. Con los mismos días, **el stock físico de la cadena es igual en todas las arquitecturas**: integrar cambia quién lo posee y dónde está. La comparación v1.0 "106 / 583 / 653 t" sumaba categorías y universos distintos y se retira.
-5. **Façon tiene dos variantes** que deben distinguirse: materias primas de la empresa (B1: stock propio en casa del elaborador) o del elaborador (B2: stock propio solo en granja). Quién compra y quién mantiene stocks es un dato contractual a relevar (DPV-14B-03).
+5. **Façon tiene dos variantes** que deben distinguirse: materias primas de la empresa (B1: stock propio en casa del elaborador) o del elaborador (B2: stock propio solo en granja). Quién compra y quién mantiene stocks es un dato contractual a relevar (DPV-155).
 6. **La demanda física es idéntica en compra, integración parcial o total** (test U05).
-7. **Pollito:** incubar huevo comprado **sustituye** la dependencia de proveedores de pollito por la de proveedores de huevo fértil; la concentración real de esa oferta es DPV-14B-02 ([`../15_incubacion/compra_vs_incubacion.md`](../15_incubacion/compra_vs_incubacion.md)).
+7. **Pollito:** incubar huevo comprado **sustituye** la dependencia de proveedores de pollito por la de proveedores de huevo fértil; la concentración real de esa oferta es DPV-154 ([`../15_incubacion/compra_vs_incubacion.md`](../15_incubacion/compra_vs_incubacion.md)).
 8. **Sincronización (nuevo en v1.1):** existe un **posible problema de sincronización entre tamaño de lote de nacimiento, capacidad de galpones y cadencia de faena**, más visible a escala chica (a 2.500 aves/día, cosechar un galpón equivalente de 15.000–30.000 aves lleva ~6–12 días de faena). No demuestra incompatibilidad: debe validarse con la arquitectura real de las granjas ([`integracion_upstream.md` §4](integracion_upstream.md)).
 9. **Acoplamiento operativo:** integrar granjas obliga a proveer pollito y alimento; comprar pollo vivo vuelve irrelevantes las otras dos decisiones.
 
@@ -37,14 +37,14 @@ Arquitectura 0: pollito y alimento comprados, granjas de terceros, faena a faço
 | Dato | Registro |
 |---|---|
 | Precio y condiciones del alimento por fase puesto en granja | DPV-050 |
-| Façon: quién compra materias primas, quién mantiene inventario, mínimo de lote, servicio nutricional, mermas, almacenamiento, frecuencia de producción, capacidad disponible | DPV-14B-03, DPV-14B-04 |
-| Proveedores de grano: volumen anual, calidad, contratos, estacionalidad | DPV-14B-05, DPV-117 |
-| Plantas de alimento en operación: t/h reales, eficiencia, turnos, días de fabricación, energía, dotación | DPV-14B-07 |
-| Densidades y días de stock reales; silos de granja | DPV-14B-04 |
-| Incubadoras: días de nacimiento, lote mínimo, mínimos contractuales, flexibilidad, uniformidad, ventana de entrega, estacionalidad, capacidad futura | DPV-047, DPV-14B-10 |
+| Façon: quién compra materias primas, quién mantiene inventario, mínimo de lote, servicio nutricional, mermas, almacenamiento, frecuencia de producción, capacidad disponible | DPV-155, DPV-156 |
+| Proveedores de grano: volumen anual, calidad, contratos, estacionalidad | DPV-157, DPV-117 |
+| Plantas de alimento en operación: t/h reales, eficiencia, turnos, días de fabricación, energía, dotación | DPV-158 |
+| Densidades y días de stock reales; silos de granja | DPV-156 |
+| Incubadoras: días de nacimiento, lote mínimo, mínimos contractuales, flexibilidad, uniformidad, ventana de entrega, estacionalidad, capacidad futura | DPV-047, DPV-133 |
 | Arquitectura real de granjas (galpones por granja, plazas por galpón, llenado y cosecha) | DPV-048, DPV-133 |
-| Registro SENASA de fábricas de alimento y medicados | DPV-14B-06 |
-| Integradores: condiciones para un tercero y prácticas de sincronización | DPV-14B-08 |
+| Registro SENASA de fábricas de alimento y medicados | DPV-007 |
+| Integradores: condiciones para un tercero y prácticas de sincronización | DPV-159 |
 
 ## 5. Tests (21/21 correctos)
 
