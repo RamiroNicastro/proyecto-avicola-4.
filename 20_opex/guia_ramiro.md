@@ -61,10 +61,24 @@ Un supermercado grande puede comprar mucho y pagar a 60–90 días. Si crecés r
 
 ## 10. Por qué un OPEX incompleto no debe generar EBITDA
 
-Hoy el motor tiene precio para **1 o 2** de entre 61 y 210 conceptos según la configuración (el pollito comprado o el maíz, ambos con fuente débil). Si con eso se calculara una ganancia (EBITDA), saldría enorme y falsa, porque faltarían el alimento, los sueldos, la luz y casi todo lo demás. El motor muestra "NO DISPONIBLE" hasta tener los precios, y separa los montos por calidad de la fuente.
+Hoy el motor tiene precio para **1 a 3** de entre 63 y 217 conceptos según la configuración (el pollito comprado o el maíz, ambos con fuente débil). Esos montos están rotulados **"montos parciales E4 no comparables"**. Si con eso se calculara una ganancia (EBITDA), saldría enorme y falsa, porque faltarían el alimento, los sueldos, la luz y casi todo lo demás. El motor muestra "NO DISPONIBLE" hasta tener los precios, y separa los montos por calidad de la fuente.
 
 ## 11. Qué sí se puede usar hoy
 
 - **Cuánto se necesita** de cada cosa por escala: toneladas de alimento, pollitos, kWh, m³ de agua, km de camión, personas (en FTE), envases por kg.
 - **Qué precios conseguir primero**: [`matriz_validacion_opex.csv`](matriz_validacion_opex.csv).
 - **Dónde hay riesgos de contar dos veces** algo (frío y luz, choferes y flete, personal del faenador y tarifa de façon).
+
+## 12. Saber qué costos existen ≠ saber cuánto cuestan
+
+El motor ya **sabe qué costos existen** en cada arquitectura: si hay granjas propias, figuran su personal, su luz, su gas, la cama, la limpieza, la mortalidad, el seguro, el veterinario (cobertura **estructural** 100 %). Pero en la mayoría **no sabe cuánto cuestan** (cobertura de **costeo** 0–10 %), y en muchos ni siquiera cuánto se consume (por ejemplo, la luz de una incubadora o de una fábrica de alimento: no se usa la de la planta de faena porque es otra cosa).
+
+Por eso una configuración más integrada no "cuesta menos" en las tablas: tiene más bloques pendientes. Ninguna configuración es hoy **costeable**.
+
+## 13. El personal que calculamos es el de la planta
+
+Las personas del modelo de RRHH (14A) son las de la **planta de faena**, la estructura y la coordinación de los integrados. Si la empresa tuviera granjas, incubadora o fábrica de alimento propias, haría falta más gente que **todavía no está calculada** (figura como pendiente). En la faena a façon, buena parte de las personas son del frigorífico que presta el servicio: están dentro de la tarifa, no son sueldos propios.
+
+## 14. El aguinaldo no es un precio
+
+El aguinaldo (SAC) es una regla de la ley laboral, no un precio de mercado: el motor lo usa como regla para armar el costo de cada puesto, pero no lo cuenta como "dato con precio".

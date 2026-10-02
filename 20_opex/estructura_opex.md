@@ -1,6 +1,6 @@
 # Estructura del OPEX — módulos, clasificación y columnas
 
-**Fecha:** 2026-10-02 · Fuente de verdad de los conceptos: [`base_costos_opex.csv`](base_costos_opex.csv) (323 filas). Método: [`metodologia_opex.md`](metodologia_opex.md).
+**Fecha:** 2026-10-02 · Fuente de verdad de los conceptos: [`base_costos_opex.csv`](base_costos_opex.csv) (359 filas, v1.1). Reglas laborales: [`reglas_laborales_opex.csv`](reglas_laborales_opex.csv). Método: [`metodologia_opex.md`](metodologia_opex.md).
 
 ## 1. Módulos
 
@@ -36,14 +36,16 @@ Costo laboral por driver de 14A (SUP-17-07): `produccion`, `activos` y `estrateg
 
 ## 3. Columnas
 
-**Base de costos** ([`base_costos_opex.csv`](base_costos_opex.csv)): `ID_COSTO`, `MODULO`, `SUBMODULO`, `CONCEPTO`, `UNIDAD`, `PRECIO_UNITARIO`, `PRECIO_BAJO`, `PRECIO_ALTO`, `ORIGEN_RANGO`, `MONEDA_ORIGINAL`, `TC_MONEDA_POR_USD`, `TIPO_TC`, `FECHA_TC`, `FUENTE_TC`, `PRECIO_USD_EQUIVALENTE`, `FECHA_PRECIO`, `PAIS`, `TIPO_PRECIO`, `IVA_TRATAMIENTO`, `FLETE_INCLUIDO`, `NIVEL_EVIDENCIA`, `LECTURA_PRIMARIA`, `FUENTE`, `ESTADO`, `NATURALEZA`, `PCT_VARIABLE`, `ORIGEN_PCT_VARIABLE`, `CENTRO_COSTO`, `TIPO`, `GRUPO_PROVEEDOR`, `INDICE_ACTUALIZACION`, `FECHA_ACTUALIZACION`, `OBSERVACIONES`.
+**Base de costos** ([`base_costos_opex.csv`](base_costos_opex.csv)): `ID_COSTO`, `MODULO`, `SUBMODULO`, `CONCEPTO`, `UNIDAD`, `PRECIO_UNITARIO`, `PRECIO_BAJO`, `PRECIO_ALTO`, `ORIGEN_RANGO`, `MONEDA_ORIGINAL`, `TC_MONEDA_POR_USD`, `TIPO_TC`, `FECHA_TC`, `FUENTE_TC`, `PRECIO_USD_EQUIVALENTE`, `FECHA_PRECIO`, `PAIS`, `TIPO_PRECIO`, `IVA_TRATAMIENTO`, `FLETE_INCLUIDO`, `CONDICION_ENTREGA`, `ORIGEN_PRECIO_USD`, `NIVEL_EVIDENCIA`, `LECTURA_PRIMARIA`, `FUENTE`, `ESTADO`, `NATURALEZA`, `PCT_VARIABLE`, `ORIGEN_PCT_VARIABLE`, `CENTRO_COSTO`, `TIPO`, `GRUPO_PROVEEDOR`, `INDICE_ACTUALIZACION`, `FECHA_ACTUALIZACION`, `OBSERVACIONES`.
 
-**Registro** ([`registro_costos_operativos.csv`](registro_costos_operativos.csv)): `ESCENARIO`, `CONFIGURACION`, `ESCALA_AVES_DIA`, `MODULO`, `SUBMODULO`, `CONCEPTO`, `COSTO_ID`, `FLUJO`, `CENTRO_COSTO`, `NATURALEZA`, `TIPO`, `APORTANTE`, `FASE`, `DRIVER`, `CANTIDAD`, `UNIDAD`, `ESTADO_DIMENSION`, `INCLUIDO_EN`, `MOTIVO`, `COSTEA`, `PRECIO_USD`, `COSTO_CALCULADO_USD_ANIO`, `COSTO_CONCEPTO_USD_AVE`, `EVIDENCIA`, `PCT_VARIABLE`, `PCT_FIJO`, `FIJO_VARIABLE`, `ESTADO`, `GRUPO_PROVEEDOR`, `ALERTAS`.
+**Registro** ([`registro_costos_operativos.csv`](registro_costos_operativos.csv)): `ESCENARIO`, `CONFIGURACION`, `ESCALA_AVES_DIA`, `MODULO`, `SUBMODULO`, `CONCEPTO`, `COSTO_ID`, `FLUJO`, `CENTRO_COSTO`, `NATURALEZA`, `TIPO`, `APORTANTE`, `FASE`, `DRIVER`, `CANTIDAD`, `UNIDAD`, `ESTADO_DIMENSION`, `INCLUIDO_EN`, `MOTIVO`, `COSTEA`, `PRECIO_USD`, `COSTO_CALCULADO_USD_ANIO`, `COSTO_CONCEPTO_USD_AVE`, `EVIDENCIA`, `PCT_VARIABLE`, `PCT_FIJO`, `FIJO_VARIABLE`, `ESTADO`, `GRUPO_PROVEEDOR`, `MODULO_ARQ`, `BLOQUE`, `AMBITO_GRANJA`, `UNIVERSO_RRHH`, `UNIVERSO_UTILITIES`, `PRECIO_ORIGINAL_OBSERVADO`, `MONEDA_ORIGINAL`, `FECHA_PRECIO`, `CONDICION_ENTREGA`, `IVA_PRECIO`, `TC_USADO`, `FECHA_TC`, `ORIGEN_PRECIO_USD`, `ALERTAS`.
 
 | Campo | Valores |
 |---|---|
 | `ESTADO_DIMENSION` | DIMENSIONADO · PENDIENTE · INCLUIDO (lo cubre otro concepto: `INCLUIDO_EN`) · INFORMATIVO (aporte de terceros, brecha de jornada) |
-| `ESTADO` | CON_PRECIO · SIN_PRECIO · SIN_TIPO_DE_CAMBIO · SIN_CANTIDAD · APORTANTE_PENDIENTE · INCLUIDO_EN_OTRO_CONCEPTO · INFORMATIVO · FUTURO |
+| `ESTADO` | CON_PRECIO · PENDIENTE_PRECIO · SIN_TIPO_DE_CAMBIO · PENDIENTE_CANTIDAD · APORTANTE_PENDIENTE · INCLUIDO_EN_OTRO_CONCEPTO · INCLUIDO_EN_TARIFA_FACON · INCLUIDO_EN_TARIFA_FLETE · INFORMATIVO · FUTURO |
+| `MODULO_ARQ` / `BLOQUE` | Módulo de la arquitectura y bloque operativo material (completitud, [`metodologia_opex.md`](metodologia_opex.md) §8) |
+| `AMBITO_GRANJA` | PROPIA (costo de la empresa) / INTEGRADA (según aportante; costo del productor informativo) |
 | `COSTO_CONCEPTO_USD_AVE` | Costo **de ese concepto** por ave faenada (solo filas con precio). **No** es un costo total por ave |
 
 ## 4. Administración y comercial

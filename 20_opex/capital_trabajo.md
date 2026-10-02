@@ -13,7 +13,7 @@ caja operativa     = OPEX total × días de buffer ÷ 365  (OPCIONAL: sin input 
 
 ## 1. Stock físico ≠ stock propiedad de la empresa (corrección de 14B)
 
-Solo entra al capital de trabajo el inventario **propiedad de la empresa**. El stock en manos de terceros entra solo si contractualmente es de la empresa (tests K01–K03, K08; mutación M04).
+Solo entra al capital de trabajo el inventario con `PROPIEDAD_EMPRESA = TRUE`. El stock en manos de terceros entra solo si contractualmente es de la empresa; la arquitectura (planta de alimento, incubación o granjas propias) **no** hace que un inventario de tercero pase al balance propio, y una propiedad PENDIENTE no entra (tests K01–K03, K08, X12; mutación M04).
 
 | Inventario | Propietario | Entra |
 |---|---|---|
@@ -36,7 +36,7 @@ Solo entra al capital de trabajo el inventario **propiedad de la empresa**. El s
 |---|---|---|---|---|
 | Alimento en silos de granja (t, 3 d) | 26 | 53 | 106 | 212 |
 | Maíz propio (t, 15 d; C3 y façon B1) | 79 | 159 | 318 | 636 |
-| …valorizado con el maíz E4 (USD) | 15.445 | 30.890 | 61.780 | 123.561 |
+| …valorizado con el maíz E4 a precio Rosario (USD; **no** puesto en planta) | 15.445 | 30.890 | 61.780 | 123.561 |
 | Aves en crianza (inventario medio) | 82.846 | 165.692 | 331.383 | 662.767 |
 | Producto refrigerado, stock medio (t; C1) | 6,4 | 12,8 | 25,7 | 51,4 |
 | Producto congelado, stock medio (t; C1) | 1,8 | 3,5 | 7,0 | 14,0 |

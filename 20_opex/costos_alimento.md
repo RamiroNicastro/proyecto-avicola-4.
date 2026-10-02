@@ -25,7 +25,9 @@
 | Servicio | — | ALI-B-SRV (t × USD/t) | (incluido en el precio) | — |
 | Almacenamiento | — | ALI-B-ALM (t·mes de MP propias en el elaborador) | — | ALI-C-ALM (PENDIENTE) |
 | Mermas | (del proveedor) | ALI-MERMA (PENDIENTE) | (del elaborador) | ALI-MERMA (PENDIENTE) |
-| Energía, vapor | — | — | — | ALI-C-ENE, ALI-C-TER (PENDIENTES: kWh/t sin dimensionar, DPV-158) |
+| Energía, vapor, agua | — | — | — | ALI-C-ENE, ALI-C-TER, ALI-C-AGUA (PENDIENTES: kWh/t, vapor y agua sin dimensionar, DPV-158; **no** se usa el kWh ni el agua de la planta de faena de 09C) |
+| Diferencial a puesto en planta | — | ALI-MP-DIF-* | — | ALI-MP-DIF-* (PENDIENTE) |
+| Movimientos internos | — | — | — | ALI-C-MOV (PENDIENTE) |
 | Análisis | — | — | — | ALI-C-ANA (PENDIENTE) |
 | Personal | — | — | — | 14A no lo dimensiona → FTE PENDIENTE |
 | Mantenimiento | — | — | — | MAN-ALI-* |
@@ -42,7 +44,7 @@ Tests: compra no carga costos internos de fábrica (A01, mutación M03); planta 
 
 | ID | Valor | Evidencia | Uso |
 |---|---|---|---|
-| ALI-MP-MAIZ | ARS 295.800/t (pizarra Rosario, 2026-09-29) ÷ 1.522 ARS/USD (A3500 del mismo día) = **USD 194,35/t** | **E4** `[PVDP]` (extracto de buscador; sitio de la Cámara Arbitral bloqueado) | C3, CF, variantes B1. Es precio **sobre puerto**: el maíz puesto en planta depende de la zona (flete a cargo, LOG-GRA) |
+| ALI-MP-MAIZ | **Precio observado:** ARS 295.800/t, pizarra Cámara Arbitral de Rosario, 2026-09-29, condición SOBRE_PUERTO_ROSARIO, IVA no informado (FTE-17-001). **Conversión del modelo:** ÷ 1.522 ARS/USD (A3500 del mismo día, FTE-17-003) = USD 194,35/t (`ORIGEN_PRECIO_USD = CONVERSION_MODELO`) | **E4** `[PVDP]` (extracto; sitio bloqueado) | C3, CF, variantes B1. **Precio Rosario ≠ costo puesto en planta**: el diferencial (zona, acondicionamiento, secado, comisiones) es ALI-MP-DIF-MAIZ, PENDIENTE; el flete es LOG-GRA-* |
 | ALI-A-PT, ALI-B-*, ALI-MP-SOJA, aceite, núcleo, otros | — | PENDIENTE | DPV-050, DPV-155, DPV-157 |
 
 Monto con precio (E4): maíz C3/CF = USD 0,36 / 0,72 / 1,44 / 2,88 M/año (2.500 / 5.000 / 10.000 / 20.000) ≈ USD 0,58 por ave faenada **solo por el maíz**. No es costo de alimento: faltan soja, núcleo, aceite, flete, mermas, energía, personal y mantenimiento.
@@ -50,3 +52,7 @@ Monto con precio (E4): maíz C3/CF = USD 0,36 / 0,72 / 1,44 / 2,88 M/año (2.500
 ## 4. Composición parametrizable
 
 `composicion_alimento` acepta fracciones que suman 1 (`maiz`, `harina_soja`, `aceite`, `nucleo`, `otros` **o** `resto`). Si se carga, los drivers pasan a `DERIVADO_OPEX` con evidencia `[SUPUESTO]`. Sin input se usan los puntos de 14B; aceite, núcleo y otros quedan `INCLUIDO` en "resto" porque 14B solo da rangos (1–5 %, 2,5–4 %, 0,2–1,3 %).
+
+## 5. Completitud (auditoría v1.1)
+
+Planta propia: 12 bloques materiales representados (materias primas con filas explícitas de maíz, soja, aceite, núcleo y otros —estas tres `INCLUIDO` en "resto" hasta tener fórmula—, diferencial a planta, RRHH, electricidad, vapor, agua, mantenimiento, laboratorio, mermas, almacenamiento, movimientos internos, transporte). C3-10000: cobertura estructural 100 %, física 17 %, de costeo 0 % (el maíz con precio no completa el bloque de materias primas). Façon sin variante: fila explícita de alimento/materias primas con cantidad y sin precio aplicable (antes faltaba el bloque). Tests X03, X10.

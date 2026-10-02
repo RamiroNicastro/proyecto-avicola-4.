@@ -24,9 +24,10 @@ Un extracto de la misma cámara con "$ 16 por unidad" (2026-09-13) es incompatib
 | Insumos de expedición | INC-OP-INS | pollitos/año | Sin precio |
 | Limpieza y desinfección | INC-OP-LIM | cargas/año = cargas/semana (cadencia 2) × semanas equivalentes ≈ 100 | Sin precio; agua y energía en INC-OP-AGUA / INC-OP-ENE |
 | Descartes | INC-OP-DES | huevos recibidos − pollitos vendibles (unidades/año) | Sin precio; masa por unidad PENDIENTE |
-| Energía | INC-OP-ENE | — | **SIN_CANTIDAD**: 09C no dimensiona la incubadora |
-| Agua | INC-OP-AGUA | — | SIN_CANTIDAD |
-| Personal | COSTO_LABORAL | — | SIN_CANTIDAD: 14A no dimensiona la incubadora |
+| Energía eléctrica y HVAC (climatización de salas, setters, hatchers) | INC-OP-ENE | — | **PENDIENTE_CANTIDAD**: 09C no dimensiona la incubadora y su kWh **no** se reutiliza (test X04, mutación M12) |
+| Agua | INC-OP-AGUA | — | PENDIENTE_CANTIDAD (universo de utilities INCUBACION) |
+| Calidad y bioseguridad | INC-OP-CAL | análisis | PENDIENTE (v1.1) |
+| Personal | COSTO_LABORAL (`RRHH_INCUBACION_PENDIENTE`) | — | PENDIENTE_CANTIDAD: 14A no dimensiona la incubadora (no se fabrican FTE) |
 | Mantenimiento | MAN-INC-* | activos de la incubadora (BOQ 16) según método | Método PENDIENTE |
 | Transporte de huevo / de pollito | LOG-HUE-*, LOG-POL-* | viajes PENDIENTES (capacidad de camión, DPV-047) | — |
 
@@ -42,3 +43,7 @@ Setter y hatcher **no** generan costos separados por máquina: su energía depen
 ## 3. Reproductoras (CF, arquitectura futura)
 
 Estructura preparada sin valores: REP-AVE (reposición), REP-ALI, REP-SAN, REP-ENE, REP-OTR con `FASE = FUTURO`. No cuentan como costo (test A08). Requiere evidencia (DPV-045).
+
+## 4. Completitud (auditoría v1.1)
+
+La incubación propia tiene representados sus **12 bloques materiales** (huevo, vacunas, energía/HVAC, RRHH, agua, lavado/desinfección, mantenimiento, consumibles, descartes, transporte de huevo, transporte de pollito, calidad/bioseguridad) en [`completitud_arquitecturas_opex.csv`](completitud_arquitecturas_opex.csv): cobertura estructural 100 %, física 42 % (C3-10000), de costeo 0 %. Setter y hatcher son drivers de CAPEX y de capacidad, no costos operativos por sí mismos (test X02, mutación M14).

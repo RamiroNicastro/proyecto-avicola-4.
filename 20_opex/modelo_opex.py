@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 """
-MOTOR OPEX + CAPITAL DE TRABAJO — versión 1.0 (2026-10-02, sesión 17)
-=====================================================================
+MOTOR OPEX + CAPITAL DE TRABAJO — versión 1.1 (2026-10-02, sesión 17 + auditoría de completitud y costo laboral)
+=================================================================================================================
+
+v1.1: cada fila tiene MODULO_ARQ y BLOQUE operativo; la matriz `completitud_arquitecturas_opex.csv` verifica que todo
+módulo propio tenga sus bloques materiales (aunque estén PENDIENTES) y separa cobertura ESTRUCTURAL ("sé qué costos
+existen"), FÍSICA (cantidades) y de COSTEO ("sé cuánto cuestan"); ARQUITECTURA_COSTEABLE bloquea totales y costos
+unitarios; montos parciales rotulados MONTOS_PARCIALES_E4_NO_COMPARABLES; RRHH industrial (14A) separado de los
+universos upstream no dimensionados (FTE_TOTAL_CONOCIDO vs FTE_ADICIONAL_PENDIENTE); utilities por universo (09C = faena);
+el SAC es una regla laboral (`reglas_laborales_opex.csv`), no un precio; precio observado ≠ conversión USD.
 
 ¿CUÁNTO CUESTA OPERAR CADA CONFIGURACIÓN DEL PROYECTO Y CUÁNTO CAPITAL QUEDA INMOVILIZADO EN LA OPERACIÓN?
 
@@ -72,7 +79,7 @@ with redirect_stdout(io.StringIO()):
     import modelo_balance_masa as mb    # noqa: E402  (04)
 ms, ml, mup = mcx.ms, mcx.ml, mcx.mup
 
-VERSION = "1.0"
+VERSION = "1.1"
 FECHA = "2026-10-02"
 FUENTE = "20_opex/modelo_opex.py"
 FECHA_BASE_OPEX = "2026-10-01"                 # SUP-17-01: editable (--fecha-base); sin indexación automática
@@ -84,6 +91,7 @@ SALIDA_MAPA = os.path.join(AQUI, "mapa_drivers_opex.csv")
 SALIDA_LAB = os.path.join(AQUI, "modelo_costo_laboral.csv")
 SALIDA_CT = os.path.join(AQUI, "capital_trabajo_opex.csv")
 SALIDA_MATRIZ = os.path.join(AQUI, "matriz_validacion_opex.csv")
+SALIDA_COMP = os.path.join(AQUI, "completitud_arquitecturas_opex.csv")
 
 ESCALAS_REF = mcx.ESCALAS_REF
 PESO_REF = 2.9                                 # perfil medio de 03/14B (SUP-027): único publicado por las fuentes
@@ -272,7 +280,7 @@ def drivers_opex(c):
     da = mcx.dias_anio(cc)
     pub = E in ESCALAS_REF
     t = "DIRECTO" if pub else "CALCULO_MODELO_FUENTE"
-    DR = {"E": E, "ds": ds, "dias_anio": da, "sem_op": da / ds, "proc": {}, "v": {}, "alertas": []}
+    DR = {"E": E, "ds": ds, "dias_anio": da, "sem_op": da / ds, "proc": {}, "v": {}, "alertas": [], "c": c}
     if not pub:
         DR["alertas"].append(f"ESCALA_INTERMEDIA: {E:g} aves/día no publicada; drivers = CALCULO_MODELO_FUENTE")
     # ---- CAPEX (arquitectura, BOQ por bloque, flota, 09C) ------------------------------------
@@ -357,8 +365,9 @@ def drivers_opex(c):
 
         def r09(clave, var, factor, un, uso, ev="[ESTIMACIÓN]", obs=""):
             v3 = [None if u[n].get(var) is None else u[n][var] * factor for n in mcx.NIVELES]
-            return _reg(DR, clave, v3[1], un, "09C", var + ("" if factor == 1 else f" × {factor:g}"), t09, ev, uso, obs,
-                        esc09, v3[0], v3[2])
+            return _reg(DR, clave, v3[1], un, "09C", var + ("" if factor == 1 else f" × {factor:g}"), t09, ev, uso,
+                        "UNIVERSO 09C = planta de FAENA; no se extiende a incubación, alimento, granjas ni rendering"
+                        + (f"; {obs}" if obs else ""), esc09, v3[0], v3[2])
         r09("kwh_anio", "kwh_total_anio", 1, "kWh/año", "UT-ELE-KWH (incluye frío, aire, bombeo, efluentes aerobios)")
         r09("kwh_frio_proceso_anio", "kwh_proceso_frio_de_proceso_agua_helada_hielo_dia", da, "kWh/año",
             "INFORMATIVO: ya incluido en kwh_anio (no se duplica)", "[SUPUESTO] reparto ilustrativo")
@@ -462,8 +471,11 @@ def drivers_opex(c):
     ent = entradas_rrhh(c)
     R = mr.calcular(ent)
     DR["rrhh"], DR["rrhh_entradas"] = R, ent
-    _reg(DR, "fte_total_14a", R["fte_total"], "FTE", "14A", "fte_total", "CALCULO_MODELO_FUENTE", "[SUPUESTO] productividad",
-         "costo laboral", obs="headcount de nómina PENDIENTE (factor de cobertura no validado)",
+    _reg(DR, "fte_industrial_14a", R["fte_total"], "FTE", "14A", "fte_total", "CALCULO_MODELO_FUENTE", "[SUPUESTO] productividad",
+         "RRHH INDUSTRIAL + estructura + coordinación primaria (14A). NO es el FTE total de una empresa verticalmente "
+         "integrada: granjas propias, incubación, planta de alimento, reproductoras y rendering no están dimensionados",
+         obs="headcount de nómina PENDIENTE (factor de cobertura no validado); incluye horas de terceros que luego "
+             "pueden quedar INCLUIDAS en tarifas (faenador, choferes)",
          escenario=f"turnos={ent['turnos']}; autom={ent['automatizacion']}; limpieza={ent['limpieza']}; "
                    f"mant={ent['mantenimiento']}; lab={ent['laboratorio']}")
     _reg(DR, "fte_directos_14a", R["fte_interno"]["directo"] + R["fte_tercerizado"]["directo"], "FTE", "14A",
@@ -477,9 +489,10 @@ def drivers_opex(c):
     _reg(DR, "fraccion_granjas_propias", c["fraccion_granjas_propias"], "fracción", "CAPEX16", "fraccion_granjas_propias",
          "CONSUMIDO_CAPEX", "ESCENARIO (SUP-16-09)", "reparto propia / integrada")
     for k in ("kwh_granja", "gas_granja", "cama_t", "personal_granja", "personal_incubadora", "personal_planta_alimento",
-              "kwh_incubadora", "kwh_planta_alimento", "lodos_t", "potencia_contratada_kw"):
+              "personal_reproductoras", "personal_rendering", "kwh_incubadora", "agua_incubadora", "kwh_planta_alimento",
+              "vapor_planta_alimento", "agua_planta_alimento", "kwh_rendering", "lodos_t", "potencia_contratada_kw"):
         _reg(DR, k, None, "—", "OPEX", "—", "PENDIENTE", "PENDIENTE: el módulo fuente no lo dimensiona",
-             "concepto SIN_CANTIDAD (no se inventa)")
+             "concepto PENDIENTE_CANTIDAD (no se inventa)")
     DR["alertas"] += [a for a in D["alertas"] if a.startswith(("DRIVER_INCONSISTENTE", "ESCALA"))]
     if mcx.flota_de(cc, "vivo") != mcx.flota_de(cc, "refrigerado"):
         DR["alertas"].append("RRHH_FLOTA_MIXTA: 14A usa un único indicador de flota propia (se toma el de aves vivas)")
@@ -562,18 +575,41 @@ def validar_base(filas):
                 raise ErrorOpex(f"{i}: un rango exige ORIGEN_RANGO (sin ±% automático)")
 
 
-def costo_empresa_fte(cat, base):
-    """Costo empresa anual por FTE de una categoría laboral desde sus componentes. Cualquier faltante → None."""
-    comp = {k: base.get(f"LAB-{cat}-{k}") for k in ("SAL", "CAR", "ADI", "ART", "BEN", "EPP", "CAP")}
+ARCHIVO_REGLAS = os.path.join(AQUI, "reglas_laborales_opex.csv")
+COMPONENTES_LAB = ("SAL", "ADI", "VAC", "CAR", "ART", "BEN", "EPP", "CAP", "OTR")   # HEX: solo si se organizan horas extra
+
+
+def leer_reglas(ruta=ARCHIVO_REGLAS):
+    """Reglas laborales (SAC, vacaciones, horas extra…). NO son precios: no tienen nivel E1–E5."""
+    with open(ruta, encoding="utf-8") as f:
+        reglas = {r["REGLA"]: r for r in csv.DictReader(f)}
+    return validar_reglas(reglas)
+
+
+def validar_reglas(reglas):
+    for r in reglas.values():
+        if r["TIPO"].startswith(("precio", "cotizacion")) or r["EVIDENCIA"] in EVIDENCIAS:
+            raise ErrorOpex(f"regla {r['REGLA']}: una regla laboral no es un precio ni lleva nivel E1–E5")
+    return reglas
+
+
+def costo_empresa_fte(cat, base, reglas=None):
+    """Costo empresa anual por FTE de una categoría laboral desde sus componentes. Cualquier faltante → None.
+    remuneración mensual = salario × (1 + adicionales % + vacaciones %); anual = mensual × (12 + SAC);
+    costo = anual × (1 + cargas % + ART %) + beneficios × 12 + EPP + capacitación + otros. Horas extra: NO automáticas."""
+    reglas = reglas if reglas is not None else leer_reglas()
+    comp = {k: base.get(f"LAB-{cat}-{k}") for k in COMPONENTES_LAB}
     val = {k: precio_usd(r) for k, r in comp.items()}
-    meses = precio_usd(base.get("LAB-PARAM-MESES"))
-    falt = [k for k, x in val.items() if x is None] + ([] if meses is not None else ["MESES"])
-    niveles = [r["NIVEL_EVIDENCIA"] for r in comp.values() if r] + [base["LAB-PARAM-MESES"]["NIVEL_EVIDENCIA"]]
+    sac = _num(reglas.get("SAC", {}).get("VALOR"))
+    val["SAC"] = sac
+    falt = [k for k, x in val.items() if x is None]
+    niveles = [r["NIVEL_EVIDENCIA"] for r in comp.values() if r]
     peor = max((n for n in niveles if n in EVIDENCIAS), default="PENDIENTE")
     if falt:
         return None, "PENDIENTE", falt, val
-    rem = val["SAL"] * meses * (1 + val["ADI"] / 100)
-    return rem * (1 + val["CAR"] / 100 + val["ART"] / 100) + val["BEN"] * 12 + val["EPP"] + val["CAP"], peor, [], val
+    rem = val["SAL"] * (1 + val["ADI"] / 100 + val["VAC"] / 100) * (12 + sac)
+    return (rem * (1 + val["CAR"] / 100 + val["ART"] / 100) + val["BEN"] * 12 + val["EPP"] + val["CAP"] + val["OTR"],
+            peor, [], val)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -583,7 +619,9 @@ CAMPOS_REG = ["ESCENARIO", "CONFIGURACION", "ESCALA_AVES_DIA", "MODULO", "SUBMOD
               "CENTRO_COSTO", "NATURALEZA", "TIPO", "APORTANTE", "FASE", "DRIVER", "CANTIDAD", "UNIDAD",
               "ESTADO_DIMENSION", "INCLUIDO_EN", "MOTIVO", "COSTEA", "PRECIO_USD", "COSTO_CALCULADO_USD_ANIO",
               "COSTO_CONCEPTO_USD_AVE", "EVIDENCIA", "PCT_VARIABLE", "PCT_FIJO", "FIJO_VARIABLE", "ESTADO",
-              "GRUPO_PROVEEDOR", "ALERTAS"]
+              "GRUPO_PROVEEDOR", "MODULO_ARQ", "BLOQUE", "AMBITO_GRANJA", "UNIVERSO_RRHH", "UNIVERSO_UTILITIES",
+              "PRECIO_ORIGINAL_OBSERVADO", "MONEDA_ORIGINAL", "FECHA_PRECIO", "CONDICION_ENTREGA", "IVA_PRECIO",
+              "TC_USADO", "FECHA_TC", "ORIGEN_PRECIO_USD", "ALERTAS"]
 
 
 class Registro:
@@ -592,7 +630,7 @@ class Registro:
 
     def add(self, modulo, costo_id, cantidad, driver="", unidad=None, concepto=None, submodulo=None, flujo="",
             aportante="EMPRESA", fase="OPERACION", estado_dim=None, incluido_en="", motivo="", centro=None,
-            naturaleza=None, tipo=None):
+            naturaleza=None, tipo=None, ambito="", universo_rrhh=""):
         b = self.base.get(costo_id) if costo_id else None
         if costo_id and b is None and not costo_id.startswith("LAB-"):
             raise ErrorOpex(f"COSTO_ID {costo_id} inexistente en la base")
@@ -607,6 +645,7 @@ class Registro:
                  TIPO=tipo or (b["TIPO"] if b else ""), APORTANTE=aportante, FASE=fase, DRIVER=driver,
                  CANTIDAD=cantidad, UNIDAD=unidad or (b["UNIDAD"] if b else ""), ESTADO_DIMENSION=estado_dim,
                  INCLUIDO_EN=incluido_en, MOTIVO=motivo, GRUPO_PROVEEDOR=b["GRUPO_PROVEEDOR"] if b else "",
+                 AMBITO_GRANJA=ambito, UNIVERSO_RRHH=universo_rrhh,
                  COSTEA=(aportante in ("EMPRESA", "PENDIENTE") and fase in ("OPERACION", "OPCIONAL_MERCADO")
                          and estado_dim in ("DIMENSIONADO", "PENDIENTE")))
         if b and f["UNIDAD"] != b["UNIDAD"]:
@@ -615,25 +654,28 @@ class Registro:
         return f
 
     def split(self, modulo, costo_id, aporte, q_total, driver, **kw):
-        """Reparte una cantidad entre granjas propias (empresa) e integradas según el aportante del concepto."""
+        """Reparte una cantidad entre granjas PROPIAS (costo de la empresa) e INTEGRADAS (según el aportante del
+        concepto). Con granjas mixtas siempre hay dos filas separadas (ámbito PROPIA / INTEGRADA)."""
         fp = self.c["fraccion_granjas_propias"]
         ap = aportes(self.c)[aporte]
         mot = kw.pop("motivo", "")
-        q_emp = None if q_total is None else q_total * fp
-        q_int = None if q_total is None else q_total * (1 - fp)
-        if ap == "EMPRESA" or fp >= 1 - TOL:
-            return [self.add(modulo, costo_id, q_total, driver, motivo=mot, **kw)]
         out = []
         if fp > TOL:
-            out.append(self.add(modulo, costo_id, q_emp, driver + " × fracción propia", motivo=mot, **kw))
-        if ap == "PRODUCTOR_INTEGRADO":
-            out.append(self.add(modulo, costo_id, q_int, driver + " × fracción integrada", aportante=ap,
-                                estado_dim="INFORMATIVO", motivo="aporte del integrado (SUP-17-04): no es costo de la empresa"
-                                + (f"; {mot}" if mot else ""),
-                                **kw))
-        else:
-            out.append(self.add(modulo, costo_id, q_int, driver + " × fracción integrada", aportante=ap,
-                                motivo="APORTANTE_PENDIENTE: según contrato (03)" + (f"; {mot}" if mot else ""), **kw))
+            q = None if q_total is None else q_total * fp
+            out.append(self.add(modulo, costo_id, q, driver + ("" if fp >= 1 - TOL else " × fracción propia"),
+                                motivo=mot, ambito="PROPIA", **kw))
+        if fp < 1 - TOL:
+            q = None if q_total is None else q_total * (1 - fp)
+            d = driver + ("" if fp <= TOL else " × fracción integrada")
+            if ap == "EMPRESA":
+                out.append(self.add(modulo, costo_id, q, d, motivo=mot, ambito="INTEGRADA", **kw))
+            elif ap == "PRODUCTOR_INTEGRADO":
+                out.append(self.add(modulo, costo_id, q, d, aportante=ap, estado_dim="INFORMATIVO", ambito="INTEGRADA",
+                                    motivo="COSTO DEL PRODUCTOR (aporte del integrado, SUP-17-04): no es costo de la empresa"
+                                    + (f"; {mot}" if mot else ""), **kw))
+            else:
+                out.append(self.add(modulo, costo_id, q, d, aportante=ap, ambito="INTEGRADA",
+                                    motivo="APORTANTE_PENDIENTE: según contrato (03)" + (f"; {mot}" if mot else ""), **kw))
         return out
 
 
@@ -651,6 +693,10 @@ def generar_registro(c, DR, base):
         if "M03" in _MUT:                                         # mutación: compra con costo interno de fábrica
             R.add("ALIMENTO", "ALI-C-ENE", None, "kwh_planta_alimento")
     elif c["alimento"] == "facon" and c["alimento_facon_mp"] is None:
+        R.add("ALIMENTO", "", t_al, "alimento_t_anio", unidad="t", submodulo="facon",
+              concepto="Alimento a façon: materias primas (B1) o precio integral (B2) — variante NO definida",
+              motivo="VARIANTE_FACON_NO_DEFINIDA (DEC-17-02): sin variante no hay precio aplicable; la cantidad sí existe",
+              centro="alimento", naturaleza="variable", tipo="comprado")
         R.add("ALIMENTO", "ALI-B-SRV", None, "alimento_t_anio", motivo="VARIANTE_FACON_NO_DEFINIDA (DEC-17-02): "
               "MP de la empresa (MP + servicio) o del elaborador (precio integral)")
     elif c["alimento"] == "facon" and c["alimento_facon_mp"] == "elaborador":
@@ -665,6 +711,11 @@ def generar_registro(c, DR, base):
             elif k in ("aceite", "nucleo", "otros") and "resto" in comp:
                 R.add("ALIMENTO", i, None, "—", estado_dim="INCLUIDO", incluido_en="ALI-MP-RESTO",
                       motivo="desagregación PENDIENTE: 14B solo da rangos")
+        # Precio Rosario ≠ costo puesto en planta: diferencial aparte (el flete va en LOG-GRA-*)
+        for k, i in (("maiz", "ALI-MP-DIF-MAIZ"), ("harina_soja", "ALI-MP-DIF-SOJA")):
+            if k in comp:
+                R.add("ALIMENTO", i, v[f"mp_{k}_t_anio"], f"mp_{k}_t_anio",
+                      motivo="precio de referencia (pizarra) ≠ puesto en planta; diferencial PENDIENTE (DPV-17-02)")
         R.add("ALIMENTO", "ALI-MERMA", None, "% merma × t MP", motivo="% de merma no dimensionado (DPV-158)")
         if c["alimento"] == "facon":
             R.add("ALIMENTO", "ALI-B-SRV", t_al, "alimento_t_anio")
@@ -672,8 +723,11 @@ def generar_registro(c, DR, base):
                      if k in ("maiz", "harina_soja", "micros_aceite_otros"))
             R.add("ALIMENTO", "ALI-B-ALM", st * 12, "stock propio de MP (14B) × 12 meses")
         else:
-            R.add("ALIMENTO", "ALI-C-ENE", None, "kwh_planta_alimento", motivo="kWh/t no dimensionado (DPV-158)")
-            R.add("ALIMENTO", "ALI-C-TER", None, "—", motivo="vapor de peletizado no dimensionado (DPV-158)")
+            R.add("ALIMENTO", "ALI-C-ENE", None, "kwh_planta_alimento", motivo="kWh/t de molienda, mezcla y pellet no "
+                  "dimensionado (DPV-158); NO se usa el kWh de la planta de faena (09C)")
+            R.add("ALIMENTO", "ALI-C-TER", None, "vapor_planta_alimento", motivo="vapor de peletizado no dimensionado (DPV-158)")
+            R.add("ALIMENTO", "ALI-C-AGUA", None, "agua_planta_alimento", motivo="no dimensionado; NO se usa el agua de 09C")
+            R.add("ALIMENTO", "ALI-C-MOV", None, "—", motivo="movimientos internos no dimensionados")
             R.add("ALIMENTO", "ALI-C-ANA", None, "—", motivo="plan de muestreo PENDIENTE")
             R.add("ALIMENTO", "ALI-C-ALM", None, "—", motivo="no dimensionado")
     # ---------------- POLLITOS / INCUBACIÓN / REPRODUCTORAS ----------------
@@ -685,10 +739,13 @@ def generar_registro(c, DR, base):
         R.add("INCUBACION", "INC-OP-INS", v["pollitos_a_recibir_anio"], "pollitos_a_recibir_anio")
         R.add("INCUBACION", "INC-OP-LIM", v["cargas_incubacion_anio"], "cargas_incubacion_anio")
         R.add("INCUBACION", "INC-OP-DES", v["descartes_incubacion_anio"], "descartes_incubacion_anio")
-        R.add("INCUBACION", "INC-OP-ENE", None, "kwh_incubadora", motivo="09C no dimensiona la incubadora")
-        R.add("INCUBACION", "INC-OP-AGUA", None, "—", motivo="no dimensionado")
+        kwh_inc = DR["v"]["kwh_anio"] if "M12" in _MUT else None   # mutación: reutiliza el kWh de faena (09C)
+        R.add("INCUBACION", "INC-OP-ENE", kwh_inc, "kwh_anio" if "M12" in _MUT else "kwh_incubadora",
+              motivo="energía y HVAC de la incubadora no dimensionados; NO se usa el kWh de la planta de faena (09C)")
+        R.add("INCUBACION", "INC-OP-AGUA", None, "agua_incubadora", motivo="no dimensionado; NO se usa el agua de 09C")
+        R.add("INCUBACION", "INC-OP-CAL", None, "—", motivo="plan de control y bioseguridad PENDIENTE")
     if c["reproductoras"]:
-        for i in ("REP-AVE", "REP-ALI", "REP-SAN", "REP-ENE", "REP-OTR"):
+        for i in ("REP-AVE", "REP-ALI", "REP-SAN", "REP-ENE", "REP-AGUA", "REP-MAN", "REP-RES", "REP-LOG", "REP-OTR"):
             R.add("REPRODUCTORAS", i, None, "—", fase="FUTURO", motivo="arquitectura futura sin evidencia (DPV-045)")
     # ---------------- PRODUCCIÓN PRIMARIA ----------------
     R.split("PRODUCCION_PRIMARIA", "PP-SAN", "sanidad", v["pollitos_alojados_anio"], "pollitos_alojados_anio")
@@ -700,19 +757,22 @@ def generar_registro(c, DR, base):
     R.split("PRODUCCION_PRIMARIA", "PP-BIO", "bioseguridad", v["m2_galpon"], "m2_galpon")
     R.split("PRODUCCION_PRIMARIA", "PP-ENE", "electricidad_granja", None, "kwh_granja", motivo="DPV-052")
     R.split("PRODUCCION_PRIMARIA", "PP-AGUA", "agua_granja", v["agua_bebida_m3_anio"], "agua_bebida_m3_anio")
+    R.split("PRODUCCION_PRIMARIA", "PP-VET", "sanidad", None, "—", motivo="plan sanitario y de análisis PENDIENTE")
     if fp < 1 - TOL:
         R.add("PRODUCCION_PRIMARIA", "PP-ATE", None, "—", motivo="necesidad PENDIENTE: 14A ya dimensiona veterinario y "
-              "técnicos de campo (no se duplica)")
+              "técnicos de campo (no se duplica)", ambito="INTEGRADA")
         base_pago = c["base_pago_integrado"]
         if base_pago is None:
             R.add("PRODUCCION_PRIMARIA", "PP-PAGO-AVE", None, "—", concepto="Pago al productor integrado (base del contrato NO definida)",
-                  motivo="CONTRATO_NO_DEFINIDO (DEC-17-04)")
+                  motivo="CONTRATO_NO_DEFINIDO (DEC-17-04)", ambito="INTEGRADA")
         elif base_pago == "ave":
-            R.add("PRODUCCION_PRIMARIA", "PP-PAGO-AVE", v["aves_cargadas_anio"] * (1 - fp), "aves_cargadas_anio × fracción integrada")
+            R.add("PRODUCCION_PRIMARIA", "PP-PAGO-AVE", v["aves_cargadas_anio"] * (1 - fp), "aves_cargadas_anio × fracción integrada",
+                  ambito="INTEGRADA")
         else:
-            R.add("PRODUCCION_PRIMARIA", "PP-PAGO-KG", v["kg_vivo_cargado_anio"] * (1 - fp), "kg_vivo_cargado_anio × fracción integrada")
+            R.add("PRODUCCION_PRIMARIA", "PP-PAGO-KG", v["kg_vivo_cargado_anio"] * (1 - fp), "kg_vivo_cargado_anio × fracción integrada",
+                  ambito="INTEGRADA")
     if fp > TOL:
-        R.add("PRODUCCION_PRIMARIA", "PP-OTR", None, "—", motivo="no definido")
+        R.add("PRODUCCION_PRIMARIA", "PP-OTR", None, "—", motivo="otros insumos de granja propia: no definidos", ambito="PROPIA")
     # ---------------- FAENA ----------------
     if propia:
         R.add("FAENA", "FAE-QUIM", v["aves_faenadas_anio"], "aves_faenadas_anio")
@@ -785,9 +845,12 @@ def generar_registro(c, DR, base):
         R.add("SUBPRODUCTOS", "SUB-CONT", 12.0, "12 meses")
         if c["subproductos"] == "B_basico_propio":
             R.add("SUBPRODUCTOS", "SUB-TRAT-B", None, "—", motivo="tecnología no definida (SUP-16-14)")
+            R.add("SUBPRODUCTOS", "SUB-TRAT-ENE", None, "—", motivo="energía del tratamiento no incluida en 09C (tecnología no definida)")
         if c["rendering"]:
-            for i in ("SUB-REN-ENE", "SUB-REN-INS", "SUB-REN-MAN"):
-                R.add("SUBPRODUCTOS", i, None, "—", fase="FUTURO", motivo="rendering: arquitectura futura")
+            for i in ("SUB-REN-ENE", "SUB-REN-TER", "SUB-REN-AGUA", "SUB-REN-MAN", "SUB-REN-INS", "SUB-REN-TRAT",
+                      "SUB-REN-RES", "SUB-REN-LOG"):
+                R.add("SUBPRODUCTOS", i, None, "kwh_rendering" if i == "SUB-REN-ENE" else "—", fase="FUTURO",
+                      motivo="rendering: arquitectura futura; NO se usan los consumos de 09C (planta de faena)")
     # ---------------- LOGÍSTICA ----------------
     cc = config_capex(c)
     activos = {"POL": True, "HUE": c["pollito"] == "incubacion", "ALI": True,
@@ -825,7 +888,8 @@ def generar_registro(c, DR, base):
             if f not in ("VIV", "REF", "CON"):
                 R.add("COSTO_LABORAL", "LAB-CHOF", None, "—", unidad="FTE-año", concepto=f"Choferes de flota propia ({nombre})",
                       submodulo="choferes", flujo=nombre, aportante=ap, motivo="14A no dimensiona choferes de este flujo",
-                      centro="logistica", naturaleza="semifijo", tipo="interno")
+                      centro="logistica", naturaleza="semifijo", tipo="interno",
+                      universo_rrhh="RRHH_LOGISTICA_NO_DIMENSIONADO_14A")
         else:
             m = modelo_tarifa(c, f)
             if m is None:
@@ -896,7 +960,138 @@ def generar_registro(c, DR, base):
             R.add("SEGUROS", f"SEG-FLOTA-{f}", v[f"vehiculos_{f}"], f"vehiculos_{f}", flujo=nombre)
     # ---------------- COSTO LABORAL (14A) ----------------
     lineas_laborales(R, c, DR)
+    clasificar_filas(R.filas, c)
     return R.filas
+
+
+# ---------------------------------------------------------------------------------------------
+# 4 bis. MÓDULO DE ARQUITECTURA Y BLOQUE OPERATIVO DE CADA FILA (completitud estructural)
+# ---------------------------------------------------------------------------------------------
+BLOQUE_POR_ID = {
+    "ALI-A-PT": "materia_prima", "ALI-B-PTE": "materia_prima", "ALI-A-DES": "logistica", "ALI-B-SRV": "servicio_tercero",
+    "ALI-B-ALM": "almacenamiento", "ALI-C-ALM": "almacenamiento", "ALI-MERMA": "mermas", "ALI-C-ENE": "energia",
+    "ALI-C-TER": "termico", "ALI-C-AGUA": "agua", "ALI-C-ANA": "laboratorio", "ALI-C-MOV": "movimientos_internos",
+    "ALI-MP-DIF-MAIZ": "diferencial", "ALI-MP-DIF-SOJA": "diferencial", "POL-COMPRA": "materia_prima",
+    "INC-OP-HUEVO": "materia_prima", "INC-OP-VAC": "sanidad", "INC-OP-ENE": "energia", "INC-OP-AGUA": "agua",
+    "INC-OP-LIM": "limpieza", "INC-OP-INS": "consumibles", "INC-OP-DES": "residuos", "INC-OP-CAL": "calidad",
+    "REP-AVE": "materia_prima", "REP-ALI": "alimento", "REP-SAN": "sanidad", "REP-ENE": "energia", "REP-AGUA": "agua",
+    "REP-MAN": "mantenimiento", "REP-RES": "residuos", "REP-LOG": "logistica", "REP-OTR": "otros",
+    "PP-SAN": "sanidad", "PP-CAMA": "cama", "PP-GAS": "termico", "PP-CAPT": "captura", "PP-MORT": "residuos",
+    "PP-LIMP": "limpieza", "PP-BIO": "bioseguridad", "PP-ENE": "energia", "PP-AGUA": "agua", "PP-VET": "veterinaria",
+    "PP-ATE": "sanidad", "PP-PAGO-AVE": "servicio_tercero", "PP-PAGO-KG": "servicio_tercero", "PP-OTR": "otros",
+    "FAE-FACON": "servicio_tercero", "FAE-FACON-FRIO": "frio", "FAE-FACON-SUB": "residuos", "FAE-QUIM": "limpieza",
+    "FAE-ELEM": "limpieza", "FAE-CUCH": "consumibles", "FAE-SERV": "otros", "UT-FRIO-TER": "frio",
+    "SUB-CONT": "residuos", "SUB-TRAT-B": "consumibles", "SUB-TRAT-ENE": "energia", "SUB-REN-ENE": "energia",
+    "SUB-REN-TER": "termico", "SUB-REN-AGUA": "agua", "SUB-REN-MAN": "mantenimiento", "SUB-REN-INS": "consumibles",
+    "SUB-REN-TRAT": "tratamiento", "SUB-REN-RES": "residuos", "SUB-REN-LOG": "logistica",
+}
+UNIVERSO_UTIL_POR_PREFIJO = (("UT-", "FAENA_09C"), ("EF-", "FAENA_09C"), ("INC-OP-ENE", "INCUBACION"),
+                             ("INC-OP-AGUA", "INCUBACION"), ("ALI-C-ENE", "PLANTA_ALIMENTO"), ("ALI-C-TER", "PLANTA_ALIMENTO"),
+                             ("ALI-C-AGUA", "PLANTA_ALIMENTO"), ("PP-ENE", "GRANJAS"), ("PP-GAS", "GRANJAS"),
+                             ("PP-AGUA", "GRANJAS"), ("SUB-REN-ENE", "RENDERING"), ("SUB-REN-TER", "RENDERING"),
+                             ("SUB-REN-AGUA", "RENDERING"), ("SUB-TRAT-ENE", "TRATAMIENTO_SUBPRODUCTOS"),
+                             ("REP-ENE", "REPRODUCTORAS"), ("REP-AGUA", "REPRODUCTORAS"))
+AREA_MODULO = {"proc": "FAENA_PROPIA", "frio": "FAENA_PROPIA", "elec": "FAENA_PROPIA", "util": "FAENA_PROPIA",
+               "inc": "INCUBACION_PROPIA", "ali": "PLANTA_ALIMENTO_PROPIA", "gra": "GRANJAS_PROPIAS"}
+UNIVERSO_RRHH_MODULO = {"RRHH_GRANJAS_PROPIAS_PENDIENTE": "GRANJAS_PROPIAS", "RRHH_INCUBACION_PENDIENTE": "INCUBACION_PROPIA",
+                        "RRHH_PLANTA_ALIMENTO_PENDIENTE": "PLANTA_ALIMENTO_PROPIA",
+                        "RRHH_REPRODUCTORAS_FUTURO": "REPRODUCTORAS_FUTURO", "RRHH_RENDERING_FUTURO": "RENDERING_FUTURO"}
+
+
+def _modulos_flujo(c):
+    faena = "FAENA_PROPIA" if c["faena"] == "propia" else "FAENA_FACON"
+    alim = {"compra": "ALIMENTO_COMPRADO", "facon": "ALIMENTO_FACON", "propia": "PLANTA_ALIMENTO_PROPIA"}[c["alimento"]]
+    pol = "POLLITO_COMPRADO" if c["pollito"] == "compra" else "INCUBACION_PROPIA"
+    return faena, alim, pol
+
+
+def clasificar_fila(f, c):
+    """(MODULO_ARQ, BLOQUE) de una fila: a qué módulo de la arquitectura pertenece y qué bloque operativo cubre."""
+    faena, alim, pol = _modulos_flujo(c)
+    i, mod, sub, fl = f["COSTO_ID"], f["MODULO"], f["SUBMODULO"], f["FLUJO"]
+    granja = "GRANJAS_PROPIAS" if f["AMBITO_GRANJA"] == "PROPIA" else "GRANJAS_INTEGRADAS"
+    if mod == "ALIMENTO":
+        return alim, BLOQUE_POR_ID.get(i, "materia_prima")
+    if mod == "POLLITOS":
+        return "POLLITO_COMPRADO", "materia_prima"
+    if mod == "INCUBACION":
+        return "INCUBACION_PROPIA", BLOQUE_POR_ID[i]
+    if mod == "REPRODUCTORAS":
+        return "REPRODUCTORAS_FUTURO", BLOQUE_POR_ID[i]
+    if mod == "PRODUCCION_PRIMARIA":
+        return granja, BLOQUE_POR_ID[i]
+    if mod == "FAENA":
+        return ("FAENA_FACON" if i.startswith("FAE-FACON") else faena), BLOQUE_POR_ID.get(i, "limpieza")
+    if mod == "EMPAQUE":
+        return faena, "empaque"
+    if mod == "UTILITIES":
+        if i == "UT-FRIO-TER":
+            return faena, "frio"
+        return "FAENA_PROPIA", ("termico" if i.startswith("UT-TER") else "agua" if i.startswith("UT-AGUA") else "energia")
+    if mod == "EFLUENTES":
+        return "FAENA_PROPIA", "efluentes"
+    if mod == "SUBPRODUCTOS":
+        if i.startswith("SUB-REN"):
+            return "RENDERING_FUTURO", BLOQUE_POR_ID[i]
+        if i.startswith("SUB-TRAT"):
+            return "TRATAMIENTO_SUBPRODUCTOS_PROPIO", BLOQUE_POR_ID[i]
+        return "FAENA_PROPIA", "residuos"
+    if mod == "LOGISTICA" or (mod == "SEGUROS" and i.startswith("SEG-FLOTA")) or (mod == "COSTO_LABORAL" and sub == "choferes"):
+        if fl == "huevos":
+            return "INCUBACION_PROPIA", "logistica_huevo"
+        if fl == "pollitos":
+            return pol, ("logistica_pollito" if pol == "INCUBACION_PROPIA" else "logistica")
+        if fl in ("alimento", "grano"):
+            return alim, "logistica"
+        if fl == "subproductos":
+            return "FAENA_PROPIA", "logistica"
+        return faena, "logistica"
+    if mod == "MANTENIMIENTO":
+        area = i.split("-")[1].lower() if i.startswith("MAN-") else sub
+        if area == "edif" or area == "personal":
+            return (faena if c["faena"] == "propia" else "ESTRUCTURA"), "mantenimiento"
+        return AREA_MODULO.get(area, faena), "mantenimiento"
+    if mod == "CALIDAD":
+        if i in ("CAL-CERT", "CAL-AUD", "CAL-DOC", "CAL-TRAZ"):
+            return "ESTRUCTURA", "calidad"
+        return faena, "calidad"
+    if mod == "HALAL":
+        return "MERCADO_HALAL_OPCIONAL", "calidad"
+    if mod in ("ADMINISTRACION", "COMERCIAL"):
+        return "ESTRUCTURA", "administracion"
+    if mod == "SEGUROS":
+        if i == "SEG-GRA":
+            return "GRANJAS_PROPIAS", "seguros"
+        if i in ("SEG-PLANTA", "SEG-INC", "SEG-INT"):
+            return (faena if c["faena"] == "propia" else "ESTRUCTURA"), "seguros"
+        return "ESTRUCTURA", "seguros"
+    if mod == "COSTO_LABORAL":
+        u = f["UNIVERSO_RRHH"]
+        if u in UNIVERSO_RRHH_MODULO:
+            return UNIVERSO_RRHH_MODULO[u], "rrhh"
+        if sub == "tratamiento_subproductos":
+            return "TRATAMIENTO_SUBPRODUCTOS_PROPIO", "rrhh"
+        if sub == "captura":
+            return granja if c["fraccion_granjas_propias"] < 1 - TOL else "GRANJAS_PROPIAS", "captura"
+        if sub == "laboratorio":
+            return faena, "calidad"
+        if u == "COORDINACION_PRIMARIA_14A":
+            return ("GRANJAS_INTEGRADAS" if c["fraccion_granjas_propias"] < 1 - TOL else "GRANJAS_PROPIAS"), "rrhh"
+        if u in ("ESTRUCTURA_14A",) or sub == "hys_externo":
+            return "ESTRUCTURA", "rrhh"
+        if sub in ("choferes_aves", "choferes_producto"):
+            return faena, "logistica"
+        return faena, "rrhh"
+    return "ESTRUCTURA", "otros"
+
+
+def clasificar_filas(filas, c):
+    for f in filas:
+        f["MODULO_ARQ"], f["BLOQUE"] = clasificar_fila(f, c)
+        f["UNIVERSO_UTILITIES"] = "" if f["COSTO_ID"] == "UT-FRIO-TER" else next(
+            (u for pre, u in UNIVERSO_UTIL_POR_PREFIJO if f["COSTO_ID"].startswith(pre)), "")
+        if f["MODULO"] == "UTILITIES" and not f["COSTO_ID"]:
+            f["UNIVERSO_UTILITIES"] = "FAENA_09C"                   # energía de frío/bombeo/efluentes ya incluida en 09C
 
 
 # Mantenimiento: áreas ↔ bloques del BOQ de CAPEX
@@ -963,7 +1158,24 @@ NATURALEZA_DRIVER_14A = {"produccion": "semifijo", "activos": "semifijo", "casi_
 INCLUIDO_SERVICIO = {"captura": "PP-CAPT", "hys_externo": "ADM-HYS", "laboratorio": "CAL-ANA-MICRO"}
 
 
+UNIVERSO_14A = {"operacion_industrial": "INDUSTRIAL_14A", "soporte_industrial": "INDUSTRIAL_14A",
+                "logistica": "INDUSTRIAL_14A", "administracion": "ESTRUCTURA_14A", "direccion": "ESTRUCTURA_14A",
+                "produccion_primaria": "COORDINACION_PRIMARIA_14A"}
+# Universos de RRHH que 14A NO dimensiona: se registran como PENDIENTE (o FUTURO), nunca con FTE fabricados
+UNIVERSOS_PENDIENTES = {"personal_granja": ("RRHH_GRANJAS_PROPIAS_PENDIENTE", "Personal de granjas propias", "produccion_primaria"),
+                        "personal_incubadora": ("RRHH_INCUBACION_PENDIENTE", "Personal de incubadora", "incubacion"),
+                        "personal_planta_alimento": ("RRHH_PLANTA_ALIMENTO_PENDIENTE", "Personal de planta de alimento", "alimento"),
+                        "operacion_efluentes": ("RRHH_INDUSTRIAL_NO_DIMENSIONADO_14A",
+                                                "Operación de planta de efluentes (puede estar cubierta por mantenimiento)",
+                                                "servicios_generales"),
+                        "tratamiento_subproductos": ("RRHH_INDUSTRIAL_NO_DIMENSIONADO_14A",
+                                                     "Operación del tratamiento básico de subproductos", "servicios_generales"),
+                        "personal_reproductoras": ("RRHH_REPRODUCTORAS_FUTURO", "Personal de reproductoras", "incubacion"),
+                        "personal_rendering": ("RRHH_RENDERING_FUTURO", "Personal de rendering", "servicios_generales")}
+
+
 def lineas_laborales(R, c, DR):
+    DR["_filas_lab_pend"] = []
     rr = DR["rrhh"]
     da = DR["dias_anio"]
     cc = config_capex(c)
@@ -973,24 +1185,27 @@ def lineas_laborales(R, c, DR):
         cat = categoria_laboral(p)
         cen = centro_laboral(p)
         nat = NATURALEZA_DRIVER_14A.get(p["driver"], "semifijo")
+        uni = UNIVERSO_14A.get(p["categoria"], "INDUSTRIAL_14A")
         kw = dict(submodulo=p["clave"], concepto=p["puesto"], centro=cen)
         if p["clave"] in INCLUIDO_SERVICIO and not (p["fte_interno"] or 0) > TOL:
             R.add("COSTO_LABORAL", "", None, "—", unidad="", estado_dim="INCLUIDO", incluido_en=INCLUIDO_SERVICIO[p["clave"]],
-                  motivo="servicio por unidad: se costea en el concepto de servicio", naturaleza=nat, tipo="tercerizado", **kw)
+                  motivo="servicio por unidad: se costea en el concepto de servicio", naturaleza=nat, tipo="tercerizado",
+                  universo_rrhh="TERCERO_INCLUIDO_EN_SERVICIO", **kw)
             continue
         if p["estado"] == "PENDIENTE":
             R.add("COSTO_LABORAL", f"LAB-{cat}", None, p["clave"], unidad="FTE-año", motivo="dotación PENDIENTE en 14A",
-                  naturaleza=nat, tipo="interno", **kw)
+                  naturaleza=nat, tipo="interno", universo_rrhh=uni, **kw)
             continue
         if (p["fte_interno"] or 0) > TOL:
             R.add("COSTO_LABORAL", f"LAB-{cat}", p["fte_interno"], f"FTE interno 14A ({p['clave']})", unidad="FTE-año",
-                  motivo="PROVISIONAL_POR_FTE (headcount PENDIENTE)", naturaleza=nat, tipo="interno", **kw)
+                  motivo="PROVISIONAL_POR_FTE (headcount PENDIENTE)", naturaleza=nat, tipo="interno", universo_rrhh=uni, **kw)
         if (p["fte_tercerizado"] or 0) > TOL:
             horas = (p["horas_contratadas_dia"] or 0) * da
             if c["faena"] == "facon" and p["categoria"] == "operacion_industrial" and "M11" not in _MUT:
-                R.add("COSTO_LABORAL", "", horas, f"horas contratadas 14A ({p['clave']})", unidad="hora",
-                      estado_dim="INCLUIDO", incluido_en="FAE-FACON", motivo="personal del faenador: está en la tarifa de "
-                      "façon; la función se conserva (horas visibles, 14A)", naturaleza="variable", tipo="tercerizado", **kw)
+                R.add("COSTO_LABORAL", "", horas, f"horas contratadas 14A ({p['clave']})", unidad="hora", aportante="TERCERO",
+                      estado_dim="INCLUIDO", incluido_en="FAE-FACON", motivo="RECURSO_FISICO_DE_TERCERO (personal del faenador): "
+                      "costo INCLUIDO_EN_TARIFA_FACON; horas visibles para trazabilidad (14A)", naturaleza="variable",
+                      tipo="tercerizado", universo_rrhh="TERCERO_INCLUIDO_EN_TARIFA", **kw)
                 continue
             if p["clave"] in ("choferes_aves", "choferes_producto"):
                 fl = "vivo" if p["clave"] == "choferes_aves" else "refrigerado"
@@ -999,34 +1214,83 @@ def lineas_laborales(R, c, DR):
                     incl = ""
                 if incl:
                     R.add("COSTO_LABORAL", "", horas, f"horas contratadas 14A ({p['clave']})", unidad="hora",
-                          estado_dim="INCLUIDO", incluido_en=incl, motivo="el chofer está en la tarifa del flete tercerizado; "
-                          "la función se conserva (horas visibles)", naturaleza="variable", tipo="tercerizado", **kw)
+                          aportante="TERCERO", estado_dim="INCLUIDO", incluido_en=incl,
+                          motivo="RECURSO_FISICO_DE_TERCERO (chofer del transportista): costo INCLUIDO_EN_TARIFA_FLETE; "
+                          "horas visibles", naturaleza="variable", tipo="tercerizado",
+                          universo_rrhh="TERCERO_INCLUIDO_EN_TARIFA", **kw)
                     continue
                 area = "LOG"
             else:
                 area = AREA_TERCERIZADA.get(p["clave"], "OTR")
             R.add("COSTO_LABORAL", f"LAB-TER-{area}", horas, f"horas contratadas 14A ({p['clave']})",
-                  naturaleza="variable", tipo="tercerizado", **kw)
-    # Funciones que 14A NO dimensiona (no se inventan dotaciones)
+                  naturaleza="variable", tipo="tercerizado", universo_rrhh=uni, **kw)
+    # Universos de RRHH que 14A NO dimensiona (no se inventan dotaciones)
     faltan = []
     if c["fraccion_granjas_propias"] > TOL:
-        faltan.append(("personal_granja", "Personal de granjas propias", "produccion_primaria"))
+        faltan.append("personal_granja")
     if c["pollito"] == "incubacion":
-        faltan.append(("personal_incubadora", "Personal de incubadora", "incubacion"))
+        faltan.append("personal_incubadora")
     if c["alimento"] == "propia":
-        faltan.append(("personal_planta_alimento", "Personal de planta de alimento", "alimento"))
+        faltan.append("personal_planta_alimento")
     if c["faena"] == "propia":
-        faltan.append(("operacion_efluentes", "Operación de planta de efluentes (puede estar cubierta por mantenimiento)",
-                       "servicios_generales"))
+        faltan.append("operacion_efluentes")
     if c["subproductos"] == "B_basico_propio" and c["faena"] == "propia":
-        faltan.append(("tratamiento_subproductos", "Operación del tratamiento básico de subproductos", "servicios_generales"))
-    for k, n, cen in faltan:
-        R.add("COSTO_LABORAL", "LAB-CONV_SOP", None, k, unidad="FTE-año", concepto=n, submodulo=k, centro=cen,
-              naturaleza="semifijo", tipo="interno", motivo="14A no dimensiona esta función: FTE PENDIENTE")
+        faltan.append("tratamiento_subproductos")
+    if c["reproductoras"]:
+        faltan.append("personal_reproductoras")
+    if c["rendering"]:
+        faltan.append("personal_rendering")
+    if "M14" in _MUT and "personal_incubadora" in faltan:     # mutación: se omite un bloque material
+        faltan.remove("personal_incubadora")
+    for k in faltan:
+        uni, n, cen = UNIVERSOS_PENDIENTES[k]
+        fut = uni.endswith("FUTURO")
+        DR.setdefault("_filas_lab_pend", []).append(R.add(
+              "COSTO_LABORAL", "LAB-CONV_SOP", None, k, unidad="FTE-año", concepto=n, submodulo=k, centro=cen,
+              naturaleza="semifijo", tipo="interno", fase="FUTURO" if fut else "OPERACION", universo_rrhh=uni,
+              motivo=("arquitectura FUTURA: dotación sin evidencia" if fut else
+                      "14A no dimensiona esta función: FTE PENDIENTE (no se reutilizan FTE industriales)")))
     R.add("COSTO_LABORAL", "", DR["v"]["horas_brecha_jornada_anio"], "horas_brecha_jornada_anio", unidad="h-persona",
           concepto="Brecha de jornada a organizar (turnos, relevos, personal adicional u horas extra)", submodulo="brecha",
           estado_dim="INFORMATIVO", motivo="NO son horas extra automáticas (14A, DPV-146)", centro="faena",
-          naturaleza="semivariable", tipo="interno")
+          naturaleza="semivariable", tipo="interno", universo_rrhh="INDUSTRIAL_14A")
+
+
+def fte_universos(c, DR):
+    """FTE por universo. FTE_TOTAL_CONOCIDO = solo lo que 14A dimensiona para la EMPRESA (industrial + estructura +
+    coordinación primaria), sin terceros cuyo costo está dentro de una tarifa. Lo no dimensionado es PENDIENTE."""
+    cc = config_capex(c)
+    emp = terc = 0.0
+    for p in DR["rrhh"]["puestos"]:
+        if p["grupo"] not in mr.GRUPOS:
+            continue
+        emp += p["fte_interno"] or 0
+        ft = p["fte_tercerizado"] or 0
+        if not ft:
+            continue
+        incluido = (c["faena"] == "facon" and p["categoria"] == "operacion_industrial") or (
+            p["clave"] in ("choferes_aves", "choferes_producto")
+            and mcx.flota_de(cc, "vivo" if p["clave"] == "choferes_aves" else "refrigerado") != "propia")
+        if incluido:
+            terc += ft
+        else:
+            emp += ft
+    pend = []
+    if c["fraccion_granjas_propias"] > TOL:
+        pend.append("granjas propias")
+    if c["pollito"] == "incubacion":
+        pend.append("incubación")
+    if c["alimento"] == "propia":
+        pend.append("planta de alimento")
+    if c["faena"] == "propia":
+        pend.append("operación de efluentes")
+    if c["subproductos"] == "B_basico_propio" and c["faena"] == "propia":
+        pend.append("tratamiento de subproductos")
+    fut = [x for x, ok in (("reproductoras", c["reproductoras"]), ("rendering", c["rendering"])) if ok]
+    return {"FTE_INDUSTRIAL_14A": DR["rrhh"]["fte_total"], "FTE_TOTAL_CONOCIDO": emp,
+            "FTE_TERCEROS_INCLUIDOS_EN_TARIFAS": terc,
+            "FTE_ADICIONAL_PENDIENTE": ("PENDIENTE: " + ", ".join(pend)) if pend else "NINGUNO IDENTIFICADO",
+            "FTE_FUTURO_NO_DIMENSIONADO": ", ".join(fut)}
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1047,8 +1311,21 @@ def costear(filas, base, fecha_base=FECHA_BASE_OPEX, aves_anio=None):
         f["PCT_VARIABLE"] = pv
         f["PCT_FIJO"] = None if pv is None else 100 - pv
         f["FIJO_VARIABLE"] = nat + ("" if pv is not None else " (reparto PENDIENTE)")
+        if b and _num(b["PRECIO_UNITARIO"]) is not None and b["ESTADO"] == "CON_PRECIO":
+            # PRECIO OBSERVADO (moneda original) ≠ CONVERSIÓN DEL MODELO (USD): se guardan por separado
+            f.update(PRECIO_ORIGINAL_OBSERVADO=_num(b["PRECIO_UNITARIO"]), MONEDA_ORIGINAL=b["MONEDA_ORIGINAL"],
+                     FECHA_PRECIO=b["FECHA_PRECIO"], CONDICION_ENTREGA=b["CONDICION_ENTREGA"], IVA_PRECIO=b["IVA_TRATAMIENTO"],
+                     TC_USADO=_num(b["TC_MONEDA_POR_USD"]), FECHA_TC=b["FECHA_TC"],
+                     ORIGEN_PRECIO_USD=b["ORIGEN_PRECIO_USD"] or ("OBSERVADO_EN_USD" if b["MONEDA_ORIGINAL"] == "USD" else ""))
         if f["ESTADO_DIMENSION"] in ("INCLUIDO", "INFORMATIVO"):
-            f["ESTADO"] = f["ESTADO_DIMENSION"] if f["ESTADO_DIMENSION"] == "INFORMATIVO" else "INCLUIDO_EN_OTRO_CONCEPTO"
+            if f["ESTADO_DIMENSION"] == "INFORMATIVO":
+                f["ESTADO"] = "INFORMATIVO"
+            elif f["INCLUIDO_EN"] == "FAE-FACON":
+                f["ESTADO"] = "INCLUIDO_EN_TARIFA_FACON"
+            elif f["INCLUIDO_EN"].startswith("flete"):
+                f["ESTADO"] = "INCLUIDO_EN_TARIFA_FLETE"
+            else:
+                f["ESTADO"] = "INCLUIDO_EN_OTRO_CONCEPTO"
             continue
         if f["FASE"] == "FUTURO":
             f["ESTADO"] = "FUTURO"
@@ -1057,26 +1334,26 @@ def costear(filas, base, fecha_base=FECHA_BASE_OPEX, aves_anio=None):
             f["ESTADO"] = "APORTANTE_PENDIENTE"
             continue
         if f["CANTIDAD"] is None:
-            f["ESTADO"] = "SIN_CANTIDAD"
+            f["ESTADO"] = "PENDIENTE_CANTIDAD"
             continue
         # precio
         if f["COSTO_ID"].startswith("LAB-") and not b:
             p, niv, falt, _ = costo_empresa_fte(f["COSTO_ID"][4:], base)
             if p is None:
-                f["ESTADO"] = "SIN_PRECIO"
+                f["ESTADO"] = "PENDIENTE_PRECIO"
                 al.append("COMPONENTES_FALTANTES:" + "/".join(falt))
             else:
                 f["PRECIO_USD"], f["EVIDENCIA"] = p, niv
         elif b is None:
-            f["ESTADO"] = "SIN_PRECIO"
+            f["ESTADO"] = "PENDIENTE_PRECIO"
         else:
             p = precio_usd(b)
             if _num(b["PRECIO_UNITARIO"]) is None:
-                f["ESTADO"] = "SIN_PRECIO"
+                f["ESTADO"] = "PENDIENTE_PRECIO"
             elif p is None:
                 f["ESTADO"] = "SIN_TIPO_DE_CAMBIO"
             elif b["ESTADO"] != "CON_PRECIO":
-                f["ESTADO"] = "SIN_PRECIO"
+                f["ESTADO"] = "PENDIENTE_PRECIO"
                 al.append(f"PRECIO_{b['ESTADO']}_NO_USADO")
             else:
                 f["PRECIO_USD"], f["EVIDENCIA"] = p, b["NIVEL_EVIDENCIA"]
@@ -1110,8 +1387,184 @@ def calidad_monto(niveles):
     return mcx.calidad_monto(niveles)
 
 
-def resumir(filas, DR):
-    """Resumen por módulo y total. Nunca publica un total con faltantes."""
+# ---------------------------------------------------------------------------------------------
+# 5 bis. COMPLETITUD DE ARQUITECTURAS (estructura ≠ dimensión física ≠ costeo)
+# ---------------------------------------------------------------------------------------------
+# Bloques operativos MATERIALES de cada módulo propio o contratado. Un bloque sin fila = AUSENTE (error de modelo);
+# con filas sin cantidad o precio = PENDIENTE; nunca 0.
+BLOQUES_REQUERIDOS = {
+    "FAENA_PROPIA": ("rrhh", "energia", "termico", "agua", "efluentes", "consumibles", "limpieza", "empaque",
+                     "mantenimiento", "residuos", "calidad", "seguros", "logistica"),
+    "FAENA_FACON": ("servicio_tercero", "rrhh", "frio", "residuos", "empaque", "calidad", "logistica"),
+    "GRANJAS_PROPIAS": ("rrhh", "energia", "termico", "agua", "cama", "limpieza", "bioseguridad", "sanidad",
+                        "mantenimiento", "residuos", "seguros", "veterinaria", "captura", "otros"),
+    "GRANJAS_INTEGRADAS": ("servicio_tercero", "sanidad", "rrhh", "captura", "costo_productor"),
+    "POLLITO_COMPRADO": ("materia_prima", "logistica"),
+    "INCUBACION_PROPIA": ("materia_prima", "sanidad", "energia", "rrhh", "agua", "limpieza", "mantenimiento",
+                          "consumibles", "residuos", "logistica_huevo", "logistica_pollito", "calidad"),
+    "ALIMENTO_COMPRADO": ("materia_prima", "logistica"),
+    "ALIMENTO_FACON": ("materia_prima", "servicio_tercero", "logistica"),
+    "PLANTA_ALIMENTO_PROPIA": ("materia_prima", "diferencial", "rrhh", "energia", "termico", "agua", "mantenimiento",
+                               "laboratorio", "mermas", "almacenamiento", "movimientos_internos", "logistica"),
+    "TRATAMIENTO_SUBPRODUCTOS_PROPIO": ("rrhh", "energia", "consumibles"),
+    "ESTRUCTURA": ("rrhh", "administracion", "seguros", "calidad"),
+    "REPRODUCTORAS_FUTURO": ("rrhh", "materia_prima", "alimento", "sanidad", "energia", "agua", "mantenimiento",
+                             "residuos", "logistica"),
+    "RENDERING_FUTURO": ("rrhh", "energia", "termico", "agua", "mantenimiento", "consumibles", "tratamiento", "residuos",
+                         "logistica"),
+}
+BLOQUES_FACON_B1 = ("diferencial", "almacenamiento", "mermas")
+COLUMNAS_BLOQUE = {"RRHH": ("rrhh",), "ENERGIA": ("energia",), "TERMICO": ("termico",), "AGUA": ("agua",),
+                   "MANTENIMIENTO": ("mantenimiento",), "CONSUMIBLES": ("consumibles", "cama", "empaque"),
+                   "LIMPIEZA": ("limpieza",), "LOGISTICA": ("logistica", "logistica_huevo", "logistica_pollito", "captura")}
+
+
+def modulos_activos(c):
+    faena, alim, pol = _modulos_flujo(c)
+    fp = c["fraccion_granjas_propias"]
+    act = {faena: "INICIAL", alim: "INICIAL", pol: "INICIAL", "ESTRUCTURA": "INICIAL"}
+    if fp > TOL:
+        act["GRANJAS_PROPIAS"] = "INICIAL"
+    if fp < 1 - TOL:
+        act["GRANJAS_INTEGRADAS"] = "INICIAL"
+    if c["subproductos"] == "B_basico_propio" and c["faena"] == "propia":
+        act["TRATAMIENTO_SUBPRODUCTOS_PROPIO"] = "INICIAL"
+    if c["reproductoras"]:
+        act["REPRODUCTORAS_FUTURO"] = "FUTURO"
+    if c["rendering"]:
+        act["RENDERING_FUTURO"] = "FUTURO"
+    return act
+
+
+def requeridos(c, m):
+    req = BLOQUES_REQUERIDOS[m]
+    if m == "ALIMENTO_FACON" and c["alimento_facon_mp"] == "empresa":
+        req = req + BLOQUES_FACON_B1
+    if m == "ALIMENTO_FACON" and c["alimento_facon_mp"] == "elaborador":
+        req = ("materia_prima", "logistica")            # B2: precio integral (el servicio está dentro del precio)
+    return req
+
+
+def _estado(filas_b, cuenta):
+    """Estado de un bloque según sus filas costeables (o futuras): COMPLETO / PARCIAL / PENDIENTE."""
+    if not filas_b:
+        return "INCLUIDO_EN_OTRO"
+    n = len(filas_b)
+    k = sum(1 for f in filas_b if cuenta(f))
+    return "COMPLETO" if k == n else ("PARCIAL" if k else "PENDIENTE")
+
+
+def _combinar(estados):
+    e = [x for x in estados if x != "NO_APLICA"]
+    if not e:
+        return "NO_APLICA"
+    if "AUSENTE" in e:
+        return "AUSENTE"
+    e = [x for x in e if x != "INCLUIDO_EN_OTRO"] or ["COMPLETO"]
+    if all(x == "COMPLETO" for x in e):
+        return "COMPLETO"
+    if all(x == "PENDIENTE" for x in e):
+        return "PENDIENTE"
+    return "PARCIAL"
+
+
+CAMPOS_COMP = ["ESCENARIO", "CONFIGURACION", "ESCALA_AVES_DIA", "MODULO_ARQ", "FASE", "DRIVER_FISICO", "CANTIDAD", "PRECIO",
+               "RRHH", "ENERGIA", "TERMICO", "AGUA", "MANTENIMIENTO", "CONSUMIBLES", "LIMPIEZA", "LOGISTICA",
+               "OTROS_BLOQUES", "BLOQUES_REQUERIDOS", "BLOQUES_REPRESENTADOS", "BLOQUES_AUSENTES",
+               "BLOQUES_CON_CANTIDAD", "BLOQUES_COSTEADOS", "COBERTURA_ESTRUCTURAL_PCT", "COBERTURA_FISICA_PCT",
+               "COBERTURA_COSTEO_PCT", "FILAS_COSTO_PRODUCTOR", "MODULO_ESTRUCTURA_COMPLETA",
+               "MODULO_OPERATIVAMENTE_COMPLETO", "MODULO_COSTEABLE", "ESTADO_MODULO", "FALTANTES"]
+
+
+def completitud(c, filas):
+    """Matriz de completitud por módulo y banderas de la arquitectura. Distingue:
+    ESTRUCTURAL ('sé qué costos existen': bloque representado aunque esté PENDIENTE), FÍSICA (bloque con cantidades) y
+    COSTEO ('sé cuánto cuestan': bloque con precio)."""
+    rows = []
+    tot = {"req": 0, "rep": 0, "fis": 0, "cos": 0}
+    flags = {"estructura": True, "operativa": True, "costeable": True}
+    for m, fase in modulos_activos(c).items():
+        fm = [f for f in filas if f["MODULO_ARQ"] == m]
+        req = requeridos(c, m)
+        est_b, cant_b, cost_b, ausentes, falt = {}, {}, {}, [], []
+        for b in req:
+            if b == "costo_productor":
+                fb = [f for f in fm if f["APORTANTE"] == "PRODUCTOR_INTEGRADO"]
+                est_b[b] = cost_b[b] = "INFORMATIVO" if fb else "AUSENTE"
+                cant_b[b] = "COMPLETO" if fb else "AUSENTE"
+                if not fb:
+                    ausentes.append(b)
+                continue
+            fb = [f for f in fm if f["BLOQUE"] == b]
+            if not fb:
+                est_b[b] = cant_b[b] = cost_b[b] = "AUSENTE"
+                ausentes.append(b)
+                continue
+            fc = [f for f in fb if f["COSTEA"] or f["FASE"] == "FUTURO"]
+            cost_b[b] = _estado(fc, lambda f: f["ESTADO"] == "CON_PRECIO")
+            cant_b[b] = _estado(fc, lambda f: f["CANTIDAD"] is not None)
+            # estado del bloque: COMPLETO (con precio) / PARCIAL (algo dimensionado o con precio) / PENDIENTE (nada)
+            est_b[b] = cost_b[b] if cost_b[b] != "PENDIENTE" else ("PARCIAL" if cant_b[b] in ("COMPLETO", "PARCIAL") else "PENDIENTE")
+            if cost_b[b] not in ("COMPLETO", "INCLUIDO_EN_OTRO"):
+                falt.append(f"{b}: precio {cost_b[b]}, cantidad {cant_b[b]}")
+        fcost = [f for f in fm if f["COSTEA"] or f["FASE"] == "FUTURO"]
+        n_req = len(req)
+        rep_ = n_req - len(ausentes)
+        fis = sum(1 for b in req if cant_b[b] in ("COMPLETO", "INCLUIDO_EN_OTRO"))
+        cos = sum(1 for b in req if cost_b[b] in ("COMPLETO", "INCLUIDO_EN_OTRO", "INFORMATIVO"))
+        r = {"MODULO_ARQ": m, "FASE": fase,
+             "DRIVER_FISICO": _estado(fcost, lambda f: f["DRIVER"] not in ("", "—")) if fcost else "NO_APLICA",
+             "CANTIDAD": _estado(fcost, lambda f: f["CANTIDAD"] is not None) if fcost else "NO_APLICA",
+             "PRECIO": _estado(fcost, lambda f: f["ESTADO"] == "CON_PRECIO") if fcost else "NO_APLICA",
+             **{col: _combinar([est_b[b] if b in req else "NO_APLICA" for b in bs]) for col, bs in COLUMNAS_BLOQUE.items()},
+             "OTROS_BLOQUES": "; ".join(f"{b}:{est_b[b]}" for b in req
+                                        if not any(b in bs for bs in COLUMNAS_BLOQUE.values())),
+             "BLOQUES_REQUERIDOS": n_req, "BLOQUES_REPRESENTADOS": rep_, "BLOQUES_AUSENTES": ", ".join(ausentes),
+             "BLOQUES_CON_CANTIDAD": fis, "BLOQUES_COSTEADOS": cos,
+             "COBERTURA_ESTRUCTURAL_PCT": 100 * rep_ / n_req, "COBERTURA_FISICA_PCT": 100 * fis / n_req,
+             "COBERTURA_COSTEO_PCT": 100 * cos / n_req,
+             "FILAS_COSTO_PRODUCTOR": sum(1 for f in fm if f["APORTANTE"] == "PRODUCTOR_INTEGRADO"),
+             "MODULO_ESTRUCTURA_COMPLETA": not ausentes, "MODULO_OPERATIVAMENTE_COMPLETO": not ausentes and fis == n_req,
+             "FALTANTES": "; ".join(([f"AUSENTE: {', '.join(ausentes)}"] if ausentes else []) + falt)}
+        r["MODULO_COSTEABLE"] = r["MODULO_OPERATIVAMENTE_COMPLETO"] and cos == n_req and not any(
+            f["ESTADO"] == "APORTANTE_PENDIENTE" for f in fm)
+        r["ESTADO_MODULO"] = ("COMPLETO" if r["MODULO_COSTEABLE"] else "PENDIENTE" if cos == 0 and fis == 0 else "PARCIAL")
+        rows.append(r)
+        if fase == "INICIAL":
+            tot["req"] += n_req
+            tot["rep"] += rep_
+            tot["fis"] += fis
+            tot["cos"] += cos
+            flags["estructura"] &= r["MODULO_ESTRUCTURA_COMPLETA"]
+            flags["operativa"] &= r["MODULO_OPERATIVAMENTE_COMPLETO"]
+            flags["costeable"] &= r["MODULO_COSTEABLE"]
+    # bloques FUTUROS: su estructura también debe estar representada (no bloquean la etapa inicial)
+    fut_ok = all(r["MODULO_ESTRUCTURA_COMPLETA"] for r in rows if r["FASE"] == "FUTURO")
+    if "M17" in _MUT:                                             # mutación: costeable sin mirar los módulos
+        flags["costeable"] = flags["operativa"] = True
+    res = {"ARQUITECTURA_ESTRUCTURA_COMPLETA": flags["estructura"] and fut_ok,
+           "ARQUITECTURA_OPERATIVAMENTE_COMPLETA": flags["operativa"],
+           "ARQUITECTURA_COSTEABLE": flags["operativa"] and flags["costeable"],
+           "COBERTURA_ESTRUCTURAL_PCT": 100 * tot["rep"] / tot["req"], "COBERTURA_FISICA_PCT": 100 * tot["fis"] / tot["req"],
+           "COBERTURA_COSTEO_BLOQUES_PCT": 100 * tot["cos"] / tot["req"],
+           "MODULOS_INCOMPLETOS": ", ".join(r["MODULO_ARQ"] for r in rows if r["FASE"] == "INICIAL" and not r["MODULO_COSTEABLE"])}
+    return rows, res
+
+
+def comparabilidad(publicable, niveles):
+    if publicable:
+        return "COMPARABLE (arquitectura costeable y cobertura completa)"
+    if not niveles:
+        return "SIN_MONTO"
+    return "MONTOS_PARCIALES_E4_NO_COMPARABLES" if "E4" in niveles else "MONTOS_PARCIALES_NO_COMPARABLES"
+
+
+def resumir(filas, DR, arq=None):
+    """Resumen por módulo y total. Nunca publica un total ni un costo unitario si (a) falta algún concepto o (b) la
+    arquitectura no es COSTEABLE (algún bloque operativo material sin cantidad o sin precio)."""
+    if arq is None:
+        arq = completitud(DR["c"], filas)[1]
+    costeable = arq["ARQUITECTURA_COSTEABLE"]
     mods = sorted({f["MODULO"] for f in filas})
     out = {}
     v = DR["v"]
@@ -1127,14 +1580,14 @@ def resumir(filas, DR):
         falt = [f for f in cost if f["ESTADO"] != "CON_PRECIO"]
         d = {"ESTADO_MODULO": "SIN_CONCEPTOS" if not cost else ("COMPLETO" if not falt else "INCOMPLETO"),
              "CONCEPTOS_COSTEABLES": len(cost), "CONCEPTOS_CON_PRECIO": len(con),
-             "CONCEPTOS_SIN_PRECIO": sum(1 for f in cost if f["ESTADO"] in ("SIN_PRECIO", "SIN_TIPO_DE_CAMBIO")),
-             "CONCEPTOS_SIN_CANTIDAD": sum(1 for f in cost if f["ESTADO"] == "SIN_CANTIDAD"),
+             "CONCEPTOS_SIN_PRECIO": sum(1 for f in cost if f["ESTADO"] in ("PENDIENTE_PRECIO", "SIN_TIPO_DE_CAMBIO")),
+             "CONCEPTOS_SIN_CANTIDAD": sum(1 for f in cost if f["ESTADO"] == "PENDIENTE_CANTIDAD"),
              "CONCEPTOS_APORTANTE_PENDIENTE": sum(1 for f in cost if f["ESTADO"] == "APORTANTE_PENDIENTE"),
              **{f"OPEX_{g}_USD_ANIO": (sum(por_e[e] for e in GRUPOS_EVIDENCIA[g]) if con else None) for g in GRUPOS_EVIDENCIA},
              **{f"N_CONCEPTOS_{g}": sum(1 for f in con if f["EVIDENCIA"] in GRUPOS_EVIDENCIA[g]) for g in GRUPOS_EVIDENCIA},
              "N_CONCEPTOS_PENDIENTES": len(falt),
              "CALIDAD_MONTO": calidad_monto({f["EVIDENCIA"] for f in con}),
-             "MONTO_CON_PRECIO_USD_ANIO": tot if con else None,
+             "MONTO_PARCIAL_CON_PRECIO_USD_ANIO": tot if con else None,
              "MONTO_VARIABLE_USD_ANIO": var if con else None, "MONTO_FIJO_USD_ANIO": fij if con else None,
              "MONTO_SIN_CLASIFICAR_USD_ANIO": sin if con else None,
              "COBERTURA_CONCEPTOS_PCT": (100 * len(con) / len(cost)) if cost else None,
@@ -1147,15 +1600,23 @@ def resumir(filas, DR):
             d["COBERTURA_VALOR"] = "100"
         else:
             d["COBERTURA_VALOR"] = f"NO CALCULABLE: {len(falt)} conceptos sin magnitud"
-        completo = bool(cost) and not falt
+        completo = bool(cost) and not falt and costeable
+        d["COMPARABILIDAD"] = comparabilidad(completo, {f["EVIDENCIA"] for f in con})
         d["TOTAL_PRELIMINAR_USD_ANIO"] = tot if completo else None
-        d["TOTAL_PRELIMINAR"] = f"{tot:.0f}" if completo else ("NO APLICA" if not cost else
-                                                                f"NO DISPONIBLE: {len(falt)} conceptos sin costo")
+        d["TOTAL_PRELIMINAR"] = f"{tot:.0f}" if completo else ("NO APLICA" if not cost else (
+            f"NO DISPONIBLE: {len(falt)} conceptos sin costo" if falt else "NO DISPONIBLE: arquitectura no costeable")
+            + ("" if costeable else f"; módulos incompletos: {arq['MODULOS_INCOMPLETOS']}"))
         kp = {"COSTO_USD_AVE": v["aves_faenadas_anio"], "COSTO_USD_KG_VIVO": v["kg_vivo_cargado_anio"],
               "COSTO_USD_KG_PRODUCTO": v["kg_producto_anio"], "COSTO_USD_DIA": DR["dias_anio"], "COSTO_USD_MES": 12}
         for k, den in kp.items():
             d[k] = (tot / den) if (completo and m == "TOTAL") else (
-                f"NO DISPONIBLE (cobertura {d['COBERTURA_CONCEPTOS_PCT']:.1f} %)" if cost else "NO APLICA")
+                f"NO DISPONIBLE (cobertura de costeo {d['COBERTURA_CONCEPTOS_PCT']:.1f} %; arquitectura "
+                f"{'costeable' if costeable else 'NO costeable'})" if cost else "NO APLICA")
+        if m == "TOTAL":
+            d.update({k: arq[k] for k in ("ARQUITECTURA_ESTRUCTURA_COMPLETA", "ARQUITECTURA_OPERATIVAMENTE_COMPLETA",
+                                          "ARQUITECTURA_COSTEABLE", "COBERTURA_ESTRUCTURAL_PCT", "COBERTURA_FISICA_PCT",
+                                          "COBERTURA_COSTEO_BLOQUES_PCT", "MODULOS_INCOMPLETOS")})
+            d.update(fte_universos(DR["c"], DR))
         out[m] = d
     return out
 
@@ -1182,7 +1643,8 @@ def cto(inventarios, cxc, caja, cxp):
     return inventarios + cxc + caja - cxp
 
 
-CAMPOS_CT = ["ESCENARIO", "COMPONENTE", "SUBCOMPONENTE", "CANTIDAD", "UNIDAD", "PROPIETARIO", "UBICACION", "ENTRA_EN_CT",
+CAMPOS_CT = ["ESCENARIO", "COMPONENTE", "SUBCOMPONENTE", "CANTIDAD", "UNIDAD", "PROPIETARIO", "PROPIEDAD_EMPRESA", "UBICACION",
+             "ENTRA_EN_CT",
              "PRECIO_ID", "PRECIO_USD", "VALOR_USD", "EVIDENCIA", "ESTADO", "FALTA"]
 
 
@@ -1193,8 +1655,11 @@ def capital_trabajo(c, DR, filas, base, opex_total=None):
     def row(comp, sub, cant, uni, prop, ubic, pid, falta="", valor_forzado=None, entra=None):
         r = base.get(pid) if pid else None
         p = precio_usd(r) if (r and r["ESTADO"] == "CON_PRECIO") else None
+        prop_emp = {"empresa": "TRUE", "tercero": "FALSE"}.get(prop, "PENDIENTE")
+        if prop_emp != "TRUE":                     # solo el stock PROPIEDAD de la empresa entra al CT (nunca por arquitectura)
+            entra = None
         if entra is None:
-            entra = "Sí" if prop == "empresa" else ("No (propiedad de tercero)" if prop == "tercero" else "PENDIENTE")
+            entra = "Sí" if prop_emp == "TRUE" else ("No (propiedad de tercero)" if prop_emp == "FALSE" else "PENDIENTE")
         val = valor_forzado
         if val is None and entra == "Sí" and cant is not None and p is not None:
             val = cant * p
@@ -1205,7 +1670,7 @@ def capital_trabajo(c, DR, filas, base, opex_total=None):
         if est == "PENDIENTE" and not falta:
             falta = "cantidad" if cant is None else "precio"
         rows.append({"ESCENARIO": "", "COMPONENTE": comp, "SUBCOMPONENTE": sub, "CANTIDAD": cant, "UNIDAD": uni,
-                     "PROPIETARIO": prop, "UBICACION": ubic, "ENTRA_EN_CT": entra, "PRECIO_ID": pid or "",
+                     "PROPIETARIO": prop, "PROPIEDAD_EMPRESA": prop_emp, "UBICACION": ubic, "ENTRA_EN_CT": entra, "PRECIO_ID": pid or "",
                      "PRECIO_USD": p, "VALOR_USD": val, "EVIDENCIA": r["NIVEL_EVIDENCIA"] if (r and p is not None) else "",
                      "ESTADO": est, "FALTA": falta})
     # Inventarios de alimento (14B: categoría × propietario)
@@ -1226,6 +1691,8 @@ def capital_trabajo(c, DR, filas, base, opex_total=None):
             falta = ""
             if prop == "empresa" and cat.startswith("alimento_terminado") and ids[cat] is None:
                 falta = "costo de producción del alimento (MP + conversión) PENDIENTE"
+            if prop == "empresa" and cat == "maiz":
+                falta = "valuado a precio Rosario sobre puerto (E4), NO al costo puesto en planta (diferencial PENDIENTE)"
             row("INVENTARIO", f"alimento: {cat}", cant, "t", prop, x["ubicacion"], ids[cat], falta)
     if c["pollito"] == "incubacion":
         row("INVENTARIO", "huevo fértil en almacén", v["stock_huevos_almacen"], "huevos", "empresa", "incubadora", "INC-OP-HUEVO")
@@ -1344,7 +1811,9 @@ def correr(c, base=None):
     if c["utilizacion"] < 1:
         DR["alertas"].append(f"UTILIZACION {c['utilizacion']:.0%}: el registro informa la escala plena; el ajuste por "
                              "utilización se publica con aplicar_utilizacion() (fijos no bajan)")
-    res = resumir(filas, DR)
+    comp_rows, arq = completitud(c, filas)
+    DR["completitud"], DR["arquitectura"] = comp_rows, arq
+    res = resumir(filas, DR, arq)
     ct_rows, ct = capital_trabajo(c, DR, filas, base, res["TOTAL"]["TOTAL_PRELIMINAR_USD_ANIO"])
     return filas, res, DR, ct_rows, ct
 
@@ -1372,25 +1841,34 @@ CAMPOS_ESC = ["ESCENARIO", "CONFIGURACION", "ESCALA_AVES_DIA", "DIAS_ANIO", "ARQ
               "FECHA_BASE_OPEX", "MONEDA", "MODULO", "ESTADO_MODULO", "CONCEPTOS_COSTEABLES", "CONCEPTOS_CON_PRECIO",
               "CONCEPTOS_SIN_PRECIO", "CONCEPTOS_SIN_CANTIDAD", "CONCEPTOS_APORTANTE_PENDIENTE", "OPEX_E1_E2_USD_ANIO",
               "OPEX_E3_USD_ANIO", "OPEX_E4_USD_ANIO", "OPEX_E5_USD_ANIO", "N_CONCEPTOS_E1_E2", "N_CONCEPTOS_E3",
-              "N_CONCEPTOS_E4", "N_CONCEPTOS_E5", "N_CONCEPTOS_PENDIENTES", "CALIDAD_MONTO", "MONTO_CON_PRECIO_USD_ANIO",
+              "N_CONCEPTOS_E4", "N_CONCEPTOS_E5", "N_CONCEPTOS_PENDIENTES", "CALIDAD_MONTO", "MONTO_PARCIAL_CON_PRECIO_USD_ANIO",
               "MONTO_VARIABLE_USD_ANIO", "MONTO_FIJO_USD_ANIO", "MONTO_SIN_CLASIFICAR_USD_ANIO", "COBERTURA_CONCEPTOS_PCT",
-              "COBERTURA_VALOR", "TOTAL_PRELIMINAR", "COSTO_USD_AVE", "COSTO_USD_KG_VIVO", "COSTO_USD_KG_PRODUCTO",
+              "COBERTURA_VALOR", "COMPARABILIDAD", "ARQUITECTURA_ESTRUCTURA_COMPLETA",
+              "ARQUITECTURA_OPERATIVAMENTE_COMPLETA", "ARQUITECTURA_COSTEABLE", "COBERTURA_ESTRUCTURAL_PCT",
+              "COBERTURA_FISICA_PCT", "COBERTURA_COSTEO_BLOQUES_PCT", "MODULOS_INCOMPLETOS", "FTE_INDUSTRIAL_14A",
+              "FTE_TOTAL_CONOCIDO", "FTE_TERCEROS_INCLUIDOS_EN_TARIFAS", "FTE_ADICIONAL_PENDIENTE",
+              "FTE_FUTURO_NO_DIMENSIONADO", "TOTAL_PRELIMINAR", "COSTO_USD_AVE", "COSTO_USD_KG_VIVO", "COSTO_USD_KG_PRODUCTO",
               "COSTO_USD_DIA", "COSTO_USD_MES", "CONCEPTOS_INFORMATIVOS_TERCEROS", "CONCEPTOS_INCLUIDOS_EN_OTRO",
               "CONCEPTOS_FUTUROS_U_OPCIONALES", "CAPITAL_TRABAJO", "ALERTAS"]
 CAMPOS_MAPA = ["ESCENARIO", "CONFIGURACION", "ESCALA_AVES_DIA", "DRIVER", "VALOR_BAJO", "VALOR", "VALOR_ALTO", "UNIDAD",
                "FUENTE", "VARIABLE_ORIGEN", "ESCENARIO_FUENTE", "TIPO", "EVIDENCIA", "USO_EN_OPEX", "OBSERVACIONES"]
-CAMPOS_LAB = ["ESCENARIO", "PUESTO", "CLAVE", "AREA", "GRUPO", "CENTRO_COSTO", "MODALIDAD", "CATEGORIA_LABORAL",
-              "COSTO_ID", "PUESTOS_TURNO", "SIMULTANEOS", "PUESTOS_EQUIVALENTES", "HEADCOUNT", "FTE",
+CAMPOS_LAB = ["ESCENARIO", "UNIVERSO_RRHH", "PUESTO", "CLAVE", "AREA", "GRUPO", "CENTRO_COSTO", "MODALIDAD",
+              "CATEGORIA_LABORAL", "COSTO_ID", "PUESTOS_TURNO", "SIMULTANEOS", "PUESTOS_EQUIVALENTES", "HEADCOUNT", "FTE",
               "HORAS_PERSONA_DIA", "HORAS_ANIO", "HORAS_CONTRATADAS_ANIO", "TURNOS", "TIPO_CONTRATACION",
-              "SALARIO_BASE_MENSUAL_USD", "MESES_REMUNERADOS", "ADICIONALES_PCT", "CARGAS_PCT", "ART_PCT",
-              "BENEFICIOS_USD_MES", "EPP_UNIFORME_USD_ANIO", "CAPACITACION_USD_ANIO", "HORAS_EXTRA",
-              "COSTO_EMPRESA_ANUAL_FTE_USD", "TARIFA_HORA_USD", "COSTO_ANUAL_USD", "BASE_COSTEO", "ESTADO", "FUENTE"]
+              "REMUNERACION_BASE_MENSUAL_USD", "ADICIONALES_PCT", "VACACIONES_PCT", "SAC_SUELDOS_ANIO (regla)",
+              "CARGAS_PCT", "ART_PCT", "BENEFICIOS_USD_MES", "EPP_UNIFORME_USD_ANIO", "CAPACITACION_USD_ANIO",
+              "OTROS_USD_ANIO", "HORAS_EXTRA", "COSTO_EMPRESA_ANUAL_FTE_USD", "TARIFA_HORA_USD", "COSTO_ANUAL_USD",
+              "BASE_COSTEO", "ESTADO", "FUENTE"]
 
 
-def filas_costo_laboral(nombre, c, DR, base):
+def filas_costo_laboral(nombre, c, DR, base, reglas=None):
+    """Una fila por puesto y modalidad de 14A (RRHH INDUSTRIAL / estructura / coordinación primaria) + una fila por
+    universo de RRHH NO dimensionado (granjas, incubación, planta de alimento, reproductoras, rendering) + totales.
+    Ningún salario cargado → COSTO_LABORAL_TOTAL = PENDIENTE."""
+    reglas = reglas if reglas is not None else leer_reglas()
     out = []
     da = DR["dias_anio"]
-    meses = precio_usd(base["LAB-PARAM-MESES"])
+    sac = reglas.get("SAC", {}).get("VALOR", "")
     cc = config_capex(c)
     for p in DR["rrhh"]["puestos"]:
         if p["grupo"] not in mr.GRUPOS:
@@ -1408,20 +1886,22 @@ def filas_costo_laboral(nombre, c, DR, base):
                 mods.append(("tercerizado (horas contratadas)", p["fte_tercerizado"]))
         for mod, fte in mods:
             r = {k: "" for k in CAMPOS_LAB}
-            r.update(ESCENARIO=nombre, PUESTO=p["puesto"], CLAVE=p["clave"], AREA=p["categoria"], GRUPO=p["grupo"],
-                     CENTRO_COSTO=centro_laboral(p), MODALIDAD=mod, PUESTOS_TURNO=p["puestos_turno"],
-                     SIMULTANEOS=p["simultaneos"], TURNOS=p["cuadrillas"], TIPO_CONTRATACION=p["contrato"],
+            r.update(ESCENARIO=nombre, UNIVERSO_RRHH=UNIVERSO_14A.get(p["categoria"], "INDUSTRIAL_14A"), PUESTO=p["puesto"],
+                     CLAVE=p["clave"], AREA=p["categoria"], GRUPO=p["grupo"], CENTRO_COSTO=centro_laboral(p), MODALIDAD=mod,
+                     PUESTOS_TURNO=p["puestos_turno"], SIMULTANEOS=p["simultaneos"], TURNOS=p["cuadrillas"],
+                     TIPO_CONTRATACION=p["contrato"],
                      HEADCOUNT="PENDIENTE (FACTOR_COBERTURA_NOMINA)" if mod == "interno" else "no aplica",
-                     MESES_REMUNERADOS=meses, HORAS_EXTRA="NO AUTOMÁTICAS (brecha informada en el registro, DPV-146)",
-                     FUENTE="14A (modelo_rrhh.calcular) + base_costos_opex.csv")
+                     HORAS_EXTRA="NO AUTOMÁTICAS (brecha de jornada informativa; LAB-<CAT>-HEX solo si se organizan)",
+                     FUENTE="14A (modelo_rrhh.calcular) + base_costos_opex.csv + reglas_laborales_opex.csv")
             if mod == "interno":
-                cost, niv, falt, val = costo_empresa_fte(cat, base)
+                cost, niv, falt, val = costo_empresa_fte(cat, base, reglas)
                 r.update(CATEGORIA_LABORAL=cat, COSTO_ID=f"LAB-{cat}", PUESTOS_EQUIVALENTES=round(p["puestos_equivalentes"] or 0, 3),
                          FTE=round(fte, 4), HORAS_PERSONA_DIA=round(p["horas_persona_dia"] or 0, 3),
                          HORAS_ANIO=round((p["horas_persona_dia"] or 0) * da, 1),
-                         SALARIO_BASE_MENSUAL_USD=val["SAL"], ADICIONALES_PCT=val["ADI"], CARGAS_PCT=val["CAR"],
-                         ART_PCT=val["ART"], BENEFICIOS_USD_MES=val["BEN"], EPP_UNIFORME_USD_ANIO=val["EPP"],
-                         CAPACITACION_USD_ANIO=val["CAP"], COSTO_EMPRESA_ANUAL_FTE_USD=cost,
+                         REMUNERACION_BASE_MENSUAL_USD=val["SAL"], ADICIONALES_PCT=val["ADI"], VACACIONES_PCT=val["VAC"],
+                         **{"SAC_SUELDOS_ANIO (regla)": sac}, CARGAS_PCT=val["CAR"], ART_PCT=val["ART"],
+                         BENEFICIOS_USD_MES=val["BEN"], EPP_UNIFORME_USD_ANIO=val["EPP"], CAPACITACION_USD_ANIO=val["CAP"],
+                         OTROS_USD_ANIO=val["OTR"], COSTO_EMPRESA_ANUAL_FTE_USD=cost,
                          COSTO_ANUAL_USD=None if cost is None else cost * fte, BASE_COSTEO="PROVISIONAL_POR_FTE",
                          ESTADO="COSTEADO" if cost is not None else "PENDIENTE: " + "/".join(falt) + " (DPV-148)")
             elif mod.startswith("tercerizado"):
@@ -1432,25 +1912,49 @@ def filas_costo_laboral(nombre, c, DR, base):
                 incl_facon = c["faena"] == "facon" and p["categoria"] == "operacion_industrial"
                 area = "LOG" if chofer else AREA_TERCERIZADA.get(p["clave"], "OTR")
                 tar = None if (incl or incl_facon) else precio_usd(base.get(f"LAB-TER-{area}"))
-                r.update(CATEGORIA_LABORAL=f"TER-{area}", COSTO_ID="" if incl else f"LAB-TER-{area}", FTE=round(fte, 4),
-                         HORAS_CONTRATADAS_ANIO=round(horas, 1), TARIFA_HORA_USD=tar,
+                r.update(CATEGORIA_LABORAL=f"TER-{area}", COSTO_ID="" if (incl or incl_facon) else f"LAB-TER-{area}",
+                         FTE=round(fte, 4), HORAS_CONTRATADAS_ANIO=round(horas, 1), TARIFA_HORA_USD=tar,
                          COSTO_ANUAL_USD=None if tar is None else tar * horas, BASE_COSTEO="HORAS_CONTRATADAS",
-                         ESTADO="INCLUIDO EN FLETE TERCERIZADO" if incl else "INCLUIDO EN FAE-FACON" if incl_facon else (
-                             "COSTEADO" if tar is not None else "PENDIENTE (tarifa)"))
+                         ESTADO=("INCLUIDO_EN_TARIFA_FLETE (recurso físico de tercero)" if incl else
+                                 "INCLUIDO_EN_TARIFA_FACON (recurso físico de tercero)" if incl_facon else
+                                 "COSTEADO" if tar is not None else "PENDIENTE (tarifa)"))
                 if incl or incl_facon:
-                    r["COSTO_ID"] = ""
+                    r["UNIVERSO_RRHH"] = "TERCERO_INCLUIDO_EN_TARIFA"
             else:
-                r.update(ESTADO=("INCLUIDO EN " + INCLUIDO_SERVICIO[p["clave"]]) if mod.startswith("servicio")
+                r.update(ESTADO=("INCLUIDO_EN " + INCLUIDO_SERVICIO[p["clave"]]) if mod.startswith("servicio")
                          else "DOTACIÓN PENDIENTE (14A)", FTE="" if mod.startswith("servicio") else "PENDIENTE")
+                if mod.startswith("servicio"):
+                    r["UNIVERSO_RRHH"] = "TERCERO_INCLUIDO_EN_SERVICIO"
             out.append(r)
-    tot = [r["COSTO_ANUAL_USD"] for r in out if r["ESTADO"] not in ("INCLUIDO EN FLETE TERCERIZADO",)
-           and not str(r["ESTADO"]).startswith("INCLUIDO EN ")]
+    # Universos de RRHH NO dimensionados: filas explícitas, FTE PENDIENTE (no se fabrican)
+    fu = fte_universos(c, DR)
+    pend = [f for f in DR.get("_filas_lab_pend", [])]
+    for f in pend:
+        r = {k: "" for k in CAMPOS_LAB}
+        r.update(ESCENARIO=nombre, UNIVERSO_RRHH=f["UNIVERSO_RRHH"], PUESTO=f["CONCEPTO"], CLAVE=f["SUBMODULO"],
+                 MODALIDAD="PENDIENTE", FTE="PENDIENTE", HEADCOUNT="PENDIENTE", CENTRO_COSTO=f["CENTRO_COSTO"],
+                 ESTADO=("FUTURO: sin dimensionamiento" if f["FASE"] == "FUTURO" else
+                         "PENDIENTE: 14A no dimensiona esta función (DPV-17-15)"),
+                 FUENTE="sin modelo físico de dotación")
+        out.append(r)
+    tot = [r["COSTO_ANUAL_USD"] for r in out if not str(r["ESTADO"]).startswith(("INCLUIDO", "FUTURO"))]
     total = None if any(x in ("", None) for x in tot) else sum(tot)
+    for nombre_t, fte_t, est in (
+            ("FTE_INDUSTRIAL_14A (RRHH industrial + estructura + coordinación primaria; NO es FTE total de empresa integrada)",
+             round(fu["FTE_INDUSTRIAL_14A"], 3), "incluye horas de terceros que pueden quedar en tarifas"),
+            ("FTE_TERCEROS_INCLUIDOS_EN_TARIFAS (faenador a façon, choferes con flete tercerizado)",
+             round(fu["FTE_TERCEROS_INCLUIDOS_EN_TARIFAS"], 3), "recurso físico de tercero: sin costo laboral propio"),
+            ("FTE_TOTAL_CONOCIDO (empresa, dimensionado por 14A)", round(fu["FTE_TOTAL_CONOCIDO"], 3), "conocido"),
+            ("FTE_ADICIONAL_PENDIENTE", fu["FTE_ADICIONAL_PENDIENTE"], "no se fabrican FTE para módulos sin modelo físico")):
+        fila = {k: "" for k in CAMPOS_LAB}
+        fila.update(ESCENARIO=nombre, PUESTO=nombre_t, FTE=fte_t, ESTADO=est, BASE_COSTEO="RESUMEN")
+        out.append(fila)
     fila_tot = {k: "" for k in CAMPOS_LAB}
-    fila_tot.update(ESCENARIO=nombre, PUESTO="COSTO_LABORAL_TOTAL", FTE=round(DR["rrhh"]["fte_total"], 3),
-                    COSTO_ANUAL_USD=total if total is not None else "PENDIENTE",
-                    ESTADO="COSTEADO" if total is not None else "PENDIENTE: salarios y cargas sin fuente (DPV-148); "
-                    "funciones no dimensionadas por 14A en el registro", BASE_COSTEO="PROVISIONAL_POR_FTE")
+    fila_tot.update(ESCENARIO=nombre, PUESTO="COSTO_LABORAL_TOTAL", FTE="no se suma (universos pendientes)" if pend else
+                    round(fu["FTE_TOTAL_CONOCIDO"], 3), COSTO_ANUAL_USD=total if (total is not None and not pend) else "PENDIENTE",
+                    ESTADO="COSTEADO" if (total is not None and not pend) else
+                    "PENDIENTE: salarios y cargas sin fuente (DPV-148)" + ("; universos de RRHH sin dimensionar" if pend else ""),
+                    BASE_COSTEO="PROVISIONAL_POR_FTE")
     out.append(fila_tot)
     return out
 
@@ -1477,7 +1981,7 @@ def escribir(ruta, filas, campos):
 
 def construir_salidas(base=None):
     base = base or leer_base()
-    reg, esc, mapa, lab, cts = [], [], [], [], []
+    reg, esc, mapa, lab, cts, comp = [], [], [], [], [], []
     resumen = {}
     for nombre, c in escenarios_opex():
         filas, res, DR, ct_rows, ct = correr(c, base)
@@ -1495,6 +1999,8 @@ def construir_salidas(base=None):
         lab += filas_costo_laboral(nombre, c, DR, base)
         for r in ct_rows:
             cts.append({**r, "ESCENARIO": nombre})
+        for r in DR["completitud"]:
+            comp.append({**cab, **r})
         resumen[nombre] = (res, ct, DR)
     escribir(SALIDA_REG, reg, CAMPOS_REG)
     escribir(SALIDA_ESC, esc, CAMPOS_ESC)
@@ -1502,7 +2008,9 @@ def construir_salidas(base=None):
     escribir(SALIDA_LAB, lab, CAMPOS_LAB)
     escribir(SALIDA_CT, cts, CAMPOS_CT)
     escribir(SALIDA_MATRIZ, matriz_validacion(resumen), CAMPOS_MATRIZ)
-    return {"registro": len(reg), "escenarios": len(esc), "mapa": len(mapa), "laboral": len(lab), "ct": len(cts)}
+    escribir(SALIDA_COMP, comp, CAMPOS_COMP)
+    return {"registro": len(reg), "escenarios": len(esc), "mapa": len(mapa), "laboral": len(lab), "ct": len(cts),
+            "completitud": len(comp)}
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1521,7 +2029,7 @@ MATRIZ = [
      "Incubadoras que venden a terceros; CAPIA", "ALTA", "ALTO", "POL-COMPRA, LOG-POL-*", "DPV-006, DPV-17-03, DPV-17-17"),
     ("huevo fértil", "huevos_recibidos_anio", "huevos/año", "C3-10000", "USD/huevo incubable puesto en incubadora; disponibilidad",
      "Productores de huevo fértil / reproductoras", "MEDIA", "ALTO en C3/CF", "INC-OP-HUEVO", "DPV-17-03"),
-    ("salarios y cargas", "fte_total_14a", "FTE", "C1-10000", "Salario de convenio por categoría, cargas, ART, adicionales, beneficios, EPP; convenio aplicable",
+    ("salarios y cargas", "fte_industrial_14a", "FTE", "C1-10000", "Salario de convenio por categoría, cargas, ART, adicionales, beneficios, EPP; convenio aplicable",
      "Convenio colectivo (lectura primaria), estudio contable laboral", "ALTA", "MUY ALTO", "LAB-*", "DPV-148, DPV-146"),
     ("energía eléctrica", "kwh_anio", "kWh/año", "C1-10000", "Tarifa industrial (cargo variable USD/kWh, cargo por potencia USD/kW·mes, cargo fijo) de la distribuidora del sitio",
      "Cuadro tarifario oficial de la distribuidora / ente regulador provincial", "ALTA", "ALTO", "UT-ELE-*", "DPV-052, DPV-095, DPV-17-05"),
@@ -1579,8 +2087,6 @@ def _base_sintetica(precio=10.0, nivel="E3", pct_var=None):
         r.update(PRECIO_UNITARIO=str(5.0 if r["UNIDAD"] == "%" else precio), MONEDA_ORIGINAL="USD",
                  TC_MONEDA_POR_USD="1", NIVEL_EVIDENCIA=nivel, LECTURA_PRIMARIA="Sí", FUENTE="TEST", ESTADO="CON_PRECIO",
                  PRECIO_USD_EQUIVALENTE="", FECHA_PRECIO="2026-10-01", FLETE_INCLUIDO="No", IVA_TRATAMIENTO="sin_iva")
-        if r["ID_COSTO"] == "LAB-PARAM-MESES":
-            r.update(PRECIO_UNITARIO="13", MONEDA_ORIGINAL="NA")
         if r["NATURALEZA"] == "semivariable" and pct_var is not None:
             r.update(PCT_VARIABLE=str(pct_var), ORIGEN_PCT_VARIABLE="SUP-TEST")
     return base
@@ -1699,15 +2205,15 @@ def ejecutar_tests(verbose=True):
         validar_base, [dict(next(iter(base.values())), ID_COSTO="Y", PRECIO_UNITARIO="", NIVEL_EVIDENCIA="E4")]))
     fs, rs, Ds, _, _ = correr(config_opex("C1", aves_dia=10000), sint)
     tot = sum(f["COSTO_CALCULADO_USD_ANIO"] for f in fs if f["COSTEA"] and f["ESTADO"] == "CON_PRECIO")
-    suma_mod = sum(d["MONTO_CON_PRECIO_USD_ANIO"] or 0 for m, d in rs.items() if m != "TOTAL")
+    suma_mod = sum(d["MONTO_PARCIAL_CON_PRECIO_USD_ANIO"] or 0 for m, d in rs.items() if m != "TOTAL")
     chk("C04", "Total = suma válida: TOTAL = Σ módulos = Σ conceptos con precio (base sintética)",
-        _cerca(rs["TOTAL"]["MONTO_CON_PRECIO_USD_ANIO"], tot) and _cerca(suma_mod, tot))
+        _cerca(rs["TOTAL"]["MONTO_PARCIAL_CON_PRECIO_USD_ANIO"], tot) and _cerca(suma_mod, tot))
     ids_cost = [(f["COSTO_ID"], f["FLUJO"], f["SUBMODULO"]) for f in f1 if f["COSTEA"] and f["COSTO_ID"]]
-    chk("C05", "Sin doble conteo: cada (COSTO_ID, flujo, puesto) aparece una sola vez como costo en un escenario",
-        all(len(ids_cost) == len(set(ids_cost)) for _ in [0]) and all(
-            len([(f["COSTO_ID"], f["FLUJO"], f["SUBMODULO"], f["APORTANTE"]) for f in fl if f["COSTEA"] and f["COSTO_ID"]]) ==
-            len({(f["COSTO_ID"], f["FLUJO"], f["SUBMODULO"], f["APORTANTE"]) for f in fl if f["COSTEA"] and f["COSTO_ID"]})
-            for (fl, *_r) in run.values()))
+    clave = lambda f: (f["COSTO_ID"], f["FLUJO"], f["SUBMODULO"], f["APORTANTE"], f["AMBITO_GRANJA"])  # noqa: E731
+    chk("C05", "Sin doble conteo: cada (COSTO_ID, flujo, puesto, aportante, ámbito propia/integrada) aparece una sola vez "
+        "como costo en un escenario", all(len(ids_cost) == len(set(ids_cost)) for _ in [0]) and all(
+            len([clave(f) for f in fl if f["COSTEA"] and f["COSTO_ID"]]) ==
+            len({clave(f) for f in fl if f["COSTEA"] and f["COSTO_ID"]}) for (fl, *_r) in run.values()))
     kwh_cost = [f for f in fs if f["COSTO_ID"] == "UT-ELE-KWH" and f["COSTEA"]]
     frio_cost = [f for f in fs if f["CENTRO_COSTO"] == "frio" and f["COSTEA"] and f["UNIDAD"] == "kWh"]
     chk("C06", "Energía de frío no se duplica: un solo UT-ELE-KWH y las energías de frío son INCLUIDO (sin costo)",
@@ -1766,7 +2272,7 @@ def ejecutar_tests(verbose=True):
     chk("A10", "Mantenimiento: un solo método por corrida; % CAPEX sin CAPEX con precio → BASE_SIN_PRECIO (no 0)",
         all(f["COSTO_ID"].endswith("-PCT") for f in fm if f["MODULO"] == "MANTENIMIENTO" and f["COSTEA"]) and
         not any(f["COSTO_ID"].endswith("-PCT") for f in fa_) and all(
-            f["ESTADO"] == "SIN_CANTIDAD" for f in fm if f["COSTO_ID"].endswith("-PCT")))
+            f["ESTADO"] == "PENDIENTE_CANTIDAD" for f in fm if f["COSTO_ID"].endswith("-PCT")))
     chk("A11", "Tarifa de flete: un modelo por flujo (no se mezclan viaje/km/unidad/contrato)",
         _lanza(validar_config_opex, config_opex("C1", modelo_tarifa_flete="peso")) and all(
             len({f["COSTO_ID"] for f in fl if f["FLUJO"] == fn and "-TER-" in f["COSTO_ID"]}) <= 1
@@ -1811,8 +2317,10 @@ def ejecutar_tests(verbose=True):
         x[1]["TOTAL"]["TOTAL_PRELIMINAR_USD_ANIO"] is None and str(x[1]["TOTAL"]["COSTO_USD_AVE"]).startswith("NO DISPONIBLE")
         for x in run.values()))
     fs_ok = [f for f in fs if not f["COSTEA"] or f["ESTADO"] == "CON_PRECIO"]
-    rok = resumir(fs_ok, Ds)["TOTAL"]
-    chk("E04", "Con cobertura completa (base sintética, solo conceptos con precio) sí hay total y costo por ave = total ÷ aves",
+    arq_forz = dict(Ds["arquitectura"], ARQUITECTURA_COSTEABLE=True, MODULOS_INCOMPLETOS="")
+    rok = resumir(fs_ok, Ds, arq_forz)["TOTAL"]
+    chk("E04", "Aritmética del total: con conceptos completos y arquitectura COSTEABLE (forzada en el test) hay total y "
+        "costo por ave = total ÷ aves",
         rok["TOTAL_PRELIMINAR_USD_ANIO"] is not None and _cerca(rok["COSTO_USD_AVE"],
                                                                rok["TOTAL_PRELIMINAR_USD_ANIO"] / Ds["v"]["aves_faenadas_anio"]))
     chk("E05", "Base: precio en ARS sin TC rechazado; E1 sin cotización rechazado; E3 sin lectura primaria rechazado",
@@ -1831,11 +2339,12 @@ def ejecutar_tests(verbose=True):
         lab[-1]["COSTO_ANUAL_USD"] == "PENDIENTE" and all(r["HEADCOUNT"].startswith("PENDIENTE") for r in lab
                                                           if r["MODALIDAD"] == "interno"))
     labs = filas_costo_laboral("T", config_opex("C1", aves_dia=10000), D1, sint)
-    esperado = 10 * 13 * 1.05 * 1.10 + 10 * 12 + 10 + 10
-    chk("L02", "Costo empresa por FTE = salario × meses × (1+adic.) × (1+cargas+ART) + beneficios × 12 + EPP + capac.",
+    esperado = 10 * (1 + 0.05 + 0.05) * (12 + 1) * (1 + 0.05 + 0.05) + 10 * 12 + 10 + 10 + 10
+    chk("L02", "Costo empresa por FTE = salario × (1 + adic. + vac.) × (12 + SAC) × (1 + cargas + ART) + beneficios × 12 "
+        "+ EPP + capac. + otros (SAC = regla, no precio)",
         all(_cerca(r["COSTO_EMPRESA_ANUAL_FTE_USD"], esperado) for r in labs if r["MODALIDAD"] == "interno"))
-    chk("L03", "Funciones que 14A no dimensiona (granja, incubadora, planta de alimento) quedan SIN_CANTIDAD, no en 0",
-        all(f["ESTADO"] == "SIN_CANTIDAD" for f in f3 if f["SUBMODULO"] in ("personal_granja", "personal_incubadora",
+    chk("L03", "Funciones que 14A no dimensiona (granja, incubadora, planta de alimento) quedan PENDIENTE_CANTIDAD, no en 0",
+        all(f["ESTADO"] == "PENDIENTE_CANTIDAD" for f in f3 if f["SUBMODULO"] in ("personal_granja", "personal_incubadora",
                                                                          "personal_planta_alimento")) and
         {"personal_granja", "personal_incubadora", "personal_planta_alimento"} <= {f["SUBMODULO"] for f in f3})
     # ---------------- RAMP-UP ----------------
@@ -1870,6 +2379,105 @@ def ejecutar_tests(verbose=True):
     chk("S06", "No hay CAPEX dentro del OPEX: ningún concepto OPEX usa IDs de la base CAPEX ni depreciación",
         not any(f["COSTO_ID"] in mcx.leer_base() for (fl, *_r) in run.values() for f in fl) and not any(
             "deprecia" in f["CONCEPTO"].lower() for (fl, *_r) in run.values() for f in fl))
+    # ---------------- COMPLETITUD DE ARQUITECTURAS (auditoría de cierre 17) ----------------
+    comp3 = {r["MODULO_ARQ"]: r for r in D3["completitud"]}
+    gr3 = [f for f in f3 if f["MODULO_ARQ"] == "GRANJAS_PROPIAS"]
+    chk("X01", "C3 con granjas propias tiene el bloque RRHH de granjas (PENDIENTE_CANTIDAD, universo propio) y todos sus "
+        "bloques materiales (energía, calefacción, agua, cama, limpieza, bioseguridad, mantenimiento, mortalidad, seguros, "
+        "veterinaria, otros)", any(f["BLOQUE"] == "rrhh" and f["UNIVERSO_RRHH"] == "RRHH_GRANJAS_PROPIAS_PENDIENTE"
+                                   and f["ESTADO"] == "PENDIENTE_CANTIDAD" for f in gr3)
+        and not comp3["GRANJAS_PROPIAS"]["BLOQUES_AUSENTES"]
+        and {"PP-ENE", "PP-GAS", "PP-AGUA", "PP-CAMA", "PP-LIMP", "PP-BIO", "PP-MORT", "SEG-GRA", "PP-VET", "PP-OTR"}
+        <= {f["COSTO_ID"] for f in gr3})
+    inc = {f["COSTO_ID"] for f in f3 if f["MODULO_ARQ"] == "INCUBACION_PROPIA"}
+    chk("X02", "Incubación propia contiene todos sus bloques materiales (huevo, vacunas, energía/HVAC, RRHH, agua, lavado, "
+        "mantenimiento, consumibles, descartes, transporte de huevo y de pollito, calidad/bioseguridad)",
+        not comp3["INCUBACION_PROPIA"]["BLOQUES_AUSENTES"] and
+        {"INC-OP-HUEVO", "INC-OP-VAC", "INC-OP-ENE", "INC-OP-AGUA", "INC-OP-LIM", "INC-OP-INS", "INC-OP-DES", "INC-OP-CAL",
+         "LAB-CONV_SOP"} <= inc and any(f["FLUJO"] == "huevos" for f in f3) and any(f["FLUJO"] == "pollitos" for f in f3))
+    ali = {f["COSTO_ID"] for f in f3 if f["MODULO_ARQ"] == "PLANTA_ALIMENTO_PROPIA"}
+    chk("X03", "Planta de alimento propia contiene todos sus bloques materiales (maíz, soja, aceite, núcleo, otros, "
+        "diferencial a planta, RRHH, electricidad, vapor, agua, mantenimiento, laboratorio, mermas, almacenamiento, "
+        "movimientos internos, transporte)", not comp3["PLANTA_ALIMENTO_PROPIA"]["BLOQUES_AUSENTES"] and
+        {"ALI-MP-MAIZ", "ALI-MP-SOJA", "ALI-MP-ACEITE", "ALI-MP-NUCLEO", "ALI-MP-OTROS", "ALI-MP-DIF-MAIZ", "ALI-C-ENE",
+         "ALI-C-TER", "ALI-C-AGUA", "ALI-C-ANA", "ALI-MERMA", "ALI-C-ALM", "ALI-C-MOV", "LAB-CONV_SOP"} <= ali)
+    k09 = {k for (_, _, DR, _, _) in run.values() for k, p in DR["proc"].items() if p["FUENTE"].startswith("11_agua")}
+    usa09 = [f for (fl, *_r) in run.values() for f in fl if f["DRIVER"].split(" ")[0] in k09]
+    up = [f for (fl, *_r) in run.values() for f in fl if f["UNIVERSO_UTILITIES"] not in ("", "FAENA_09C")]
+    chk("X04", "Utilities de faena (09C) no se reutilizan para upstream: todo driver de 09C se usa solo en FAENA_PROPIA; "
+        "incubación, alimento, rendering y tratamiento quedan PENDIENTE_CANTIDAD; en granjas solo el agua de bebida de 03",
+        usa09 and all(f["MODULO_ARQ"] == "FAENA_PROPIA" for f in usa09) and up and all(
+            f["DRIVER"].split(" ")[0] not in k09 for f in up) and all(
+            f["CANTIDAD"] is None for f in up if f["UNIVERSO_UTILITIES"] != "GRANJAS")
+        and all(f["CANTIDAD"] is None for f in up if f["UNIVERSO_UTILITIES"] == "GRANJAS" and f["COSTO_ID"] != "PP-AGUA"))
+    fu3 = r3["TOTAL"]
+    chk("X05", "FTE de 14A no se etiqueta como FTE total de la empresa integrada: driver fte_industrial_14a; C3 con "
+        "FTE_ADICIONAL_PENDIENTE (granjas, incubación, planta de alimento); en C0 el personal del faenador no es FTE propio",
+        not any(k.startswith("fte_total") for (_, _, DR, _, _) in run.values() for k in DR["proc"])
+        and "NO es el FTE total" in D3["proc"]["fte_industrial_14a"]["USO_EN_OPEX"]
+        and fu3["FTE_ADICIONAL_PENDIENTE"].startswith("PENDIENTE") and all(
+            x in fu3["FTE_ADICIONAL_PENDIENTE"] for x in ("granjas", "incubación", "planta de alimento"))
+        and r0["TOTAL"]["FTE_TOTAL_CONOCIDO"] < r0["TOTAL"]["FTE_INDUSTRIAL_14A"] - 10)
+    arq_ok = completitud(config_opex("C1", aves_dia=10000), fs_ok)[1]
+    chk("X06", "Un módulo con un bloque material faltante bloquea el OPEX total aunque los conceptos presentes tengan precio "
+        "(y hoy ninguna arquitectura es costeable ni publica total)",
+        not arq_ok["ARQUITECTURA_COSTEABLE"] and resumir(fs_ok, Ds, arq_ok)["TOTAL"]["TOTAL_PRELIMINAR_USD_ANIO"] is None
+        and all(not x[2]["arquitectura"]["ARQUITECTURA_COSTEABLE"] and x[1]["TOTAL"]["TOTAL_PRELIMINAR_USD_ANIO"] is None
+                for x in run.values()))
+    reglas = leer_reglas()
+    con_precio = [r for r in base.values() if r["ESTADO"] == "CON_PRECIO"]
+    chk("X07", "13 meses / SAC no figura como precio ni evidencia E4: no hay fila de 'meses' en la base; con precio quedan 2",
+        not any(r["UNIDAD"] == "meses" or "MESES" in r["ID_COSTO"] or "SAC" in r["ID_COSTO"] for r in base.values())
+        and len(con_precio) == 2 and {r["ID_COSTO"] for r in con_precio} == {"POL-COMPRA", "ALI-MP-MAIZ"})
+    chk("X08", "El SAC es una regla laboral (no cotización): sin nivel E1–E5; una regla con evidencia E4 es rechazada",
+        reglas["SAC"]["ESTADO"].startswith("REGLA") and reglas["SAC"]["EVIDENCIA"] not in EVIDENCIAS
+        and _lanza(validar_reglas, {"X": dict(reglas["SAC"], EVIDENCIA="E4")}))
+    pol = next(f for f in f1 if f["COSTO_ID"] == "POL-COMPRA")
+    chk("X09", "Precio ARS observado y conversión USD separados (pollito: ARS 1.312,22, fecha, IVA, TC 1.486,5 y su fecha, "
+        "USD = conversión del modelo)", pol["PRECIO_ORIGINAL_OBSERVADO"] == 1312.22 and pol["MONEDA_ORIGINAL"] == "ARS"
+        and pol["FECHA_PRECIO"] == "2026-07-06" and pol["IVA_PRECIO"].startswith("sin_iva") and pol["TC_USADO"] == 1486.5
+        and pol["FECHA_TC"] == "2026-07-06" and pol["ORIGEN_PRECIO_USD"].startswith("CONVERSION_MODELO")
+        and _cerca(pol["PRECIO_USD"], 1312.22 / 1486.5) and base["POL-COMPRA"]["MONEDA_ORIGINAL"] == "ARS")
+    dif = [f for f in f3 if f["COSTO_ID"] == "ALI-MP-DIF-MAIZ"]
+    mz = next(f for f in f3 if f["COSTO_ID"] == "ALI-MP-MAIZ")
+    ctm = next(r for r in run[("C3", 10000)][3] if r["SUBCOMPONENTE"] == "alimento: maiz")
+    chk("X10", "Maíz Rosario no se etiqueta 'puesto en planta': condición SOBRE_PUERTO, diferencial a planta como concepto "
+        "PENDIENTE y CT advierte la valuación", "SOBRE_PUERTO" in mz["CONDICION_ENTREGA"]
+        and "NO es costo puesto en planta" in mz["CONDICION_ENTREGA"] and dif and dif[0]["ESTADO"] == "PENDIENTE_PRECIO"
+        and _cerca(dif[0]["CANTIDAD"], mz["CANTIDAD"]) and "Rosario" in ctm["FALTA"])
+    fac0 = [f for f in f0 if f["MODULO"] == "COSTO_LABORAL" and f["SUBMODULO"] in ("colgado", "evisceracion", "trozado")]
+    chk("X11", "Façon no duplica personal: horas del faenador = RECURSO FÍSICO DE TERCERO, INCLUIDO_EN_TARIFA_FACON, sin "
+        "costo laboral propio de operación industrial", fac0 and all(
+            f["APORTANTE"] == "TERCERO" and f["ESTADO"] == "INCLUIDO_EN_TARIFA_FACON" and not f["COSTEA"] for f in fac0)
+        and not any(f["COSTEA"] and f["MODULO"] == "COSTO_LABORAL" and f["SUBMODULO"] in
+                    ("colgado", "descarga", "faena", "evisceracion", "enfriamiento", "clasificacion", "trozado", "empaque",
+                     "camaras_expedicion", "subproductos") for f in f0))
+    ctall = [r for x in run.values() for r in x[3] if r["COMPONENTE"] == "INVENTARIO"]
+    chk("X12", "Stock de tercero no entra al CT propio en ninguna arquitectura (entra solo con PROPIEDAD_EMPRESA = TRUE)",
+        all((r["ENTRA_EN_CT"] == "Sí") == (r["PROPIEDAD_EMPRESA"] == "TRUE") for r in ctall)
+        and all(r["VALOR_USD"] is None for r in ctall if r["PROPIEDAD_EMPRESA"] != "TRUE")
+        and any(r["PROPIEDAD_EMPRESA"] == "FALSE" for r in ctall))
+    chk("X13", "Montos parciales E4 marcados NO COMPARABLES (ningún escenario aparece como resultado económico comparable)",
+        all(x[1]["TOTAL"]["COMPARABILIDAD"] == "MONTOS_PARCIALES_E4_NO_COMPARABLES" for x in run.values())
+        and not any(d["COMPARABILIDAD"].startswith("COMPARABLE") for x in run.values() for d in x[1].values()))
+    compF = {r["MODULO_ARQ"]: r for r in run[("CF", 10000)][2]["completitud"]}
+    chk("X14", "Rendering y reproductoras (CF, FUTURO): estructura completa (RRHH, energía, térmico, agua, mantenimiento, "
+        "insumos, tratamiento, residuos, logística) sin costos y sin bloquear la etapa inicial",
+        not compF["RENDERING_FUTURO"]["BLOQUES_AUSENTES"] and not compF["REPRODUCTORAS_FUTURO"]["BLOQUES_AUSENTES"]
+        and all(f["COSTO_CALCULADO_USD_ANIO"] is None for f in run[("CF", 10000)][0] if f["FASE"] == "FUTURO"))
+    var = [correr(config_opex(cf, aves_dia=10000, alimento_facon_mp=v_), base) for cf in ("C0", "C2")
+           for v_ in ("empresa", "elaborador")]
+    chk("X15", "Cobertura estructural ≠ cobertura de costeo: estructura 100 % en todas las arquitecturas y variantes de "
+        "façon (sé qué costos existen) y costeo por bloques < 100 % (no sé cuánto cuestan)", all(
+            abs(x[2]["arquitectura"]["COBERTURA_ESTRUCTURAL_PCT"] - 100) < TOL and x[2]["arquitectura"]["ARQUITECTURA_ESTRUCTURA_COMPLETA"]
+            and x[2]["arquitectura"]["COBERTURA_COSTEO_BLOQUES_PCT"] < 100 for x in list(run.values()) + var))
+    propios = [fn for fn in ("vivo", "refrigerado", "alimento", "pollitos", "huevos", "subproductos")]
+    chk("X16", "Flota propia (C3): cada flujo tiene combustible, mantenimiento, choferes y seguro (aunque PENDIENTES)", all(
+        any(f["COSTO_ID"] == "LOG-COMB-GASOIL" and f["FLUJO"] == fn for f in f3)
+        and any(f["COSTO_ID"].endswith("-MANT") and f["FLUJO"] == fn for f in f3)
+        and any(f["COSTO_ID"].startswith("SEG-FLOTA") and f["FLUJO"] == fn for f in f3)
+        and (fn in ("vivo", "refrigerado", "congelado") or any(f["COSTO_ID"] == "LAB-CHOF" and f["FLUJO"] == fn for f in f3))
+        for fn in propios))
     return res
 
 
@@ -1878,7 +2486,10 @@ MUTACIONES = {"D01": "OPEX recalcula el alimento con un FCR propio", "M01": "un 
               "M08": "limpieza vuelve a cobrar agua ya incluida en utilities", "M04": "el stock de un tercero entra al CT",
               "M06": "una referencia E4 se presenta como E1", "M07": "un costo negativo (neteo)",
               "M09": "flota tercerizada carga costos de flota propia", "M10": "choferes tercerizados cobrados además del flete",
-              "M11": "personal del faenador cobrado además de la tarifa de façon"}
+              "M11": "personal del faenador cobrado además de la tarifa de façon",
+              "M12": "la incubadora reutiliza el kWh de la planta de faena (09C)",
+              "M14": "se omite el bloque RRHH de la incubación propia",
+              "M17": "se publica total sin mirar la completitud de los módulos"}
 
 
 def prueba_mutaciones():
@@ -1909,8 +2520,13 @@ def escenario_cli(a):
     print(f"Escenario {a.config}-{a.aves_dia:g} — {mcx.etiqueta_arquitectura(config_capex(c))}")
     for m, d in res.items():
         print(f"  {m:20s} conceptos {d['CONCEPTOS_COSTEABLES']:3d} | con precio {d['CONCEPTOS_CON_PRECIO']:3d} | "
-              f"monto con precio {_fmt(d['MONTO_CON_PRECIO_USD_ANIO']) or '—':>12} USD/año ({d['CALIDAD_MONTO']}) | "
+              f"monto parcial {_fmt(d['MONTO_PARCIAL_CON_PRECIO_USD_ANIO']) or '—':>12} USD/año ({d['COMPARABILIDAD']}) | "
               f"{d['TOTAL_PRELIMINAR']}")
+    arq = DR["arquitectura"]
+    print(f"  Arquitectura: estructura completa {arq['ARQUITECTURA_ESTRUCTURA_COMPLETA']} | operativamente completa "
+          f"{arq['ARQUITECTURA_OPERATIVAMENTE_COMPLETA']} | costeable {arq['ARQUITECTURA_COSTEABLE']} | cobertura estructural "
+          f"{arq['COBERTURA_ESTRUCTURAL_PCT']:.0f} % / física {arq['COBERTURA_FISICA_PCT']:.0f} % / costeo "
+          f"{arq['COBERTURA_COSTEO_BLOQUES_PCT']:.0f} %")
     print(f"  Capital de trabajo: {ct['CAPITAL_TRABAJO']} — falta: {ct['FALTA']}")
     for al in DR["alertas"]:
         print("  ALERTA:", al)

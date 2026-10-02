@@ -22,11 +22,15 @@
 | SUP-17-09 | **Ramp-up:** variables × u, fijos y semifijos constantes, escalamiento lineal de drivers; etapas arranque y estabilización sin factor (PENDIENTE); ineficiencias del arranque no modeladas | Criterio de modelo | `aplicar_utilizacion()` | DEC-17-08 |
 | SUP-17-10 | **Capacidades y distancias logísticas** = escenarios de CAPEX/12B (5.500 aves/camión; 12 t; 28 t; 10 t; radio 100 km; mercado 300 km; fábrica–granja 75 km; receptor 50 km) | [SUPUESTO] heredado | `drivers_opex()` | SUP-16-20, SUP-033, SUP-091, SUP-096 |
 | SUP-17-11 | **Stock medio de producto terminado** = `inventario()` de 12B con 6 despachos/semana de refrigerado y 2 de congelado, sin stock de seguridad | [SUPUESTO] heredado | capital de trabajo | SUP-099, DEC-058 |
-| SUP-17-12 | **Costeo laboral provisional por FTE**: costo empresa/FTE = salario × meses × (1 + adicionales) × (1 + cargas + ART) + beneficios × 12 + EPP + capacitación; meses = 13 (SAC, [PVDP]); headcount PENDIENTE; sin horas extra automáticas | Criterio de modelo | `costo_empresa_fte()` | SUP-125, SUP-126, DPV-146, DPV-148 |
+| SUP-17-12 | **Costeo laboral provisional por FTE (v1.1)**: costo empresa/FTE = salario × (1 + adicionales % + vacaciones %) × (12 + SAC) × (1 + cargas % + ART %) + beneficios × 12 + EPP + capacitación + otros. El **SAC es una regla laboral** (`reglas_laborales_opex.csv`, [PVDP], DPV-17-19), **no** un precio E4 (la v1.0 lo contaba como concepto con precio: corregido). Headcount PENDIENTE; horas extra no automáticas | Criterio de modelo | `costo_empresa_fte()` | SUP-125, SUP-126, DPV-146, DPV-148 |
 | SUP-17-13 | **Tercerizar conserva la función**: las horas de 14A siguen visibles; si el servicio ya las cobra (choferes en flete tercerizado, personal del faenador en façon, captura, laboratorio externo, HyS externo) quedan `INCLUIDO` en ese concepto; si no, se costean con tarifa horaria | Criterio de modelo | `lineas_laborales()` | SUP-129, SUP-134 |
 | SUP-17-14 | **Tipo de cambio de precios en ARS** = A3500 (oficial mayorista) del día del precio, como criterio provisional | Criterio de modelo | base | DEC-006 |
-| SUP-17-15 | **Total preliminar y costos unitarios** solo con cobertura 100 % de los conceptos costeables (incluye aportantes resueltos); si no, "NO DISPONIBLE" + montos separados por evidencia | Criterio de modelo | `resumir()` | SUP-16-10, DEC-17-10 |
+| SUP-17-15 | **Total preliminar y costos unitarios** solo con cobertura 100 % de los conceptos costeables (incluye aportantes resueltos) **y** `ARQUITECTURA_COSTEABLE = TRUE` (v1.1); si no, "NO DISPONIBLE" + montos rotulados `MONTOS_PARCIALES_E4_NO_COMPARABLES` | Criterio de modelo | `resumir()` | SUP-16-10, DEC-17-10 |
 | SUP-17-16 | **Huevos en incubación (WIP)** valuados al costo del huevo como **cota inferior** | Criterio de modelo | capital de trabajo | DEC-17-07 |
+| SUP-17-17 | **Completitud de arquitecturas (v1.1)**: cada módulo propio o contratado tiene una lista de **bloques operativos materiales** (`BLOQUES_REQUERIDOS`); un bloque sin cantidad o precio queda PENDIENTE, nunca 0 ni ausente; un bloque ausente es error de modelo. `ARQUITECTURA_OPERATIVAMENTE_COMPLETA` = todos los bloques con cantidades; `ARQUITECTURA_COSTEABLE` = además con precio y sin aportantes pendientes. Los módulos FUTUROS deben estar estructurados pero no bloquean la etapa inicial | Criterio de modelo | `completitud()` | DEC-17-01 |
+| SUP-17-18 | **Universos que no se mezclan (v1.1)**: utilities por universo (09C = solo planta de faena; incubación, alimento, granjas, tratamiento, rendering y reproductoras con consumos propios PENDIENTES) y RRHH por universo (14A = industrial + estructura + coordinación primaria; granjas propias, incubación, planta de alimento, efluentes, tratamiento y choferes de otros flujos PENDIENTES; reproductoras y rendering FUTURO). `FTE_TOTAL_CONOCIDO` excluye terceros incluidos en tarifas | Criterio de modelo | `clasificar_filas()`, `fte_universos()` | SUP-140, D17-02 |
+| SUP-17-19 | **Precio observado ≠ conversión (v1.1)**: el precio en ARS es la observación; el USD es `CONVERSION_MODELO` (TC A3500 de la fecha del precio) y no una nueva observación. Precio de pizarra Rosario ≠ costo puesto en planta (diferencial `ALI-MP-DIF-*` aparte; flete en `LOG-GRA-*`) | Criterio de modelo | base, `costear()` | SUP-17-14 |
+| SUP-17-20 | **Granjas mixtas (v1.1)**: cada concepto de producción primaria se registra en dos filas (`AMBITO_GRANJA` PROPIA / INTEGRADA); la integrada sigue al aportante y el aporte del productor es informativo ("costo del productor") | Criterio de modelo | `Registro.split()` | SUP-17-04 |
 
 ## 2. Datos por validar propuestos (`datos_por_validar.md`)
 
@@ -46,10 +50,11 @@
 | DPV-17-12 | **Plan de autocontrol y precio por análisis** (microbiología, agua, alimento, vuelco) | Calidad | CAL-ANA-*, ALI-C-ANA, EF-ANA | DPV-041, DEC-065 |
 | DPV-17-13 | **Certificaciones y auditorías** (BPM/HACCP/ISO, clientes) y su costo anual | Calidad | CAL-CERT, CAL-AUD | DPV-101 (tasas SENASA) |
 | DPV-17-14 | **Parámetros de capital de trabajo:** días de cobro por canal, días de pago por proveedor, días de stock de envases, repuestos e insumos | Capital de trabajo | CT | DPV-039, DEC-079 |
-| DPV-17-15 | **Dotaciones no dimensionadas por 14A:** granjas propias, incubadora, planta de alimento, operación de efluentes, tratamiento de subproductos, choferes de pollitos / alimento / grano / subproductos con flota propia | Costo laboral | COSTO_LABORAL (SIN_CANTIDAD) | DPV-153, DPV-158 |
-| DPV-17-16 | **Consumos no dimensionados:** energía y gas de granja, cama (kg/m²), energía y agua de incubadora, kWh/t y vapor de planta de alimento, consumo L/km por tipo de camión, horas de equipo de frío vehicular, lodos | Cantidades hoy SIN_CANTIDAD | PP-ENE/GAS/CAMA, INC-OP-ENE/AGUA, ALI-C-*, LOG-COMB, LOG-*-FRIO, EF-LODO | **ampliar DPV-052, DPV-158, DPV-072, DPV-084** |
+| DPV-17-15 | **Dotaciones no dimensionadas por 14A:** granjas propias, incubadora, planta de alimento, operación de efluentes, tratamiento de subproductos, choferes de pollitos / alimento / grano / subproductos con flota propia | Costo laboral | COSTO_LABORAL (PENDIENTE_CANTIDAD) | DPV-153, DPV-158 |
+| DPV-17-16 | **Consumos no dimensionados:** energía y gas de granja, cama (kg/m²), energía y agua de incubadora, kWh/t y vapor de planta de alimento, consumo L/km por tipo de camión, horas de equipo de frío vehicular, lodos | Cantidades hoy PENDIENTE_CANTIDAD | PP-ENE/GAS/CAMA, INC-OP-ENE/AGUA, ALI-C-*, LOG-COMB, LOG-*-FRIO, EF-LODO | **ampliar DPV-052, DPV-158, DPV-072, DPV-084** |
 | DPV-17-17 | **Lectura primaria del Índice de costo de producción de pollos parrilleros (SAGyP)** (FTE-16-002): estructura y valores de costos de crianza | Benchmark oficial OPEX (E3) para alimento, pollito, sanidad, energía y mano de obra de granja | PP-*, ALI-*, POL-* | DPV-16-07 |
 | DPV-17-18 | **Lectura primaria del A3500 (BCRA)** para las fechas de los precios usados | Validar los TC | base | DEC-006 |
+| DPV-17-19 | **Normativa laboral en original**: SAC (Ley 20.744 arts. 121–122), vacaciones y plus vacacional (arts. 150–155), recargo de horas extra (art. 201), contribuciones patronales y alícuotas de ART vigentes; convenio colectivo aplicable por categoría | Reglas y componentes del costo empresa por FTE | `reglas_laborales_opex.csv`, LAB-<CAT>-* | **ampliar DPV-146, DPV-148** |
 
 ## 3. Decisiones pendientes propuestas (`decisiones_pendientes.md`)
 
@@ -82,7 +87,7 @@ OPEX; costo variable / fijo / semifijo / semivariable; centro de costo; capital 
 
 | Módulo | Estado propuesto |
 |---|---|
-| OPEX (`20`) | **MOTOR OPEX + CAPITAL DE TRABAJO CONSTRUIDO** v1.0 (62 tests, 11/11 mutaciones). **Sin OPEX total ni capital de trabajo**: 3 de 323 conceptos con precio (todos E4); cobertura por conceptos 0,5–2,7 % |
+| OPEX (`20`) | **MOTOR OPEX + CAPITAL DE TRABAJO CONSTRUIDO** v1.1 (78 tests, 14/14 mutaciones; auditado en completitud de arquitecturas y costo laboral). **Sin OPEX total ni capital de trabajo y ninguna arquitectura costeable**: 2 de 359 conceptos con precio (ambos E4); cobertura estructural 100 %, física 43–73 %, de costeo por bloques 0–10 % |
 
 Hito sugerido: "2026-10-02 — Motor OPEX + capital de trabajo (sesión 17)".
 
@@ -91,7 +96,7 @@ Hito sugerido: "2026-10-02 — Motor OPEX + capital de trabajo (sesión 17)".
 | ID | Dependencia / tensión | Estado |
 |---|---|---|
 | D17-01 | 20 → 21: el registro, el reparto fijo/variable y el capital de trabajo alimentan el modelo financiero; ingresos, IVA, depreciación e impuestos se calculan allí | Abierta |
-| D17-02 | 18 (14A) → 20: 14A no dimensiona personal upstream (granjas, incubadora, planta de alimento), operación de efluentes ni choferes de algunos flujos; OPEX los deja SIN_CANTIDAD | Abierta (DPV-17-15) |
+| D17-02 | 18 (14A) → 20: 14A no dimensiona personal upstream (granjas, incubadora, planta de alimento), operación de efluentes ni choferes de algunos flujos; OPEX los deja PENDIENTE_CANTIDAD | Abierta (DPV-17-15) |
 | D17-03 | 19 → 20: el mantenimiento por % CAPEX o por activo depende del BOQ y de los precios de CAPEX | Abierta |
 | T17-01 | Contradicción de precios de pollito BB en extractos de CAPIA (ARS 1.312 vs "$ 16") | Registrada; prevalece la lectura del original cuando se obtenga |
 | T17-02 | Maíz: precio sobre puerto vs puesto en planta (paridad por zona) | Abierta (DPV-17-02) |
@@ -100,4 +105,25 @@ Hito sugerido: "2026-10-02 — Motor OPEX + capital de trabajo (sesión 17)".
 
 ## 8. Archivos de esta sesión
 
-`20_opex/`: `modelo_opex.py`, `base_costos_opex.csv` (input), `registro_costos_operativos.csv`, `escenarios_opex.csv`, `mapa_drivers_opex.csv`, `modelo_costo_laboral.csv`, `capital_trabajo_opex.csv`, `matriz_validacion_opex.csv`, `fuentes_17.csv`, 17 documentos `.md` y `README.md`. Ningún archivo fuera de `20_opex/` fue modificado.
+`20_opex/`: `modelo_opex.py`, `base_costos_opex.csv` y `reglas_laborales_opex.csv` (inputs), `completitud_arquitecturas_opex.csv`, `registro_costos_operativos.csv`, `escenarios_opex.csv`, `mapa_drivers_opex.csv`, `modelo_costo_laboral.csv`, `capital_trabajo_opex.csv`, `matriz_validacion_opex.csv`, `fuentes_17.csv`, 17 documentos `.md` y `README.md`. Ningún archivo fuera de `20_opex/` fue modificado.
+
+## 9. Auditoría de cierre v1.1 — completitud de arquitecturas y costo laboral
+
+| Hallazgo v1.0 | Corrección v1.1 | Test |
+|---|---|---|
+| Façon de alimento sin variante (C0, C2): el bloque de materias primas no existía (solo el servicio) | Fila explícita de alimento/MP con cantidad y sin precio aplicable | X15 |
+| Incubación propia sin calidad/bioseguridad; energía sin mención de HVAC | INC-OP-CAL; INC-OP-ENE incluye HVAC; universo de utilities INCUBACION | X02 |
+| Planta de alimento sin agua, movimientos internos ni diferencial a puesto en planta | ALI-C-AGUA, ALI-C-MOV, ALI-MP-DIF-MAIZ/SOJA | X03, X10 |
+| Granjas propias sin análisis/veterinaria; mixtas en una sola fila | PP-VET; filas PROPIA / INTEGRADA separadas | X01 |
+| Tratamiento básico de subproductos sin energía | SUB-TRAT-ENE | — |
+| Rendering (CF) solo con energía, insumos y mantenimiento | + RRHH, térmico, agua, tratamiento, residuos, logística (FUTURO) | X14 |
+| Reproductoras (CF) sin RRHH, agua, mantenimiento, residuos ni logística | REP-AGUA/MAN/RES/LOG + RRHH FUTURO | X14 |
+| FTE de 14A presentado como dotación (C3 "igual a C1") | `fte_industrial_14a`; universos de RRHH; FTE_TOTAL_CONOCIDO, FTE_TERCEROS_INCLUIDOS_EN_TARIFAS, FTE_ADICIONAL_PENDIENTE | X05 |
+| Utilities sin universo (riesgo de extender 09C a la empresa integrada) | `UNIVERSO_UTILITIES`; drivers de 09C solo en FAENA_PROPIA | X04 (mutación M12) |
+| "13 meses remunerados" contado como precio E4 | Retirado de la base; SAC = regla laboral; componentes VAC, HEX, OTR agregados | X07, X08 |
+| USD del pollito y del maíz sin distinguir de la observación en ARS | Columnas de precio observado, condición, IVA, TC, fecha y `ORIGEN_PRECIO_USD` | X09 |
+| Totales bloqueados solo por conceptos faltantes | Además por `ARQUITECTURA_COSTEABLE`; montos `MONTOS_PARCIALES_E4_NO_COMPARABLES` | X06, X13 (mutación M17) |
+| Horas del faenador "INCLUIDO" genérico | Recurso físico de tercero, `INCLUIDO_EN_TARIFA_FACON` | X11 |
+
+Tests adaptados con justificación: C05 (la clave incluye el ámbito propia/integrada, porque las granjas mixtas generan dos filas a propósito), E04 (verifica la aritmética del total forzando una arquitectura costeable; el bloqueo real lo prueba X06) y L02 (nueva fórmula con vacaciones, SAC como regla y otros).
+

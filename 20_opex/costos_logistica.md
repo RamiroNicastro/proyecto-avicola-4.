@@ -20,13 +20,13 @@ Test D07: viajes y km de aves vivas y km de alimento reproducen el CSV de 12B. E
 
 | Flota propia (por flujo) | Tercerizado (por flujo, **un** modelo) |
 |---|---|
-| Gasoil: L = km × L/km (consumo PENDIENTE en 12B → SIN_CANTIDAD) | Tarifa por viaje (viajes/año) |
+| Gasoil: L = km × L/km (consumo PENDIENTE en 12B → PENDIENTE_CANTIDAD) | Tarifa por viaje (viajes/año) |
 | Mantenimiento y neumáticos: km/año | Tarifa por km (km/año) |
 | Patente: vehículos de CAPEX | Tarifa por unidad (t, pollito o huevo/año) |
 | Seguros: SEG-FLOTA-<flujo> (módulo seguros) | Tarifa por contrato anual |
 | Peajes, lavado y desinfección: viajes/año | |
 | Equipo de frío vehicular: horas PENDIENTES (pollitos, huevos, refrigerado, congelado) | |
-| Choferes: 14A (aves vivas y producto); otros flujos SIN_CANTIDAD | Chofer incluido en la tarifa: horas de 14A visibles como INCLUIDO |
+| Choferes: 14A (aves vivas y producto); otros flujos PENDIENTE_CANTIDAD | Chofer incluido en la tarifa: horas de 14A visibles como INCLUIDO |
 | Terceros eventuales | |
 
 Sin `modelo_tarifa_flete` el flete tercerizado figura con `MODELO_TARIFA_NO_DEFINIDO` (DEC-17-05). Variante con tarifa por unidad: `C1-10000-FLETE-POR-UNIDAD`. Tests A06 (flota tercerizada no carga costos propios; mutación M09), A07 (flota propia no carga flete) y A11 (un modelo por flujo).

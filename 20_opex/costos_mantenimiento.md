@@ -17,7 +17,7 @@ Tipos: preventivo, correctivo, repuestos, lubricantes, servicios técnicos exter
 | `None` (por defecto) | una fila por área | — | `METODO_MANTENIMIENTO_NO_DEFINIDO` (DEC-17-06) |
 | `pct_capex` | MAN-<área>-PCT | CAPEX con precio del área (bloques del BOQ de 19) | `BASE_SIN_PRECIO`: el CAPEX no tiene total (test A10) |
 | `por_activo` | MAN-<área>-PREV / CORR / REP / LUB | activos costeables del área en el BOQ (activo-año) | Cantidades disponibles; precios PENDIENTES |
-| `horas_tecnicas` | MAN-<área>-STEC | horas técnicas externas | SIN_CANTIDAD (no dimensionadas más allá de 14A) |
+| `horas_tecnicas` | MAN-<área>-STEC | horas técnicas externas | PENDIENTE_CANTIDAD (no dimensionadas más allá de 14A) |
 | `contrato` | MAN-<área>-CONT | 1 contrato-año | Sin precio (variante `C1-10000-MANT-CONTRATO`) |
 
 ## 3. Por qué no un % fijo

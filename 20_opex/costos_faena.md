@@ -10,7 +10,7 @@
 | Frío en el faenador | FAE-FACON-FRIO | t·mes | Alcance PENDIENTE |
 | Subproductos en façon | FAE-FACON-SUB | t | Alcance PENDIENTE (DPV-17-07); un crédito sería ingreso, no se netea |
 | Empaque | EMP-* | kg de producto | Aportante PENDIENTE (`facon_aporta_empaque`) |
-| Personal del faenador | 14A (horas tercerizadas) | horas | **INCLUIDO en FAE-FACON** (test A04b, mutación M11) |
+| Personal del faenador | 14A (horas tercerizadas) | horas | **RECURSO FÍSICO DE TERCERO** (`APORTANTE = TERCERO`): horas visibles para trazabilidad, costo `INCLUIDO_EN_TARIFA_FACON` (tests A04b, X11; mutación M11) |
 | Control de calidad propio en el faenador | 14A `control_calidad_facon` | FTE | Costo laboral de la empresa |
 | Congelado en tercero | UT-FRIO-TER | t congeladas/año (12B) | Sin precio |
 
@@ -47,6 +47,10 @@ Estructura por kg de producto comercial (05: comestible a empaque, incluye garra
 | Cabezas | SUB-RET-CABEZAS | 181 | 09C |
 | Decomisos | SUB-RET-DECOMISOS | 100 | 04 (filas `decomiso*`) |
 
-Más contenedores (SUB-CONT), transporte (LOG-SUB-*, criterio másico = cota inferior), frío (incluido en kWh si aplica; 12B: retiro diario sin stock refrigerado), clasificación (personal de subproductos de 14A) y, si `subproductos = B_basico_propio`, insumos y energía del tratamiento (SUB-TRAT-B, SIN_CANTIDAD; operación sin FTE en 14A). Rendering propio: SUB-REN-* con `FASE = FUTURO`.
+Más contenedores (SUB-CONT), transporte (LOG-SUB-*, criterio másico = cota inferior), frío (incluido en kWh si aplica; 12B: retiro diario sin stock refrigerado), clasificación (personal de subproductos de 14A) y, si `subproductos = B_basico_propio`, insumos y energía del tratamiento (SUB-TRAT-B, PENDIENTE_CANTIDAD; operación sin FTE en 14A). Rendering propio: SUB-REN-* con `FASE = FUTURO`.
 
 **No se netean ingresos**: si un receptor paga por la sangre o las plumas, ese ingreso va al modelo financiero; el precio de retiro en la base nunca es negativo (test C02, mutación M07).
+
+## 5. Rendering (CF, FUTURO) — estructura completa sin costos
+
+SUB-REN-ENE (electricidad), SUB-REN-TER (térmico), SUB-REN-AGUA, SUB-REN-MAN (mantenimiento), SUB-REN-INS (químicos/insumos), SUB-REN-TRAT (gases, olores y efluentes), SUB-REN-RES (residuos), SUB-REN-LOG (harinas y grasas) y RRHH (`RRHH_RENDERING_FUTURO`): todos `FASE = FUTURO`, PENDIENTES, sin cantidades de 09C (test X14). El tratamiento básico propio (B) tiene RRHH, energía (SUB-TRAT-ENE, v1.1) e insumos.

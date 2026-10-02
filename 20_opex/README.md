@@ -4,14 +4,16 @@
 
 **Regla:** costo = driver físico consumido × precio de una base externa. Vacío = desconocido, nunca 0. Sin cobertura completa no hay OPEX total, costo por ave ni capital de trabajo. **No** se calculan ingresos, EBITDA, VAN, TIR, payback, depreciación, impuestos ni IVA definitivo.
 
-**Estado (2026-10-02, sesión 17):** motor v1.0 construido (62 tests, 11/11 mutaciones). **Sin OPEX total ni capital de trabajo**: 3 de 323 conceptos con precio, todos E4 `[PVDP]`; cobertura por conceptos 0,5–2,7 %. Ver [`conclusiones_opex.md`](conclusiones_opex.md).
+**Estado (2026-10-02, sesión 17):** motor v1.1 construido y auditado en completitud de arquitecturas y costo laboral (78 tests, 14/14 mutaciones). **Sin OPEX total ni capital de trabajo, y ninguna arquitectura costeable**: 2 de 359 conceptos con precio, ambos E4 `[PVDP]`; cobertura estructural 100 %, física 43–73 %, de costeo por bloques 0–10 % y por conceptos 0,5–2,6 %. Ver [`conclusiones_opex.md`](conclusiones_opex.md).
 
 ## Archivos
 
 | Archivo | Contenido |
 |---|---|
 | [`modelo_opex.py`](modelo_opex.py) | Motor: drivers → registro → costeo → resumen → capital de trabajo → ramp-up; tests y mutaciones |
-| [`base_costos_opex.csv`](base_costos_opex.csv) | **Input**: 323 conceptos con unidad, precio, moneda, TC, fecha, evidencia, naturaleza, centro, tipo y grupo de proveedor (editable sin tocar el código) |
+| [`base_costos_opex.csv`](base_costos_opex.csv) | **Input**: 359 conceptos con unidad, precio observado, moneda, fecha, condición, TC y su fecha, conversión USD, evidencia, naturaleza, centro, tipo y grupo de proveedor (editable sin tocar el código) |
+| [`reglas_laborales_opex.csv`](reglas_laborales_opex.csv) | **Input**: reglas laborales (SAC, vacaciones, horas extra, jornada, cargas): no son precios |
+| [`completitud_arquitecturas_opex.csv`](completitud_arquitecturas_opex.csv) | Salida: bloques operativos materiales por escenario y módulo; coberturas estructural / física / de costeo; arquitectura operativamente completa y costeable |
 | [`registro_costos_operativos.csv`](registro_costos_operativos.csv) | Salida: una fila por concepto y escenario (29 escenarios, 4.401 filas) |
 | [`escenarios_opex.csv`](escenarios_opex.csv) | Salida: resumen por escenario y módulo (montos por evidencia, conteos, coberturas, total, KPI unitarios, CT) |
 | [`mapa_drivers_opex.csv`](mapa_drivers_opex.csv) | Salida: procedencia de cada driver (valor bajo/medio/alto, unidad, archivo y variable de origen, tipo, evidencia) |
@@ -40,7 +42,7 @@
 ## Uso
 
 ```bash
-python3 20_opex/modelo_opex.py                     # tests + regenera los 6 CSV de salida
+python3 20_opex/modelo_opex.py                     # tests + regenera los 7 CSV de salida
 python3 20_opex/modelo_opex.py --solo-tests
 python3 20_opex/modelo_opex.py --mutaciones
 python3 20_opex/modelo_opex.py --escenario --config C3 --aves-dia 10000

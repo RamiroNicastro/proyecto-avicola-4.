@@ -1,6 +1,6 @@
 # Metodología del motor OPEX + capital de trabajo
 
-**Versión:** 1.0 · **Fecha:** 2026-10-02 · **Modelo:** [`modelo_opex.py`](modelo_opex.py) · **Sesión:** 17
+**Versión:** 1.1 (auditoría de completitud de arquitecturas y costo laboral) · **Fecha:** 2026-10-02 · **Modelo:** [`modelo_opex.py`](modelo_opex.py) · **Sesión:** 17
 
 > Pregunta que responde: **¿cuánto cuesta operar cada configuración del proyecto y cuánto capital queda inmovilizado en la operación?**
 > El motor **no** elige escala, arquitectura, make-or-buy ni proveedor, y **no** calcula ingresos, EBITDA, VAN, TIR, payback, depreciación, impuesto a las ganancias ni IVA definitivo (van a `21_modelo_financiero`).
@@ -35,7 +35,7 @@ CAPITAL DE TRABAJO: inventarios PROPIOS + CxC + caja − CxP; cualquier faltante
 | kg comestible a empaque por ave | 05 (`kg_ave_config`) | Empaque |
 | Viajes, km y t por flujo; stock medio de producto | 12B (`aves_vivas`, `producto`, `insumos`, `subproductos`, `inventario`) | Logística, capital de trabajo |
 | Vehículos de flota propia por flujo | CAPEX 16 (que consume 12B) | Patentes, seguros de flota |
-| Puestos, FTE interno, horas contratadas, modalidad, brecha de jornada | 14A (`modelo_rrhh.calcular`) | Costo laboral |
+| Puestos, FTE interno, horas contratadas, modalidad, brecha de jornada | 14A (`modelo_rrhh.calcular`) | **RRHH industrial** + estructura + coordinación primaria (no FTE total de la empresa integrada) |
 | Activos costeables y CAPEX por bloque | CAPEX 16 (`correr`) | Base del mantenimiento (por activo o % CAPEX) |
 
 Cada driver queda en [`mapa_drivers_opex.csv`](mapa_drivers_opex.csv) con valor (bajo/medio/alto cuando la fuente lo da), unidad, archivo y variable de origen, escenario fuente, tipo y evidencia.
@@ -47,7 +47,7 @@ Cada driver queda en [`mapa_drivers_opex.csv`](mapa_drivers_opex.csv) con valor 
 | `CONSUMIDO_CAPEX` | Valor del motor CAPEX (flota, días operativos, fracción de granjas propias) |
 | `DERIVADO_OPEX` | Operación declarada de OPEX sobre salidas fuente (anualización, suma de granos, huevos = huevos/pollito × pollitos) |
 | `SUPUESTO_OPEX` | Parámetro propio de OPEX (composición de alimento si el usuario la carga) |
-| `PENDIENTE` | El módulo fuente no lo dimensiona: el concepto queda SIN_CANTIDAD |
+| `PENDIENTE` | El módulo fuente no lo dimensiona: el concepto queda PENDIENTE_CANTIDAD |
 
 **Anualización** (DERIVADO_OPEX): drivers diarios × días operativos (250/300, SUP-025); drivers semanales de producto y subproductos × semanas operativas (días ÷ días/semana); viajes y km de alimento × (t/año ÷ t de la semana plena), porque las granjas consumen todo el año calendario. Los huevos se anualizan con huevos/pollito × pollitos/año (14B publica `huevos_recibidos_anio` a ritmo pleno × 52,14 semanas, que es una cota superior).
 
@@ -58,7 +58,7 @@ Cada driver queda en [`mapa_drivers_opex.csv`](mapa_drivers_opex.csv) con valor 
 | Costo de un concepto | cantidad anual × precio USD | cantidad y precio existen; unidad del driver = unidad del precio (test S03) |
 | Precio USD | precio original ÷ `TC_MONEDA_POR_USD` | moneda ≠ USD exige TC, tipo y fecha (test E05) |
 | Mantenimiento % CAPEX | % × CAPEX con precio del área | base completa; si no → `BASE_SIN_PRECIO` (test A10) |
-| Costo empresa por FTE | salario × meses × (1 + adicionales %) × (1 + cargas % + ART %) + beneficios × 12 + EPP + capacitación | todos los componentes cargados; si falta uno → PENDIENTE (test L02) |
+| Costo empresa por FTE | salario × (1 + adicionales % + vacaciones %) × (12 + SAC) × (1 + cargas % + ART %) + beneficios × 12 + EPP + capacitación + otros | todos los componentes cargados; SAC = **regla** (`reglas_laborales_opex.csv`), no precio; horas extra no automáticas (test L02) |
 | Costo laboral interno | FTE (14A) × costo empresa por FTE | **provisional por FTE**: headcount PENDIENTE |
 | Costo tercerizado | horas contratadas (14A) × tarifa horaria | — |
 | Ramp-up | variable × u + fijo | todos los conceptos con precio con reparto fijo/variable (tests R01–R03) |
@@ -89,7 +89,8 @@ Por escenario y módulo ([`escenarios_opex.csv`](escenarios_opex.csv)):
 - **Montos con precio separados por evidencia** (`OPEX_E1_E2_USD_ANIO`, `OPEX_E3`, `OPEX_E4`, `OPEX_E5`) y `CALIDAD_MONTO`. No existe una columna "OPEX conocido".
 - **Conteos**: costeables, con precio, sin precio, sin cantidad, aportante pendiente; informativos de terceros, incluidos en otro concepto, futuros u opcionales.
 - **Cobertura por conceptos** (con precio ÷ costeables) y **cobertura por valor** solo si todos los faltantes tienen magnitud (hoy: "NO CALCULABLE").
-- **Total preliminar y costos unitarios** (USD/ave, USD/kg vivo, USD/kg producto, USD/día, USD/mes) **solo con cobertura completa**; si no, "NO DISPONIBLE (cobertura X %)" (tests E03, E04).
+- **Total preliminar y costos unitarios** (USD/ave, USD/kg vivo, USD/kg producto, USD/día, USD/mes) **solo si todos los conceptos tienen costo Y la arquitectura es COSTEABLE** (§8); si no, "NO DISPONIBLE" (tests E03, E04, X06).
+- Los montos con precio se publican como `MONTO_PARCIAL_CON_PRECIO_USD_ANIO` con `COMPARABILIDAD = MONTOS_PARCIALES_E4_NO_COMPARABLES` (test X13): no son resultado económico del escenario ni sirven para comparar arquitecturas.
 - Monto con precio partido en **variable / fijo / sin clasificar** (base del break-even posterior).
 - `CAPITAL_TRABAJO` del escenario (hoy PENDIENTE en todos).
 
@@ -104,4 +105,19 @@ Por escenario y módulo ([`escenarios_opex.csv`](escenarios_opex.csv)):
 
 ## 7. Ejecución
 
-Ver [`README.md`](README.md). Los tests (62) y las mutaciones (11) están en el mismo script; si un test falla, no se escriben salidas.
+Ver [`README.md`](README.md). Los tests (78) y las mutaciones (14) están en el mismo script; si un test falla, no se escriben salidas.
+
+## 8. Completitud de arquitecturas (v1.1)
+
+**Principio:** una arquitectura con un módulo propio no puede aparecer como OPEX completo si al módulo le falta algún bloque operativo material. Un costo sin driver o sin precio queda PENDIENTE, nunca 0 ni ausente.
+
+1. Cada fila del registro tiene `MODULO_ARQ` (FAENA_PROPIA, FAENA_FACON, GRANJAS_PROPIAS, GRANJAS_INTEGRADAS, POLLITO_COMPRADO, INCUBACION_PROPIA, ALIMENTO_COMPRADO, ALIMENTO_FACON, PLANTA_ALIMENTO_PROPIA, TRATAMIENTO_SUBPRODUCTOS_PROPIO, ESTRUCTURA, REPRODUCTORAS_FUTURO, RENDERING_FUTURO) y `BLOQUE` operativo (RRHH, energía, térmico, agua, mantenimiento, consumibles, limpieza, logística, materia prima, sanidad, residuos, calidad, seguros…).
+2. `BLOQUES_REQUERIDOS` (en el código) lista los bloques materiales de cada módulo. La matriz [`completitud_arquitecturas_opex.csv`](completitud_arquitecturas_opex.csv) informa por escenario y módulo: driver físico, cantidad y precio; estado de cada bloque (COMPLETO = con precio; PARCIAL = algo dimensionado o con precio; PENDIENTE = nada; NO_APLICA); bloques ausentes; coberturas y estado del módulo.
+3. Tres coberturas distintas:
+   - **ESTRUCTURAL** = bloques representados ÷ requeridos ("sé qué costos existen"): hoy 100 % en todas las arquitecturas.
+   - **FÍSICA** = bloques con todas sus cantidades ÷ requeridos: 43–73 %.
+   - **COSTEO** = bloques con todo su precio ÷ requeridos ("sé cuánto cuestan"): 0–10 %. Es distinta de la cobertura de costeo por conceptos (0,5–2,6 %).
+4. Banderas de la arquitectura (módulos de la etapa inicial; los FUTUROS deben tener estructura pero no bloquean): `ARQUITECTURA_ESTRUCTURA_COMPLETA`, `ARQUITECTURA_OPERATIVAMENTE_COMPLETA` (todos los bloques con cantidades) y `ARQUITECTURA_COSTEABLE` (además, todos con precio y sin aportantes pendientes). Una arquitectura puede estar físicamente modelada y no ser costeable. **Hoy ninguna es costeable.**
+5. **Universos que no se mezclan:** utilities por universo (`UNIVERSO_UTILITIES`: FAENA_09C, INCUBACION, PLANTA_ALIMENTO, GRANJAS, TRATAMIENTO_SUBPRODUCTOS, RENDERING, REPRODUCTORAS; 09C solo vale para la planta de faena, test X04) y RRHH por universo (`UNIVERSO_RRHH`, ver [`costos_rrhh.md`](costos_rrhh.md); test X05).
+
+Omisiones estructurales corregidas en la auditoría: bloque de materias primas del façon sin variante (C0, C2); calidad/bioseguridad de incubación; agua, movimientos internos y diferencial a planta de la fábrica de alimento; análisis/veterinaria de granjas propias; energía del tratamiento básico de subproductos; RRHH, térmico, agua, tratamiento, residuos y logística del rendering; RRHH, agua, mantenimiento, residuos y logística de reproductoras; FTE de 14A presentado como dotación total; "13 meses" como precio E4.

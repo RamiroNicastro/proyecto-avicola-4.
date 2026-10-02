@@ -6,16 +6,16 @@
 
 | Concepto | ID | Cantidad | Estado |
 |---|---|---|---|
-| Análisis microbiológicos (laboratorio externo) | CAL-ANA-MICRO | análisis/año | SIN_CANTIDAD: plan de muestreo PENDIENTE (DPV-17-12) |
-| Análisis de agua de proceso | CAL-ANA-AGUA | análisis/año | SIN_CANTIDAD (solo planta propia) |
+| Análisis microbiológicos (laboratorio externo) | CAL-ANA-MICRO | análisis/año | PENDIENTE_CANTIDAD: plan de muestreo PENDIENTE (DPV-17-12) |
+| Análisis de agua de proceso | CAL-ANA-AGUA | análisis/año | PENDIENTE_CANTIDAD (solo planta propia) |
 | Insumos de laboratorio propio | CAL-LAB-INS | 1 año | Sin precio (solo con laboratorio propio; el equipamiento está en CAPEX) |
 | Certificaciones | CAL-CERT | 1 año | Sin precio |
 | Auditorías | CAL-AUD | 1 año | Sin precio |
 | Documentación | CAL-DOC | 1 año | Sin precio |
 | Trazabilidad (software) | CAL-TRAZ | 12 meses | Sin precio |
-| Tasas y aranceles SENASA | CAL-SENASA | — | **SIN_CANTIDAD**: no se inventa el costo de inspección; estructura (por ave, por kg, fija) y montos PENDIENTES (DPV-101) |
-| Análisis de alimento (planta propia) | ALI-C-ANA | — | SIN_CANTIDAD |
-| Análisis de vuelco | EF-ANA | — | SIN_CANTIDAD |
+| Tasas y aranceles SENASA | CAL-SENASA | — | **PENDIENTE_CANTIDAD**: no se inventa el costo de inspección; estructura (por ave, por kg, fija) y montos PENDIENTES (DPV-101) |
+| Análisis de alimento (planta propia) | ALI-C-ANA | — | PENDIENTE_CANTIDAD |
+| Análisis de vuelco | EF-ANA | — | PENDIENTE_CANTIDAD |
 
 El **personal** de calidad (QC, jefe de calidad, APPCC, trazabilidad, analistas de laboratorio propio, control de calidad en el façon) está en costo laboral (14A). La inspección oficial está fuera de la empresa en 14A; su eventual costo para el establecimiento es CAL-SENASA. Con laboratorio externo, el puesto de 14A remite a CAL-ANA-MICRO (sin doble conteo).
 

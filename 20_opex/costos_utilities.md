@@ -20,7 +20,7 @@ C3/CF (perfil P2, más congelado): 627.226 / 1.254.452 / 2.508.904 / 5.017.808 k
 | Concepto | ID | Driver | Estado |
 |---|---|---|---|
 | Energía activa | UT-ELE-KWH | kWh/año (09C) | Tarifa industrial **no asumida** (DPV-17-05) |
-| Potencia / demanda contratada | UT-ELE-POT | kW·mes | **SIN_CANTIDAD**: el pico no está dimensionado (DPV-095). Nunca se multiplican kW por la tarifa de kWh |
+| Potencia / demanda contratada | UT-ELE-POT | kW·mes | **PENDIENTE_CANTIDAD**: el pico no está dimensionado (DPV-095). Nunca se multiplican kW por la tarifa de kWh |
 | Cargo fijo | UT-ELE-FIJO | 12 meses | Sin precio |
 
 ## 3. Térmico
@@ -44,7 +44,21 @@ Arquitectura de frío C (congelado tercerizado, y C0): UT-FRIO-TER = t congelada
 | Químicos | EF-QUIM | m³ de efluente | Sin precio; tecnología PENDIENTE (DEC-043) |
 | Energía | — | incluida en kWh (tratamiento aerobio de 09C) | INCLUIDO |
 | Personal | COSTO_LABORAL | — | 14A no tiene operador de efluentes → FTE PENDIENTE (puede estar cubierto por mantenimiento) |
-| Análisis de vuelco | EF-ANA | análisis | SIN_CANTIDAD (frecuencia de la autoridad) |
-| Lodos | EF-LODO | t | SIN_CANTIDAD: lodos no dimensionados en 09C (DPV-072) |
+| Análisis de vuelco | EF-ANA | análisis | PENDIENTE_CANTIDAD (frecuencia de la autoridad) |
+| Lodos | EF-LODO | t | PENDIENTE_CANTIDAD: lodos no dimensionados en 09C (DPV-072) |
 | Canon de vuelco | EF-CANON | m³ | Sin precio (jurisdicción) |
 | Mantenimiento | MAN-UTIL-* | — | Método PENDIENTE |
+
+## 7. Utilities por universo (auditoría v1.1)
+
+| Universo (`UNIVERSO_UTILITIES`) | Conceptos | Cantidades |
+|---|---|---|
+| **FAENA_09C** | UT-*, EF-*, energías de frío/bombeo/efluentes incluidas | 09C (solo planta de faena) |
+| INCUBACION | INC-OP-ENE (incl. HVAC), INC-OP-AGUA | PENDIENTE |
+| PLANTA_ALIMENTO | ALI-C-ENE, ALI-C-TER, ALI-C-AGUA | PENDIENTE (DPV-158) |
+| GRANJAS | PP-ENE, PP-GAS, PP-AGUA | agua de bebida de 03; resto PENDIENTE (DPV-052) |
+| TRATAMIENTO_SUBPRODUCTOS | SUB-TRAT-ENE | PENDIENTE |
+| RENDERING (FUTURO) | SUB-REN-ENE, SUB-REN-TER, SUB-REN-AGUA | PENDIENTE |
+| REPRODUCTORAS (FUTURO) | REP-ENE, REP-AGUA | PENDIENTE |
+
+09C modeló la planta de faena: sus kWh, m³ y energía térmica **no** se extienden a la empresa integrada. El mapa de drivers lo declara en cada driver de 09C y el test X04 verifica que ningún driver de 09C se use fuera de FAENA_PROPIA (mutación M12: la incubadora con el kWh de faena es detectada).
