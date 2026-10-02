@@ -4,6 +4,8 @@
 
 **Relacionado:** `03_produccion_primaria`, `04_balance_masa`, `14_alimento_balanceado` (modelo físico del upstream), DPV-006, DPV-047, DEC-023.
 
+**Reconciliación (2026-10-02):** los IDs provisionales de esta carpeta se reemplazaron por los definitivos de los registros centrales (mapa en [`../00_gestion_proyecto/reconciliacion_sesiones_14.md`](../00_gestion_proyecto/reconciliacion_sesiones_14.md) §2); ninguna decisión se cerró y la lógica del modelo no cambió.
+
 **Contenido (2026-09-30):** [`cuestionario_incubadoras.md`](cuestionario_incubadoras.md) — preguntas para incubadoras y proveedores de pollito BB (capacidad, disponibilidad, genética, calidad, vacunación, precio, volumen mínimo, contratos, expansión) y tabla comparativa. No se asume incubadora propia (SUP-034).
 
 ## Contenido (v1.1, 2026-10-01; sesión 14B con auditoría de sincronización)

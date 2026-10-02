@@ -30,7 +30,7 @@ QUÉ NO HACE
   No calcula salarios, cargas ni OPEX (plantilla con costos VACÍOS). No elige escala, turnos, automatización,
   modalidad de limpieza, mantenimiento ni flota. No calcula horas extra: informa la BRECHA entre presencia
   requerida y jornada de referencia, que puede resolverse con turnos, relevos, escalonamiento, personal
-  adicional, horas extraordinarias u otra organización (DPV-14A-01). No modifica los modelos que importa.
+  adicional, horas extraordinarias u otra organización (DPV-146). No modifica los modelos que importa.
   Ninguna productividad es un dato argentino medido: coeficientes [SUPUESTO] de rango (alta / media / baja).
 
 FÓRMULAS (r = E / h, ritmo de la línea en aves/h; n_c = cuadrillas; J = jornada de referencia 8 h)
@@ -70,7 +70,8 @@ TESTS: R01–R14 de v1.0 adaptados a las nuevas unidades + R15–R23 de la audit
   distintas, cuadrilla parcial ≠ FTE, tercerización conserva horas, sin horas extra automáticas, cobertura vs
   carga, layout recibe pico, KPI con denominador, plantilla sin salarios, SENASA fuera de la empresa).
 
-IDs: SUP-14A-01..18, DPV-14A-##, DEC-14A-##, FTE-14A-### (provisionales; actualizaciones_gestion_14A.md).
+IDs: SUP-124 a SUP-141 y demás registros centrales (00_gestion_proyecto/; mapa de IDs provisionales
+14A → definitivos en 00_gestion_proyecto/reconciliacion_sesiones_14.md, 2026-10-02).
 """
 
 from __future__ import annotations
@@ -119,7 +120,7 @@ DRIVERS = ("produccion", "activos", "casi_fijo", "estrategia")
 FRANJAS_EN_SITIO = ("linea", "tecnica", "post", "diurna")
 PENDIENTE = None
 # Sensibilidad del factor de cobertura de nómina: SÓLO para mostrar un rango de headcount (no validado)
-FACTOR_COBERTURA_SENSIBILIDAD = (1.08, 1.18)                   # SUP-14A-03 [SUPUESTO DE SENSIBILIDAD]
+FACTOR_COBERTURA_SENSIBILIDAD = (1.08, 1.18)                   # SUP-126 [SUPUESTO DE SENSIBILIDAD]
 
 
 class ErrorRRHH(Exception):
@@ -135,10 +136,10 @@ def T(alta, media, baja):
 # 1. PARÁMETROS — todos [SUPUESTO] de rango o [PVDP]; ninguno es dato argentino medido
 # ---------------------------------------------------------------------------
 P = {
-    # --- jornada (SUP-14A-02; DPV-082, DPV-14A-01)
-    "jornada_referencia_h": 8.0,          # [PVDP] base del FTE y de la brecha (FTE-14A-001); convenio PENDIENTE
+    # --- jornada (SUP-125; DPV-082, DPV-146)
+    "jornada_referencia_h": 8.0,          # [PVDP] base del FTE y de la brecha (FTE-298); convenio PENDIENTE
     "solape_cambio_turno_h": 0.25,        # [SUPUESTO] traspaso entre cuadrillas
-    # --- operación industrial: puestos por 1.000 aves/h, POR TAREA (SUP-14A-04)
+    # --- operación industrial: puestos por 1.000 aves/h, POR TAREA (SUP-127)
     "colgado_por_1000": T(1000 / 1380, 1.0, 1000 / 690),   # FTE-219 [PVDP·débil] 23 aves/min; prudente 50 % (SUP-063)
     "descarga_por_1000": {"M": T(0.6, 0.8, 1.0), "S": T(0.4, 0.5, 0.7), "A": T(0.2, 0.3, 0.4)},
     "faena_por_1000": {"M": T(1.6, 2.2, 3.0), "Mc": T(1.2, 1.6, 2.2), "S": T(0.6, 0.9, 1.3), "A": T(0.2, 0.5, 0.8)},
@@ -148,23 +149,23 @@ P = {
                        "A": T(1.0, 2.2, 3.5)},
     "evisc_fijo": {"M": 1, "S": 1, "A": 2},
     "clasif_por_1000": {"M": T(1.0, 1.5, 2.0), "S": T(0.5, 0.8, 1.0), "A": T(0.2, 0.3, 0.5)},
-    # kg/persona-h (base: kg que entran a la operación, balance v1.1) — sin fuente (SUP-14A-05)
+    # kg/persona-h (base: kg que entran a la operación, balance v1.1) — sin fuente (SUP-128)
     "trozado_kg_h": {"M": T(250, 180, 120), "Mc": T(300, 220, 150), "S": T(450, 320, 220), "A": T(1500, 800, 500)},
     "deshuese_kg_h": {"M": T(70, 50, 35), "S": T(100, 75, 55), "A": T(350, 250, 180)},
     "empaque_kg_h": {"M": T(350, 250, 170), "Mc": T(450, 330, 230), "S": T(700, 500, 350), "A": T(2000, 1100, 700)},
     "camaras_t_persona_turno": T(25.0, 18.0, 12.0),
     "subprod_t_persona_turno": {"M": T(6.0, 4.0, 3.0), "S": T(8.0, 6.0, 4.0), "A": T(15.0, 10.0, 8.0)},
     "limpieza_operativa_por_1000": T(0.3, 0.5, 0.8),
-    # --- limpieza post-producción (SUP-14A-06; DPV-091). Factor por automatización y fracción híbrida =
+    # --- limpieza post-producción (SUP-129; DPV-091). Factor por automatización y fracción híbrida =
     #     [SUPUESTO DE SENSIBILIDAD] genéricos (no son tareas medidas)
     "limpieza_m2_persona_h": T(60.0, 40.0, 25.0),
     "limpieza_factor_auto": {"manual": 1.0, "mecanizado": 1.0, "semiautomatico": 1.1, "automatico": 1.25},
     "limpieza_hibrida_interna": 0.30,
-    # --- supervisión (SUP-14A-07)
+    # --- supervisión (SUP-130)
     "span_supervision": T(30, 22, 15),
-    # --- calidad: control operativo QC por cuadrilla (SUP-14A-08)
+    # --- calidad: control operativo QC por cuadrilla (SUP-131)
     "control_calidad_por_1000": T(0.6, 0.8, 1.2),
-    # --- mantenimiento: CARGA por activos (SUP-14A-09) y COBERTURA por política (SUP-14A-16)
+    # --- mantenimiento: CARGA por activos (SUP-132) y COBERTURA por política (SUP-139)
     "mant_h_semana_equipo": {"M": T(0.0, 0.0, 0.0), "Mc": T(0.5, 0.75, 1.5), "S": T(0.75, 1.5, 3.0),
                              "A": T(1.5, 3.0, 6.0)},
     "mant_peso_criticidad": {"CRÍTICO": 1.5, "IMPORTANTE": 1.0, "SECUNDARIO": 0.5},
@@ -174,13 +175,13 @@ P = {
     # (NO es requisito técnico universal): base 1; +1 desde 5.000; +1 desde 10.000; +1 si automático ≥ 10.000
     "cobertura_umbrales": (5000, 10000),
     "cobertura_guardia_fuera_produccion": 1,
-    # --- producción primaria (coordinación; SUP-14A-10)
+    # --- producción primaria (coordinación; SUP-133)
     "granjas_por_tecnico": T(20, 15, 10),
     "plazas_granja": 30000,
-    # --- logística (SUP-14A-11)
+    # --- logística (SUP-134)
     "aves_camion_escenario": 5500,                                # SUP-033 (sin fuente), capacidad de ESCENARIO
     "radio_km_escenario": 100,
-    # --- RR. HH. (SUP-14A-12): 1 cada N puestos equivalentes internos
+    # --- RR. HH. (SUP-135): 1 cada N puestos equivalentes internos
     "puestos_por_rrhh": T(150, 120, 90),
 }
 
@@ -200,9 +201,9 @@ ESTRUCTURA = {
     "trazabilidad": ("Trazabilidad y registros", "soporte_industrial", "soporte", "oficinas",
                      {"S": 0, "M": 0.5, "L": 1, "XL": 1}, "convenio_pendiente", "En 2.500 la cubre el jefe de calidad"),
     "hys": ("Higiene y seguridad laboral (interno)", "soporte_industrial", "soporte", "transversal",
-            {"S": 0, "M": 0, "L": 1, "XL": 1}, "fuera_convenio", "Servicio externo en S y M (PENDIENTE, DPV-14A-07)"),
+            {"S": 0, "M": 0, "L": 1, "XL": 1}, "fuera_convenio", "Servicio externo en S y M (PENDIENTE, DPV-149)"),
     "lavanderia": ("Lavandería / ropería por zona", "soporte_industrial", "soporte", "personal",
-                   {"S": 0.5, "M": 1, "L": 1, "XL": 2}, "convenio_pendiente", "Alternativa tercerizada (DEC-14A-07)"),
+                   {"S": 0.5, "M": 1, "L": 1, "XL": 2}, "convenio_pendiente", "Alternativa tercerizada (DEC-073)"),
     "planificacion_trafico": ("Planificación y tráfico", "logistica", "soporte", "oficinas",
                               {"S": 0.5, "M": 1, "L": 1, "XL": 2}, "fuera_convenio", ""),
     "deposito_insumos": ("Recepción de insumos y depósito (envases, químicos)", "logistica", "soporte", "deposito",
@@ -241,7 +242,7 @@ PRIMARIA_COMPRA = {
 }
 LAB_PROPIO = {"S": 1, "M": 1, "L": 2, "XL": 3}
 
-# Cómo escala cada función (SUP-14A-17): produccion · activos · casi_fijo · estrategia
+# Cómo escala cada función (SUP-140): produccion · activos · casi_fijo · estrategia
 DRIVER = {
     **{k: "produccion" for k in ("colgado", "descarga", "faena", "evisceracion", "enfriamiento", "clasificacion",
                                  "trozado", "deshuese", "empaque", "camaras_expedicion", "subproductos",
@@ -301,7 +302,7 @@ def banda(E):
 
 
 def nivel_area(area, auto):
-    """Nivel de automatización de cada TAREA bajo el escenario (09A/08 §1). SUP-14A-14."""
+    """Nivel de automatización de cada TAREA bajo el escenario (09A/08 §1). SUP-137."""
     t = NIVEL_OBJETIVO[auto]
     tabla = {
         "descarga": ("M", "M", "S", "A"), "faena": ("M", "Mc", "S", "A"), "evisceracion": ("M", "M", "S", "A"),
@@ -393,7 +394,7 @@ def presente(fila, E):
 
 
 def carga_mantenimiento(E, ritmo, auto, prod):
-    """Horas-técnico por semana por activos (08_maquinaria/matriz_equipos.csv). [ESTIMACIÓN] con SUP-14A-09."""
+    """Horas-técnico por semana por activos (08_maquinaria/matriz_equipos.csv). [ESTIMACIÓN] con SUP-132."""
     total, n_eq, por_nivel = 0.0, 0, {"M": 0, "Mc": 0, "S": 0, "A": 0}
     for f in equipos():
         if not presente(f, E):
@@ -411,7 +412,7 @@ def carga_mantenimiento(E, ritmo, auto, prod):
 
 
 def tecnicos_cobertura(E, auto):
-    """POLÍTICA DE COBERTURA DE REFERENCIA (SUP-14A-16): técnicos presentes mientras funcionan los activos.
+    """POLÍTICA DE COBERTURA DE REFERENCIA (SUP-139): técnicos presentes mientras funcionan los activos.
     No es requisito técnico universal."""
     u1, u2 = P["cobertura_umbrales"]
     return 1 + (E >= u1) + (E >= u2) + (auto == "automatico" and E >= u2)
@@ -447,7 +448,7 @@ def turnos_y_jornada(e):
             alertas.append(f"INCOMPATIBILIDAD_JORNADA(presencia {presencia:.2f} h > jornada de referencia {J:.0f} h: "
                            "requiere organización adicional)")
         else:
-            alertas.append(f"JORNADA_EXTENDIDA_A_VALIDAR(presencia {presencia:.2f} h; DPV-14A-01)")
+            alertas.append(f"JORNADA_EXTENDIDA_A_VALIDAR(presencia {presencia:.2f} h; DPV-146)")
     elif modo == "extendido":
         alertas.append("NOTA_EXTENDIDO_INNECESARIO(cabe en la jornada de referencia)")
     return {
@@ -546,7 +547,7 @@ def calcular(entradas=None):
          max(1, techo(t_sol_dia / n_c / P["subprod_t_persona_turno"][ns][pr])), f"{t_sol_dia:.1f} t/día; nivel {ns}"),
     ]
     for clave, nombre, zona, pt, base in ops:
-        linea(clave, nombre, "operacion_industrial", "directo", zona, pt, base=base, ref="SUP-14A-04/05",
+        linea(clave, nombre, "operacion_industrial", "directo", zona, pt, base=base, ref="SUP-127/128",
               interno=planta)
     directos_turno = sum(o[3] for o in ops) if planta else 0
 
@@ -554,7 +555,7 @@ def calcular(entradas=None):
     if planta:
         linea("limpieza_operativa", "Limpieza operativa en turno", "operacion_industrial", "soporte", "transversal",
               techo(1 + P["limpieza_operativa_por_1000"][pr] * r / 1000), base="durante producción; siempre interna",
-              ref="SUP-14A-06")
+              ref="SUP-129")
         m2 = m2_proceso(E, h, cfg, AUTO_12C[auto], AREA_12C_POR_PROD[pr])
         ph_req = m2 * P["limpieza_factor_auto"][auto] / P["limpieza_m2_persona_h"][pr]
         vent_l = tj["t_limpieza"] + tj["t_sanitizacion"]
@@ -569,7 +570,7 @@ def calcular(entradas=None):
                 fte_tercerizado=cu_ext * vent_l / J, horas_persona_dia=cuadrilla * vent_l,
                 horas_contratadas_dia=cu_ext * vent_l,
                 contrato="convenio_pendiente" if cu_int else "servicio_tercerizado",
-                base=f"{m2:.0f} m² proceso (12C); ventana {vent_l:.2f} h; {e['limpieza']}", ref="SUP-14A-06; DPV-091")
+                base=f"{m2:.0f} m² proceso (12C); ventana {vent_l:.2f} h; {e['limpieza']}", ref="SUP-129; DPV-091")
         estructura("supervisor_saneamiento", "Supervisor de saneamiento / verificación POES", "operacion_industrial",
                    "supervision", "transversal", 1 if (cu_int >= 6 or e["limpieza"] != "propia") else 0,
                    nota="interno en toda modalidad (verificación)")
@@ -578,10 +579,10 @@ def calcular(entradas=None):
     if planta:
         sup_c = max(1, techo(directos_turno / P["span_supervision"][pr]))
         linea("supervisores_linea", "Supervisores de línea", "operacion_industrial", "supervision", "transversal",
-              sup_c, ref="SUP-14A-07", contrato="fuera_convenio")
+              sup_c, ref="SUP-130", contrato="fuera_convenio")
         if n_c == 2:
             linea("jefes_turno", "Jefe de turno", "operacion_industrial", "supervision", "transversal", 1,
-                  ref="SUP-14A-07", contrato="fuera_convenio")
+                  ref="SUP-130", contrato="fuera_convenio")
         x = ESTRUCTURA["jefe_produccion"]
         estructura("jefe_produccion", *x[:4], x[4][b], contrato=x[5], nota=x[6])
     else:
@@ -590,7 +591,7 @@ def calcular(entradas=None):
     # ---------------- 5.4 Calidad (empresa) e inspección oficial (SENASA, separada) ----------------
     if planta:
         linea("control_calidad", "Control de calidad operativo (QC)", "soporte_industrial", "soporte", "transversal",
-              techo(1 + P["control_calidad_por_1000"][pr] * r / 1000), ref="SUP-14A-08")
+              techo(1 + P["control_calidad_por_1000"][pr] * r / 1000), ref="SUP-131")
     else:
         estructura("control_calidad_facon", "QC propio en la planta del façonier (supervisión de terceros)",
                    "soporte_industrial", "soporte", "externo_facon", 1 if b in ("S", "M") else 2,
@@ -612,7 +613,7 @@ def calcular(entradas=None):
             fte_tercerizado=PENDIENTE, horas_persona_dia=PENDIENTE, horas_contratadas_dia=PENDIENTE,
             estado="PENDIENTE", contrato="oficial",
             base="inspectores por velocidad de línea sin norma leída; tasa o cargo a la empresa sin verificar",
-            ref="DPV-090; DPV-14A-05")
+            ref="DPV-090; DPV-101")
     if planta:
         pendientes.append("inspeccion_oficial")
 
@@ -645,7 +646,7 @@ def calcular(entradas=None):
                 contrato="convenio_pendiente" if fi else "servicio_tercerizado",
                 base=(f"{n_eq} equipos ({por_niv['Mc']} Mc, {por_niv['S']} S, {por_niv['A']} A); carga {h_sem:.0f} h/sem "
                       f"= {fte_carga:.2f} FTE; cobertura {simult} simultáneo(s) = {fte_cob:.2f} FTE; {modo_m}"),
-                ref="SUP-14A-09; SUP-14A-16")
+                ref="SUP-132; SUP-139")
         x = ESTRUCTURA["jefe_mantenimiento"]
         estructura("jefe_mantenimiento", x[0] if modo_m != "tercerizado" else "Coordinador de mantenimiento y contratos",
                    *x[1:4], x[4][b] if modo_m != "tercerizado" else max(x[4][b], 0.5), nota="función retenida")
@@ -660,7 +661,7 @@ def calcular(entradas=None):
             categoria="soporte_industrial", grupo="soporte", zona="transversal", franja="sin_presencia",
             modalidad="externo", fte_tercerizado=PENDIENTE, horas_persona_dia=PENDIENTE,
             horas_contratadas_dia=PENDIENTE, estado="PENDIENTE", contrato="servicio_tercerizado",
-            base="horas-profesional según norma no leída", ref="DPV-14A-07; FTE-14A-004")
+            base="horas-profesional según norma no leída", ref="DPV-149; FTE-301")
     pendientes.append("hys_externo")
 
     # ---------------- 5.7 Logística ----------------
@@ -686,7 +687,7 @@ def calcular(entradas=None):
                 fte_tercerizado=0.0 if fp else hp / J, horas_persona_dia=hp, horas_contratadas_dia=0.0 if fp else hp,
                 contrato="CCT 40/89 [PVDP]" if fp else "servicio_tercerizado",
                 base=f"flota mínima {fl}; {hp:.1f} h-camión/día (12B; {ac} aves/camión de ESCENARIO)",
-                ref="SUP-033; SUP-14A-11")
+                ref="SUP-033; SUP-134")
     cap, dist = e["cap_camion_producto_t"], e["dist_producto_km"]
     cd = logistica_producto(E, dias, cfg, cap, dist) if (cap and dist) else None
     if cd is None:
@@ -705,11 +706,11 @@ def calcular(entradas=None):
                 horas_presencia=hp / n_ch, puestos_equivalentes=n_ch if fp else 0.0,
                 fte_interno=hp / J if fp else 0.0, fte_tercerizado=0.0 if fp else hp / J, horas_persona_dia=hp,
                 horas_contratadas_dia=0.0 if fp else hp, contrato="CCT 40/89 [PVDP]",
-                base=f"{cd:.2f} camión-día (12B, {cap} t y {dist} km de ESCENARIO)", ref="SUP-14A-11")
+                base=f"{cd:.2f} camión-día (12B, {cap} t y {dist} km de ESCENARIO)", ref="SUP-134")
     _puesto(lst, clave="captura", puesto="Cuadrillas de captura y carga en granja", categoria="logistica",
             grupo="soporte", zona="granja", franja="campo", modalidad="externo", fte_tercerizado=PENDIENTE,
             horas_persona_dia=PENDIENTE, horas_contratadas_dia=PENDIENTE, estado="PENDIENTE",
-            contrato="servicio_tercerizado", base="función del integrado o contratista", ref="DPV-14A-09")
+            contrato="servicio_tercerizado", base="función del integrado o contratista", ref="DPV-054")
     pendientes.append("captura")
 
     # ---------------- 5.8 Producción primaria (sólo coordinación) ----------------
@@ -829,7 +830,7 @@ def agregar(lst, e, tj, k, pendientes):
 
 def matriz_presencia(lst, tj):
     """MATRIZ CONCEPTUAL DE PRESENCIA: puesto → ingreso → duración → salida → franja (h desde el inicio de la
-    preparación). Sólo puestos en sitio (internos y terceros en sitio). SUP-14A-18."""
+    preparación). Sólo puestos en sitio (internos y terceros en sitio). SUP-141."""
     filas = []
     J = tj["J"]
     for p in lst:
@@ -1049,7 +1050,7 @@ def filas_plantilla(R, nombre):
                     "oficial" if p["grupo"] == "oficial" else "servicio_tercerizado"),
                 **{c: "" for c in CAMPOS_COSTO},
                 "MONEDA": "USD", "TIPO_CAMBIO_FECHA_FUENTE": "", "FUENTE": "",
-                "ESTADO": "COSTO PENDIENTE DE VALIDACIÓN (DPV-14A-03)" + ("; dotación PENDIENTE" if fte is None else ""),
+                "ESTADO": "COSTO PENDIENTE DE VALIDACIÓN (DPV-148)" + ("; dotación PENDIENTE" if fte is None else ""),
             })
     return filas
 

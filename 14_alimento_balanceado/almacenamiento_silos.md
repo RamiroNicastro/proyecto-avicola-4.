@@ -4,7 +4,7 @@
 
 > **Dos preguntas distintas, dos secciones distintas.** (1) **Silos:** qué volumen de almacenamiento debe **tener instalado** la empresa en cada arquitectura (§1–4). (2) **Inventarios:** cuánto **material** hay en la cadena, de qué categoría, **de quién es** y **dónde está** (§5). La v1.0 presentaba juntos 106 / 583 / 653 t (compra / façon / planta propia a 10.000 aves/día) como "stock total": eran sumas de categorías distintas (alimento terminado + granos) y de universos distintos (propiedad de la empresa, sin el stock que mantiene el tercero). **Esa comparación se retira.**
 >
-> **Solo desde variables.** Consumo diario, días de stock, densidad aparente y número de materias primas. **No hay "silo estándar"**: el número de silos queda PENDIENTE (test U06). **Todos los días de stock son supuestos hasta validación** (SUP-14B-10).
+> **Solo desde variables.** Consumo diario, días de stock, densidad aparente y número de materias primas. **No hay "silo estándar"**: el número de silos queda PENDIENTE (test U06). **Todos los días de stock son supuestos hasta validación** (SUP-150).
 
 ---
 
@@ -13,14 +13,14 @@
 ```
 t almacenadas_i      = consumo_t_día_i × días_de_stock_i
 m³ útiles_i          = t almacenadas_i / densidad aparente_i (t/m³)
-m³ brutos_i          = m³ útiles_i / factor de llenado (0,90; SUP-14B-09)
+m³ brutos_i          = m³ útiles_i / factor de llenado (0,90; SUP-149)
 silos mínimos        = n.º de materias primas a granel + n.º de tipos de alimento terminado
 n.º de silos_i       = techo(m³ brutos_i / volumen unitario)  → PENDIENTE (sin volumen unitario)
 ```
 
 - **Consumo diario:** alimento entregado (semana plena / 7) de [`demanda_alimento.md`](demanda_alimento.md); por categoría: maíz 60 %, harina de soja 30 % (SUP-032), micros-aceite-otros 10 % (resto ilustrativo).
 - **Días de stock (supuestos):** maíz 7 / **15** / 30; harina de soja 7 / **15**; micros-aceite-otros 15 / **30** / 60; alimento terminado en planta 1 / **2** / 3; silos de granja 2 / **3** / 5 (en negrita, el valor de parámetro usado en las tablas). Son decisiones de diseño y de compra, no datos.
-- **Densidad aparente:** maíz ~0,72 t/m³; harina de soja 0,56–0,67; alimento terminado 0,55 / 0,60 / 0,65 (FTE-14B-003 `[PVDP]`; DPV-14B-04). Los micros, aceite y otros se almacenan en bolsas, *big bags* o tanques: m³ no calculados.
+- **Densidad aparente:** maíz ~0,72 t/m³; harina de soja 0,56–0,67; alimento terminado 0,55 / 0,60 / 0,65 (FTE-307 `[PVDP]`; DPV-156). Los micros, aceite y otros se almacenan en bolsas, *big bags* o tanques: m³ no calculados.
 
 ## 2. Silos que cada arquitectura obliga a tener instalados
 
@@ -78,7 +78,7 @@ Los días de stock mueven el volumen **más de 3 veces** para la misma escala (t
 | Material en proceso | Tercero (PENDIENTE) | Propio, en el elaborador (PENDIENTE) | Tercero (PENDIENTE) | Propio (PENDIENTE) |
 | **Qué queda físicamente en la operación de la empresa** | Solo el alimento en silos de granja | Solo el alimento en silos de granja (el resto está en el elaborador o acopio) | Solo el alimento en silos de granja | Todo |
 
-Quién compra las materias primas en el façon y quién mantiene los stocks es una **condición contractual a relevar** (DPV-14B-03): el modelo mantiene B1 y B2 como variantes separadas.
+Quién compra las materias primas en el façon y quién mantiene los stocks es una **condición contractual a relevar** (DPV-155): el modelo mantiene B1 y B2 como variantes separadas.
 
 ### 5.3 Tabla de inventario: stock propio / stock en tercero (referencial), t (medio, 5 d; días de parámetro)
 

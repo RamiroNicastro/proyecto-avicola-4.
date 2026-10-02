@@ -4,6 +4,8 @@
 
 **Relacionado:** `03_produccion_primaria`, `04_balance_masa`, `13_logistica`, `15_incubacion`, `20_opex`, `23_plan_expansion`.
 
+**Reconciliación (2026-10-02):** los IDs provisionales de esta carpeta se reemplazaron por los definitivos de los registros centrales (mapa en [`../00_gestion_proyecto/reconciliacion_sesiones_14.md`](../00_gestion_proyecto/reconciliacion_sesiones_14.md) §2); ninguna decisión se cerró y la lógica del modelo no cambió.
+
 ## Contenido (v1.1, 2026-10-01; sesión 14B con auditoría de sincronización e inventarios)
 
 | Archivo | Contenido |
@@ -17,8 +19,8 @@
 | [`guia_ramiro.md`](guia_ramiro.md) | Explicación sin jerga y preguntas para fábricas y proveedores de grano |
 | [`modelo_upstream.py`](modelo_upstream.py) | Modelo físico (importa `03` v1.1): `python3 modelo_upstream.py [--tablas]`; 21 tests U01–U21 |
 | [`escenarios_upstream.csv`](escenarios_upstream.csv) | Salidas en formato largo (15.998 filas; 1.054 PENDIENTES con valor vacío). **Sin precios** |
-| [`actualizaciones_gestion_14B.md`](actualizaciones_gestion_14B.md) | Propuestas para los registros centrales (IDs provisionales 14B) |
-| [`fuentes_14B.csv`](fuentes_14B.csv) | Fuentes provisionales FTE-14B-001 a 005 (todas `[PVDP]`) |
+| [`actualizaciones_gestion_14B.md`](actualizaciones_gestion_14B.md) | **Archivo histórico**: propuestas de la sesión 14B, ya integradas en `00_gestion_proyecto` (mapa de IDs en [`../00_gestion_proyecto/reconciliacion_sesiones_14.md`](../00_gestion_proyecto/reconciliacion_sesiones_14.md) §2) |
+| [`fuentes_14B.csv`](fuentes_14B.csv) | **Histórico, no activo** desde la reconciliación de las sesiones 14 (2026-10-02): las 5 fuentes están en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) (FTE-305 a FTE-309, todas `[PVDP]`) |
 
 ### Columnas de `escenarios_upstream.csv`
 

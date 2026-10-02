@@ -6,6 +6,8 @@
 > **Qué es este plan:** la priorización de los 115 datos por validar (DPV-001 a DPV-115, sin cambiar su numeración), los instrumentos para salir a buscarlos y el orden de trabajo.
 > **Qué no es:** no investiga tecnologías nuevas, no construye modelos, no elige escala, localización, proveedor ni maquinaria, no solicita cotizaciones, no calcula CAPEX ni OPEX. **Ningún DPV se marca validado** y **ninguna decisión se cierra**.
 > **Actualización (reconciliación de las sesiones 12, 2026-10-01):** se agregaron DPV-116 a DPV-145 (localización, logística y layout) a la matriz con nivel y ola (N2: 19, N3: 7, N4: 4); la matriz tiene ahora 145 DPV. Ninguno es N1: no cambian los hitos H-A / H-B, pero varios se suman a las olas O0 (escritorio), O3, O5, O7 y O8. Detalle en [`reconciliacion_sesiones_12.md`](reconciliacion_sesiones_12.md) §4.
+>
+> **Actualización (reconciliación de las sesiones 14, 2026-10-02):** se agregaron DPV-146 a DPV-159 (RR. HH., incubación, alimento e integración upstream) a la matriz con nivel y ola (N2: 5 · N3: 8 · N4: 1; ninguno N1: no cambian los hitos H-A/H-B); ocho propuestas se consolidaron en DPV existentes (DPV-007, 047, 054, 091, 092, 101, 121, 133). La matriz tiene ahora 159 DPV. Se agregan dos actores en O4 (fábricas de alimento / façon y proveedores de grano) **sin cuestionario nuevo**: las preguntas están en [`../14_alimento_balanceado/integracion_upstream.md`](../14_alimento_balanceado/integracion_upstream.md) §6. Las preguntas nuevas para incubadoras y productores (días de nacimiento, lote mínimo, galpones por granja, llenado, noches de cosecha) quedan registradas en DPV-047 y DPV-133; su incorporación a los cuestionarios existentes queda pendiente. Detalle en [`reconciliacion_sesiones_14.md`](reconciliacion_sesiones_14.md).
 
 ---
 
@@ -100,13 +102,15 @@ Condicionales: DPV-049 (pollo vivo spot) **sube a N1** si la etapa 0 elegida es 
 | Pollerías y carnicerías | 8–10 | idem | 013, 040, 070 | O2 |
 | Gastronomía y catering | 3–5 | idem | 040 | O2 |
 | Elaboradores e industria de chacinados | 3–5 | idem · [`cuestionario_subproductos.md`](../07_subproductos/cuestionario_subproductos.md) | 040, 071, 079 | O2 |
-| **Frigoríficos avícolas** (incluye posibles plantas a façon, de distinto tamaño) | 3–5 visitas | [`guia_visita_planta.md`](../05_proceso_industrial/guia_visita_planta.md) | 006, 083, 054, 062, 067, 082, 088, 091, 092, 108, 114 | O3 |
-| **Productores avícolas** (integrados e independientes) | 6–10 en 2 zonas | [`cuestionario_productores.md`](../03_produccion_primaria/cuestionario_productores.md) | 019, 044, 048, 049, 050 | O4 |
+| **Frigoríficos avícolas** (incluye posibles plantas a façon, de distinto tamaño) | 3–5 visitas | [`guia_visita_planta.md`](../05_proceso_industrial/guia_visita_planta.md) | 006, 083, 054, 062, 067, 082, 088, 091, 092, 108, 114, 138, 146, 147, 148, 150, 151 | O3 |
+| **Productores avícolas** (integrados e independientes) | 6–10 en 2 zonas | [`cuestionario_productores.md`](../03_produccion_primaria/cuestionario_productores.md) | 019, 044, 048, 049, 050, 133, 156 | O4 |
 | Asesores técnicos y veterinarios avícolas | 2–3 | idem | 019, 056 | O4 |
-| **Incubadoras** | 3–4 | [`cuestionario_incubadoras.md`](../15_incubacion/cuestionario_incubadoras.md) | 006, 047 | O4 |
+| **Incubadoras** | 3–4 | [`cuestionario_incubadoras.md`](../15_incubacion/cuestionario_incubadoras.md) | 006, 047, 153, 154 | O4 |
+| Fábricas de alimento balanceado / façon (reconciliación 14) | 3–4 | [`integracion_upstream.md`](../14_alimento_balanceado/integracion_upstream.md) §6.2 (sin cuestionario propio) | 050, 155, 156, 158 | O4 |
+| Proveedores de grano e integradoras (reconciliación 14) | 2–3 + 2 | [`integracion_upstream.md`](../14_alimento_balanceado/integracion_upstream.md) §6.3 | 117, 157, 159 | O4 |
 | Rendering, graserías y operadores de residuos | 2–4 | [`cuestionario_subproductos.md`](../07_subproductos/cuestionario_subproductos.md) | 065, 072, 080, 111 | O5 |
 | Pet food, traders y exportadores de partes | 3–5 | idem | 064, 073, 077, 081 | O5 |
-| **SENASA** (regional o central) y asesor de habilitaciones | 1 reunión + 1 consulta | [`preguntas_senasa_ejecutivas.md`](../16_normativa_senasa/preguntas_senasa_ejecutivas.md) | 007, 024, 034, 086, 094, 099, 101, 107, 115 | O6 |
+| **SENASA** (regional o central) y asesor de habilitaciones | 1 reunión + 1 consulta | [`preguntas_senasa_ejecutivas.md`](../16_normativa_senasa/preguntas_senasa_ejecutivas.md) | 007, 024, 034, 086, 094, 099, 101, 107, 115, 152 | O6 |
 | Contador | 1 consulta | — | 043 | O2 |
 | Proveedores de equipos y frío (sin pedir cotización) | exposición + consultas | [`plan_rfq.md`](../08_maquinaria/plan_rfq.md) | 089 (y luego 095–097, 109) | O7 |
 | Municipios, distribuidoras, organismos hídricos y ambientales | por terreno | [`ficha_relevamiento_terreno.md`](../10_localizacion/ficha_relevamiento_terreno.md) | 052, 053, 087, 106 | O8 |

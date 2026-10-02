@@ -27,7 +27,7 @@ Perfil medio: inicio ~5 %, crecimiento ~27 %, terminación ~68 % del tonelaje ([
 
 ## 3. Categorías de materias primas (separación conceptual, NO fórmula)
 
-> **Recetas reales = nutricionista / formulación** (DEC-14B-03). Las inclusiones son rangos de orden de magnitud de una dieta maíz–soja típica (`03` §4; FTE-160 `[PVDP]`) y dependen de precios relativos, disponibilidad regional, fase y restricciones de clientes (p. ej. harinas animales). El punto ilustrativo solo existe para maíz y harina de soja (SUP-032: 60 % / 30 %; el 10 % restante se reparte entre las otras categorías sin asignar).
+> **Recetas reales = nutricionista / formulación** (DEC-076). Las inclusiones son rangos de orden de magnitud de una dieta maíz–soja típica (`03` §4; FTE-160 `[PVDP]`) y dependen de precios relativos, disponibilidad regional, fase y restricciones de clientes (p. ej. harinas animales). El punto ilustrativo solo existe para maíz y harina de soja (SUP-032: 60 % / 30 %; el 10 % restante se reparte entre las otras categorías sin asignar).
 
 | Categoría | Qué incluye | Inclusión (% del alimento) | Por qué importa en el upstream |
 |---|---|---|---|

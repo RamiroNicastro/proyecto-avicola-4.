@@ -1,5 +1,7 @@
 # Actualizaciones de gestión pendientes de reconciliación — sesión 14A (RR. HH. y organización)
 
+> **ARCHIVO HISTÓRICO — RECONCILIADO el 2026-10-02.** Todo lo propuesto aquí ya fue integrado en `00_gestion_proyecto/` y `25_fuentes/`. Los IDs provisionales `14A` que aparecen abajo **ya no están activos**: sus equivalentes definitivos (y los casos consolidados en registros existentes) están en [`../00_gestion_proyecto/reconciliacion_sesiones_14.md`](../00_gestion_proyecto/reconciliacion_sesiones_14.md) §2. El CSV de fuentes provisional [`fuentes_14A.csv`](fuentes_14A.csv) se conserva **solo como histórico** (no es registro activo): las fuentes vigentes están en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv).
+
 **Fecha:** 2026-10-01 · Sesión ejecutada **en paralelo** con 14B. **v1.1:** auditoría final de unidades laborales (SUP-14A-02/03/09/12 revisados; SUP-14A-16 a 18 nuevos; DPV-14A-02 ampliado; tensiones T-14A-1, T-14A-3 y T-14A-4 reformuladas).
 
 > **Por qué existe este archivo:** por instrucción del promotor, esta sesión **no modificó** `00_gestion_proyecto/` ni `25_fuentes/`, ni archivos de 14B. Lo que normalmente se registraría en `supuestos.md`, `datos_por_validar.md`, `decisiones_pendientes.md`, `estado_proyecto.md` y `registro_fuentes.csv` se propone aquí con **IDs provisionales** (`SUP-14A-##`, `DPV-14A-##`, `DEC-14A-##`, `FTE-14A-###`) para la reconciliación.

@@ -3,7 +3,7 @@
 **Fecha:** 2026-10-01 · **Versión:** 1.1 (sesión 14A, en paralelo con 14B; auditoría final de unidades laborales) · Base: [`estructura_organizacional.md`](estructura_organizacional.md), [`dotacion_por_escala.md`](dotacion_por_escala.md), [`turnos_y_productividad.md`](turnos_y_productividad.md), [`mantenimiento_y_servicios.md`](mantenimiento_y_servicios.md), [`calidad_inocuidad.md`](calidad_inocuidad.md), [`modelo_rrhh.py`](modelo_rrhh.py), [`escenarios_rrhh.csv`](escenarios_rrhh.csv), [`plantilla_costo_laboral.csv`](plantilla_costo_laboral.csv), [`guia_ramiro.md`](guia_ramiro.md)
 
 > **Pregunta central:** ¿qué personas necesita la empresa, dónde trabajan, en qué turnos y cómo cambia la estructura al crecer de 2.500 a 20.000 aves/día?
-> **No** se elige escala, automatización, turnos, modalidad de limpieza, mantenimiento ni flota; **no** se inicia OPEX ni se cargan salarios (plantilla de costos vacía). Registros centrales **no** modificados: propuestas en [`actualizaciones_gestion_14A.md`](actualizaciones_gestion_14A.md).
+> **No** se elige escala, automatización, turnos, modalidad de limpieza, mantenimiento ni flota; **no** se inicia OPEX ni se cargan salarios (plantilla de costos vacía). Registros centrales **no** modificados por la sesión 14A: sus propuestas ([`actualizaciones_gestion_14A.md`](actualizaciones_gestion_14A.md), hoy archivo histórico) se integraron en la reconciliación de las sesiones 14 (2026-10-02; mapa de IDs en [`reconciliacion_sesiones_14.md`](../00_gestion_proyecto/reconciliacion_sesiones_14.md) §2).
 > **Evidencia:** ninguna productividad, ausentismo ni dotación proviene de plantas argentinas. Todas las cifras son `[ESTIMACIÓN]` con coeficientes `[SUPUESTO]` de rango.
 
 ---
@@ -45,7 +45,7 @@ Dotación simultánea 7 / 11 / 19 / 35 (rango 5–59) durante una ventana de 4 h
 
 ## 4. Turnos y jornada
 
-**Con la parametrización actual, una sola cuadrilla bajo una jornada de referencia de 8 h no puede cubrir 8 h netas de producción más todas las ventanas auxiliares sin una organización adicional** (presencia ~10 h; brecha ~2 h/persona; 59–91 horas-persona/día a organizar según escala). La forma de resolverlo (turnos, relevos, escalonamiento, personal adicional, horas extraordinarias u otra) no está demostrada (DPV-14A-01). Sin organización adicional caben ~6–7 h netas con una cuadrilla y ~11,4–13,5 h con dos. Dos cuadrillas de 8 h netas tienen alertas de jornada y de 24 h. Matriz de presencia: el pico en sitio ocurre al inicio con la jornada diurna o, con dos cuadrillas, en el traspaso (10.000: 72 → 96).
+**Con la parametrización actual, una sola cuadrilla bajo una jornada de referencia de 8 h no puede cubrir 8 h netas de producción más todas las ventanas auxiliares sin una organización adicional** (presencia ~10 h; brecha ~2 h/persona; 59–91 horas-persona/día a organizar según escala). La forma de resolverlo (turnos, relevos, escalonamiento, personal adicional, horas extraordinarias u otra) no está demostrada (DPV-146). Sin organización adicional caben ~6–7 h netas con una cuadrilla y ~11,4–13,5 h con dos. Dos cuadrillas de 8 h netas tienen alertas de jornada y de 24 h. Matriz de presencia: el pico en sitio ocurre al inicio con la jornada diurna o, con dos cuadrillas, en el traspaso (10.000: 72 → 96).
 
 ## 5. Automatización
 
@@ -97,7 +97,7 @@ Lo casi fijo explica la dilución por escala; lo que escala por activos explica 
 
 1. Coeficientes sin dato argentino (rangos); el factor de cobertura de nómina no está validado.
 2. La limpieza depende de m² proxy de 12C y de una ventana fija; la limpieza por sectores no está modelada.
-3. El horario de la matriz de presencia (diurna desde el fin de la preparación; limpieza sin solapamiento) es un supuesto (SUP-14A-18).
+3. El horario de la matriz de presencia (diurna desde el fin de la preparación; limpieza sin solapamiento) es un supuesto (SUP-141).
 4. Choferes de producto, inspección oficial, servicio externo de HyS y captura PENDIENTES.
 5. Sin costos: no puede evaluarse todavía la conveniencia de automatizar, tercerizar o sumar una cuadrilla.
 

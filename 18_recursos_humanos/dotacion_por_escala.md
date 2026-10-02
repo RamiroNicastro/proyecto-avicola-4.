@@ -3,7 +3,7 @@
 **Fecha:** 2026-10-01 · **Versión:** 1.1 (sesión 14A; auditoría de unidades laborales) · Fase 0
 
 > **Qué es:** órdenes de magnitud de puestos, presencia simultánea, FTE y horas contratadas por escala, con rangos de productividad alta–media–baja. Fuente: [`modelo_rrhh.py`](modelo_rrhh.py) v1.1 y [`escenarios_rrhh.csv`](escenarios_rrhh.csv) (15.576 escenarios).
-> **Qué no es:** una dotación validada, un headcount de nómina ni un plan de contratación. **Ninguna productividad es un dato argentino medido**: coeficientes `[SUPUESTO]` de rango (SUP-14A-04 a SUP-14A-18) y dos referencias extranjeras débiles `[PVDP]` (colgado FTE-219; eviscerado manual FTE-218). Todas las cifras son `[ESTIMACIÓN]`.
+> **Qué no es:** una dotación validada, un headcount de nómina ni un plan de contratación. **Ninguna productividad es un dato argentino medido**: coeficientes `[SUPUESTO]` de rango (SUP-127 a SUP-141) y dos referencias extranjeras débiles `[PVDP]` (colgado FTE-219; eviscerado manual FTE-218). Todas las cifras son `[ESTIMACIÓN]`.
 > **v1.1:** la v1.0 usaba una sola variable "personas" para conceptos distintos. Esta versión separa las unidades y deja el **headcount de nómina como PENDIENTE**.
 
 ---
@@ -17,14 +17,14 @@
 | **Puestos simultáneos de producción** | Suma de puestos presentes mientras corre la línea: directos + supervisión de línea + QC + limpieza operativa + técnicos de cobertura | Personal de planta en producción | Calculado |
 | **Pico de personas en sitio** | Máximo de personas presentes a la vez en el establecimiento (internas y terceros en sitio), según la matriz de presencia ([`turnos_y_productividad.md`](turnos_y_productividad.md) §3) | **Vestuarios, comedor, estacionamiento (12C)** | Calculado; excluye inspección oficial (PENDIENTE) |
 | **Puestos equivalentes internos** | Posiciones distintas a cubrir con personal propio: puestos × cuadrillas; integrantes de la cuadrilla de limpieza propia; dedicación de roles de estructura (0,5 = rol combinado) | **Base** del headcount | Calculado |
-| **Headcount de nómina** | Puestos equivalentes × FACTOR_COBERTURA_NOMINA (francos, vacaciones, licencias, ausentismo, capacitación, reemplazos) | Nómina y OPEX | **PENDIENTE** (factor no validado, DPV-14A-02). **No se deriva del FTE** |
+| **Headcount de nómina** | Puestos equivalentes × FACTOR_COBERTURA_NOMINA (francos, vacaciones, licencias, ausentismo, capacitación, reemplazos) | Nómina y OPEX | **PENDIENTE** (factor no validado, DPV-147). **No se deriva del FTE** |
 | **FTE** | Horas-persona por día operativo ÷ jornada de referencia de 8 h `[PVDP]`. 2 personas × 4 h = 1 FTE | Comparar cargas de trabajo; OPEX por hora | Calculado |
 | **FTE tercerizados / horas contratadas** | Horas-persona de funciones tercerizadas (limpieza, mantenimiento, flota) | Servicios tercerizados en OPEX | Calculado (salvo funciones PENDIENTES) |
 | **Funciones cubiertas** | Funciones con carga interna, tercerizada o PENDIENTE | Verificar que tercerizar no borre funciones | Calculado |
 
 ## 2. Tabla de dotación corregida
 
-**Escenario de referencia (no es decisión, SUP-14A-15):** 1 cuadrilla con 8 h netas en turno extendido (alerta de jornada, [`turnos_y_productividad.md`](turnos_y_productividad.md) §2), automatización de referencia de 09A por escala (manual / mecanizado / semiautomático / automático; DEC-037 abierta), config. B (trozado), limpieza y mantenimiento propios, flota de aves de terceros con 5.500 aves/camión **de escenario** (SUP-033), integración, laboratorio externo, 5 días/semana. Rango: productividad alta–**media**–baja.
+**Escenario de referencia (no es decisión, SUP-138):** 1 cuadrilla con 8 h netas en turno extendido (alerta de jornada, [`turnos_y_productividad.md`](turnos_y_productividad.md) §2), automatización de referencia de 09A por escala (manual / mecanizado / semiautomático / automático; DEC-037 abierta), config. B (trozado), limpieza y mantenimiento propios, flota de aves de terceros con 5.500 aves/camión **de escenario** (SUP-033), integración, laboratorio externo, 5 días/semana. Rango: productividad alta–**media**–baja.
 
 | Unidad | 2.500 | 5.000 | 10.000 | 20.000 |
 |---|---|---|---|---|
@@ -57,7 +57,7 @@ FTE por grupo (internos + tercerizados, productividad media) y puestos equivalen
 
 1. **Las unidades divergen donde importan.** A 20.000 aves/día: 50 puestos simultáneos en producción, 87 personas en sitio en el pico, 132 puestos equivalentes, 126 FTE internos. Ninguna de estas cifras es "la dotación": cada una responde a otra pregunta.
 2. **Puestos equivalentes > FTE cuando hay trabajo parcial** (limpieza: 35 puestos y 17,5 FTE a 20.000) y **FTE > puestos cuando la presencia supera la jornada** (línea: ~10 h de presencia sobre 8 h → 1,25 FTE por puesto). Por eso el headcount no puede derivarse del FTE.
-3. **El rango de productividad pesa más que el punto medio** (FTE internos ×1,7–2,1 entre alta y baja). Ninguna cifra central debe usarse como dotación hasta tener datos de plantas (DPV-092, DPV-14A-04).
+3. **El rango de productividad pesa más que el punto medio** (FTE internos ×1,7–2,1 entre alta y baja). Ninguna cifra central debe usarse como dotación hasta tener datos de plantas (DPV-092).
 4. **La escala diluye la estructura:** de 2.500 a 20.000 aves/día (×8), los FTE totales crecen ×2,3 (media). FTE por 1.000 aves/día: 22,2 → 6,4.
 5. **Los directos se estancan entre 10.000 y 20.000** sólo porque la referencia pasa de semiautomático a automático; con el mismo nivel de automatización los directos siempre crecen con la escala (test R02).
 
@@ -114,4 +114,4 @@ Su viabilidad depende de que exista un façonier con capacidad, habilitación y 
 
 ## 6. Qué falta para que estas cifras sirvan para decidir
 
-Dotación real por sector, productividad, organización de turnos y limpieza de 2–3 plantas argentinas comparables ([`guia_ramiro.md`](guia_ramiro.md) §4); convenio aplicable (DPV-14A-01); factor de cobertura de nómina (DPV-14A-02); inspección oficial (DPV-14A-05); servicio de HyS (DPV-14A-07); oferta de mano de obra y técnicos por corredor (DPV-121, DPV-14A-08). Lista completa en [`actualizaciones_gestion_14A.md`](actualizaciones_gestion_14A.md) §2.
+Dotación real por sector, productividad, organización de turnos y limpieza de 2–3 plantas argentinas comparables ([`guia_ramiro.md`](guia_ramiro.md) §4); convenio aplicable (DPV-146); factor de cobertura de nómina (DPV-147); inspección oficial (DPV-101); servicio de HyS (DPV-149); oferta de mano de obra y técnicos por corredor (DPV-121). Lista completa en [`../00_gestion_proyecto/datos_por_validar.md`](../00_gestion_proyecto/datos_por_validar.md) (DPV-146 a DPV-152 y consolidados; mapa en [`reconciliacion_sesiones_14.md`](../00_gestion_proyecto/reconciliacion_sesiones_14.md) §2).

@@ -22,7 +22,7 @@
 |---|---|---|---|
 | **Volumen** | Sirve a cualquier escala si hay oferta; el **lote de nacimiento** lo fija el proveedor (PENDIENTE) | Necesita volumen estable; el **lote de nacimiento** = demanda / cadencia y puede ser menor que la unidad de colocación (galpón o granja): posible problema de sincronización a validar ([`capacidad_incubacion.md` §4](capacidad_incubacion.md)) | Necesita volumen y horizonte largos |
 | **Calidad** | Por contrato: peso, uniformidad, mortalidad 7 d, vacunas | Control del proceso de incubación; **la fertilidad y la calidad del huevo siguen dependiendo del proveedor** | Control completo |
-| **Dependencia** | Alta (oferta concentrada; integradoras se autoabastecen) | **Se sustituye** la dependencia de proveedores de pollito por dependencia de proveedores de huevo fértil; la concentración y disponibilidad real de esa oferta es **DPV-14B-02** (sin evidencia) | Solo de la genética |
+| **Dependencia** | Alta (oferta concentrada; integradoras se autoabastecen) | **Se sustituye** la dependencia de proveedores de pollito por dependencia de proveedores de huevo fértil; la concentración y disponibilidad real de esa oferta es **DPV-154** (sin evidencia) | Solo de la genética |
 | **Capital** | Nulo | Planta de incubación + equipos + capital de trabajo en huevo | B + granjas de recría y reproductoras + alimento de reproductoras |
 | **Flexibilidad** | Alta (si hay oferta) | Baja: capacidad fija; ociosa si la faena no la llena | Muy baja (ciclos de ~1 año de los lotes de reproductoras) |
 | **Bioseguridad** | Riesgo compartido con los otros clientes del proveedor | Controlada en la planta; el huevo sigue siendo una entrada de riesgo | Máxima posible (compatible con compartimentos, Res. 484/2017, FTE-149 `[PVDP]`) |
@@ -32,18 +32,18 @@
 
 ## 3. Lectura crítica
 
-1. **B sustituye una dependencia por otra y agrega control del proceso de incubación.** Incubar huevo fértil comprado sustituye la dependencia de proveedores de pollito por dependencia de proveedores de huevo fértil; **la concentración y disponibilidad real de esa oferta es un dato por validar** (DPV-14B-02, pregunta E5 del [cuestionario](cuestionario_incubadoras.md)). No hay evidencia de que haya más o menos vendedores de huevo que de pollito.
+1. **B sustituye una dependencia por otra y agrega control del proceso de incubación.** Incubar huevo fértil comprado sustituye la dependencia de proveedores de pollito por dependencia de proveedores de huevo fértil; **la concentración y disponibilidad real de esa oferta es un dato por validar** (DPV-154, pregunta E5 del [cuestionario](cuestionario_incubadoras.md)). No hay evidencia de que haya más o menos vendedores de huevo que de pollito.
 2. **El argumento para B es más de calidad, programación y costo que de seguridad de suministro**, y ninguno de los tres puede evaluarse sin datos de campo (calidad del pollito comprado vs propio, precio pollito vs huevo + costo de incubar).
-3. **Posible problema de sincronización a escala chica:** a 2.500–5.000 aves/día la planta de incubación sería pequeña frente a los ejemplos citados (80.000–400.000 por semana, FTE-14B-004 `[PVDP]`) y sus lotes de nacimiento (≈ 2.600–26.400 pollitos según cadencia) pueden ser menores que la unidad de colocación (un galpón de ~15.000–30.000 plazas equivalentes). Eso **no demuestra incompatibilidad**: depende de la arquitectura real de las granjas (galpones por granja, plazas por galpón, tolerancia de edad en un mismo lote) y debe validarse ([`../14_alimento_balanceado/integracion_upstream.md` §4](../14_alimento_balanceado/integracion_upstream.md)).
+3. **Posible problema de sincronización a escala chica:** a 2.500–5.000 aves/día la planta de incubación sería pequeña frente a los ejemplos citados (80.000–400.000 por semana, FTE-308 `[PVDP]`) y sus lotes de nacimiento (≈ 2.600–26.400 pollitos según cadencia) pueden ser menores que la unidad de colocación (un galpón de ~15.000–30.000 plazas equivalentes). Eso **no demuestra incompatibilidad**: depende de la arquitectura real de las granjas (galpones por granja, plazas por galpón, tolerancia de edad en un mismo lote) y debe validarse ([`../14_alimento_balanceado/integracion_upstream.md` §4](../14_alimento_balanceado/integracion_upstream.md)).
 4. **C es una decisión de otra naturaleza** (negocio de genética/reproductoras) y **no se supone en las arquitecturas de referencia 0 y 1**.
 5. **Mitigaciones dentro de A** (sin integrar): contratos anuales con volumen asegurado, **al menos dos proveedores**, especificaciones con reposición, seguimiento de la 1.ª semana por proveedor ([`../03_produccion_primaria/modelos_integracion.md` §4.4](../03_produccion_primaria/modelos_integracion.md)), y posibilidad contractual de compra de huevo fértil como respaldo.
 
 ## 4. Qué haría falta para pasar de A a B (señales, sin umbrales)
 
-- Oferta de huevo fértil para terceros, escrita, de ≥ 2 proveedores (DPV-14B-02).
+- Oferta de huevo fértil para terceros, escrita, de ≥ 2 proveedores (DPV-154).
 - Volumen de faena estable que llene la planta de incubación en el tamaño evaluado, con una cadencia de nacimientos compatible con galpones y faena (chequeo de sincronización).
 - Evidencia de que el pollito comprado tiene problemas de calidad, programación o disponibilidad que la incubación propia resolvería.
 - Comparación económica: precio del pollito vs (huevo + incubación + capital) — **fase posterior**.
-- Habilitación SENASA y sitio con distancias de bioseguridad (DPV-14B-06).
+- Habilitación SENASA y sitio con distancias de bioseguridad (DPV-007).
 
-**Umbral de volumen para B o C: PENDIENTE** (DEC-14B-01).
+**Umbral de volumen para B o C: PENDIENTE** (DEC-074).
