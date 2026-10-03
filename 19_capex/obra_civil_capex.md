@@ -96,7 +96,7 @@ Cada área de 12C pertenece a una sola categoría (test M06), y la suma por tipo
 | OC-RS | Recepción semicubierta | edificio | recepción y espera | PENDIENTE | — |
 | OC-FR | Envolvente de frío (paneles en FR-PAN) | edificio | cámaras refrigeradas/congeladas, túnel, antecámaras, cámaras de subproductos y decomisos | PENDIENTE | — |
 | OC-DK | Docks y expedición | edificio | expedición/docks | PENDIENTE | — |
-| OC-DP | Depósitos y talleres secos | edificio | residuos/cartón, envases, taller, repuestos, químicos | **250 / 300 / 350** | **E4 `[PVDP]`** FTE-16-001 |
+| OC-DP | Depósitos y talleres secos | edificio | residuos/cartón, envases, taller, repuestos, químicos | **250 / 300 / 350** | **E4 `[PVDP]`** FTE-310 |
 | OC-ST | Salas técnicas | edificio | máquinas de frío, caldera, aire, generador, eléctrica, tratamiento de agua | PENDIENTE | — |
 | OC-LB | Laboratorio | edificio | laboratorio de calidad | PENDIENTE | — |
 | OC-VC | Personal | edificio | vestuarios, comedor, lavandería | PENDIENTE | — |
@@ -108,7 +108,7 @@ Cada área de 12C pertenece a una sola categoría (test M06), y la suma por tipo
 | OC-EF | Obra de efluentes | efluentes | pretratamiento, ecualización, DAF, biológico, lodos, circulación | PENDIENTE | — |
 | OC-CER | Cerco perimetral (m) | perímetro | perímetro del terreno a adquirir | PENDIENTE | — |
 | OC-INF | Infraestructura del predio | **lote** (corrección v1.1) | pluviales, cloaca interna, iluminación exterior | PENDIENTE | — |
-| OC-ADM | Oficina asset-light | — | m² PENDIENTES (DPV-16-12) | PENDIENTE | — |
+| OC-ADM | Oficina asset-light | — | m² PENDIENTES (DPV-166) | PENDIENTE | — |
 
 **No son obra** (no reciben ningún USD/m²): terreno, retiros y buffers, reserva de expansión, área verde (12C no la modela: PENDIENTE). La v1.0 aplicaba un USD/m² de infraestructura a **todo** el terreno (incluidos retiros, buffers y reserva); en la v1.1 OC-INF es un lote global y la preparación del sitio usa el **mínimo físico**.
 
@@ -116,7 +116,7 @@ Cada área de 12C pertenece a una sola categoría (test M06), y la suma por tipo
 
 ## 5. Qué falta para costear la obra
 
-1. USD/m² por categoría con fecha, TC, IVA y alcance (DPV-16-02).
+1. USD/m² por categoría con fecha, TC, IVA y alcance (DPV-161).
 2. Footprints de proveedor para salir de PROXY (DPV-090, SUP-107).
 3. Sitio: retiros, FOS, suelo, cota, accesos (DPV-106, DPV-141).
 4. Que 12C publique el **terreno sin reserva** como salida propia (propuesta T16-07), para que CAPEX lo consuma en lugar de pedírselo a la función.

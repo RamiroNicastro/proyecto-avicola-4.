@@ -29,9 +29,9 @@ Test D07: viajes y km de aves vivas y km de alimento reproducen el CSV de 12B. E
 | Choferes: 14A (aves vivas y producto); otros flujos PENDIENTE_CANTIDAD | Chofer incluido en la tarifa: horas de 14A visibles como INCLUIDO |
 | Terceros eventuales | |
 
-Sin `modelo_tarifa_flete` el flete tercerizado figura con `MODELO_TARIFA_NO_DEFINIDO` (DEC-17-05). Variante con tarifa por unidad: `C1-10000-FLETE-POR-UNIDAD`. Tests A06 (flota tercerizada no carga costos propios; mutación M09), A07 (flota propia no carga flete) y A11 (un modelo por flujo).
+Sin `modelo_tarifa_flete` el flete tercerizado figura con `MODELO_TARIFA_NO_DEFINIDO` (DEC-087). Variante con tarifa por unidad: `C1-10000-FLETE-POR-UNIDAD`. Tests A06 (flota tercerizada no carga costos propios; mutación M09), A07 (flota propia no carga flete) y A11 (un modelo por flujo).
 
-## 3. Flota propia (CAPEX 16, con reserva de 1 unidad SUP-16-02) — C3
+## 3. Flota propia (CAPEX 16, con reserva de 1 unidad SUP-156) — C3
 
 | Flujo | 2.500 | 5.000 | 10.000 | 20.000 |
 |---|---|---|---|---|
@@ -40,4 +40,4 @@ Sin `modelo_tarifa_flete` el flete tercerizado figura con `MODELO_TARIFA_NO_DEFI
 | Alimento | 2 | 2 | 2 | 3 |
 | Subproductos | 3 | 3 | 3 | 3 |
 
-Los costos de flota no se calculan aquí con precios (todos PENDIENTES: DPV-042, DPV-054, DPV-084, DPV-16-16). El flete del alimento y del pollito puede estar incluido en sus precios: la base marca `FLETE_INCLUIDO` y el motor alerta el posible doble conteo.
+Los costos de flota no se calculan aquí con precios (todos PENDIENTES: DPV-042, DPV-054, DPV-084, DPV-168). El flete del alimento y del pollito puede estar incluido en sus precios: la base marca `FLETE_INCLUIDO` y el motor alerta el posible doble conteo.

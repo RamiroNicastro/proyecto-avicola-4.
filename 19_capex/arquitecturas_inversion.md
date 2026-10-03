@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-02 · Implementación: `config_por_defecto()`, `preset()` y `validar_config()` en [`modelo_capex.py`](modelo_capex.py)
 
-> Ninguna arquitectura se declara "mejor". Las configuraciones C0–C3 y CF son **referencias de comparación** (SUP-16-09, SUP-152), no una recomendación ni una secuencia obligatoria. El motor solo dice **qué se construye, qué se compra, qué se terceriza y qué cantidad física implica**.
+> Ninguna arquitectura se declara "mejor". Las configuraciones C0–C3 y CF son **referencias de comparación** (SUP-163, SUP-152), no una recomendación ni una secuencia obligatoria. El motor solo dice **qué se construye, qué se compra, qué se terceriza y qué cantidad física implica**.
 
 ## 1. Opciones por eslabón (inputs del motor)
 
@@ -13,11 +13,11 @@
 | Pollito BB | `pollito` (+ `reproductoras`) | `compra` · `incubacion` · reproductoras propias solo como **FUTURO** (exige incubación, test A08) | Incubación: 15 conceptos con setter y hatcher separados; reproductoras: `FASE = FUTURO` |
 | Alimento | `alimento` | `compra` · `facon` · `propia` | `propia`: 18 conceptos ALI-* con la t/h de 14B; `compra` y `facon`: sin activos de planta (test A02) |
 | Logística | `flota` (+ `flota_por_flujo`) | `tercero` · `propia` · `mixto` (por flujo) | Vehículos solo en flujos propios (tests A03, A04); flujos: pollitos, alimento/granos, aves vivas, refrigerado, congelado, subproductos, servicio |
-| Frío / producto | `frio` | `A_refrigerado` · `B_refrigerado_congelado` · `C_congelado_tercero` | A → perfil P1 con congelado propio mínimo; B → P2; C → P1 sin túnel propio (SUP-16-04, test A10) |
-| Subproductos | `subproductos` (+ `rendering`) | `A_externo` · `B_basico_propio` · rendering **FUTURO** | B agrega SB-BAS; rendering = `FASE = FUTURO` (SUP-16-14) |
-| Terreno | `terreno` (+ `escala_objetivo`) | `compra_fase` · `compra_reserva` · `parque_industrial` · `rural_compatible` | Necesidad de terreno de la arquitectura (fase, o crecimiento hasta la escala objetivo + rendering) y tipo de precio (SUP-16-16); la superficie a comprar se elige con `criterio_terreno` |
+| Frío / producto | `frio` | `A_refrigerado` · `B_refrigerado_congelado` · `C_congelado_tercero` | A → perfil P1 con congelado propio mínimo; B → P2; C → P1 sin túnel propio (SUP-158, test A10) |
+| Subproductos | `subproductos` (+ `rendering`) | `A_externo` · `B_basico_propio` · rendering **FUTURO** | B agrega SB-BAS; rendering = `FASE = FUTURO` (SUP-168) |
+| Terreno | `terreno` (+ `escala_objetivo`) | `compra_fase` · `compra_reserva` · `parque_industrial` · `rural_compatible` | Necesidad de terreno de la arquitectura (fase, o crecimiento hasta la escala objetivo + rendering) y tipo de precio (SUP-170); la superficie a comprar se elige con `criterio_terreno` |
 | Línea | `modalidad_linea` | `lotes` · `llave_en_mano` | Llave en mano: L1–L5 hijos de L11 (test A09) |
-| Automatización | `automatizacion` | `manual` · `semi` · `auto` | Nivel de cada EQ donde la matriz 08 deja "M/S" (SUP-16-05) y superficie de 12C |
+| Automatización | `automatizacion` | `manual` · `semi` · `auto` | Nivel de cada EQ donde la matriz 08 deja "M/S" (SUP-159) y superficie de 12C |
 | Otros | `dias_semana`, `horas_netas`, `laboratorio_propio`, `tecnologia_efluentes`, `config_producto` (A/B/C), `fecha_base`, capacidades de vehículos, distancias | — | Pasan a los módulos de origen |
 
 Combinaciones inválidas que el motor rechaza: reproductoras sin incubación; rendering sin planta propia; flota mixta sin definir cada flujo; fracción de granjas incompatible con la opción; escala fuera de 2.500–20.000; moneda distinta de USD.

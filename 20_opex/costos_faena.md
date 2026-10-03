@@ -8,7 +8,7 @@
 |---|---|---|---|
 | Servicio de faena | FAE-FACON | aves faenadas/año (625.000 / 1.250.000 / 2.500.000 / 5.000.000) | Tarifa **no asumida** (DPV-006) |
 | Frío en el faenador | FAE-FACON-FRIO | t·mes | Alcance PENDIENTE |
-| Subproductos en façon | FAE-FACON-SUB | t | Alcance PENDIENTE (DPV-17-07); un crédito sería ingreso, no se netea |
+| Subproductos en façon | FAE-FACON-SUB | t | Alcance PENDIENTE (DPV-006); un crédito sería ingreso, no se netea |
 | Empaque | EMP-* | kg de producto | Aportante PENDIENTE (`facon_aporta_empaque`) |
 | Personal del faenador | 14A (horas tercerizadas) | horas | **RECURSO FÍSICO DE TERCERO** (`APORTANTE = TERCERO`): horas visibles para trazabilidad, costo `INCLUIDO_EN_TARIFA_FACON` (tests A04b, X11; mutación M11) |
 | Control de calidad propio en el faenador | 14A `control_calidad_facon` | FTE | Costo laboral de la empresa |
@@ -35,7 +35,7 @@ Test A04: façon no carga utilities, efluentes, químicos de planta, subproducto
 
 ## 3. Empaque
 
-Estructura por kg de producto comercial (05: comestible a empaque, incluye garras y menudencias según 12B): bolsas, bandejas, film, cajas, etiquetas, separadores, pallets, flejes, otros. Cantidad: 1.498 / 2.996 / 5.991 / 11.982 t de producto/año (configuración B). El **coeficiente de cada material por kg depende del mix y del formato** (bandeja vs caja máster, entero vs trozado): no hay mix definitivo, por eso el precio se pide "por kg de producto" por material y queda PENDIENTE (DPV-17-09). Cambiar `config_producto` (A/B/C) cambia los kg por ave (05).
+Estructura por kg de producto comercial (05: comestible a empaque, incluye garras y menudencias según 12B): bolsas, bandejas, film, cajas, etiquetas, separadores, pallets, flejes, otros. Cantidad: 1.498 / 2.996 / 5.991 / 11.982 t de producto/año (configuración B). El **coeficiente de cada material por kg depende del mix y del formato** (bandeja vs caja máster, entero vs trozado): no hay mix definitivo, por eso el precio se pide "por kg de producto" por material y queda PENDIENTE (DPV-172). Cambiar `config_producto` (A/B/C) cambia los kg por ave (05).
 
 ## 4. Subproductos (costos, no ingresos)
 

@@ -45,7 +45,7 @@ FÓRMULAS
   costo (unitario)   = cantidad × precio_unitario_USD                          (por nivel bajo/medio/alto)
   costo (global)     = precio del lote (cantidad = 1 lote)
   costo (escalado)   = precio_ref × (capacidad / capacidad_ref)^exponente       (exponente explícito; sin
-                       exponente solo vale DENTRO del rango de la referencia: SUP-16-13)
+                       exponente solo vale DENTRO del rango de la referencia: SUP-167)
   costo (porcentaje) = % × base declarada (BASE_PORCENTAJE); base sin precio → PENDIENTE (no 0)
   precio_USD         = precio_original ÷ TC_MONEDA_POR_USD (obligatorio si la moneda no es USD)
   instalado          = COSTO_INSTALADO, o precio si el precio ya es instalado, o precio + capas C02–C19
@@ -53,7 +53,7 @@ FÓRMULAS
                        C10 obra civil se excluye porque la obra se costea en OC-*), o precio × factor SOLO en
                        modo sensibilidad; si no, PENDIENTE.
   LOW / HIGH         = cantidad baja × precio bajo / cantidad alta × precio alto, solo si ambos existen
-                       (envolvente con correlación perfecta, no intervalo de confianza: SUP-16-08).
+                       (envolvente con correlación perfecta, no intervalo de confianza: SUP-162).
 
 Uso
 ---
@@ -65,7 +65,7 @@ Uso
     python3 19_capex/modelo_capex.py --escenario --config C1 --costos otra_base.csv   # sensibilidad
 
 El script se DETIENE (código 1) si falla cualquier prueba. Unidades métricas; CSV con punto decimal.
-IDs provisionales: SUP-16-##, DPV-16-##, DEC-16-##, FTE-16-### (ver actualizaciones_gestion_16.md).
+IDs centrales desde la reconciliación 16–17 (ver 00_gestion_proyecto/reconciliacion_sesiones_16_17.md §2).
 """
 import argparse
 import copy
@@ -90,7 +90,7 @@ import modelo_upstream as mup     # noqa: E402  (14B)
 VERSION = "1.2"
 FECHA = "2026-10-02"
 FUENTE = "19_capex/modelo_capex.py"
-FECHA_BASE_CAPEX = "2026-10-01"            # SUP-16-01: editable (--fecha-base)
+FECHA_BASE_CAPEX = "2026-10-01"            # SUP-155: editable (--fecha-base)
 MONEDA_MODELO = "USD"
 ARCHIVO_COSTOS = os.path.join(AQUI, "base_costos_capex.csv")
 ARCHIVO_CAPAS = os.path.join(AQUI, "capas_importacion_capex.csv")
@@ -130,13 +130,13 @@ OPCIONES = {
 }
 CRITERIOS_TERRENO = (None, "minimo_fisico", "conceptual_12c", "objetivo_12c", "requerido_arquitectura", "usuario")
 FLUJOS = ("pollitos", "alimento", "vivo", "refrigerado", "congelado", "subproductos", "servicio")
-# SUP-16-04: arquitectura de frío → perfil de destino de 09C y congelado propio
+# SUP-158: arquitectura de frío → perfil de destino de 09C y congelado propio
 FRIO_A_PERFIL = {"A_refrigerado": ("P1", True), "B_refrigerado_congelado": ("P2", True),
                  "C_congelado_tercero": ("P1", False)}
-# SUP-16-03: ciclo de vehículos de alimento y subproductos (sin fuente)
+# SUP-157: ciclo de vehículos de alimento y subproductos (sin fuente)
 T_CARGA_DESCARGA_H = 2.0
 DIAS_ENTREGA_SEMANA = 6
-# SUP-16-15: almacenamiento de agua = días de agua captada (barrido 0,5 / 1 / 2)
+# SUP-169: almacenamiento de agua = días de agua captada (barrido 0,5 / 1 / 2)
 DIAS_RESERVA_AGUA = (0.5, 1.0, 2.0)
 
 
@@ -177,7 +177,7 @@ def config_por_defecto():
 
 
 def preset(nombre, **kw):
-    """Configuraciones de REFERENCIA (SUP-16-09). No son recomendación ni secuencia obligatoria."""
+    """Configuraciones de REFERENCIA (SUP-163). No son recomendación ni secuencia obligatoria."""
     c = config_por_defecto()
     p = {
         "C0": dict(faena="facon", granjas="integradas", pollito="compra", alimento="facon", flota="tercero",
@@ -266,7 +266,7 @@ def etiqueta_arquitectura(c):
 #   CALCULO_MODELO_FUENTE = la MISMA función del módulo fuente con entradas que su CSV no publica
 #                           (escala intermedia u otra combinación). No es interpolación.
 #   DERIVADO_CAPEX        = operación de CAPEX sobre salidas fuente (suma, redondeo, perímetro), declarada
-#   SUPUESTO_CAPEX        = parámetro propio de CAPEX (SUP-16-##)
+#   SUPUESTO_CAPEX        = parámetro propio de CAPEX (SUP-155…175)
 #   PENDIENTE             = el módulo fuente no lo dimensiona; CAPEX no lo inventa
 # INTERPOLADO no se usa en ningún driver (todas las fuentes son funciones evaluables a cualquier escala).
 TIPOS_DRIVER = ("DIRECTO", "CALCULO_MODELO_FUENTE", "DERIVADO_CAPEX", "SUPUESTO_CAPEX", "INTERPOLADO", "PENDIENTE")
@@ -335,7 +335,7 @@ def escenario_12c_publicado(e, con_terreno):
 
 
 def _vehiculos(viajes_semana, dist_km, vel, horas_dia, dias_semana):
-    """VOLUMEN ÷ CAPACIDAD (ya en viajes) ÷ CICLOS DISPONIBLES (SUP-16-03)."""
+    """VOLUMEN ÷ CAPACIDAD (ya en viajes) ÷ CICLOS DISPONIBLES (SUP-157)."""
     if viajes_semana is None:
         return None
     ciclo = 2 * dist_km / vel + T_CARGA_DESCARGA_H
@@ -358,7 +358,7 @@ def drivers(c):
     if not base_esc:
         D["alertas"].append(f"ESCALA_INTERMEDIA: {E:g} aves/día no está publicada en los CSV fuente; los drivers son "
                             "CALCULO_MODELO_FUENTE (mismas funciones, no interpolación) y los niveles de EQ se toman "
-                            "de la escala de referencia más cercana (SUP-16-05)")
+                            "de la escala de referencia más cercana (SUP-159)")
     tipo_fuente = "DIRECTO" if base_esc else "CALCULO_MODELO_FUENTE"
     perfil, _ = FRIO_A_PERFIL[c["frio"]]
     h = c["horas_netas"]
@@ -573,8 +573,8 @@ def drivers(c):
         elif fl == "alimento":
             i = ml.insumos(E, ds, cap_granelero=c["cap_granelero_t"], dist_fabrica=c["dist_fabrica_granja_km"])
             base = _vehiculos(i["alimento_viajes_semana"], c["dist_fabrica_granja_km"], vel, hcd, DIAS_ENTREGA_SEMANA)
-            var, tipo, est = "alimento_viajes_semana ÷ ciclos (SUP-16-03)", "DERIVADO_CAPEX", "[SUPUESTO] ciclo y payload de ESCENARIO"
-            origen = f"12B {i['alimento_viajes_semana']} viajes/sem ÷ ciclos CAPEX (SUP-16-03)"
+            var, tipo, est = "alimento_viajes_semana ÷ ciclos (SUP-157)", "DERIVADO_CAPEX", "[SUPUESTO] ciclo y payload de ESCENARIO"
+            origen = f"12B {i['alimento_viajes_semana']} viajes/sem ÷ ciclos CAPEX (SUP-157)"
         elif fl == "pollitos":
             i = ml.insumos(E, ds, cap_granelero=c["cap_granelero_t"], cap_pollitos=c["cap_camion_pollitos"])
             vs = i["pollitos_viajes_semana"]
@@ -594,11 +594,11 @@ def drivers(c):
             origen = "Sin driver físico: cantidad PENDIENTE (no se fijan cantidades arbitrarias)"
         unidades = None if base is None else (base + res if base > 0 else 0)
         D["flota"][fl] = {"base": base, "unidades": unidades,
-                          "origen": origen + ("" if base is None else f"; + reserva {res} (SUP-16-02)")}
+                          "origen": origen + ("" if base is None else f"; + reserva {res} (SUP-156)")}
         _reg(D, f"flota_base_{fl}", base, "vehículos", "12B", var, tipo, est,
-             f"capacidades de ESCENARIO de 12B (SUP-16-20)", f"VEH/CAR/FRI/AUX-{fl.upper()} (antes de la reserva)", origen)
+             f"capacidades de ESCENARIO de 12B (SUP-096)", f"VEH/CAR/FRI/AUX-{fl.upper()} (antes de la reserva)", origen)
         _reg(D, f"flota_reserva_{fl}", None if base is None else unidades - base, "vehículos", "CAPEX", "reserva_flota_unidades",
-             "SUPUESTO_CAPEX", "[SUPUESTO] SUP-16-02", uso="reserva de flota")
+             "SUPUESTO_CAPEX", "[SUPUESTO] SUP-156", uso="reserva de flota")
     # ---- Upstream (14B, que consume 03) ---------------------------------------------------------
     t14 = "DIRECTO" if base_esc else "CALCULO_MODELO_FUENTE"
     pr = mup.produccion(E, ds)
@@ -664,7 +664,7 @@ def drivers(c):
                  "15 d maíz y soja, 2 d planta, 3 d granja; densidad alimento 0,60", "ALI-SIL / ALI-SPT / GRA-SIL (desde volumen, no por catálogo)")
         if util < c["umbral_utilizacion_planta_alimento"]:
             D["alertas"].append(f"PLANTA_ALIMENTO_SUBUTILIZADA: utilización {util:.0%} < "
-                                f"{c['umbral_utilizacion_planta_alimento']:.0%} (SUP-16-17); no elegir por catálogo")
+                                f"{c['umbral_utilizacion_planta_alimento']:.0%} (SUP-171); no elegir por catálogo")
     else:
         D["alimento_granja_m3"] = _reg(D, "silos:granja_m3_brutos", mup.almacenamiento(E, "A_compra", ds)["granja_m3_brutos"],
                                        "m³", "14B", "granja_m3_brutos", t14, "[SUPUESTO] días de stock y densidad",
@@ -769,7 +769,7 @@ def leer_equipos(ruta=ARCHIVO_EQUIPOS):
 
 
 def etiqueta_modularidad(texto):
-    """SUP-16-11: modularidad de 08 → etiqueta de expansión."""
+    """SUP-165: modularidad de 08 → etiqueta de expansión."""
     t = (texto or "").lower()
     if t.startswith("mantener"):
         return "REUTILIZABLE"
@@ -783,7 +783,7 @@ def etiqueta_modularidad(texto):
 
 
 def nivel_eq(fila, E, autom):
-    """SUP-16-05: nivel de la escala de referencia más cercana (empate hacia arriba)."""
+    """SUP-159: nivel de la escala de referencia más cercana (empate hacia arriba)."""
     ref = min(ESCALAS_REF, key=lambda s: (abs(s - E), -s))
     nv = fila[f"nivel_{ref}"].strip()
     if "/" in nv:
@@ -900,12 +900,12 @@ def generar_boq(c, D=None):
               etiqueta="ESCALABLE", driver="terreno_minimo_fisico", tipo_area="terreno")
         if c["terreno"] == "parque_industrial":
             B.add("TER-PARQUE", "TERRENO", "parque", "TERRENO", "Cargo de infraestructura del parque", "TER-08", 1,
-                  "lote", "1 lote; alcance según parque (DPV-16-03)", etiqueta="REUTILIZABLE")
+                  "lote", "1 lote; alcance según parque (DPV-087)", etiqueta="REUTILIZABLE")
         else:
             B.add("TER-ACCESO", "TERRENO", "acceso", "TERRENO", "Infraestructura de acceso", "TER-06", 1, "lote",
-                  "1 lote; alcance según sitio (DPV-16-03)", etiqueta="REUTILIZABLE")
+                  "1 lote; alcance según sitio (DPV-087)", etiqueta="REUTILIZABLE")
             B.add("TER-CONEX", "TERRENO", "conexiones", "TERRENO", "Conexiones extraordinarias", "TER-07", 1,
-                  "lote", "1 lote; alcance según sitio (DPV-16-11)", etiqueta="REUTILIZABLE")
+                  "lote", "1 lote; alcance según sitio (DPV-087)", etiqueta="REUTILIZABLE")
         # ---- B. OBRA CIVIL ----------------------------------------------------------------------
         nombres = {"OC-RS": "Recepción semicubierta", "OC-PH": "Proceso húmedo", "OC-FR": "Envolvente de frío",
                    "OC-DK": "Docks y expedición", "OC-DP": "Depósitos y talleres secos", "OC-ST": "Salas técnicas",
@@ -998,8 +998,8 @@ def generar_boq(c, D=None):
               "09C agua captada (m³/d; 15/25/38 L/ave); fuente según sitio", etiqueta="ESCALABLE", driver="agua_captada_m3_dia")
         B.add("AG-ALM", "AGUA", "almacenamiento", "UTILITIES", "Almacenamiento de agua (EQ-72)", "AG-ALM",
               tuple(cap[i] * DIAS_RESERVA_AGUA[i] for i in range(3)), "m³",
-              "DERIVADO_CAPEX: agua captada × días de reserva 0,5/1/2 (SUP-16-15)", etiqueta="DUPLICABLE",
-              driver="agua_captada_m3_dia×SUP-16-15")
+              "DERIVADO_CAPEX: agua captada × días de reserva 0,5/1/2 (SUP-169)", etiqueta="DUPLICABLE",
+              driver="agua_captada_m3_dia×SUP-169")
         B.add("AG-TRA", "AGUA", "tratamiento", "UTILITIES", "Tratamiento de agua", "AG-TRA", qmax, "m³/h",
               "09C caudal horario máximo ilustrativo [SUPUESTO] (parámetro, sin tecnología)", etiqueta="ESCALABLE",
               driver="caudal_horario_maximo_ilustrativo_m3_h")
@@ -1095,7 +1095,7 @@ def generar_boq(c, D=None):
                       etiqueta=etiqueta_modularidad(f["modularidad"]), nivel=nv, estado="INFORMATIVO")
     else:
         B.add("OC-ADM-OBRA", "OBRA_CIVIL", "OC-ADM", "OBRA_CIVIL", "Oficina comercial / administrativa (asset-light)",
-              "OC-ADM", None, "m²", "sin programa de áreas asset-light (DPV-16-12)", etiqueta="ESCALABLE")
+              "OC-ADM", None, "m²", "sin programa de áreas asset-light (DPV-166)", etiqueta="ESCALABLE")
         for cid, nom, et in [("IT-HW", "Hardware IT", "ESCALABLE"), ("IT-SW", "Software inicial", "REUTILIZABLE")]:
             B.add(cid, "IT_TRAZABILIDAD", "it", "SERVICIOS_GENERALES", nom, cid, 1, "lote", "alcance PENDIENTE",
                   etiqueta=et)
@@ -1126,14 +1126,14 @@ def generar_boq(c, D=None):
                   None, "unidad", "volumen útil y densidades PENDIENTES (DPV-135)", etiqueta="DUPLICABLE")
     if propia and flota_de(c, "vivo") != "propia":
         B.add("JAU-VIVO", "LOGISTICA", "vivo", "LOGISTICA", "Jaulas / cajones / módulos (EQ-03) — titularidad PENDIENTE",
-              "JAU-VIVO", None, "juego", "con transporte tercerizado la titularidad de los cajones es PENDIENTE (DPV-16-10)",
+              "JAU-VIVO", None, "juego", "con transporte tercerizado la titularidad de los cajones es PENDIENTE (DPV-054)",
               titular="PENDIENTE", etiqueta="DUPLICABLE")
     # ---- INCUBACIÓN -------------------------------------------------------------------------
     if c["pollito"] == "incubacion":
         I = D["incubacion"]
         for cid, nom, q, un, org, et in [
                 ("INC-TER", "Terreno de incubadora", None, "m²", "sitio separado; m² PENDIENTES", "REUTILIZABLE"),
-                ("INC-EDI", "Edificio de incubación", None, "m²", "sin programa de áreas (DPV-16-13)", "ESCALABLE"),
+                ("INC-EDI", "Edificio de incubación", None, "m²", "sin programa de áreas (DPV-166)", "ESCALABLE"),
                 ("INC-HUE", "Sala de huevo fértil", I["capacidad_almacen_huevos"], "huevos", "14B capacidad de almacén (con margen SUP-146)", "ESCALABLE"),
                 ("INC-SET", "Setters", I["posiciones_setter_diseno"], "posiciones",
                  f"14B posiciones de setter, CADENCIA_NACIMIENTOS = {c['cadencia_nacimientos']} (escenario), margen {c['margen_capacidad_incubacion']:.0%}", "DUPLICABLE"),
@@ -1165,7 +1165,7 @@ def generar_boq(c, D=None):
         for cid, nom, q, un, org, et in [
                 ("ALI-TER", "Terreno de planta de alimento", None, "m²", "ubicación abierta (DEC-077)", "REUTILIZABLE"),
                 ("ALI-REC", "Recepción de granos", th, "t/h", "14B t/h requerida (capacidad de recepción PENDIENTE)", "REEMPLAZABLE"),
-                ("ALI-BAS", "Báscula de camiones", 1, "unidad", "1 báscula (SUP-16-18)", "REUTILIZABLE"),
+                ("ALI-BAS", "Báscula de camiones", 1, "unidad", "1 báscula (SUP-172)", "REUTILIZABLE"),
                 ("ALI-SIL", "Silos de materias primas", A["m3_silos_mp"], "m³", "14B maíz + soja (días de stock SUP-150)", "DUPLICABLE"),
                 ("ALI-TRA", "Transporte interno", 1, "lote", "alcance PENDIENTE", "ESCALABLE"),
                 ("ALI-MOL", "Molienda", th, "t/h", "14B t/h requerida (SUP-148)", "REEMPLAZABLE"),
@@ -1209,7 +1209,7 @@ def generar_boq(c, D=None):
                                 ("GRA-BIO", "Bioseguridad de granja", 1, "lote"), ("GRA-ALM", "Almacenamiento de granja", 1, "lote"),
                                 ("GRA-AUX", "Obras auxiliares de granja", 1, "lote")]:
             B.add(cid + sfx, "GRANJAS", "equipamiento", "GRANJAS", nom, cid, q, un,
-                  "¿incluido en el precio del galpón? PENDIENTE (DPV-16-07)", padre="GRA-GAL" + sfx,
+                  "¿incluido en el precio del galpón? PENDIENTE (DPV-051)", padre="GRA-GAL" + sfx,
                   incluido="PENDIENTE", titular=titular, etiqueta="DUPLICABLE")
     # ---- INDIRECTOS, PREOPERATIVOS Y CONTINGENCIA (siempre separados del directo) ---------------
     for cid, nom, cat, bl in [
@@ -1508,7 +1508,7 @@ def _base_pct(filas, base, tipo):
                 elif r["PUESTA_EN_MARCHA_INCLUIDA"] == "PENDIENTE" and f["COSTO_INSTALADO_USD"] is not None:
                     dobles += 1
         elif tipo in ("DIRECTO", "DIRECTO+INDIRECTO"):
-            ok = f["CATEGORIA_CAPEX"] == "DIRECTO" and f["BLOQUE"] != "TERRENO"   # SUP-16-07: terreno fuera de la base
+            ok = f["CATEGORIA_CAPEX"] == "DIRECTO" and f["BLOQUE"] != "TERRENO"   # SUP-161: terreno fuera de la base
             if tipo == "DIRECTO+INDIRECTO" and r["CONTINGENCIA_INCLUIDA"] == "Sí":
                 ok = False
         else:
@@ -1695,7 +1695,7 @@ TRAYECTORIAS = {"A_20000_directo": (20000,), "B_5000_a_20000": (5000, 20000),
 
 
 def accion_expansion(et, q0, q1):
-    """SUP-16-11. Devuelve (acción, Δ cantidad a adquirir)."""
+    """SUP-165. Devuelve (acción, Δ cantidad a adquirir)."""
     if q0 is None or q1 is None:
         return "PENDIENTE", None
     if et == "REUTILIZABLE":
@@ -1782,7 +1782,7 @@ def expansion(cfg_nombre="C1", terreno="compra_fase", base=None):
                                   "CANTIDAD_ANTERIOR": None if prev is None or f["ACTIVO_ID"] not in prev else prev[f["ACTIVO_ID"]]["CANTIDAD"],
                                   "CANTIDAD_NUEVA": q1, "DELTA_A_ADQUIRIR": dq, "UNIDAD": f["UNIDAD"],
                                   "COSTEA": f["COSTEA"], "COSTO_ETAPA_USD": costo,
-                                  "NOTA": ((nota_x + "; ") if prev is not None and nota_x else "") + ("costo a precio unitario de obra nueva; prima/penalidad de ampliación PENDIENTE (DPV-16-14)"
+                                  "NOTA": ((nota_x + "; ") if prev is not None and nota_x else "") + ("costo a precio unitario de obra nueva; prima/penalidad de ampliación PENDIENTE (DPV-086)"
                                            if prev is not None and costo not in (None, 0.0) else
                                            "valor residual del activo reemplazado PENDIENTE (modelo financiero)" if acc == "REEMPLAZA" else "")})
             acumulado += capex_etapa
@@ -1809,19 +1809,19 @@ def matriz_rfq():
     p = "Candidatos relevados sin selección en 08_maquinaria/proveedores_preliminares.md"
     ni = "No identificados (relevar; no se inventan proveedores)"
     filas = [
-        ("Línea de faena, evisceración y enfriamiento (L1–L4 y L11)", "linea_faena", "Base de diseño y 31 campos de 08 requerimientos_cotizacion.md; capacidad garantizada (DPV-097); inmersión y aire por separado; desglose por capas C01–C19", f"OPERATIVO {r0['ritmo_operativo'][1]:.0f}–{r1['ritmo_operativo'][1]:.0f} aves/h; NOMINAL requerido {r0['ritmo_nominal'][0]:.0f}–{r1['ritmo_nominal'][2]:.0f} aves/h (05, R 0,95–0,82); diseño y garantizada PENDIENTES (2.500–20.000 aves/día, 8 h netas, 1 línea)", "2 escalas del rango + cómo se amplía", p, 3, "PQ-L1;PQ-L2;PQ-L3;PQ-L4;PQ-L11", "DPV-097;DPV-095;DPV-16-01;DPV-16-05"),
-        ("Trozado, deshuese y packaging (L5, L7)", "linea_faena", "Mix por configuración A/B/C", "ídem", "por configuración", p, 3, "PQ-L5;PQ-L7", "DPV-037;DPV-16-01"),
-        ("Coproductos (L6) y subproductos (L9)", "linea_faena", "Garras, CMS solo con comprador; sangre, plumas, vísceras", f"{u0['masa_biologica_potencialmente_segregable_en_origen_t_dia']:.1f}–{u1['masa_biologica_potencialmente_segregable_en_origen_t_dia']:.1f} t/d de masa biológica segregable (09C; no son sólidos de efluente)", "1", p, 3, "PQ-L6;SB-L9;SB-BAS", "DEC-027;DPV-16-01"),
+        ("Línea de faena, evisceración y enfriamiento (L1–L4 y L11)", "linea_faena", "Base de diseño y 31 campos de 08 requerimientos_cotizacion.md; capacidad garantizada (DPV-097); inmersión y aire por separado; desglose por capas C01–C19", f"OPERATIVO {r0['ritmo_operativo'][1]:.0f}–{r1['ritmo_operativo'][1]:.0f} aves/h; NOMINAL requerido {r0['ritmo_nominal'][0]:.0f}–{r1['ritmo_nominal'][2]:.0f} aves/h (05, R 0,95–0,82); diseño y garantizada PENDIENTES (2.500–20.000 aves/día, 8 h netas, 1 línea)", "2 escalas del rango + cómo se amplía", p, 3, "PQ-L1;PQ-L2;PQ-L3;PQ-L4;PQ-L11", "DPV-097;DPV-095;DPV-160;DPV-093"),
+        ("Trozado, deshuese y packaging (L5, L7)", "linea_faena", "Mix por configuración A/B/C", "ídem", "por configuración", p, 3, "PQ-L5;PQ-L7", "DPV-037;DPV-160"),
+        ("Coproductos (L6) y subproductos (L9)", "linea_faena", "Garras, CMS solo con comprador; sangre, plumas, vísceras", f"{u0['masa_biologica_potencialmente_segregable_en_origen_t_dia']:.1f}–{u1['masa_biologica_potencialmente_segregable_en_origen_t_dia']:.1f} t/d de masa biológica segregable (09C; no son sólidos de efluente)", "1", p, 3, "PQ-L6;SB-L9;SB-BAS", "DEC-027;DPV-160"),
         ("Paquete de frío (cámaras, túneles, sala de máquinas, agua helada)", "frio", "Balance frigorífico por escala y perfil P1–P3; verano de diseño del sitio; refrigerante abierto", "2.500: " + detalle_frio(r0) + " || 20.000: " + detalle_frio(r1), "1 paquete por escala", p, 3, "FR-PAQ;FR-*", "DPV-109;DPV-096;DEC-046"),
         ("Pretratamiento y tratamiento de efluentes", "efluentes", "Por escenario de carga; límites de vuelco del sitio (DPV-106); superficie (DPV-144)", f"{u0.get('agua_descargada_m3_dia', 0):.0f}–{u1.get('agua_descargada_m3_dia', 0):.0f} m³/d", "por tecnología", p, 3, "EF-PAQ;EF-*;OC-EF", "DPV-114;DPV-144;DEC-043"),
-        ("Acometida, transformación, tableros y generación de respaldo", "electrico", "Lista de cargas consolidada (DEC-048); demanda máxima; política de respaldo (DEC-047)", f"potencia media de proceso {u0.get('potencia_media_equivalente_proceso_kw_bajo_14h', 0):.0f}–{u1.get('potencia_media_equivalente_proceso_kw_bajo_14h', 0):.0f} kW (pico PENDIENTE)", "1", ni + "; distribuidora eléctrica del sitio", 3, "EL-*", "DPV-095;DPV-16-11"),
+        ("Acometida, transformación, tableros y generación de respaldo", "electrico", "Lista de cargas consolidada (DEC-048); demanda máxima; política de respaldo (DEC-047)", f"potencia media de proceso {u0.get('potencia_media_equivalente_proceso_kw_bajo_14h', 0):.0f}–{u1.get('potencia_media_equivalente_proceso_kw_bajo_14h', 0):.0f} kW (pico PENDIENTE)", "1", ni + "; distribuidora eléctrica del sitio", 3, "EL-*", "DPV-095;DPV-087"),
         ("Caldera / agua caliente, aire comprimido, agua", "electrico", "Fuente térmica abierta (DEC-045)", "pico PENDIENTE", "1", p, 3, "TE-*;AC-COM;AG-*", "DPV-095"),
-        ("Obra civil por categoría (USD/m²)", "obra", "Precio por m² SEPARADO por categoría: proceso húmedo, frío, docks, depósitos, salas técnicas, personal, oficinas, exteriores, efluentes", f"{r0['m2_construidos'][1]:.0f}–{r1['m2_construidos'][1]:.0f} m² construidos (medio, conceptual)", "14 categorías", ni + "; constructoras con antecedentes en plantas alimentarias", 3, "OC-*", "DPV-16-02"),
-        ("Terreno por corredor", "obra", "USD/m² por tipo (industrial, parque, rural compatible) + preparación + acceso + conexiones", f"mínimo físico {r0['terreno_minimo'][1]:.0f}–{r1['terreno_minimo'][1]:.0f} m² (medio, función 12C); conceptual 12C {r0['terreno_conceptual'][1]:.0f}–{r1['terreno_conceptual'][1]:.0f} m²; SUPERFICIE_ESCENARIO_OBJETIVO_20000_12C {res20:.0f} m²; superficie a adquirir = DECISIÓN (criterio_terreno)", "por corredor de la lista corta (DEC-055)", ni + "; inmobiliarias / parques industriales", 3, "TER-*", "DPV-16-03;DPV-16-11"),
-        ("Incubación (setters, hatchers, sala de huevo, HVAC)", "incubacion", "Setter y hatcher por separado; cadencia; vacunación (DEC-078)", "posiciones 14B por escala", "por escala", p, 3, "INC-*", "DPV-153;DPV-16-13"),
-        ("Planta de alimento", "alimento", "t/h requerida de 14B (no catálogo sobredimensionado); forma física DEC-076", "0,9–41 t/h según escala y factores (SUP-148)", "1", p, 3, "ALI-*", "DPV-158;DPV-16-15"),
-        ("Vehículos por flujo (chasis, carrocería, frío, cajones)", "vehiculos", "Capacidad útil validada por flujo (DPV-084); separar chasis / carrocería / equipo de frío / jaulas", "flota por flujo de 12B", "por flujo", ni + "; concesionarios y carroceros", 3, "VEH-*;CAR-*;FRI-*;AUX-*;JAU-*", "DPV-084;DPV-16-10"),
-        ("Galpones de engorde y equipamiento", "granjas", "Tecnología de galpón (DEC-022); alcance de equipamiento", f"{r0['m2_galpon']:.0f}–{r1['m2_galpon']:.0f} m² de galpón", "por núcleo", ni + "; constructores de galpones y proveedores de equipamiento", 3, "GRA-*", "DPV-16-07;DEC-022"),
+        ("Obra civil por categoría (USD/m²)", "obra", "Precio por m² SEPARADO por categoría: proceso húmedo, frío, docks, depósitos, salas técnicas, personal, oficinas, exteriores, efluentes", f"{r0['m2_construidos'][1]:.0f}–{r1['m2_construidos'][1]:.0f} m² construidos (medio, conceptual)", "14 categorías", ni + "; constructoras con antecedentes en plantas alimentarias", 3, "OC-*", "DPV-161"),
+        ("Terreno por corredor", "obra", "USD/m² por tipo (industrial, parque, rural compatible) + preparación + acceso + conexiones", f"mínimo físico {r0['terreno_minimo'][1]:.0f}–{r1['terreno_minimo'][1]:.0f} m² (medio, función 12C); conceptual 12C {r0['terreno_conceptual'][1]:.0f}–{r1['terreno_conceptual'][1]:.0f} m²; SUPERFICIE_ESCENARIO_OBJETIVO_20000_12C {res20:.0f} m²; superficie a adquirir = DECISIÓN (criterio_terreno)", "por corredor de la lista corta (DEC-055)", ni + "; inmobiliarias / parques industriales", 3, "TER-*", "DPV-087;DPV-087"),
+        ("Incubación (setters, hatchers, sala de huevo, HVAC)", "incubacion", "Setter y hatcher por separado; cadencia; vacunación (DEC-078)", "posiciones 14B por escala", "por escala", p, 3, "INC-*", "DPV-153;DPV-166"),
+        ("Planta de alimento", "alimento", "t/h requerida de 14B (no catálogo sobredimensionado); forma física DEC-076", "0,9–41 t/h según escala y factores (SUP-148)", "1", p, 3, "ALI-*", "DPV-158;DPV-167"),
+        ("Vehículos por flujo (chasis, carrocería, frío, cajones)", "vehiculos", "Capacidad útil validada por flujo (DPV-084); separar chasis / carrocería / equipo de frío / jaulas", "flota por flujo de 12B", "por flujo", ni + "; concesionarios y carroceros", 3, "VEH-*;CAR-*;FRI-*;AUX-*;JAU-*", "DPV-084;DPV-054"),
+        ("Galpones de engorde y equipamiento", "granjas", "Tecnología de galpón (DEC-022); alcance de equipamiento", f"{r0['m2_galpon']:.0f}–{r1['m2_galpon']:.0f} m² de galpón", "por núcleo", ni + "; constructores de galpones y proveedores de equipamiento", 3, "GRA-*", "DPV-051;DEC-022"),
     ]
     out = []
     for i, (item, cat, esp, cap, cant, prov, ncot, ids, dpv) in enumerate(filas, 1):

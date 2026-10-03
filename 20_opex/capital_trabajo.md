@@ -25,7 +25,7 @@ Solo entra al capital de trabajo el inventario con `PROPIEDAD_EMPRESA = TRUE`. E
 | Granos, MP y alimento en planta propia | Empresa | Sí |
 | Huevo fértil en almacén (5 d) y en incubación (WIP) | Empresa | Sí (WIP valuado al costo del huevo como cota inferior) |
 | Pollitos BB | Empresa | Stock ≈ 0 (se alojan al llegar) |
-| Aves en crianza (activo biológico) | Empresa si aporta el pollito o la granja es propia | Sí; valuación PENDIENTE (DEC-17-07) |
+| Aves en crianza (activo biológico) | Empresa si aporta el pollito o la granja es propia | Sí; valuación PENDIENTE (DEC-089) |
 | Producto terminado refrigerado y congelado (stock medio de ciclo de despacho, 12B) | Empresa (también en façon, en el frío del faenador) | Sí; costo por kg PENDIENTE |
 | Subproductos | Empresa | Stock 0 (retiro diario, 12B E1) |
 | Envases, repuestos, insumos | Empresa | Días de stock PENDIENTES |

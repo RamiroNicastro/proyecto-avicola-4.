@@ -19,7 +19,7 @@ Un extracto de la misma cámara con "$ 16 por unidad" (2026-09-13) es incompatib
 
 | Concepto | ID | Driver | Estado |
 |---|---|---|---|
-| Huevo fértil | INC-OP-HUEVO | huevos/año = huevos por pollito vendible (14B, ≈ 1,24) × pollitos/año | Sin precio (DPV-17-03) |
+| Huevo fértil | INC-OP-HUEVO | huevos/año = huevos por pollito vendible (14B, ≈ 1,24) × pollitos/año | Sin precio (DPV-047) |
 | Vacunas y aplicación | INC-OP-VAC | pollitos/año | Sin precio |
 | Insumos de expedición | INC-OP-INS | pollitos/año | Sin precio |
 | Limpieza y desinfección | INC-OP-LIM | cargas/año = cargas/semana (cadencia 2) × semanas equivalentes ≈ 100 | Sin precio; agua y energía en INC-OP-AGUA / INC-OP-ENE |
@@ -38,7 +38,7 @@ Un extracto de la misma cámara con "$ 16 por unidad" (2026-09-13) es incompatib
 | Stock de huevos en almacén (5 d) | 11.675 | 23.349 | 46.698 | 93.396 |
 | Huevos en incubación (WIP) | 48.508 | 97.016 | 194.032 | 388.064 |
 
-Setter y hatcher **no** generan costos separados por máquina: su energía depende de un dimensionamiento que no existe; la cadencia es un escenario etiquetado (SUP-16-22). Test A03: pollito comprado no carga incubación y viceversa.
+Setter y hatcher **no** generan costos separados por máquina: su energía depende de un dimensionamiento que no existe; la cadencia es un escenario etiquetado (SUP-147). Test A03: pollito comprado no carga incubación y viceversa.
 
 ## 3. Reproductoras (CF, arquitectura futura)
 

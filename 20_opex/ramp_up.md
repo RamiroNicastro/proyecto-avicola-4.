@@ -27,7 +27,7 @@ Finanzas carga la curva (`rampup(filas, {"arranque": u1, "estabilizacion": u2, "
 ## 3. Límites declarados
 
 1. **Escalamiento lineal** de los drivers variables (DERIVADO_OPEX): no se vuelven a correr los modelos fuente a `u × escala` (podría quedar fuera del rango 2.500–20.000 y los viajes enteros no escalan linealmente).
-2. **Ineficiencias del arranque** (mayor mortalidad, peor conversión, rendimiento de línea bajo, mermas, horas extra, scrap de empaque) no están modeladas: requieren parámetros propios del ramp-up (DEC-17-08).
+2. **Ineficiencias del arranque** (mayor mortalidad, peor conversión, rendimiento de línea bajo, mermas, horas extra, scrap de empaque) no están modeladas: requieren parámetros propios del ramp-up (DEC-090).
 3. **Preoperativos** (commissioning, capacitación, insumos iniciales) están en CAPEX y no se repiten aquí; el OPEX empieza con la operación normal.
 4. Con utilización < 1 en la configuración, el motor emite una alerta y sigue publicando la escala plena.
 

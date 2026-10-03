@@ -15,7 +15,7 @@
 
 Se separan: **CAPEX inicial** (etapa 1), **CAPEX de expansión** (cada etapa siguiente) y **CAPEX acumulado**.
 
-## 2. Etiquetas y acciones (SUP-16-11)
+## 2. Etiquetas y acciones (SUP-165)
 
 | Etiqueta | Significado | Acción al crecer | Δ a adquirir |
 |---|---|---|---|
@@ -40,7 +40,7 @@ Los lotes y paquetes se comparan por **capacidad** (aves/h, kWf, m³/d, t/d), no
 
 Conteos v1.1 (tras la auditoría de drivers: frío y algunos componentes pasaron a PENDIENTE). Lectura (física, no económica):
 - **Terreno.** Sin reserva, crecer de 5.000 a 20.000 exige comprar ≈ 14.350 m² adicionales (medio; diferencia de mínimos físicos, función de 12C sin reserva) **contiguos**: riesgo si no hay lote vecino (DEC-063). Con reserva para 20.000 desde el inicio, el terreno se **reutiliza** (Δ = 0; test X02), a cambio de comprar ≈ 33.345 m² en la etapa 1.
-- **Obra.** Proceso húmedo +3.170 m², pavimentos +2.172 m², etc. (B, medio): se amplía; la prima de ampliar con la planta operando es PENDIENTE (DPV-16-14).
+- **Obra.** Proceso húmedo +3.170 m², pavimentos +2.172 m², etc. (B, medio): se amplía; la prima de ampliar con la planta operando es PENDIENTE (DPV-086).
 - **Equipos.** Partiendo de 5.000, 39 EQ cambian de nivel de automatización al llegar a 20.000 (reemplazo); partiendo de 10.000, 20. Es la mayor diferencia física entre trayectorias, y depende de una hipótesis.
 - **Utilities.** Efluente +330 m³/d, agua +375 m³/d (B): ampliables si se reservó espacio. Frío, transformación, respaldo y térmico quedan PENDIENTES (v1.1: el paquete de frío ya no tiene una capacidad propia de CAPEX; la carga de diseño es PENDIENTE, contradicción ×5,7 abierta).
 
@@ -57,4 +57,4 @@ USD, solo depósitos y talleres (OC-DP, E4). **El acumulado es idéntico en toda
 
 ## 5. Para el optimizador futuro
 
-`expansion_capex.csv` deja por activo: trayectoria, etapa, escala, etiqueta, acción, cantidad anterior/nueva, Δ a adquirir, unidad y costo de la etapa (vacío si no hay precio). Con cotizaciones a dos escalas (exponentes, DPV-16-01) y la prima de ampliación (DPV-16-14), el mismo motor podrá comparar trayectorias en valor. Decisiones relacionadas: DEC-033, DEC-034, DEC-035, DEC-063.
+`expansion_capex.csv` deja por activo: trayectoria, etapa, escala, etiqueta, acción, cantidad anterior/nueva, Δ a adquirir, unidad y costo de la etapa (vacío si no hay precio). Con cotizaciones a dos escalas (exponentes, DPV-160) y la prima de ampliación (DPV-086), el mismo motor podrá comparar trayectorias en valor. Decisiones relacionadas: DEC-033, DEC-034, DEC-035, DEC-063.

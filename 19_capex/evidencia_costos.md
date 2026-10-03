@@ -40,14 +40,14 @@ Reglas verificadas por `validar_base()` y los tests E01–E08:
 
 | ID_COSTO | Valor | Fuente | Por qué ese nivel / uso |
 |---|---|---|---|
-| **OC-DP** | USD 250 / 300 / 350 por m² (nave industrial llave en mano, jun-2026, TC oficial) | FTE-16-001 | E4: blog comercial leído solo como extracto (sitio bloqueado). Usado **solo** para depósitos y talleres secos; IVA desconocido (alerta IVA_INCIERTO) |
+| **OC-DP** | USD 250 / 300 / 350 por m² (nave industrial llave en mano, jun-2026, TC oficial) | FTE-310 | E4: blog comercial leído solo como extracto (sitio bloqueado). Usado **solo** para depósitos y talleres secos; IVA desconocido (alerta IVA_INCIERTO) |
 | **GRA-GAL** | ≥ USD 11,49 por plaza (6.000.000 ÷ 522.000 aves/ciclo) | FTE-081 | E4: prensa ("más de USD 6 M"). **Cota inferior**, alcance desconocido; los 8 componentes de equipamiento quedan con alcance PENDIENTE para no contarlos dos veces |
-| REP-GAL | ≥ USD 25,45–28,00 por plaza de reproductora (EE. UU.) | FTE-16-005 | E4; solo arquitectura futura |
-| ALI-REF | USD 150.000–300.000 equipos de planta de alimento de 8–10 t/h | FTE-16-006 | E4; precio de **equipo** de fabricante, Incoterm desconocido: no es instalado. No se usa |
-| REF-MAL | ARS 101.471.771 + IVA (2022), acondicionamiento de sala de faena aviar | FTE-16-003 | E4; sin TC, sin m², alcance desconocido: no convertible |
-| REF-RAFS | USD 17.401–52.501 equipos de unidades móviles de 350–1.200 aves/h (EE. UU., 2015) | FTE-16-004 | E4; no comparable con una planta SENASA |
+| REP-GAL | ≥ USD 25,45–28,00 por plaza de reproductora (EE. UU.) | FTE-314 | E4; solo arquitectura futura |
+| ALI-REF | USD 150.000–300.000 equipos de planta de alimento de 8–10 t/h | FTE-315 | E4; precio de **equipo** de fabricante, Incoterm desconocido: no es instalado. No se usa |
+| REF-MAL | ARS 101.471.771 + IVA (2022), acondicionamiento de sala de faena aviar | FTE-312 | E4; sin TC, sin m², alcance desconocido: no convertible |
+| REF-RAFS | USD 17.401–52.501 equipos de unidades móviles de 350–1.200 aves/h (EE. UU., 2015) | FTE-313 | E4; no comparable con una planta SENASA |
 | REF-SOY | ~USD 300.000 por galpón | FTE-043 | E4; sin m² ni plazas |
-| REF-EDI | USD 90–130/m² galpón cerrado estándar | FTE-16-001 | E4; no aplicable a áreas sanitarias ni de frío |
+| REF-EDI | USD 90–130/m² galpón cerrado estándar | FTE-310 | E4; no aplicable a áreas sanitarias ni de frío |
 
 ## 3 bis. Cobertura por nivel de evidencia (conteo de conceptos costeables de la empresa)
 
@@ -71,8 +71,8 @@ Cuando entren cotizaciones, el mismo resumen mostrará cuánto del monto es E1/E
 | Prioridad | Fuente | Concepto | Nivel alcanzable |
 |---|---|---|---|
 | 1 | Cotizaciones RFQ (cuando la fase lo habilite) | Línea, frío, efluentes, eléctrico | E1 |
-| 2 | Índice de costo de producción de pollo parrillero, SAGyP (FTE-16-002), leído en original | Galpones y equipamiento de granja | E3 |
-| 3 | Licitaciones públicas de salas de faena y cámaras con pliego y cómputo (p. ej., FTE-16-003 leído) | Obra civil sanitaria y de frío | E3 |
+| 2 | Índice de costo de producción de pollo parrillero, SAGyP (FTE-311), leído en original | Galpones y equipamiento de granja | E3 |
+| 3 | Licitaciones públicas de salas de faena y cámaras con pliego y cómputo (p. ej., FTE-312 leído) | Obra civil sanitaria y de frío | E3 |
 | 4 | Listas de precios de concesionarios y carroceros | Vehículos | E2 |
 | 5 | Consulta a constructoras con antecedentes en plantas alimentarias | USD/m² por categoría | E2 |
 | 6 | Inmobiliarias y parques industriales de la lista corta de corredores | Terreno | E2 |

@@ -30,7 +30,7 @@
 
 **Corrección v1.1:** la v1.0 publicaba el paquete de frío con una "cota inferior" igual a la **suma** de las cuatro cargas de 09C (incluida la ilustrativa). Esa suma era una magnitud de CAPEX que ningún módulo publica y mezclaba un supuesto con cálculos; además el RFQ la usaba como capacidad. Ahora FR-PAQ no tiene capacidad; su detalle (en BOQ y RFQ) muestra **BASE, BENCHMARK, CONTRADICCIÓN ABIERTA, DISEÑO PENDIENTE, MARGEN PENDIENTE y ESTADO "no cotizable con una sola cifra"**. El agua helada (FR-AGH) tampoco toma la carga parcial de reposición como capacidad.
 
-| Componente del paquete FR-PAQ (incluidos en el paquete, SUP-16-06) | Cantidad | Estado |
+| Componente del paquete FR-PAQ (incluidos en el paquete, SUP-160) | Cantidad | Estado |
 |---|---|---|
 | FR-PAN Paneles de cámaras | m² de cámaras de 12C | DERIVADO (suma de áreas 12C) |
 | FR-COMP / FR-COND / FR-EVAP | — | PENDIENTE (kWf total) |
@@ -44,7 +44,7 @@
 | Concepto | Cantidad | Origen |
 |---|---|---|
 | AG-CAP Captación o conexión | agua captada m³/d | 09C directo |
-| AG-ALM Almacenamiento (EQ-72) | 0,5 / 1 / 2 días de agua captada | DERIVADO_CAPEX (SUP-16-15) |
+| AG-ALM Almacenamiento (EQ-72) | 0,5 / 1 / 2 días de agua captada | DERIVADO_CAPEX (SUP-169) |
 | AG-TRA Tratamiento · AG-BOM Bombeo | caudal horario máximo ilustrativo | 09C (SUPUESTO de 09C) |
 | AG-DIS Distribución | m² construidos | 12C directo |
 | EF-PAQ Paquete de efluentes | m³/d descargados | 09C directo |

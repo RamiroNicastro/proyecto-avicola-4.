@@ -1,5 +1,7 @@
 # Actualizaciones de gestión — sesión 16 (Motor CAPEX integral)
 
+> **ARCHIVO HISTÓRICO (2026-10-03).** Las propuestas de este documento se integraron en los registros centrales en la [reconciliación de las sesiones 16–17](../00_gestion_proyecto/reconciliacion_sesiones_16_17.md); el mapa de IDs provisionales → definitivos está en su §2. Los IDs `SUP-16-##`, `DPV-16-##`, `DEC-16-##` y `FTE-16-###` de abajo **no** están activos.
+
 **Fecha:** 2026-10-02 · **Rama:** `claude/relaxed-pasteur-p3cg45` (desde `main` actualizado, commit `14d411a`, posterior a la reconciliación 14A–14B)
 **Estado:** PROPUESTA para la próxima reconciliación. Esta sesión **no** modificó `00_gestion_proyecto/` ni `25_fuentes/`. Todos los IDs son **provisionales** (`SUP-16-##`, `DPV-16-##`, `DEC-16-##`, `FTE-16-###`, `T16-##`).
 

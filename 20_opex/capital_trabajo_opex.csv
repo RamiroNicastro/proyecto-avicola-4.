@@ -1,7 +1,7 @@
 ESCENARIO,COMPONENTE,SUBCOMPONENTE,CANTIDAD,UNIDAD,PROPIETARIO,PROPIEDAD_EMPRESA,UBICACION,ENTRA_EN_CT,PRECIO_ID,PRECIO_USD,VALOR_USD,EVIDENCIA,ESTADO,FALTA
-C0-2500,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C0-2500,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-024)
 C0-2500,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C0-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C0-2500,INVENTARIO,producto terminado refrigerado,6.41915,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-2500,INVENTARIO,producto terminado congelado,1.75457,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-2500,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
@@ -14,9 +14,9 @@ C0-2500,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PEND
 C0-2500,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
 C0-2500,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
 C0-2500,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, energia)"
-C0-5000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C0-5000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-024)
 C0-5000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C0-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C0-5000,INVENTARIO,producto terminado refrigerado,12.8383,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-5000,INVENTARIO,producto terminado congelado,3.50914,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-5000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
@@ -29,9 +29,9 @@ C0-5000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PEND
 C0-5000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
 C0-5000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
 C0-5000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, energia)"
-C0-10000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C0-10000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-024)
 C0-10000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C0-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C0-10000,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-10000,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-10000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
@@ -44,9 +44,9 @@ C0-10000,CUENTAS_POR_PAGAR,packaging,,USD/año de compras,,,,Sí (resta),,,,,PEN
 C0-10000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,1 de 1 compras sin costo; días de pago
 C0-10000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
 C0-10000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, energia)"
-C0-20000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C0-20000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-024)
 C0-20000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C0-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C0-20000,INVENTARIO,producto terminado refrigerado,51.3532,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-20000,INVENTARIO,producto terminado congelado,14.0365,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-20000,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
@@ -66,7 +66,7 @@ C1-2500,INVENTARIO,alimento: harina_soja,39.7353,t,tercero,FALSE,fábrica provee
 C1-2500,INVENTARIO,alimento: micros_aceite_otros,26.4902,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C1-2500,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
 C1-2500,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C1-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C1-2500,INVENTARIO,producto terminado refrigerado,6.41915,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-2500,INVENTARIO,producto terminado congelado,1.75457,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-2500,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -89,7 +89,7 @@ C1-5000,INVENTARIO,alimento: harina_soja,79.4706,t,tercero,FALSE,fábrica provee
 C1-5000,INVENTARIO,alimento: micros_aceite_otros,52.9804,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C1-5000,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
 C1-5000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C1-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C1-5000,INVENTARIO,producto terminado refrigerado,12.8383,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-5000,INVENTARIO,producto terminado congelado,3.50914,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-5000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -112,7 +112,7 @@ C1-10000,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,fábrica prove
 C1-10000,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C1-10000,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
 C1-10000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C1-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C1-10000,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -135,7 +135,7 @@ C1-20000,INVENTARIO,alimento: harina_soja,317.882,t,tercero,FALSE,fábrica prove
 C1-20000,INVENTARIO,alimento: micros_aceite_otros,211.921,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C1-20000,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
 C1-20000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C1-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C1-20000,INVENTARIO,producto terminado refrigerado,51.3532,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-20000,INVENTARIO,producto terminado congelado,14.0365,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-20000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -151,9 +151,9 @@ C1-20000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PEN
 C1-20000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,6 de 6 compras sin costo; días de pago
 C1-20000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
 C1-20000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (alimento, pollitos, servicios, packaging, logistica, energia)"
-C2-2500,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C2-2500,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-024)
 C2-2500,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C2-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C2-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C2-2500,INVENTARIO,producto terminado refrigerado,4.27943,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C2-2500,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C2-2500,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -168,9 +168,9 @@ C2-2500,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PEND
 C2-2500,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
 C2-2500,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
 C2-2500,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, logistica, energia)"
-C2-5000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C2-5000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-024)
 C2-5000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C2-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C2-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C2-5000,INVENTARIO,producto terminado refrigerado,8.55887,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C2-5000,INVENTARIO,producto terminado congelado,14.0365,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C2-5000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -185,9 +185,9 @@ C2-5000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PEND
 C2-5000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
 C2-5000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
 C2-5000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, logistica, energia)"
-C2-10000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C2-10000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-024)
 C2-10000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C2-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C2-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C2-10000,INVENTARIO,producto terminado refrigerado,17.1177,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C2-10000,INVENTARIO,producto terminado congelado,28.0731,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C2-10000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -202,9 +202,9 @@ C2-10000,CUENTAS_POR_PAGAR,logistica,,USD/año de compras,,,,Sí (resta),,,,,PEN
 C2-10000,CUENTAS_POR_PAGAR,energia,,USD/año de compras,,,,Sí (resta),,,,,PENDIENTE,9 de 9 compras sin costo; días de pago
 C2-10000,CAJA_OPERATIVA,días de OPEX,,días,,,,Sí,,,0,,NO_ASIGNADA (opcional; no obligatoria),
 C2-10000,CAPITAL_TRABAJO_OPERATIVO,inventarios + CxC + caja − CxP,,,,,,—,,,,,PENDIENTE,"inventarios (7 ítems sin valor); cuentas por cobrar (ventas y días); cuentas por pagar (pollitos, servicios, packaging, logistica, energia)"
-C2-20000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)
+C2-20000,INVENTARIO,alimento y materias primas,,t,PENDIENTE,PENDIENTE,—,PENDIENTE,,,,,PROPIEDAD_PENDIENTE,variante del façon no definida: propietario de las MP PENDIENTE (DEC-024)
 C2-20000,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C2-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C2-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C2-20000,INVENTARIO,producto terminado refrigerado,34.2355,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C2-20000,INVENTARIO,producto terminado congelado,56.1462,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C2-20000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -227,7 +227,7 @@ C3-2500,INVENTARIO,alimento: micros_aceite_otros,26.4902,t,empresa,TRUE,planta p
 C3-2500,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
 C3-2500,INVENTARIO,huevo fértil en almacén,11674.5,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
 C3-2500,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",48508,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
-C3-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C3-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C3-2500,INVENTARIO,producto terminado refrigerado,4.27943,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C3-2500,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C3-2500,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -251,7 +251,7 @@ C3-5000,INVENTARIO,alimento: micros_aceite_otros,52.9804,t,empresa,TRUE,planta p
 C3-5000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
 C3-5000,INVENTARIO,huevo fértil en almacén,23349.1,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
 C3-5000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",97016,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
-C3-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C3-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C3-5000,INVENTARIO,producto terminado refrigerado,8.55887,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C3-5000,INVENTARIO,producto terminado congelado,14.0365,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C3-5000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -275,7 +275,7 @@ C3-10000,INVENTARIO,alimento: micros_aceite_otros,105.961,t,empresa,TRUE,planta 
 C3-10000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
 C3-10000,INVENTARIO,huevo fértil en almacén,46698.1,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
 C3-10000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",194032,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
-C3-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C3-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C3-10000,INVENTARIO,producto terminado refrigerado,17.1177,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C3-10000,INVENTARIO,producto terminado congelado,28.0731,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C3-10000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -299,7 +299,7 @@ C3-20000,INVENTARIO,alimento: micros_aceite_otros,211.921,t,empresa,TRUE,planta 
 C3-20000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
 C3-20000,INVENTARIO,huevo fértil en almacén,93396.2,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
 C3-20000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",388064,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
-C3-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C3-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C3-20000,INVENTARIO,producto terminado refrigerado,34.2355,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C3-20000,INVENTARIO,producto terminado congelado,56.1462,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C3-20000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -323,7 +323,7 @@ CF-2500,INVENTARIO,alimento: micros_aceite_otros,26.4902,t,empresa,TRUE,planta p
 CF-2500,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
 CF-2500,INVENTARIO,huevo fértil en almacén,11674.5,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
 CF-2500,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",48508,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
-CF-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+CF-2500,INVENTARIO,aves en crianza (activo biológico),82845.9,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 CF-2500,INVENTARIO,producto terminado refrigerado,4.27943,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 CF-2500,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 CF-2500,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -347,7 +347,7 @@ CF-5000,INVENTARIO,alimento: micros_aceite_otros,52.9804,t,empresa,TRUE,planta p
 CF-5000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
 CF-5000,INVENTARIO,huevo fértil en almacén,23349.1,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
 CF-5000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",97016,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
-CF-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+CF-5000,INVENTARIO,aves en crianza (activo biológico),165692,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 CF-5000,INVENTARIO,producto terminado refrigerado,8.55887,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 CF-5000,INVENTARIO,producto terminado congelado,14.0365,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 CF-5000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -371,7 +371,7 @@ CF-10000,INVENTARIO,alimento: micros_aceite_otros,105.961,t,empresa,TRUE,planta 
 CF-10000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
 CF-10000,INVENTARIO,huevo fértil en almacén,46698.1,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
 CF-10000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",194032,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
-CF-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+CF-10000,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 CF-10000,INVENTARIO,producto terminado refrigerado,17.1177,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 CF-10000,INVENTARIO,producto terminado congelado,28.0731,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 CF-10000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -395,7 +395,7 @@ CF-20000,INVENTARIO,alimento: micros_aceite_otros,211.921,t,empresa,TRUE,planta 
 CF-20000,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,cantidad
 CF-20000,INVENTARIO,huevo fértil en almacén,93396.2,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
 CF-20000,INVENTARIO,"huevos en incubación (WIP, al costo del huevo como cota inferior)",388064,huevos,empresa,TRUE,incubadora,Sí,INC-OP-HUEVO,,,,PENDIENTE,precio
-CF-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+CF-20000,INVENTARIO,aves en crianza (activo biológico),662767,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 CF-20000,INVENTARIO,producto terminado refrigerado,34.2355,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 CF-20000,INVENTARIO,producto terminado congelado,56.1462,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 CF-20000,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -418,7 +418,7 @@ C0-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: harina_soja,158.941,t,empresa,TRU
 C0-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: micros_aceite_otros,105.961,t,empresa,TRUE,elaborador,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
 C0-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,elaborador,Sí,,,,,PENDIENTE,cantidad
 C0-10000-FACON-MP-EMPRESA,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C0-10000-FACON-MP-EMPRESA,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-10000-FACON-MP-EMPRESA,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C0-10000-FACON-MP-EMPRESA,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-10000-FACON-MP-EMPRESA,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-10000-FACON-MP-EMPRESA,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
@@ -439,7 +439,7 @@ C0-10000-FACON-MP-ELABORADOR,INVENTARIO,alimento: harina_soja,158.941,t,tercero,
 C0-10000-FACON-MP-ELABORADOR,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,elaborador,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C0-10000-FACON-MP-ELABORADOR,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,elaborador,No (propiedad de tercero),,,,,NO_ENTRA,
 C0-10000-FACON-MP-ELABORADOR,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C0-10000-FACON-MP-ELABORADOR,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C0-10000-FACON-MP-ELABORADOR,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C0-10000-FACON-MP-ELABORADOR,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-10000-FACON-MP-ELABORADOR,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,faenador / frío de tercero (propiedad de la empresa),Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C0-10000-FACON-MP-ELABORADOR,INVENTARIO,envases,,USD,empresa,TRUE,—,Sí,,,,,PENDIENTE,días de stock PENDIENTES (dias_stock_envases) y compras con precio
@@ -460,7 +460,7 @@ C2-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: harina_soja,158.941,t,empresa,TRU
 C2-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: micros_aceite_otros,105.961,t,empresa,TRUE,elaborador,Sí,ALI-MP-RESTO,,,,PENDIENTE,precio
 C2-10000-FACON-MP-EMPRESA,INVENTARIO,alimento: material_en_proceso,,t,empresa,TRUE,elaborador,Sí,,,,,PENDIENTE,cantidad
 C2-10000-FACON-MP-EMPRESA,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C2-10000-FACON-MP-EMPRESA,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C2-10000-FACON-MP-EMPRESA,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C2-10000-FACON-MP-EMPRESA,INVENTARIO,producto terminado refrigerado,17.1177,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C2-10000-FACON-MP-EMPRESA,INVENTARIO,producto terminado congelado,28.0731,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C2-10000-FACON-MP-EMPRESA,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -483,7 +483,7 @@ C1-10000-GN-RED,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,fábric
 C1-10000-GN-RED,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C1-10000-GN-RED,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
 C1-10000-GN-RED,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C1-10000-GN-RED,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-GN-RED,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C1-10000-GN-RED,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-GN-RED,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-GN-RED,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -506,7 +506,7 @@ C1-10000-LIMPIEZA-TERC,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,
 C1-10000-LIMPIEZA-TERC,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C1-10000-LIMPIEZA-TERC,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
 C1-10000-LIMPIEZA-TERC,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C1-10000-LIMPIEZA-TERC,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-LIMPIEZA-TERC,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C1-10000-LIMPIEZA-TERC,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-LIMPIEZA-TERC,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-LIMPIEZA-TERC,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -529,7 +529,7 @@ C1-10000-MANT-CONTRATO,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,
 C1-10000-MANT-CONTRATO,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C1-10000-MANT-CONTRATO,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
 C1-10000-MANT-CONTRATO,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C1-10000-MANT-CONTRATO,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-MANT-CONTRATO,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C1-10000-MANT-CONTRATO,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-MANT-CONTRATO,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-MANT-CONTRATO,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -552,7 +552,7 @@ C1-10000-FLETE-POR-UNIDAD,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FAL
 C1-10000-FLETE-POR-UNIDAD,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C1-10000-FLETE-POR-UNIDAD,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
 C1-10000-FLETE-POR-UNIDAD,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C1-10000-FLETE-POR-UNIDAD,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-FLETE-POR-UNIDAD,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C1-10000-FLETE-POR-UNIDAD,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-FLETE-POR-UNIDAD,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-FLETE-POR-UNIDAD,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -575,7 +575,7 @@ C1-10000-PAGO-KG-VIVO,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,f
 C1-10000-PAGO-KG-VIVO,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C1-10000-PAGO-KG-VIVO,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
 C1-10000-PAGO-KG-VIVO,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C1-10000-PAGO-KG-VIVO,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-PAGO-KG-VIVO,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C1-10000-PAGO-KG-VIVO,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-PAGO-KG-VIVO,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-PAGO-KG-VIVO,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"
@@ -598,7 +598,7 @@ C1-10000-HALAL,INVENTARIO,alimento: harina_soja,158.941,t,tercero,FALSE,fábrica
 C1-10000-HALAL,INVENTARIO,alimento: micros_aceite_otros,105.961,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),ALI-MP-RESTO,,,,NO_ENTRA,
 C1-10000-HALAL,INVENTARIO,alimento: material_en_proceso,,t,tercero,FALSE,fábrica proveedora,No (propiedad de tercero),,,,,NO_ENTRA,
 C1-10000-HALAL,INVENTARIO,pollitos BB,0,pollitos,empresa,TRUE,—,Sí,,,0,,VALORIZADO,se alojan al recibirse (stock ≈ 0)
-C1-10000-HALAL,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)
+C1-10000-HALAL,INVENTARIO,aves en crianza (activo biológico),331383,aves,empresa,TRUE,granjas,Sí,,,,,PENDIENTE,método de valuación PENDIENTE (DEC-089: costo acumulado medio)
 C1-10000-HALAL,INVENTARIO,producto terminado refrigerado,25.6766,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-HALAL,INVENTARIO,producto terminado congelado,7.01827,t,empresa,TRUE,planta propia,Sí,,,,,PENDIENTE,costo de producción por kg PENDIENTE
 C1-10000-HALAL,INVENTARIO,subproductos,0,t,empresa,TRUE,planta,Sí,,,0,,VALORIZADO,"retiro diario (12B, estrategia E1): stock 0"

@@ -18,7 +18,7 @@
 | [`expansion_capex.csv`](expansion_capex.csv) | Salida: trayectorias 20.000 directo / 5.000 → 20.000 / 5.000 → 10.000 → 20.000 / 10.000 → 20.000 (2.508 filas) |
 | [`matriz_rfq_capex.csv`](matriz_rfq_capex.csv) | Salida: 13 cotizaciones necesarias |
 | [`mapa_drivers_capex.csv`](mapa_drivers_capex.csv) | Salida: procedencia de cada driver físico (valor, unidad, archivo y variable de origen, escenario, tipo, evidencia) |
-| [`fuentes_16.csv`](fuentes_16.csv) | Fuentes provisionales FTE-16-001…007 (todas `[PVDP]`) |
+| [`fuentes_16.csv`](fuentes_16.csv) | **Archivo histórico** (IDs provisionales de la sesión 16); centralizadas como FTE-310…316 en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) (todas `[PVDP]`) |
 | [`metodologia_capex.md`](metodologia_capex.md) | Método, fórmulas, separaciones, reglas contra el doble conteo |
 | [`estructura_capex.md`](estructura_capex.md) | Bloques, conceptos, columnas, qué entra y qué no |
 | [`arquitecturas_inversion.md`](arquitecturas_inversion.md) | Opciones por eslabón y configuraciones C0–C3/CF |
@@ -33,7 +33,7 @@
 | [`plan_cotizaciones.md`](plan_cotizaciones.md) | Qué cotizar, especificación mínima y cómo cargar una cotización |
 | [`guia_ramiro.md`](guia_ramiro.md) | Explicación sin tecnicismos |
 | [`conclusiones_capex.md`](conclusiones_capex.md) | Qué números usar y cuáles no |
-| [`actualizaciones_gestion_16.md`](actualizaciones_gestion_16.md) | SUP/DPV/DEC/FTE provisionales para la reconciliación |
+| [`actualizaciones_gestion_16.md`](actualizaciones_gestion_16.md) | **Archivo histórico**: propuestas provisionales; integradas en la [reconciliación 16–17](../00_gestion_proyecto/reconciliacion_sesiones_16_17.md) |
 
 ## Uso
 

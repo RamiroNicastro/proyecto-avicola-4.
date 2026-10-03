@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-02 · Drivers: 03 vía 14B · Implementación: `Registro.split()` y §PRODUCCIÓN PRIMARIA en [`modelo_opex.py`](modelo_opex.py)
 
-> **No se asume un contrato de integración.** El motor usa el esquema descripto en 03 ([`modelos_integracion.md`](../03_produccion_primaria/modelos_integracion.md)) solo para decir **quién aporta** cada concepto en una granja integrada (SUP-17-04), es editable (`aportes_integracion`) y lo que 03 deja "según contrato" queda **PENDIENTE**.
+> **No se asume un contrato de integración.** El motor usa el esquema descripto en 03 ([`modelos_integracion.md`](../03_produccion_primaria/modelos_integracion.md)) solo para decir **quién aporta** cada concepto en una granja integrada (SUP-177), es editable (`aportes_integracion`) y lo que 03 deja "según contrato" queda **PENDIENTE**.
 
 ## 1. Quién aporta qué (granja integrada)
 
@@ -11,7 +11,7 @@
 | Pollito, alimento, sanidad, asistencia técnica, logística de insumos | EMPRESA (03) | Costo de la empresa |
 | Mano de obra, electricidad, agua de la granja | PRODUCTOR_INTEGRADO (03) | Fila **INFORMATIVA: COSTO DEL PRODUCTOR** (no es costo de la empresa; test A05) |
 | Gas de calefacción, cama, captura, retiro de mortalidad, limpieza de galpones, bioseguridad | PENDIENTE (según contrato) | Cuenta como faltante (`APORTANTE_PENDIENTE`) |
-| Pago al integrado | — | Base del contrato **no definida** (por ave o por kg vivo): PENDIENTE_CANTIDAD (DEC-17-04). Variante `C1-10000-PAGO-KG-VIVO` |
+| Pago al integrado | — | Base del contrato **no definida** (por ave o por kg vivo): PENDIENTE_CANTIDAD (DEC-086). Variante `C1-10000-PAGO-KG-VIVO` |
 
 ## 2. Conceptos y drivers
 
@@ -36,7 +36,7 @@ Además de lo anterior, la empresa carga: energía y gas (PENDIENTE_CANTIDAD, DP
 
 ## 4. Capital de trabajo
 
-Las aves en crianza (≈ 331.000 aves en inventario medio a 10.000 aves/día, 03) son **activo biológico de la empresa** cuando la empresa aporta el pollito (integración) o la granja es propia. Su valuación (costo acumulado medio: pollito + alimento consumido + sanidad) queda **PENDIENTE** (DEC-17-07): ver [`capital_trabajo.md`](capital_trabajo.md).
+Las aves en crianza (≈ 331.000 aves en inventario medio a 10.000 aves/día, 03) son **activo biológico de la empresa** cuando la empresa aporta el pollito (integración) o la granja es propia. Su valuación (costo acumulado medio: pollito + alimento consumido + sanidad) queda **PENDIENTE** (DEC-089): ver [`capital_trabajo.md`](capital_trabajo.md).
 
 ## 5. Completitud y separación empresa / productor (auditoría v1.1)
 

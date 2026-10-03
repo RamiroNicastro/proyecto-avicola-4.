@@ -30,17 +30,17 @@ Los valores exactos de capacidad por escala salen del CSV (columna `CAPACIDAD`).
 2. **Incoterm**, **moneda**, **fecha**, **validez**, fórmula de ajuste, condiciones de pago.
 3. **IVA** y otros impuestos: incluidos o no, alícuota.
 4. **Flete, instalación, puesta en marcha, capacitación, repuestos**: incluidos o no (columnas `FLETE_INCLUIDO`, `INSTALACION_INCLUIDA`, `PUESTA_EN_MARCHA_INCLUIDA`).
-5. **Capacidad garantizada** y su definición (DPV-097); precio a **dos escalas** para estimar el exponente (DPV-16-01).
+5. **Capacidad garantizada** y su definición (DPV-097); precio a **dos escalas** para estimar el exponente (DPV-160).
 6. Alcance explícito para evitar duplicaciones: EQ-28/EQ-33 (L3 vs L6), EQ-14 (L2 vs térmico), EQ-37 (L4 vs frío) (T16-01, T16-02).
-7. Plazo de entrega y vida útil esperada (DPV-16-15).
+7. Plazo de entrega y vida útil esperada (DPV-167).
 
 ## 3. Cómo se carga una cotización
 
 1. En [`base_costos_capex.csv`](base_costos_capex.csv), fila del `ID_COSTO`: `PRECIO_UNITARIO` (y `PRECIO_BAJO`/`PRECIO_ALTO` solo si la oferta da un rango, con `ORIGEN_RANGO`), `MONEDA_ORIGINAL` (+ `TC_MONEDA_POR_USD`, `TIPO_TC`, `FECHA_TC` si no es USD), `FECHA_PRECIO`, `TIPO_PRECIO = cotizacion`, `INCOTERM`, flags de inclusión, `NIVEL_EVIDENCIA = E1`, `LECTURA_PRIMARIA = Sí`, `FUENTE` (ID del registro de fuentes con `tipo_fuente = cotizacion`), `ESTADO = CON_PRECIO`.
 2. Si es importado y no instalado: capas en [`capas_importacion_capex.csv`](capas_importacion_capex.csv) (`ID_COSTO, CAPA, ESTADO, MONTO_USD, NIVEL_EVIDENCIA, FUENTE`).
-3. Si la oferta es desglosada (frío, efluentes): cambiar `INCLUIDO_EN_PAQUETE` a "No" en los componentes (DEC-16-03).
+3. Si la oferta es desglosada (frío, efluentes): cambiar `INCLUIDO_EN_PAQUETE` a "No" en los componentes (DEC-082).
 4. Correr `python3 19_capex/modelo_capex.py`: si la fila viola una regla de evidencia, el script se detiene y dice cuál.
 
 ## 4. Antes de cotizar (sin pedir precios)
 
-Relevar presencia local, servicio técnico y plantas de referencia (DPV-089), y en la feria Avícola y Porcinos 2026 (FTE-195) preguntar alcance típico de ofertas, plazos y si cotizan a dos escalas. Leer en original las fuentes oficiales bloqueadas en esta sesión (FTE-16-002 SAGyP, FTE-16-007 INTA, FTE-16-003 pliego municipal).
+Relevar presencia local, servicio técnico y plantas de referencia (DPV-089), y en la feria Avícola y Porcinos 2026 (FTE-195) preguntar alcance típico de ofertas, plazos y si cotizan a dos escalas. Leer en original las fuentes oficiales bloqueadas en esta sesión (FTE-311 SAGyP, FTE-316 INTA, FTE-312 pliego municipal).

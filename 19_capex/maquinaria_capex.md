@@ -6,7 +6,7 @@
 
 ## 1. Paquetes costeables y equipos hijos
 
-El costo se carga **por lote RFQ** (paquete). Los EQ-01…EQ-76 entran al BOQ como **hijos informativos** (`INCLUIDO_EN_PAQUETE = Sí`): documentan nivel de automatización, etiqueta de expansión y capacidad (nominal requerida, aves/h), pero no se costean (SUP-16-06).
+El costo se carga **por lote RFQ** (paquete). Los EQ-01…EQ-76 entran al BOQ como **hijos informativos** (`INCLUIDO_EN_PAQUETE = Sí`): documentan nivel de automatización, etiqueta de expansión y capacidad (nominal requerida, aves/h), pero no se costean (SUP-160).
 
 | Paquete (COSTO_ID) | Contenido | Capacidad de referencia | Método |
 |---|---|---|---|
@@ -59,13 +59,13 @@ Capas que incluye cada Incoterm (orientación, a confirmar con el despachante): 
 
 **Factor paramétrico** (FOB × k = instalado): solo en **modo sensibilidad** (`--sensibilidad`) y con `FACTOR_INSTALADO_SENSIBILIDAD` explícito por concepto; la fila queda marcada `INSTALADO_POR_FACTOR_SENSIBILIDAD` (test I04). No hay factor por defecto.
 
-**Datos a validar:** fletes (DPV-16-04), régimen de importación, posición arancelaria, tasas y despachante (DPV-16-05; usados: DPV-093), alcance de instalación y puesta en marcha (DPV-16-06), impuestos (DPV-16-17).
+**Datos a validar:** fletes (DPV-162), régimen de importación, posición arancelaria, tasas y despachante (DPV-093; usados: DPV-093), alcance de instalación y puesta en marcha (DPV-163), impuestos (DPV-169).
 
 ## 4. Escala sin linealidad
 
-Los paquetes se costean con `precio_ref × (capacidad ÷ capacidad_ref)^exponente`. El exponente **no se supone**: debe salir de dos cotizaciones del mismo proveedor a dos escalas (DPV-16-01). Sin exponente, un precio solo vale dentro del rango de capacidad de su referencia (SUP-16-13). La referencia de fabricante de planta de alimento (ALI-REF, 8–10 t/h) muestra el caso: aun cuando la escala de 10.000 aves/día cae en ese rango (8,4 t/h), el precio es de equipo con Incoterm desconocido y **no** se usa.
+Los paquetes se costean con `precio_ref × (capacidad ÷ capacidad_ref)^exponente`. El exponente **no se supone**: debe salir de dos cotizaciones del mismo proveedor a dos escalas (DPV-160). Sin exponente, un precio solo vale dentro del rango de capacidad de su referencia (SUP-167). La referencia de fabricante de planta de alimento (ALI-REF, 8–10 t/h) muestra el caso: aun cuando la escala de 10.000 aves/día cae en ese rango (8,4 t/h), el precio es de equipo con Incoterm desconocido y **no** se usa.
 
 ## 5. Referencias de contraste no usadas
 
-- REF-RAFS (FTE-16-004): USD 17.401–52.501 de equipos para unidades de faena **móviles** de 350–1.200 aves/h (EE. UU., 2015). El ritmo es comparable con 2.500–10.000 aves/día, pero el alcance (unidad exenta, sin frío ni trozado, sin habilitación SENASA) no lo es. Sirve solo para recordar que una sala mínima y una planta habilitada son objetos distintos.
-- REF-MAL (FTE-16-003): presupuesto oficial de acondicionamiento de una sala de faena aviar municipal (ARS 2022): sin m², sin alcance ni TC.
+- REF-RAFS (FTE-313): USD 17.401–52.501 de equipos para unidades de faena **móviles** de 350–1.200 aves/h (EE. UU., 2015). El ritmo es comparable con 2.500–10.000 aves/día, pero el alcance (unidad exenta, sin frío ni trozado, sin habilitación SENASA) no lo es. Sirve solo para recordar que una sala mínima y una planta habilitada son objetos distintos.
+- REF-MAL (FTE-312): presupuesto oficial de acondicionamiento de una sala de faena aviar municipal (ARS 2022): sin m², sin alcance ni TC.

@@ -44,7 +44,7 @@ Tests: compra no carga costos internos de fábrica (A01, mutación M03); planta 
 
 | ID | Valor | Evidencia | Uso |
 |---|---|---|---|
-| ALI-MP-MAIZ | **Precio observado:** ARS 295.800/t, pizarra Cámara Arbitral de Rosario, 2026-09-29, condición SOBRE_PUERTO_ROSARIO, IVA no informado (FTE-17-001). **Conversión del modelo:** ÷ 1.522 ARS/USD (A3500 del mismo día, FTE-17-003) = USD 194,35/t (`ORIGEN_PRECIO_USD = CONVERSION_MODELO`) | **E4** `[PVDP]` (extracto; sitio bloqueado) | C3, CF, variantes B1. **Precio Rosario ≠ costo puesto en planta**: el diferencial (zona, acondicionamiento, secado, comisiones) es ALI-MP-DIF-MAIZ, PENDIENTE; el flete es LOG-GRA-* |
+| ALI-MP-MAIZ | **Precio observado:** ARS 295.800/t, pizarra Cámara Arbitral de Rosario, 2026-09-29, condición SOBRE_PUERTO_ROSARIO, IVA no informado (FTE-317). **Conversión del modelo:** ÷ 1.522 ARS/USD (A3500 del mismo día, FTE-318) = USD 194,35/t (`ORIGEN_PRECIO_USD = CONVERSION_MODELO`) | **E4** `[PVDP]` (extracto; sitio bloqueado) | C3, CF, variantes B1. **Precio Rosario ≠ costo puesto en planta**: el diferencial (zona, acondicionamiento, secado, comisiones) es ALI-MP-DIF-MAIZ, PENDIENTE; el flete es LOG-GRA-* |
 | ALI-A-PT, ALI-B-*, ALI-MP-SOJA, aceite, núcleo, otros | — | PENDIENTE | DPV-050, DPV-155, DPV-157 |
 
 Monto con precio (E4): maíz C3/CF = USD 0,36 / 0,72 / 1,44 / 2,88 M/año (2.500 / 5.000 / 10.000 / 20.000) ≈ USD 0,58 por ave faenada **solo por el maíz**. No es costo de alimento: faltan soja, núcleo, aceite, flete, mermas, energía, personal y mantenimiento.

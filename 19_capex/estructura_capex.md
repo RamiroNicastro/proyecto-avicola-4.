@@ -33,7 +33,7 @@ Un bloque inactivo se publica como **EXCLUIDO_POR_ARQUITECTURA** con valor 0: es
 | Alquileres, suscripciones de software, contratos de servicio (capa C17) | OPEX |
 | Reemplazo de activos en años futuros | Modelo financiero (campos preparados) |
 | Valor residual | Modelo financiero (campo preparado) |
-| IVA recuperable, créditos fiscales, beneficios promocionales, depreciación | Modelo financiero (DPV-16-17) |
+| IVA recuperable, créditos fiscales, beneficios promocionales, depreciación | Modelo financiero (DPV-169) |
 | Galpones de productores integrados | Informativo (`CAPEX_TERCEROS_INFORMATIVO_USD`), no CAPEX de la empresa |
 | Reproductoras y rendering | `FASE = FUTURO`, fuera del CAPEX inicial |
 

@@ -32,7 +32,7 @@
 | `FASE` | OPERACION · FUTURO (no cuenta) · OPCIONAL_MERCADO (cuenta solo si se activa el módulo) | — |
 | `GRUPO_PROVEEDOR` | alimento · pollitos · granos · servicios · packaging · logística · energía · personal | Cuentas por pagar por proveedor |
 
-Costo laboral por driver de 14A (SUP-17-07): `produccion`, `activos` y `estrategia` → semifijo (se mueven por escalones de cuadrillas y turnos); `casi_fijo` → fijo; horas tercerizadas → variable.
+Costo laboral por driver de 14A (SUP-179): `produccion`, `activos` y `estrategia` → semifijo (se mueven por escalones de cuadrillas y turnos); `casi_fijo` → fijo; horas tercerizadas → variable.
 
 ## 3. Columnas
 
@@ -54,7 +54,7 @@ Estructura por mes (12 meses/año, fijo): contabilidad, legales, sistemas, comun
 
 ## 5. Seguros
 
-Prima anual por póliza (planta todo riesgo, incendio, RC con producto, mercadería en stock y tránsito, interrupción de negocio, granjas propias) y por vehículo de flota propia y flujo. **No** se usa un porcentaje global sin evidencia. ART va en costo laboral. Todos PENDIENTES (DPV-17-11).
+Prima anual por póliza (planta todo riesgo, incendio, RC con producto, mercadería en stock y tránsito, interrupción de negocio, granjas propias) y por vehículo de flota propia y flujo. **No** se usa un porcentaje global sin evidencia. ART va en costo laboral. Todos PENDIENTES (DPV-173).
 
 ## 6. Qué no entra
 

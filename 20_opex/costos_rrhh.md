@@ -50,7 +50,7 @@ C2 y C3 tienen flota propia de aves vivas y producto: sus choferes son internos 
 |---|---|---|
 | Remuneración base mensual | base `LAB-<CAT>-SAL` | PENDIENTE (DPV-148) |
 | Adicionales (presentismo, antigüedad, nocturnidad) | `LAB-<CAT>-ADI` (%) | PENDIENTE |
-| Vacaciones (plus vacacional) | `LAB-<CAT>-VAC` (%) | PENDIENTE (convenio, DPV-17-19) |
+| Vacaciones (plus vacacional) | `LAB-<CAT>-VAC` (%) | PENDIENTE (convenio, DPV-148) |
 | **SAC / aguinaldo** | **regla** en `reglas_laborales_opex.csv` (1 sueldo adicional/año) | `REGLA_LABORAL_PENDIENTE_VERIFICACION` — **no es precio ni E4** |
 | Cargas / contribuciones | `LAB-<CAT>-CAR` (%) | PENDIENTE |
 | ART | `LAB-<CAT>-ART` (%) | PENDIENTE |
@@ -58,10 +58,10 @@ C2 y C3 tienen flota propia de aves vivas y producto: sus choferes son internos 
 | Horas extra | `LAB-<CAT>-HEX` (USD/hora) + regla de recargo | **No automáticas**: la brecha de jornada de 14A es informativa; solo si se organizan horas extra (DEC-069) |
 | Uniforme y EPP, capacitación, otros | `LAB-<CAT>-EPP/CAP/OTR` (USD/FTE·año) | PENDIENTE |
 
-Corrección v1.1: la v1.0 contaba "13 meses remunerados" como un **concepto con precio E4**. Se retiró de la base: el SAC es una regla laboral con fuente normativa a verificar (DPV-17-19), sin nivel de evidencia de precio. Los conceptos con precio pasaron de 3 a **2** (test X07, X08).
+Corrección v1.1: la v1.0 contaba "13 meses remunerados" como un **concepto con precio E4**. Se retiró de la base: el SAC es una regla laboral con fuente normativa a verificar (DPV-148), sin nivel de evidencia de precio. Los conceptos con precio pasaron de 3 a **2** (test X07, X08).
 
 Categorías: CONV_DIR, CONV_SOP, FC_SUP, FC_PRO, FC_ADM, DIR, CHOF; tercerizados LAB-TER-LIMP/MANT/LOG/OTR (USD/hora). Si falta un componente, la categoría queda PENDIENTE (no se costea parcialmente).
 
 ## 4. Unidades y advertencias
 
-FTE (horas operativas ÷ 8 h) ≠ headcount de nómina (PENDIENTE: factor de cobertura no validado). El costeo por FTE es **provisional**: subestima si el costo empresa no incluye la cobertura de francos y licencias. Naturaleza (SUP-17-07): producción, activos y estrategia → semifijo; casi fijo → fijo; horas tercerizadas → variable.
+FTE (horas operativas ÷ 8 h) ≠ headcount de nómina (PENDIENTE: factor de cobertura no validado). El costeo por FTE es **provisional**: subestima si el costo empresa no incluye la cobertura de francos y licencias. Naturaleza (SUP-179): producción, activos y estrategia → semifijo; casi fijo → fijo; horas tercerizadas → variable.
