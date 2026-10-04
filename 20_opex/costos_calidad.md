@@ -6,7 +6,7 @@
 
 | Concepto | ID | Cantidad | Estado |
 |---|---|---|---|
-| Análisis microbiológicos (laboratorio externo) | CAL-ANA-MICRO | análisis/año | PENDIENTE_CANTIDAD: plan de muestreo PENDIENTE (DPV-17-12) |
+| Análisis microbiológicos (laboratorio externo) | CAL-ANA-MICRO | análisis/año | PENDIENTE_CANTIDAD: plan de muestreo PENDIENTE (DPV-174) |
 | Análisis de agua de proceso | CAL-ANA-AGUA | análisis/año | PENDIENTE_CANTIDAD (solo planta propia) |
 | Insumos de laboratorio propio | CAL-LAB-INS | 1 año | Sin precio (solo con laboratorio propio; el equipamiento está en CAPEX) |
 | Certificaciones | CAL-CERT | 1 año | Sin precio |

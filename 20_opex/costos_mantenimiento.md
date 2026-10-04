@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-02 · Implementación: §MANTENIMIENTO de `generar_registro()`, `base_capex_area()`, `n_activos_area()` en [`modelo_opex.py`](modelo_opex.py)
 
-> **El % del CAPEX no se usa como verdad.** Es uno de cuatro métodos alternativos, cualquier valor que se cargue es `[SUPUESTO]`/`[PVDP]` (SUP-17-06), y hoy no puede calcularse porque el CAPEX no tiene precio.
+> **El % del CAPEX no se usa como verdad.** Es uno de cuatro métodos alternativos, cualquier valor que se cargue es `[SUPUESTO]`/`[PVDP]` (SUP-178), y hoy no puede calcularse porque el CAPEX no tiene precio.
 
 ## 1. Áreas y tipos
 
@@ -14,7 +14,7 @@ Tipos: preventivo, correctivo, repuestos, lubricantes, servicios técnicos exter
 
 | `mantenimiento_metodo` | Conceptos | Cantidad | Estado hoy |
 |---|---|---|---|
-| `None` (por defecto) | una fila por área | — | `METODO_MANTENIMIENTO_NO_DEFINIDO` (DEC-17-06) |
+| `None` (por defecto) | una fila por área | — | `METODO_MANTENIMIENTO_NO_DEFINIDO` (DEC-088) |
 | `pct_capex` | MAN-<área>-PCT | CAPEX con precio del área (bloques del BOQ de 19) | `BASE_SIN_PRECIO`: el CAPEX no tiene total (test A10) |
 | `por_activo` | MAN-<área>-PREV / CORR / REP / LUB | activos costeables del área en el BOQ (activo-año) | Cantidades disponibles; precios PENDIENTES |
 | `horas_tecnicas` | MAN-<área>-STEC | horas técnicas externas | PENDIENTE_CANTIDAD (no dimensionadas más allá de 14A) |
@@ -22,4 +22,4 @@ Tipos: preventivo, correctivo, repuestos, lubricantes, servicios técnicos exter
 
 ## 3. Por qué no un % fijo
 
-Un porcentaje anual sobre el CAPEX mezcla tecnologías con desgaste distinto (frío y línea vs obra civil), depende de un CAPEX que hoy no existe y, aplicado a una planta "barata", subestima: los equipos de menor costo suelen requerir más correctivo y repuestos. Los métodos por activo o por contrato se pueden cotizar con el mismo RFQ de los equipos (`19_capex/plan_cotizaciones.md`), pidiendo el plan de mantenimiento y los repuestos críticos (DPV-17-10).
+Un porcentaje anual sobre el CAPEX mezcla tecnologías con desgaste distinto (frío y línea vs obra civil), depende de un CAPEX que hoy no existe y, aplicado a una planta "barata", subestima: los equipos de menor costo suelen requerir más correctivo y repuestos. Los métodos por activo o por contrato se pueden cotizar con el mismo RFQ de los equipos (`19_capex/plan_cotizaciones.md`), pidiendo el plan de mantenimiento y los repuestos críticos (DPV-150).

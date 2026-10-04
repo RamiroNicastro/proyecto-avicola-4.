@@ -19,7 +19,7 @@ C3/CF (perfil P2, más congelado): 627.226 / 1.254.452 / 2.508.904 / 5.017.808 k
 
 | Concepto | ID | Driver | Estado |
 |---|---|---|---|
-| Energía activa | UT-ELE-KWH | kWh/año (09C) | Tarifa industrial **no asumida** (DPV-17-05) |
+| Energía activa | UT-ELE-KWH | kWh/año (09C) | Tarifa industrial **no asumida** (DPV-052) |
 | Potencia / demanda contratada | UT-ELE-POT | kW·mes | **PENDIENTE_CANTIDAD**: el pico no está dimensionado (DPV-095). Nunca se multiplican kW por la tarifa de kWh |
 | Cargo fijo | UT-ELE-FIJO | 12 meses | Sin precio |
 
@@ -35,7 +35,7 @@ El combustible **no está elegido** (DEC-045): sin elección, la fila es UT-TER-
 
 El sistema de frío consume electricidad y mantenimiento. Su electricidad (frío de proceso, congelación, cámaras) **ya está** en `kwh_total_anio` de 09C: se muestra como filas `INCLUIDO` en UT-ELE-KWH, sin costo (test C06, mutación M02). El mantenimiento del frío va en MAN-FRIO-* y la reposición de refrigerante dentro de ese mantenimiento. La contradicción ×5,7 entre la carga física y el reparto top-down de 09C sigue **abierta** (DPV-109): el kWh total de 09C es el benchmark top-down, no un balance frigorífico.
 
-Arquitectura de frío C (congelado tercerizado, y C0): UT-FRIO-TER = t congeladas/año (12B) × tarifa PENDIENTE (DPV-17-06).
+Arquitectura de frío C (congelado tercerizado, y C0): UT-FRIO-TER = t congeladas/año (12B) × tarifa PENDIENTE (DPV-171).
 
 ## 6. Efluentes
 

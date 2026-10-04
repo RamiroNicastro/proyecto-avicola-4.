@@ -88,6 +88,8 @@ Escala cualitativa: ▲ favorece la opción · ● neutro / depende · ▼ desfa
 
 ## 3. Arquitecturas de madurez de referencia
 
+> **Nomenclatura (reconciliación 16–17, 2026-10-03):** estas arquitecturas se citan como **M0, M1, M2, M3 y MF** (madurez upstream). **No** son las configuraciones económicas **C0–C3/CF** de CAPEX y OPEX (p. ej. M3 = granjas integradas + propias; C3 = granjas 100 % propias; M0 = alimento comprado; C0 = alimento a façon). Equivalencias en [`../00_gestion_proyecto/mapa_arquitecturas_economicas.csv`](../00_gestion_proyecto/mapa_arquitecturas_economicas.csv). Solo se corrigió la nomenclatura; la tabla y el modelo no cambian.
+
 > **Referencias, no recorrido** (SUP-152). Describen combinaciones crecientes de integración para ordenar el análisis. **La empresa no necesita recorrerlas en ese orden**: si existieran demanda, capital y ventaja económica suficientes (a demostrar en la fase económica), una función podría integrarse antes, o podría saltearse una arquitectura o detenerse en cualquiera. El modelo marca todas con `orden_obligatorio = False` (test U20).
 
 | Arquitectura de referencia | Pollito | Alimento | Granjas | Faena | Capacidad física upstream propia | Condiciones para evaluarla (conceptual) |

@@ -42,7 +42,7 @@ Regla: CAPEX **consume** salidas de los módulos anteriores; no produce una vers
 | `DIRECTO` | Salida del módulo fuente para un escenario **publicado** en su CSV; un test lo verifica contra el CSV | m² construidos (12C `referencia` / `perfil_P2`), superficie del escenario objetivo (12C `objetivo_20000`), setters y hatchers (14B), plazas (03), flota de aves vivas (12B), agua y energía (09C) |
 | `CALCULO_MODELO_FUENTE` | La **misma función** del módulo fuente con entradas que su CSV no publica (escala intermedia, perfil o modalidad no publicados). **No es interpolación** | todo driver a 7.500 o 15.000 aves/día; terreno mínimo físico (12C no publica terreno sin reserva) |
 | `DERIVADO_CAPEX` | Operación declarada de CAPEX sobre salidas fuente | ⌈camión-día⌉, perímetro del terreno, suma de áreas por categoría, silos de maíz + soja |
-| `SUPUESTO_CAPEX` | Parámetro propio (SUP-16-##) | reserva de flota, ciclo de vehículos de alimento, días de reserva de agua |
+| `SUPUESTO_CAPEX` | Parámetro propio (SUP-155…175) | reserva de flota, ciclo de vehículos de alimento, días de reserva de agua |
 | `PENDIENTE` | El módulo fuente no lo dimensiona; CAPEX no lo inventa | carga frigorífica total, pico eléctrico, transformador, grupo, caldera, lodos, granjas |
 | `INTERPOLADO` | No se usa en ningún driver | — |
 
@@ -50,7 +50,7 @@ Escenarios **etiquetados** (inputs explícitos, no verdades): horas netas (8), s
 
 Consistencias entre fuentes que dos módulos calculan por separado (efluente 12C vs 09C, plazas 14B vs 03, ritmo 05 vs 23) se verifican en cada corrida: una diferencia genera `DRIVER_INCONSISTENTE` y **no se corrige** (test N13).
 
-Escala intermedia: alerta `ESCALA_INTERMEDIA`; todos los drivers son `CALCULO_MODELO_FUENTE`; los niveles de automatización de los equipos (matriz 08, solo en 4 escalas) se toman de la escala de referencia más cercana (SUP-16-05).
+Escala intermedia: alerta `ESCALA_INTERMEDIA`; todos los drivers son `CALCULO_MODELO_FUENTE`; los niveles de automatización de los equipos (matriz 08, solo en 4 escalas) se toman de la escala de referencia más cercana (SUP-159).
 
 ## 2 ter. Capacidad de planta ≠ capacidad de línea
 
@@ -71,10 +71,10 @@ La v1.0 usaba el ritmo operativo (aves/día ÷ horas) como capacidad de los lote
 |---|---|---|
 | `unitario` | costo = cantidad × precio unitario (USD) | unidad del BOQ = unidad del precio |
 | `global` | costo = precio del lote | cantidad = 1 lote |
-| `escalado` | costo = precio_ref × (capacidad ÷ capacidad_ref)^exponente | exponente **explícito**; sin exponente, solo dentro del rango de la referencia (SUP-16-13) |
+| `escalado` | costo = precio_ref × (capacidad ÷ capacidad_ref)^exponente | exponente **explícito**; sin exponente, solo dentro del rango de la referencia (SUP-167) |
 | `porcentaje` | costo = % × base declarada | base sin precio → PENDIENTE (no 0); base parcial → alerta `BASE_INCOMPLETA` |
 
-**Moneda.** `precio_USD = precio_original ÷ TC_MONEDA_POR_USD`. Un precio en ARS u otra moneda **sin** tipo de cambio, fecha y tipo de TC no entra (error de validación si se marca `CON_PRECIO`; estado `SIN_TIPO_DE_CAMBIO` si no). La fecha base es editable (`FECHA_BASE_CAPEX`, SUP-16-01).
+**Moneda.** `precio_USD = precio_original ÷ TC_MONEDA_POR_USD`. Un precio en ARS u otra moneda **sin** tipo de cambio, fecha y tipo de TC no entra (error de validación si se marca `CON_PRECIO`; estado `SIN_TIPO_DE_CAMBIO` si no). La fecha base es editable (`FECHA_BASE_CAPEX`, SUP-155).
 
 **Equipo → instalado** (detalle en [`maquinaria_capex.md`](maquinaria_capex.md) §3):
 1. Si la base trae `COSTO_INSTALADO`, se usa.
@@ -83,7 +83,7 @@ La v1.0 usaba el ritmo operativo (aves/día ÷ horas) como capacidad de los lote
 4. Solo en **modo sensibilidad** se acepta `precio × FACTOR_INSTALADO_SENSIBILIDAD` (marcado).
 5. Si no, la fila queda **PRECIO_PARCIAL**: el equipo tiene precio pero **no** suma al CAPEX.
 
-**Rangos.** LOW/HIGH solo donde el precio declara `ORIGEN_RANGO`; se combinan cantidad baja × precio bajo y alta × alta (SUP-16-08). No hay ±20 % automático.
+**Rangos.** LOW/HIGH solo donde el precio declara `ORIGEN_RANGO`; se combinan cantidad baja × precio bajo y alta × alta (SUP-162). No hay ±20 % automático.
 
 ## 4. Separaciones obligatorias
 
@@ -96,7 +96,7 @@ La v1.0 usaba el ritmo operativo (aves/día ÷ horas) como capacidad de los lote
 | CAPEX inicial | Arquitectura futura | `FASE = FUTURO` (reproductoras, rendering) |
 | CAPEX | Capital de trabajo | No hay alimento, pollitos, inventarios ni cuentas por cobrar en el BOQ (test P05) |
 | CAPEX inicial | Reemplazos y valor residual | Campos `VIDA_UTIL_ANIOS`, `REEMPLAZO_ANIO`, `COSTO_REEMPLAZO`, `VALOR_RESIDUAL` vacíos, para el modelo financiero |
-| Costo económico | IVA recuperable | SUP-16-12; no se resuelve la fiscalidad |
+| Costo económico | IVA recuperable | SUP-166; no se resuelve la fiscalidad |
 
 ## 5. Reglas contra el doble conteo
 
@@ -117,7 +117,7 @@ Por escenario y por bloque ([`escenarios_capex.csv`](escenarios_capex.csv)):
 - **Conceptos** costeables, con precio, sin precio, sin cantidad, con precio parcial y con alcance pendiente.
 - **Cobertura por conceptos** = con precio ÷ costeables.
 - **Cobertura por valor**: solo si todos los faltantes tienen una magnitud estimada; si no, "NO CALCULABLE" (hoy, en todos los escenarios).
-- **Total preliminar**: solo con cobertura completa (SUP-16-10). Si no, "NO DISPONIBLE: N conceptos sin costo".
+- **Total preliminar**: solo con cobertura completa (SUP-164). Si no, "NO DISPONIBLE: N conceptos sin costo".
 
 ## 7. Qué no hace (y dónde irá)
 

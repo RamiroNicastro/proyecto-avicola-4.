@@ -64,11 +64,11 @@ Sin cambios necesarios: agua (15/25/38 L/ave) y efluente reproducen 09C; kWh nun
 
 ## 6. Principales datos por validar
 
-DPV-16-01 (precios de línea a dos escalas y exponente), DPV-16-02 (USD/m² por categoría), DPV-16-03 (terreno), DPV-16-04/05 (fletes e importación), DPV-16-06 (alcance de paquetes e instalación), DPV-16-07 (galpones con fuente oficial), DPV-16-14 (prima de ampliación). Capacidades reales pendientes: DPV-095, DPV-097, DPV-109.
+DPV-160 (precios de línea a dos escalas y exponente), DPV-161 (USD/m² por categoría), DPV-087 (terreno), DPV-162 / DPV-093 (fletes e importación), DPV-163 (alcance de paquetes e instalación), DPV-051 (galpones con fuente oficial), DPV-086 (prima de ampliación). Capacidades reales pendientes: DPV-095, DPV-097, DPV-109.
 
 ## 7. Principales decisiones abiertas
 
-DEC-16-01 (adoptar la estructura del motor), DEC-16-02 (lotes vs llave en mano), DEC-16-03 (frío y efluentes en paquete o desglosados), DEC-16-04 (criterio de contingencia), DEC-16-05 (umbral de cobertura para publicar un total), DEC-16-06 (titularidad de cajones). Y las existentes que el motor solo parametriza: DEC-001, DEC-002, DEC-020, DEC-024, DEC-035, DEC-049, DEC-063, DEC-074.
+DEC-080 (adoptar la estructura del motor), DEC-081 (lotes vs llave en mano), DEC-082 (frío y efluentes en paquete o desglosados), DEC-083 (criterio de contingencia), DEC-084 (umbral de cobertura para publicar un total), DEC-056 (titularidad de cajones). Y las existentes que el motor solo parametriza: DEC-001, DEC-002, DEC-020, DEC-024, DEC-035, DEC-049, DEC-063, DEC-074.
 
 ## 8. Próximo paso
 

@@ -20,7 +20,7 @@
 | [`modelo_costo_laboral.csv`](modelo_costo_laboral.csv) | Salida: puesto × modalidad × FTE/horas × componentes del costo empresa (desde 14A; salarios vacíos) |
 | [`capital_trabajo_opex.csv`](capital_trabajo_opex.csv) | Salida: inventarios (propietario, ubicación, si entra), CxC, CxP por proveedor, caja y CTO por escenario |
 | [`matriz_validacion_opex.csv`](matriz_validacion_opex.csv) | Salida: 20 ítems a cotizar / validar con driver, magnitud física, actor, prioridad e impacto |
-| [`fuentes_17.csv`](fuentes_17.csv) | Fuentes provisionales FTE-17-001…008 (todas `[PVDP]`) |
+| [`fuentes_17.csv`](fuentes_17.csv) | **Archivo histórico** (IDs provisionales de la sesión 17); centralizadas como FTE-317…322 y consolidadas en FTE-029 y FTE-300 en [`../25_fuentes/registro_fuentes.csv`](../25_fuentes/registro_fuentes.csv) (todas `[PVDP]`) |
 | [`metodologia_opex.md`](metodologia_opex.md) | Método, fórmulas, procedencia, reglas contra el doble conteo |
 | [`estructura_opex.md`](estructura_opex.md) | Módulos, clasificación, columnas, administración, comercial y seguros |
 | [`costos_alimento.md`](costos_alimento.md) | Compra / façon B1 y B2 / planta propia |
@@ -37,7 +37,7 @@
 | [`evidencia_costos_opex.md`](evidencia_costos_opex.md) | Niveles E1–E5 y estado de la base |
 | [`guia_ramiro.md`](guia_ramiro.md) | Explicación sin tecnicismos |
 | [`conclusiones_opex.md`](conclusiones_opex.md) | Qué números usar y cuáles no |
-| [`actualizaciones_gestion_17.md`](actualizaciones_gestion_17.md) | SUP/DPV/DEC/FTE provisionales para la reconciliación |
+| [`actualizaciones_gestion_17.md`](actualizaciones_gestion_17.md) | **Archivo histórico**: propuestas provisionales; integradas en la [reconciliación 16–17](../00_gestion_proyecto/reconciliacion_sesiones_16_17.md) |
 
 ## Uso
 

@@ -1,5 +1,7 @@
 # Actualizaciones de gestión — sesión 17 (Motor OPEX + capital de trabajo)
 
+> **ARCHIVO HISTÓRICO (2026-10-03).** Las propuestas de este documento se integraron en los registros centrales en la [reconciliación de las sesiones 16–17](../00_gestion_proyecto/reconciliacion_sesiones_16_17.md); el mapa de IDs provisionales → definitivos está en su §2. Los IDs `SUP-17-##`, `DPV-17-##`, `DEC-17-##` y `FTE-17-###` de abajo **no** están activos.
+
 **Fecha:** 2026-10-02 · **Rama:** `ccr-8751505c-jibesg` (desde `main` actualizado, commit `c5e0eb6`, posterior al merge de la sesión 16)
 **Estado:** PROPUESTA para la próxima reconciliación. Esta sesión **no** modificó `00_gestion_proyecto/` ni `25_fuentes/` ni los modelos fuente aprobados. Todos los IDs son **provisionales** (`SUP-17-##`, `DPV-17-##`, `DEC-17-##`, `FTE-17-###`).
 

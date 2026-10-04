@@ -63,11 +63,11 @@
 
 ## 7. Principales datos por validar
 
-DPV-050 / DPV-17-01 (alimento), DPV-17-02 (granos puestos en planta y diferencial), DPV-17-03 (pollito y huevo), DPV-148 y DPV-17-19 (salarios, cargas y normativa laboral: SAC, vacaciones, horas extra), DPV-17-15 (dotaciones upstream), DPV-17-16 (consumos upstream), DPV-17-05 (tarifas), DPV-006 / DPV-17-07 (façon), DPV-17-04 (integración), DPV-17-14 (plazos) y DPV-17-17 (Índice de costo de producción de SAGyP).
+DPV-050 / DPV-050 (alimento), DPV-157 (granos puestos en planta y diferencial), DPV-047 (pollito y huevo), DPV-148 y DPV-148 (salarios, cargas y normativa laboral: SAC, vacaciones, horas extra), DPV-176 (dotaciones upstream), DPV-177 (consumos upstream), DPV-052 (tarifas), DPV-006 / DPV-006 (façon), DPV-170 (integración), DPV-175 (plazos) y DPV-019 (Índice de costo de producción de SAGyP).
 
 ## 8. Principales decisiones abiertas
 
-DEC-17-01 (estructura del motor, incluida la regla de completitud), DEC-17-02, DEC-17-04, DEC-17-05, DEC-17-06, DEC-17-07, DEC-17-08, DEC-17-10. Existentes que el motor parametriza: DEC-001, 002, 003, 004, 006, 020, 023, 024, 027, 043, 045, 056, 064, 067, 068, 069, 074, 079.
+DEC-080 (estructura del motor, incluida la regla de completitud), DEC-024, DEC-086, DEC-087, DEC-088, DEC-089, DEC-090, DEC-084. Existentes que el motor parametriza: DEC-001, 002, 003, 004, 006, 020, 023, 024, 027, 043, 045, 056, 064, 067, 068, 069, 074, 079.
 
 ## 9. Próximo paso
 

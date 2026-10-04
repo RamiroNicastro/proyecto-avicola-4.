@@ -54,7 +54,7 @@ Uso
     python3 20_opex/modelo_opex.py --escenario --config C1 --aves-dia 5000 --costos mi_base.csv
 
 El script se DETIENE (código 1) si falla cualquier prueba. Unidades métricas; CSV con punto decimal.
-IDs provisionales: SUP-17-##, DPV-17-##, DEC-17-##, FTE-17-### (ver actualizaciones_gestion_17.md).
+IDs centrales desde la reconciliación 16–17 (ver 00_gestion_proyecto/reconciliacion_sesiones_16_17.md §2).
 """
 import argparse
 import copy
@@ -82,7 +82,7 @@ ms, ml, mup = mcx.ms, mcx.ml, mcx.mup
 VERSION = "1.1"
 FECHA = "2026-10-02"
 FUENTE = "20_opex/modelo_opex.py"
-FECHA_BASE_OPEX = "2026-10-01"                 # SUP-17-01: editable (--fecha-base); sin indexación automática
+FECHA_BASE_OPEX = "2026-10-01"                 # SUP-155: editable (--fecha-base); sin indexación automática
 MONEDA = "USD"
 ARCHIVO_COSTOS = os.path.join(AQUI, "base_costos_opex.csv")
 SALIDA_REG = os.path.join(AQUI, "registro_costos_operativos.csv")
@@ -126,19 +126,19 @@ COMBUSTIBLES = {"gas_natural": ("UT-TER-GN", "equivalente_gas_natural_m3_dia", "
                 "glp": ("UT-TER-GLP", "equivalente_glp_kg_dia", "kg"),
                 "biomasa": ("UT-TER-BIO", "equivalente_biomasa_chip_kg_dia", "kg")}
 GRUPOS_CXP = ("alimento", "pollitos", "granos", "servicios", "packaging", "logistica", "energia")
-# SUP-17-04: esquema de integración descripto en 03 (modelos_integracion.md): qué aporta cada parte en una granja
+# SUP-177: esquema de integración descripto en 03 (modelos_integracion.md): qué aporta cada parte en una granja
 # INTEGRADA. No es un contrato: es editable y lo que 03 deja "según contrato" queda PENDIENTE.
 APORTES_03 = {"pollito": "EMPRESA", "alimento": "EMPRESA", "sanidad": "EMPRESA", "asistencia_tecnica": "EMPRESA",
               "logistica_insumos": "EMPRESA", "mano_obra_granja": "PRODUCTOR_INTEGRADO",
               "electricidad_granja": "PRODUCTOR_INTEGRADO", "agua_granja": "PRODUCTOR_INTEGRADO",
               "gas_calefaccion": "PENDIENTE", "cama": "PENDIENTE", "captura": "PENDIENTE",
               "mortalidad_retiro": "PENDIENTE", "limpieza_galpon": "PENDIENTE", "bioseguridad": "PENDIENTE"}
-# Ramp-up: etapas sin factores definitivos (SUP-17-09). None = PENDIENTE; finanzas carga la curva.
+# Ramp-up: etapas sin factores definitivos (SUP-181). None = PENDIENTE; finanzas carga la curva.
 ETAPAS_RAMPUP = {"arranque": None, "estabilizacion": None, "madura": 1.0}
 
 OPEX_DEFAULTS = {
     "utilizacion": 1.0, "etapa": "madura", "peso_kg": PESO_REF, "fecha_base_opex": FECHA_BASE_OPEX, "moneda_opex": MONEDA,
-    "alimento_facon_mp": None,           # None | "empresa" | "elaborador" (variante del façon: DEC-17-02)
+    "alimento_facon_mp": None,           # None | "empresa" | "elaborador" (variante del façon: DEC-024)
     "composicion_alimento": None,        # None = puntos ilustrativos de 14B; dict de fracciones (suma 1) = SUPUESTO
     "aportes_integracion": None,         # None = APORTES_03
     "base_pago_integrado": None,         # None | "ave" | "kg_vivo" (contrato no definido)
@@ -400,7 +400,7 @@ def drivers_opex(c):
     DR["producto_12b"] = p
     so = DR["sem_op"]
     esc12 = (f"perfil {perfil}; 6 despachos refrigerado y 2 congelado/sem; {c['cap_camion_refrigerado_t']:g} t; "
-             f"{c['dist_mercado_km']:g} km (ESCENARIO, SUP-16-20)")
+             f"{c['dist_mercado_km']:g} km (ESCENARIO, SUP-096)")
     t12 = "DIRECTO" if (pub and perfil == "P1" and c["dist_mercado_km"] == 300 and c["cap_camion_refrigerado_t"] == 12) \
         else "CALCULO_MODELO_FUENTE"
     for ch in ("refrigerado", "congelado"):
@@ -465,7 +465,7 @@ def drivers_opex(c):
         _reg(DR, f"vehiculos_{f}", None if fl is None else fl["unidades"], "vehículos", "CAPEX16",
              f"flota[{fc}].unidades" if f not in ("HUE", "GRA") else "—",
              "CONSUMIDO_CAPEX" if fl and fl["unidades"] is not None else "PENDIENTE",
-             "[ESTIMACIÓN] con reserva SUP-16-02" if fl and fl["unidades"] is not None else "PENDIENTE",
+             "[ESTIMACIÓN] con reserva SUP-156" if fl and fl["unidades"] is not None else "PENDIENTE",
              f"LOG-{f}-PAT, SEG-FLOTA-{f}")
     # ---- RRHH (14A) ---------------------------------------------------------------------------
     ent = entradas_rrhh(c)
@@ -487,7 +487,7 @@ def drivers_opex(c):
          "NO se usa: costeo provisional por FTE")
     # ---- Granjas propias (fracción) -----------------------------------------------------------
     _reg(DR, "fraccion_granjas_propias", c["fraccion_granjas_propias"], "fracción", "CAPEX16", "fraccion_granjas_propias",
-         "CONSUMIDO_CAPEX", "ESCENARIO (SUP-16-09)", "reparto propia / integrada")
+         "CONSUMIDO_CAPEX", "ESCENARIO (SUP-163)", "reparto propia / integrada")
     for k in ("kwh_granja", "gas_granja", "cama_t", "personal_granja", "personal_incubadora", "personal_planta_alimento",
               "personal_reproductoras", "personal_rendering", "kwh_incubadora", "agua_incubadora", "kwh_planta_alimento",
               "vapor_planta_alimento", "agua_planta_alimento", "kwh_rendering", "lodos_t", "potencia_contratada_kw"):
@@ -671,7 +671,7 @@ class Registro:
                 out.append(self.add(modulo, costo_id, q, d, motivo=mot, ambito="INTEGRADA", **kw))
             elif ap == "PRODUCTOR_INTEGRADO":
                 out.append(self.add(modulo, costo_id, q, d, aportante=ap, estado_dim="INFORMATIVO", ambito="INTEGRADA",
-                                    motivo="COSTO DEL PRODUCTOR (aporte del integrado, SUP-17-04): no es costo de la empresa"
+                                    motivo="COSTO DEL PRODUCTOR (aporte del integrado, SUP-177): no es costo de la empresa"
                                     + (f"; {mot}" if mot else ""), **kw))
             else:
                 out.append(self.add(modulo, costo_id, q, d, aportante=ap, ambito="INTEGRADA",
@@ -695,9 +695,9 @@ def generar_registro(c, DR, base):
     elif c["alimento"] == "facon" and c["alimento_facon_mp"] is None:
         R.add("ALIMENTO", "", t_al, "alimento_t_anio", unidad="t", submodulo="facon",
               concepto="Alimento a façon: materias primas (B1) o precio integral (B2) — variante NO definida",
-              motivo="VARIANTE_FACON_NO_DEFINIDA (DEC-17-02): sin variante no hay precio aplicable; la cantidad sí existe",
+              motivo="VARIANTE_FACON_NO_DEFINIDA (DEC-024): sin variante no hay precio aplicable; la cantidad sí existe",
               centro="alimento", naturaleza="variable", tipo="comprado")
-        R.add("ALIMENTO", "ALI-B-SRV", None, "alimento_t_anio", motivo="VARIANTE_FACON_NO_DEFINIDA (DEC-17-02): "
+        R.add("ALIMENTO", "ALI-B-SRV", None, "alimento_t_anio", motivo="VARIANTE_FACON_NO_DEFINIDA (DEC-024): "
               "MP de la empresa (MP + servicio) o del elaborador (precio integral)")
     elif c["alimento"] == "facon" and c["alimento_facon_mp"] == "elaborador":
         R.add("ALIMENTO", "ALI-B-PTE", t_al, "alimento_t_anio")
@@ -715,7 +715,7 @@ def generar_registro(c, DR, base):
         for k, i in (("maiz", "ALI-MP-DIF-MAIZ"), ("harina_soja", "ALI-MP-DIF-SOJA")):
             if k in comp:
                 R.add("ALIMENTO", i, v[f"mp_{k}_t_anio"], f"mp_{k}_t_anio",
-                      motivo="precio de referencia (pizarra) ≠ puesto en planta; diferencial PENDIENTE (DPV-17-02)")
+                      motivo="precio de referencia (pizarra) ≠ puesto en planta; diferencial PENDIENTE (DPV-157)")
         R.add("ALIMENTO", "ALI-MERMA", None, "% merma × t MP", motivo="% de merma no dimensionado (DPV-158)")
         if c["alimento"] == "facon":
             R.add("ALIMENTO", "ALI-B-SRV", t_al, "alimento_t_anio")
@@ -764,7 +764,7 @@ def generar_registro(c, DR, base):
         base_pago = c["base_pago_integrado"]
         if base_pago is None:
             R.add("PRODUCCION_PRIMARIA", "PP-PAGO-AVE", None, "—", concepto="Pago al productor integrado (base del contrato NO definida)",
-                  motivo="CONTRATO_NO_DEFINIDO (DEC-17-04)", ambito="INTEGRADA")
+                  motivo="CONTRATO_NO_DEFINIDO (DEC-086)", ambito="INTEGRADA")
         elif base_pago == "ave":
             R.add("PRODUCCION_PRIMARIA", "PP-PAGO-AVE", v["aves_cargadas_anio"] * (1 - fp), "aves_cargadas_anio × fracción integrada",
                   ambito="INTEGRADA")
@@ -788,7 +788,7 @@ def generar_registro(c, DR, base):
     else:
         R.add("FAENA", "FAE-FACON", v["aves_faenadas_anio"], "aves_faenadas_anio", motivo="tarifa NO asumida (DPV-006)")
         R.add("FAENA", "FAE-FACON-FRIO", None, "—", motivo="alcance del contrato PENDIENTE")
-        R.add("FAENA", "FAE-FACON-SUB", None, "—", motivo="alcance del contrato PENDIENTE (DPV-17-07)")
+        R.add("FAENA", "FAE-FACON-SUB", None, "—", motivo="alcance del contrato PENDIENTE (DPV-006)")
     # ---------------- EMPAQUE ----------------
     if propia:
         ap_emp = "EMPRESA"
@@ -829,7 +829,7 @@ def generar_registro(c, DR, base):
         elif fa == "pozo":
             R.add("UTILITIES", "UT-AGUA-CANON", v["agua_m3_anio"], "agua_m3_anio")
         else:
-            R.add("UTILITIES", "UT-AGUA-NS", v["agua_m3_anio"], "agua_m3_anio", motivo="FUENTE_AGUA_NO_SELECCIONADA (DEC-17-03)")
+            R.add("UTILITIES", "UT-AGUA-NS", v["agua_m3_anio"], "agua_m3_anio", motivo="FUENTE_AGUA_NO_SELECCIONADA (DEC-085)")
         R.add("UTILITIES", "UT-AGUA-TRAT", v["agua_m3_anio"], "agua_m3_anio")
         R.add("EFLUENTES", "EF-QUIM", v["efluente_m3_anio"], "efluente_m3_anio", motivo="tecnología PENDIENTE (DEC-043)")
         R.add("EFLUENTES", "EF-ANA", None, "—", motivo="frecuencia PENDIENTE")
@@ -844,7 +844,7 @@ def generar_registro(c, DR, base):
         R.add("SUBPRODUCTOS", "SUB-RET-DECOMISOS", v["decomisos_t_anio"], "decomisos_t_anio")
         R.add("SUBPRODUCTOS", "SUB-CONT", 12.0, "12 meses")
         if c["subproductos"] == "B_basico_propio":
-            R.add("SUBPRODUCTOS", "SUB-TRAT-B", None, "—", motivo="tecnología no definida (SUP-16-14)")
+            R.add("SUBPRODUCTOS", "SUB-TRAT-B", None, "—", motivo="tecnología no definida (SUP-168)")
             R.add("SUBPRODUCTOS", "SUB-TRAT-ENE", None, "—", motivo="energía del tratamiento no incluida en 09C (tecnología no definida)")
         if c["rendering"]:
             for i in ("SUB-REN-ENE", "SUB-REN-TER", "SUB-REN-AGUA", "SUB-REN-MAN", "SUB-REN-INS", "SUB-REN-TRAT",
@@ -894,7 +894,7 @@ def generar_registro(c, DR, base):
             m = modelo_tarifa(c, f)
             if m is None:
                 R.add("LOGISTICA", "", None, "—", unidad="", concepto=f"Flete tercerizado ({nombre}) — modelo de tarifa NO definido",
-                      submodulo="tercerizado", flujo=nombre, aportante=ap, motivo="MODELO_TARIFA_NO_DEFINIDO (DEC-17-05)",
+                      submodulo="tercerizado", flujo=nombre, aportante=ap, motivo="MODELO_TARIFA_NO_DEFINIDO (DEC-087)",
                       centro="logistica", naturaleza="variable", tipo="tercerizado")
             else:
                 q = {"viaje": viajes, "km": km, "unidad": unidades, "contrato": 1.0}[m]
@@ -910,7 +910,7 @@ def generar_registro(c, DR, base):
             continue
         if met is None:
             R.add("MANTENIMIENTO", "", None, "—", unidad="", concepto=f"Mantenimiento — área {a} (método NO definido)",
-                  submodulo=a.lower(), motivo="METODO_MANTENIMIENTO_NO_DEFINIDO (DEC-17-06); no se usa % CAPEX como verdad",
+                  submodulo=a.lower(), motivo="METODO_MANTENIMIENTO_NO_DEFINIDO (DEC-088); no se usa % CAPEX como verdad",
                   centro="mantenimiento", naturaleza="semivariable", tipo="propio")
             continue
         for tp in TIPOS_MANT_POR_METODO[met]:
@@ -1677,7 +1677,7 @@ def capital_trabajo(c, DR, filas, base, opex_total=None):
     arq = DR["arq_inventario"]
     if arq is None:
         row("INVENTARIO", "alimento y materias primas", None, "t", "PENDIENTE", "—", "",
-            "variante del façon no definida: propietario de las MP PENDIENTE (DEC-17-02)")
+            "variante del façon no definida: propietario de las MP PENDIENTE (DEC-024)")
     else:
         precio_pt = {"A_compra": "ALI-A-PT", "B_facon_mp_elaborador": "ALI-B-PTE"}.get(arq)
         ids = {"alimento_terminado_granja": precio_pt, "alimento_terminado_planta": precio_pt, "maiz": "ALI-MP-MAIZ",
@@ -1703,7 +1703,7 @@ def capital_trabajo(c, DR, filas, base, opex_total=None):
             entra="Sí", falta="se alojan al recibirse (stock ≈ 0)")
     prop_aves = "empresa" if (c["granjas"] == "propias" or aportes(c)["pollito"] == "EMPRESA") else "PENDIENTE"
     row("INVENTARIO", "aves en crianza (activo biológico)", v["inventario_aves_promedio_anual"], "aves", prop_aves,
-        "granjas", "", "método de valuación PENDIENTE (DEC-17-07: costo acumulado medio)")
+        "granjas", "", "método de valuación PENDIENTE (DEC-089: costo acumulado medio)")
     ubic = "planta propia" if c["faena"] == "propia" else "faenador / frío de tercero (propiedad de la empresa)"
     for ch in ("refrigerado", "congelado"):
         row("INVENTARIO", f"producto terminado {ch}", v[f"stock_{ch}_medio_t"], "t", "empresa", ubic, "",
@@ -1934,7 +1934,7 @@ def filas_costo_laboral(nombre, c, DR, base, reglas=None):
         r.update(ESCENARIO=nombre, UNIVERSO_RRHH=f["UNIVERSO_RRHH"], PUESTO=f["CONCEPTO"], CLAVE=f["SUBMODULO"],
                  MODALIDAD="PENDIENTE", FTE="PENDIENTE", HEADCOUNT="PENDIENTE", CENTRO_COSTO=f["CENTRO_COSTO"],
                  ESTADO=("FUTURO: sin dimensionamiento" if f["FASE"] == "FUTURO" else
-                         "PENDIENTE: 14A no dimensiona esta función (DPV-17-15)"),
+                         "PENDIENTE: 14A no dimensiona esta función (DPV-176)"),
                  FUENTE="sin modelo físico de dotación")
         out.append(r)
     tot = [r["COSTO_ANUAL_USD"] for r in out if not str(r["ESTADO"]).startswith(("INCLUIDO", "FUTURO"))]
@@ -2020,19 +2020,19 @@ CAMPOS_MATRIZ = ["ITEM", "DRIVER", "UNIDAD", "MAGNITUD_FISICA_REFERENCIA", "VALO
                  "PRIORIDAD", "IMPACTO", "CONCEPTOS", "DPV", "OBSERVACIONES"]
 MATRIZ = [
     ("alimento", "alimento_t_anio", "t/año", "C1-10000", "USD/t de alimento terminado por fase (puesto en granja y en fábrica), con flete y descarga separados",
-     "Fábricas de alimento que venden a terceros (DPV-050)", "ALTA", "MUY ALTO: probable mayor costo del OPEX", "ALI-A-PT, ALI-A-DES", "DPV-050, DPV-17-01, DPV-17-17"),
+     "Fábricas de alimento que venden a terceros (DPV-050)", "ALTA", "MUY ALTO: probable mayor costo del OPEX", "ALI-A-PT, ALI-A-DES", "DPV-050, DPV-050, DPV-019"),
     ("façon de alimento", "alimento_t_anio", "t/año", "C0-10000", "Tarifa de elaboración USD/t y precio integral con MP del elaborador; quién compra MP y mantiene inventario; mermas",
      "Fábricas con disposición a façon (DPV-155)", "ALTA", "ALTO", "ALI-B-SRV, ALI-B-PTE, ALI-B-ALM, ALI-MERMA", "DPV-155"),
     ("granos y materias primas", "mp_maiz_t_anio", "t/año", "C3-10000", "Maíz y harina de soja puestos en planta (precio + flete), núcleo, aceite, aminoácidos; contratos",
-     "Acopios, corredores, Bolsa (lectura primaria de pizarra), proveedores de núcleo", "ALTA", "ALTO en C3 y façon B1", "ALI-MP-*", "DPV-157, DPV-17-02"),
+     "Acopios, corredores, Bolsa (lectura primaria de pizarra), proveedores de núcleo", "ALTA", "ALTO en C3 y façon B1", "ALI-MP-*", "DPV-157, DPV-157"),
     ("pollito BB", "pollitos_a_recibir_anio", "pollitos/año", "C1-10000", "USD/pollito (vacunas incluidas o no, lugar de entrega, flete) — leer CAPIA en original",
-     "Incubadoras que venden a terceros; CAPIA", "ALTA", "ALTO", "POL-COMPRA, LOG-POL-*", "DPV-006, DPV-17-03, DPV-17-17"),
+     "Incubadoras que venden a terceros; CAPIA", "ALTA", "ALTO", "POL-COMPRA, LOG-POL-*", "DPV-006, DPV-047, DPV-019"),
     ("huevo fértil", "huevos_recibidos_anio", "huevos/año", "C3-10000", "USD/huevo incubable puesto en incubadora; disponibilidad",
-     "Productores de huevo fértil / reproductoras", "MEDIA", "ALTO en C3/CF", "INC-OP-HUEVO", "DPV-17-03"),
+     "Productores de huevo fértil / reproductoras", "MEDIA", "ALTO en C3/CF", "INC-OP-HUEVO", "DPV-047"),
     ("salarios y cargas", "fte_industrial_14a", "FTE", "C1-10000", "Salario de convenio por categoría, cargas, ART, adicionales, beneficios, EPP; convenio aplicable",
      "Convenio colectivo (lectura primaria), estudio contable laboral", "ALTA", "MUY ALTO", "LAB-*", "DPV-148, DPV-146"),
     ("energía eléctrica", "kwh_anio", "kWh/año", "C1-10000", "Tarifa industrial (cargo variable USD/kWh, cargo por potencia USD/kW·mes, cargo fijo) de la distribuidora del sitio",
-     "Cuadro tarifario oficial de la distribuidora / ente regulador provincial", "ALTA", "ALTO", "UT-ELE-*", "DPV-052, DPV-095, DPV-17-05"),
+     "Cuadro tarifario oficial de la distribuidora / ente regulador provincial", "ALTA", "ALTO", "UT-ELE-*", "DPV-052, DPV-095, DPV-052"),
     ("gas / combustible térmico", "energia_termica_kwh_t_anio", "kWh_t/año", "C1-10000", "Combustible elegido y su precio (gas natural USD/m³, GLP USD/kg, biomasa USD/kg)",
      "Distribuidora de gas / proveedores de GLP y biomasa", "MEDIA", "MEDIO", "UT-TER-*", "DPV-052, DEC-045"),
     ("agua", "agua_m3_anio", "m³/año", "C1-10000", "Tarifa de red o canon de agua subterránea; químicos de potabilización",
@@ -2040,25 +2040,25 @@ MATRIZ = [
     ("tratamiento de efluentes", "efluente_m3_anio", "m³/año", "C1-10000", "Químicos por m³, análisis de vuelco, canon, lodos (t y USD/t)",
      "Proveedores de tratamiento; autoridad de vuelco", "MEDIA", "MEDIO", "EF-*", "DPV-072, DEC-043"),
     ("químicos de limpieza", "aves_faenadas_anio", "aves/año", "C1-10000", "USD por ave (o por m²) de químicos de limpieza y sanitización",
-     "Proveedores de químicos para industria cárnica", "MEDIA", "MEDIO", "FAE-QUIM, INC-OP-LIM, PP-LIMP", "DPV-17-08"),
+     "Proveedores de químicos para industria cárnica", "MEDIA", "MEDIO", "FAE-QUIM, INC-OP-LIM, PP-LIMP", "DPV-172"),
     ("packaging", "kg_producto_anio", "kg producto/año", "C1-10000", "Precio por kg de producto de bolsas, bandejas, film, cajas, etiquetas, pallets según mix",
-     "Proveedores de envases", "MEDIA", "ALTO", "EMP-*", "DPV-17-09"),
+     "Proveedores de envases", "MEDIA", "ALTO", "EMP-*", "DPV-172"),
     ("mantenimiento", "activos BOQ 16", "activo-año", "C1-10000", "Método (contrato, por activo, horas) y precios; repuestos críticos; refrigerante",
-     "Proveedores de equipos (con RFQ) y de servicios técnicos", "MEDIA", "MEDIO-ALTO", "MAN-*", "DEC-17-06, DPV-17-10"),
+     "Proveedores de equipos (con RFQ) y de servicios técnicos", "MEDIA", "MEDIO-ALTO", "MAN-*", "DEC-088, DPV-150"),
     ("faena a façon", "aves_faenadas_anio", "aves/año", "C0-10000", "Tarifa USD/ave y alcance (empaque, frío, subproductos, rendimiento garantizado)",
-     "Frigoríficos con capacidad ociosa (DPV-006, DPV-016)", "ALTA", "MUY ALTO en C0", "FAE-FACON*", "DPV-006, DPV-17-07"),
+     "Frigoríficos con capacidad ociosa (DPV-006, DPV-016)", "ALTA", "MUY ALTO en C0", "FAE-FACON*", "DPV-006, DPV-006"),
     ("logística", "vivo_km_anio / refrigerado_km_anio", "km/año", "C1-10000", "Tarifas tercerizadas (viaje / km / t) por flujo; costos de flota propia (consumo L/km, mantenimiento/km, seguros)",
      "Transportistas de aves vivas, refrigerado y granel", "ALTA", "ALTO", "LOG-*", "DPV-042, DPV-054, DPV-084"),
     ("integración y granjas", "aves_cargadas_anio / kg_vivo_cargado_anio", "aves/año", "C1-10000", "Contrato de integración (base de pago, ajustes, aportes de cada parte), captura, cama, gas",
-     "Productores integrados, integradoras", "ALTA", "MUY ALTO en C0–C2", "PP-*", "DPV-17-04, DPV-054"),
+     "Productores integrados, integradoras", "ALTA", "MUY ALTO en C0–C2", "PP-*", "DPV-170, DPV-054"),
     ("seguros", "pólizas", "póliza-año", "C1-10000", "Prima anual por póliza (planta, incendio, RC, flota, mercadería, interrupción)",
-     "Brokers / aseguradoras", "BAJA", "MEDIO", "SEG-*", "DPV-17-11"),
+     "Brokers / aseguradoras", "BAJA", "MEDIO", "SEG-*", "DPV-173"),
     ("análisis y laboratorio", "plan de muestreo", "análisis/año", "C1-10000", "Plan de autocontrol y precio por análisis (microbiología, agua, alimento, vuelco)",
-     "Laboratorios acreditados", "MEDIA", "BAJO-MEDIO", "CAL-ANA-*, ALI-C-ANA, EF-ANA", "DPV-17-12"),
+     "Laboratorios acreditados", "MEDIA", "BAJO-MEDIO", "CAL-ANA-*, ALI-C-ANA, EF-ANA", "DPV-174"),
     ("certificaciones y SENASA", "establecimiento", "año", "C1-10000", "Tasas/aranceles SENASA, certificaciones, auditorías; halal (opcional)",
-     "SENASA (lectura primaria de aranceles), certificadoras", "MEDIA", "MEDIO", "CAL-SENASA, CAL-CERT, CAL-AUD, HAL-*", "DPV-101, DPV-17-13"),
+     "SENASA (lectura primaria de aranceles), certificadoras", "MEDIA", "MEDIO", "CAL-SENASA, CAL-CERT, CAL-AUD, HAL-*", "DPV-101, DPV-174"),
     ("capital de trabajo", "días", "días", "todas", "Días de cobro por canal, días de pago por proveedor, días de stock de envases, repuestos e insumos, método de valuación del activo biológico",
-     "Clientes potenciales (DPV-039), proveedores, contador", "ALTA", "MUY ALTO para la caja", "CT", "DPV-039, DPV-17-14"),
+     "Clientes potenciales (DPV-039), proveedores, contador", "ALTA", "MUY ALTO para la caja", "CT", "DPV-039, DPV-175"),
 ]
 
 

@@ -31,16 +31,16 @@ Reglas (`validar_base()`, tests C03, E05): sin precio ⇒ PENDIENTE; con precio 
 
 | ID | Precio observado (moneda original) | Conversión del modelo | Fuente | Por qué E4 / uso |
 |---|---|---|---|---|
-| **ALI-MP-MAIZ** | ARS 295.800/t · pizarra Cámara Arbitral de Rosario · 2026-09-29 · **SOBRE_PUERTO_ROSARIO** · IVA no informado | ÷ 1.522 ARS/USD (A3500, 2026-09-29) = USD 194,35/t | FTE-17-001 (TC: FTE-17-003) | Extracto; sitio bloqueado. **Precio Rosario ≠ costo puesto en planta**: diferencial ALI-MP-DIF-MAIZ (PENDIENTE) y flete LOG-GRA-* aparte (test X10) |
-| **POL-COMPRA** | ARS 1.312,22/pollito · **sin IVA** (ARS 1.450 con IVA 10 %) · semana 2026-07-06 · entrega PENDIENTE | ÷ 1.486,50 ARS/USD (A3500, 2026-07-06) = USD 0,8828 | FTE-17-002 (TC: FTE-17-004) | Extracto de un sitio que reproduce CAPIA (bloqueado); anterior a la fecha base; flete incluido PENDIENTE |
+| **ALI-MP-MAIZ** | ARS 295.800/t · pizarra Cámara Arbitral de Rosario · 2026-09-29 · **SOBRE_PUERTO_ROSARIO** · IVA no informado | ÷ 1.522 ARS/USD (A3500, 2026-09-29) = USD 194,35/t | FTE-317 (TC: FTE-318) | Extracto; sitio bloqueado. **Precio Rosario ≠ costo puesto en planta**: diferencial ALI-MP-DIF-MAIZ (PENDIENTE) y flete LOG-GRA-* aparte (test X10) |
+| **POL-COMPRA** | ARS 1.312,22/pollito · **sin IVA** (ARS 1.450 con IVA 10 %) · semana 2026-07-06 · entrega PENDIENTE | ÷ 1.486,50 ARS/USD (A3500, 2026-07-06) = USD 0,8828 | FTE-029 (TC: FTE-319) | Extracto de un sitio que reproduce CAPIA (bloqueado); anterior a la fecha base; flete incluido PENDIENTE |
 
-**SAC (aguinaldo):** ya **no** figura en la base de precios. Es una regla laboral en [`reglas_laborales_opex.csv`](reglas_laborales_opex.csv) (`REGLA_LABORAL_PENDIENTE_VERIFICACION`, fuente normativa Ley 20.744 arts. 121–122 a leer en original: DPV-17-19), sin nivel E1–E5 (tests X07, X08).
+**SAC (aguinaldo):** ya **no** figura en la base de precios. Es una regla laboral en [`reglas_laborales_opex.csv`](reglas_laborales_opex.csv) (`REGLA_LABORAL_PENDIENTE_VERIFICACION`, fuente normativa Ley 20.744 arts. 121–122 a leer en original: DPV-148), sin nivel E1–E5 (tests X07, X08).
 
 | Referencia | Valor | Fuente | Uso |
 |---|---|---|---|
-| REF-SOJA-POROTO | ARS 560.000/t (2026-09-01) | FTE-17-005 | Soja poroto ≠ harina de soja: no se usa |
-| REF-HSOJA-INT | USD 461,95/t (futuros sep-2026) | FTE-17-006 | Mercado internacional y punto de entrega distintos: no se usa |
-| REF-POL-CONTRA | "$ 16 por unidad" (2026-09-13) | FTE-17-007 | **Descartado**: incompatible con ARS 1.312 de la misma cámara dos meses antes; probable página antigua mal fechada (regla 16) |
+| REF-SOJA-POROTO | ARS 560.000/t (2026-09-01) | FTE-320 | Soja poroto ≠ harina de soja: no se usa |
+| REF-HSOJA-INT | USD 461,95/t (futuros sep-2026) | FTE-321 | Mercado internacional y punto de entrega distintos: no se usa |
+| REF-POL-CONTRA | "$ 16 por unidad" (2026-09-13) | FTE-322 | **Descartado**: incompatible con ARS 1.312 de la misma cámara dos meses antes; probable página antigua mal fechada (regla 16) |
 
 Los tipos de cambio también son extractos de prensa (A3500, `[PVDP]`).
 

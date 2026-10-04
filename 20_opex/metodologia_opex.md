@@ -101,7 +101,7 @@ Por escenario y módulo ([`escenarios_opex.csv`](escenarios_opex.csv)):
 | Ingresos, precio del pollo, ingresos por subproductos, EBITDA, VAN, TIR, payback | `21_modelo_financiero` |
 | Depreciación, impuesto a las ganancias, IVA (crédito y débito), ingresos brutos, percepciones | `21_modelo_financiero` |
 | Indexación por inflación (USD o ARS) | `21_modelo_financiero` (campos `INDICE_ACTUALIZACION` y `FECHA_ACTUALIZACION` preparados) |
-| Elección de escala, arquitectura, make-or-buy, combustible, fuente de agua, tarifa | Decisiones (DEC-17-##) y optimizador posterior |
+| Elección de escala, arquitectura, make-or-buy, combustible, fuente de agua, tarifa | Decisiones (DEC-080 a DEC-091 y existentes) y optimizador posterior |
 
 ## 7. Ejecución
 
