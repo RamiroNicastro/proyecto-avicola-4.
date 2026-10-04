@@ -1,0 +1,101 @@
+ID_INPUT,ESCENARIO,BLOQUE,VARIABLE,VALOR,UNIDAD,ORIGEN,NIVEL_EVIDENCIA,MODO,FUENTE,ESTADO,OBSERVACIONES
+IN-001,EVIDENCIA,TIEMPO,horizonte_anios,,años,PENDIENTE,,EVIDENCIA,,PENDIENTE,DEC-007: 10 / 15 / 20 años son escenarios; ninguno es el correcto
+IN-002,EVIDENCIA,TIEMPO,fecha_inicio,,AAAA-MM-DD,PENDIENTE,,EVIDENCIA,,PENDIENTE,Fecha de inicio del proyecto (T0); solo rotula fechas
+IN-003,EVIDENCIA,TIEMPO,meses_preoperacion,,meses,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Permisos, ingeniería, habilitaciones previas (DPV-086)"
+IN-004,EVIDENCIA,TIEMPO,meses_construccion,,meses,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Obra civil, fabricación y montaje (DPV-086, DPV-167)"
+IN-005,EVIDENCIA,TIEMPO,meses_commissioning,,meses,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Pruebas FAT/SAT, puesta en marcha, habilitación SENASA (DPV-086)"
+IN-006,EVIDENCIA,TIEMPO,meses_detalle,24,meses,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-06,SUPUESTO,"Convención de reporte: mensual los primeros 24 meses, anual después (SUP-19-06). No es dato económico"
+IN-007,EVIDENCIA,MONEDA,modelo_monetario,REAL,—,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-07,SUPUESTO,"USD constantes de la fecha base 2026-10-01; sin inflación por defecto (SUP-19-07, DEC-006)"
+IN-008,EVIDENCIA,MONEDA,base_tasa,REAL,—,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-07,SUPUESTO,La tasa debe estar en la misma base que los flujos (SUP-19-07)
+IN-009,EVIDENCIA,MONEDA,inflacion_anual,,fracción/año,PENDIENTE,,EVIDENCIA,,PENDIENTE,Solo modelo NOMINAL (DEC-006)
+IN-010,EVIDENCIA,DESCUENTO,tasa_descuento,,fracción/año efectiva,PENDIENTE,,EVIDENCIA,,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
+IN-011,EVIDENCIA,DESCUENTO,tasa_descuento_accionista,,fracción/año efectiva,PENDIENTE,,EVIDENCIA,,PENDIENTE,Costo del capital propio (DPV-001)
+IN-012,EVIDENCIA,DESCUENTO,tasa_reinversion,,fracción/año efectiva,PENDIENTE,,EVIDENCIA,,PENDIENTE,Solo para MIRR (opcional)
+IN-013,EVIDENCIA,VALOR_TERMINAL,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-12,SUPUESTO,"Por defecto sin valor terminal para no inflar resultados; VALOR_LIBRO / EXPLICITO / PERPETUIDAD disponibles, ninguno elegido (SUP-19-12)"
+IN-014,EVIDENCIA,VALOR_TERMINAL,valor_terminal.recuperar_ct,FALSE,bool,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-12,SUPUESTO,Sin recupero del capital de trabajo al cierre por defecto (SUP-19-12)
+IN-015,EVIDENCIA,PRODUCCION,propiedad_rendimientos_validados,,bool,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Rendimientos del balance 04 v1.1 sin ensayo en planta (DPV-060, DEC-028)"
+IN-016,EVIDENCIA,RAMPUP,curva_rampup,,nombre de curva,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
+IN-017,EVIDENCIA,DEMANDA,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
+IN-018,EVIDENCIA,DEMANDA,mix_demanda,,fracción por producto,PENDIENTE,,EVIDENCIA,,PENDIENTE,Mix por producto y canal (DPV-037)
+IN-019,EVIDENCIA,IMPUESTOS,impuestos.pct_iibb,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Ingresos brutos por jurisdicción (DPV-043)
+IN-020,EVIDENCIA,IMPUESTOS,impuestos.pct_tasas_municipales,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Tasas municipales sobre ventas (DPV-043)
+IN-021,EVIDENCIA,IMPUESTOS,impuestos.otros_impuestos_usd_anio,,USD/año,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Otros impuestos operativos fijos (DPV-043, DPV-169)"
+IN-022,EVIDENCIA,IMPUESTOS,impuestos.tasa_ganancias,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Impuesto a las ganancias (DPV-169)
+IN-023,EVIDENCIA,IMPUESTOS,impuestos.anios_quebranto,,años,PENDIENTE,,EVIDENCIA,,PENDIENTE,Años de compensación de quebrantos (DPV-169)
+IN-024,EVIDENCIA,IVA,iva.modo,,EXCLUIDO | SIMPLIFICADO,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Tratamiento del IVA (débito, crédito, saldo técnico, recupero; DPV-169, DPV-043)"
+IN-025,EVIDENCIA,IVA,iva.alicuota_ventas,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Alícuota (DPV-043, DPV-169); no se hardcodea"
+IN-026,EVIDENCIA,IVA,iva.alicuota_compras,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Alícuota (DPV-043, DPV-169); no se hardcodea"
+IN-027,EVIDENCIA,IVA,iva.alicuota_capex,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Alícuota (DPV-043, DPV-169); no se hardcodea"
+IN-028,EVIDENCIA,CANALES,canales.supermercados.dias_cobro,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Plazo de cobro promedio (0 = contado; no se asume que el supermercado paga contado) (DPV-039, DPV-175)"
+IN-029,EVIDENCIA,CANALES,canales.supermercados.pct_descuentos,,fracción de venta bruta,PENDIENTE,,EVIDENCIA,,PENDIENTE,Descuentos en factura (DPV-039)
+IN-030,EVIDENCIA,CANALES,canales.supermercados.pct_bonificaciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Bonificaciones y rebates (DPV-039)
+IN-031,EVIDENCIA,CANALES,canales.supermercados.pct_devoluciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+IN-032,EVIDENCIA,CANALES,canales.supermercados.pct_comisiones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Comisiones comerciales y fees (DPV-039)
+IN-033,EVIDENCIA,CANALES,canales.supermercados.costo_logistico_usd_kg,,USD/kg,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Costo logístico del canal ADICIONAL al OPEX de 20 (fees de CD, entrega específica); 0 solo si se declara (DPV-039)"
+IN-034,EVIDENCIA,CANALES,canales.mayoristas.dias_cobro,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Plazo de cobro promedio (0 = contado; no se asume que el supermercado paga contado) (DPV-039, DPV-175)"
+IN-035,EVIDENCIA,CANALES,canales.mayoristas.pct_descuentos,,fracción de venta bruta,PENDIENTE,,EVIDENCIA,,PENDIENTE,Descuentos en factura (DPV-039)
+IN-036,EVIDENCIA,CANALES,canales.mayoristas.pct_bonificaciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Bonificaciones y rebates (DPV-039)
+IN-037,EVIDENCIA,CANALES,canales.mayoristas.pct_devoluciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+IN-038,EVIDENCIA,CANALES,canales.mayoristas.pct_comisiones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Comisiones comerciales y fees (DPV-039)
+IN-039,EVIDENCIA,CANALES,canales.mayoristas.costo_logistico_usd_kg,,USD/kg,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Costo logístico del canal ADICIONAL al OPEX de 20 (fees de CD, entrega específica); 0 solo si se declara (DPV-039)"
+IN-040,EVIDENCIA,CANALES,canales.carnicerias_pollerias.dias_cobro,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Plazo de cobro promedio (0 = contado; no se asume que el supermercado paga contado) (DPV-039, DPV-175)"
+IN-041,EVIDENCIA,CANALES,canales.carnicerias_pollerias.pct_descuentos,,fracción de venta bruta,PENDIENTE,,EVIDENCIA,,PENDIENTE,Descuentos en factura (DPV-039)
+IN-042,EVIDENCIA,CANALES,canales.carnicerias_pollerias.pct_bonificaciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Bonificaciones y rebates (DPV-039)
+IN-043,EVIDENCIA,CANALES,canales.carnicerias_pollerias.pct_devoluciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+IN-044,EVIDENCIA,CANALES,canales.carnicerias_pollerias.pct_comisiones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Comisiones comerciales y fees (DPV-039)
+IN-045,EVIDENCIA,CANALES,canales.carnicerias_pollerias.costo_logistico_usd_kg,,USD/kg,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Costo logístico del canal ADICIONAL al OPEX de 20 (fees de CD, entrega específica); 0 solo si se declara (DPV-039)"
+IN-046,EVIDENCIA,CANALES,canales.gastronomia.dias_cobro,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Plazo de cobro promedio (0 = contado; no se asume que el supermercado paga contado) (DPV-039, DPV-175)"
+IN-047,EVIDENCIA,CANALES,canales.gastronomia.pct_descuentos,,fracción de venta bruta,PENDIENTE,,EVIDENCIA,,PENDIENTE,Descuentos en factura (DPV-039)
+IN-048,EVIDENCIA,CANALES,canales.gastronomia.pct_bonificaciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Bonificaciones y rebates (DPV-039)
+IN-049,EVIDENCIA,CANALES,canales.gastronomia.pct_devoluciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+IN-050,EVIDENCIA,CANALES,canales.gastronomia.pct_comisiones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Comisiones comerciales y fees (DPV-039)
+IN-051,EVIDENCIA,CANALES,canales.gastronomia.costo_logistico_usd_kg,,USD/kg,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Costo logístico del canal ADICIONAL al OPEX de 20 (fees de CD, entrega específica); 0 solo si se declara (DPV-039)"
+IN-052,EVIDENCIA,CANALES,canales.industria.dias_cobro,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Plazo de cobro promedio (0 = contado; no se asume que el supermercado paga contado) (DPV-039, DPV-175)"
+IN-053,EVIDENCIA,CANALES,canales.industria.pct_descuentos,,fracción de venta bruta,PENDIENTE,,EVIDENCIA,,PENDIENTE,Descuentos en factura (DPV-039)
+IN-054,EVIDENCIA,CANALES,canales.industria.pct_bonificaciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Bonificaciones y rebates (DPV-039)
+IN-055,EVIDENCIA,CANALES,canales.industria.pct_devoluciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+IN-056,EVIDENCIA,CANALES,canales.industria.pct_comisiones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Comisiones comerciales y fees (DPV-039)
+IN-057,EVIDENCIA,CANALES,canales.industria.costo_logistico_usd_kg,,USD/kg,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Costo logístico del canal ADICIONAL al OPEX de 20 (fees de CD, entrega específica); 0 solo si se declara (DPV-039)"
+IN-058,EVIDENCIA,CANALES,canales.exportacion.dias_cobro,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Plazo de cobro promedio (0 = contado; no se asume que el supermercado paga contado) (DPV-039, DPV-175)"
+IN-059,EVIDENCIA,CANALES,canales.exportacion.pct_descuentos,,fracción de venta bruta,PENDIENTE,,EVIDENCIA,,PENDIENTE,Descuentos en factura (DPV-039)
+IN-060,EVIDENCIA,CANALES,canales.exportacion.pct_bonificaciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Bonificaciones y rebates (DPV-039)
+IN-061,EVIDENCIA,CANALES,canales.exportacion.pct_devoluciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+IN-062,EVIDENCIA,CANALES,canales.exportacion.pct_comisiones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Comisiones comerciales y fees (DPV-039)
+IN-063,EVIDENCIA,CANALES,canales.exportacion.costo_logistico_usd_kg,,USD/kg,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Costo logístico del canal ADICIONAL al OPEX de 20 (fees de CD, entrega específica); 0 solo si se declara (DPV-039)"
+IN-064,EVIDENCIA,CANALES,canales.otros.dias_cobro,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Plazo de cobro promedio (0 = contado; no se asume que el supermercado paga contado) (DPV-039, DPV-175)"
+IN-065,EVIDENCIA,CANALES,canales.otros.pct_descuentos,,fracción de venta bruta,PENDIENTE,,EVIDENCIA,,PENDIENTE,Descuentos en factura (DPV-039)
+IN-066,EVIDENCIA,CANALES,canales.otros.pct_bonificaciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Bonificaciones y rebates (DPV-039)
+IN-067,EVIDENCIA,CANALES,canales.otros.pct_devoluciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+IN-068,EVIDENCIA,CANALES,canales.otros.pct_comisiones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Comisiones comerciales y fees (DPV-039)
+IN-069,EVIDENCIA,CANALES,canales.otros.costo_logistico_usd_kg,,USD/kg,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Costo logístico del canal ADICIONAL al OPEX de 20 (fees de CD, entrega específica); 0 solo si se declara (DPV-039)"
+IN-070,EVIDENCIA,CANALES,canales.exportacion.pct_derechos_exportacion,,fracción del FOB,PENDIENTE,,EVIDENCIA,,PENDIENTE,Derechos de exportación vigentes (DPV-015)
+IN-071,EVIDENCIA,CANALES,canales.exportacion.costo_exportacion_usd_kg,,USD/kg,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Logística a puerto, despacho, certificación, puerto, contenedor, seguro, halal (DPV-026, DPV-145)"
+IN-072,EVIDENCIA,CANALES,canales.exportacion.incoterm,,FOB | CIF,PENDIENTE,,EVIDENCIA,,PENDIENTE,Condición del precio de exportación; CIF exige flete y seguro en costo_exportacion
+IN-073,EVIDENCIA,CT,dias_pago.alimento,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de pago por grupo de proveedor (DPV-175, DEC-091)"
+IN-074,EVIDENCIA,CT,dias_pago.pollitos,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de pago por grupo de proveedor (DPV-175, DEC-091)"
+IN-075,EVIDENCIA,CT,dias_pago.granos,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de pago por grupo de proveedor (DPV-175, DEC-091)"
+IN-076,EVIDENCIA,CT,dias_pago.servicios,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de pago por grupo de proveedor (DPV-175, DEC-091)"
+IN-077,EVIDENCIA,CT,dias_pago.packaging,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de pago por grupo de proveedor (DPV-175, DEC-091)"
+IN-078,EVIDENCIA,CT,dias_pago.logistica,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de pago por grupo de proveedor (DPV-175, DEC-091)"
+IN-079,EVIDENCIA,CT,dias_pago.energia,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de pago por grupo de proveedor (DPV-175, DEC-091)"
+IN-080,EVIDENCIA,CT,dias_stock.materias_primas,,días de costo,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de stock valuados al costo (DEC-089, DEC-091, DPV-175)"
+IN-081,EVIDENCIA,CT,dias_stock.alimento,,días de costo,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de stock valuados al costo (DEC-089, DEC-091, DPV-175)"
+IN-082,EVIDENCIA,CT,dias_stock.packaging,,días de costo,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de stock valuados al costo (DEC-089, DEC-091, DPV-175)"
+IN-083,EVIDENCIA,CT,dias_stock.repuestos,,días de costo,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de stock valuados al costo (DEC-089, DEC-091, DPV-175)"
+IN-084,EVIDENCIA,CT,dias_stock.producto_terminado,,días de costo,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de stock valuados al costo (DEC-089, DEC-091, DPV-175)"
+IN-085,EVIDENCIA,CT,dias_stock.activo_biologico,,días de costo,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de stock valuados al costo (DEC-089, DEC-091, DPV-175)"
+IN-086,EVIDENCIA,CT,dias_stock.otros,,días de costo,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de stock valuados al costo (DEC-089, DEC-091, DPV-175)"
+IN-087,EVIDENCIA,CT,dias_caja_operativa,,días de OPEX,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
+IN-088,EVIDENCIA,FINANCIAMIENTO,financiamiento,,estructura,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Equity / deuda / mixto (DEC-092); USD 2 M no es capital confirmado (SUP-003, DEC-010)"
+IN-089,PLANTILLA_CONSERVADOR,RAMPUP,curva_rampup,CONSERVADOR,nombre de curva,SUPUESTO_MODELO,,ESCENARIO,SUP-19-09,SUPUESTO,"Plantilla ilustrativa sin fuente (SUP-19-09): solo utilización; merma, eficiencia y extras PENDIENTES"
+IN-090,PLANTILLA_CONSERVADOR,DEMANDA,demanda_referencia_02,ESC-CON,id de 02,SUPUESTO_MODELO,,ESCENARIO,02_clientes_demanda/escenarios_demanda.csv,SUPUESTO,"Escenario comercial de PRUEBA de 02 (SUPUESTO, no demanda; categoría ESCENARIO)"
+IN-091,PLANTILLA_CONSERVADOR,TIEMPO,horizonte_anios,,años,PENDIENTE,,ESCENARIO,,PENDIENTE,"El usuario elige 10, 15 o 20 (DEC-007)"
+IN-092,PLANTILLA_CONSERVADOR,DEMANDA,mix_demanda,,fracción por producto,PENDIENTE,,ESCENARIO,,PENDIENTE,Mix por producto (M1–M3 de 02 u otro) a declarar por el usuario (DPV-037)
+IN-093,PLANTILLA_BASE,RAMPUP,curva_rampup,BASE,nombre de curva,SUPUESTO_MODELO,,ESCENARIO,SUP-19-09,SUPUESTO,"Plantilla ilustrativa sin fuente (SUP-19-09): solo utilización; merma, eficiencia y extras PENDIENTES"
+IN-094,PLANTILLA_BASE,DEMANDA,demanda_referencia_02,ESC-BAS,id de 02,SUPUESTO_MODELO,,ESCENARIO,02_clientes_demanda/escenarios_demanda.csv,SUPUESTO,"Escenario comercial de PRUEBA de 02 (SUPUESTO, no demanda; categoría ESCENARIO)"
+IN-095,PLANTILLA_BASE,TIEMPO,horizonte_anios,,años,PENDIENTE,,ESCENARIO,,PENDIENTE,"El usuario elige 10, 15 o 20 (DEC-007)"
+IN-096,PLANTILLA_BASE,DEMANDA,mix_demanda,,fracción por producto,PENDIENTE,,ESCENARIO,,PENDIENTE,Mix por producto (M1–M3 de 02 u otro) a declarar por el usuario (DPV-037)
+IN-097,PLANTILLA_EXPANSIVO,RAMPUP,curva_rampup,RAPIDO,nombre de curva,SUPUESTO_MODELO,,ESCENARIO,SUP-19-09,SUPUESTO,"Plantilla ilustrativa sin fuente (SUP-19-09): solo utilización; merma, eficiencia y extras PENDIENTES"
+IN-098,PLANTILLA_EXPANSIVO,DEMANDA,demanda_referencia_02,ESC-EXP,id de 02,SUPUESTO_MODELO,,ESCENARIO,02_clientes_demanda/escenarios_demanda.csv,SUPUESTO,"Escenario comercial de PRUEBA de 02 (SUPUESTO, no demanda; categoría ESCENARIO)"
+IN-099,PLANTILLA_EXPANSIVO,TIEMPO,horizonte_anios,,años,PENDIENTE,,ESCENARIO,,PENDIENTE,"El usuario elige 10, 15 o 20 (DEC-007)"
+IN-100,PLANTILLA_EXPANSIVO,DEMANDA,mix_demanda,,fracción por producto,PENDIENTE,,ESCENARIO,,PENDIENTE,Mix por producto (M1–M3 de 02 u otro) a declarar por el usuario (DPV-037)

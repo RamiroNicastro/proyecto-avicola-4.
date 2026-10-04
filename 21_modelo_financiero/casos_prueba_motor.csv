@@ -1,0 +1,5 @@
+CASO,DESCRIPCION,VAN,TIR,TIR_ESTADO,PAYBACK_SIMPLE_ANIOS,PAYBACK_DESCONTADO_ANIOS,EBITDA_ULTIMO_ANIO,BE_UTILIZACION_EBITDA,FONDOS_INICIALES,PICO_REQUERIMIENTO_FONDOS,VALOR_ESPERADO_MANUAL,ETIQUETA
+CP-01,CAPEX 100 en T0; ventas 100/año; OPEX fijo 60/año; 5 años; 10 %; pre-tax,51.6315,0.2865,UNICA,2.5,3.0192,40,0.6,100,100,"VAN = −100 + 40 × 3,790787 = 51,6315; TIR = 28,65 %; payback = 2,5 años; BE u = 60 %",CASO_PRUEBA_ARTIFICIAL (no es escenario del proyecto)
+CP-02,CP-01 con ganancias 30 % y depreciación lineal 5 años,28.8868,0.2076,UNICA,2.9412,3.6652,40,0.6,100,100,"FCFF = 40 − 0,3 × (40 − 20) = 34; VAN = 28,887; payback = 2,94",CASO_PRUEBA_ARTIFICIAL (no es escenario del proyecto)
+CP-03,CP-01 sin ventas suficientes: OPEX 120/año,-175.8157,,NO_EXISTE (el flujo no cambia de signo),,,-20,1.2,100,200,EBITDA −20/año; NO_RECUPERADO; TIR NO_EXISTE,CASO_PRUEBA_ARTIFICIAL (no es escenario del proyecto)
+CP-04,CP-01 con cobro a 30 días,44.1595,0.2547,UNICA,2.7055,3.2927,40,0.6,108.2192,104.8858,"CxC = ventas mensuales × 30 ÷ 30,4167; ΔCT solo en el primer mes",CASO_PRUEBA_ARTIFICIAL (no es escenario del proyecto)
