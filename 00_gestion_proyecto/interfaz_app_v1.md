@@ -1,6 +1,6 @@
 # Interfaz del motor para la app v1 (contrato)
 
-**Fecha:** 2026-10-05 · **Origen:** sesión 21 (auditoría + reconciliación final del motor) · **Estado:** contrato de datos **definido**; la app **no** está diseñada ni construida.
+**Fecha:** 2026-10-05 · **Origen:** sesión 21 (auditoría + reconciliación final del motor) · **Estado:** contrato de datos **definido**; la app se construyó en la sesión 22 ([`../app/README.md`](../app/README.md)).
 
 > Este documento define **qué puede pedir y qué puede mostrar** una app sobre el motor v1 (módulos `03` a `22`). No define pantallas, tecnología ni flujo de usuario. Toda cifra que la app muestre sale del motor con su **etiqueta**; la app no calcula, no completa faltantes y no convierte un `None` en 0. Auditoría que respalda este contrato: [`auditoria_final_motor_v1.md`](auditoria_final_motor_v1.md).
 

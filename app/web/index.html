@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proyecto Avícola — Nicas &amp; Doipe</title>
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <a class="marca" href="#/inicio" data-marca>
+      <span class="logo" aria-hidden="true">🐔</span>
+      <div><div class="marca-titulo">Proyecto Avícola</div><div class="marca-sub">Nicas &amp; Doipe</div></div>
+    </a>
+    <nav id="nav" aria-label="Navegación principal">
+      <div class="nav-grupo">Proyecto</div>
+      <a href="#/inicio" data-ruta="inicio"><span class="ico">⌂</span>Inicio</a>
+      <a href="#/como-funciona" data-ruta="como-funciona"><span class="ico">🔗</span>Cómo funciona</a>
+      <a href="#/grupo/mercado" data-ruta="grupo/mercado"><span class="ico">📈</span>Mercado</a>
+      <a href="#/grupo/produccion" data-ruta="grupo/produccion"><span class="ico">🐔</span>Producción</a>
+      <a href="#/grupo/planta" data-ruta="grupo/planta"><span class="ico">🏭</span>Planta y procesos</a>
+      <a href="#/grupo/productos" data-ruta="grupo/productos"><span class="ico">🍗</span>Productos</a>
+      <a href="#/localizacion" data-ruta="localizacion"><span class="ico">📍</span>Localización</a>
+      <a href="#/grupo/logistica" data-ruta="grupo/logistica"><span class="ico">🛣️</span>Logística</a>
+      <a href="#/grupo/infraestructura" data-ruta="grupo/infraestructura"><span class="ico">💧</span>Infraestructura</a>
+      <a href="#/grupo/organizacion" data-ruta="grupo/organizacion"><span class="ico">👥</span>Organización</a>
+      <div class="nav-grupo">Economía</div>
+      <a href="#/grupo/inversion" data-ruta="grupo/inversion"><span class="ico">🏗️</span>Inversión</a>
+      <a href="#/grupo/costos" data-ruta="grupo/costos"><span class="ico">🧾</span>Costos</a>
+      <a href="#/grupo/finanzas" data-ruta="grupo/finanzas"><span class="ico">💰</span>Finanzas</a>
+      <a href="#/grupo/riesgos" data-ruta="grupo/riesgos"><span class="ico">⚠️</span>Riesgos</a>
+      <div class="nav-grupo">Decisión</div>
+      <a href="#/simular" data-ruta="simular"><span class="ico">▶</span>Simular</a>
+      <a href="#/comparar" data-ruta="comparar"><span class="ico">⇄</span>Comparar</a>
+      <a href="#/optimizar" data-ruta="optimizar"><span class="ico">◎</span>Optimizar</a>
+      <a href="#/validacion" data-ruta="validacion"><span class="ico">☐</span>Qué falta validar</a>
+      <a href="#/seguir" data-ruta="seguir"><span class="ico">→</span>Para seguir avanzando</a>
+      <div class="nav-grupo">Avanzado</div>
+      <a href="#/evidencia" data-ruta="evidencia"><span class="ico">▤</span>Evidencia</a>
+      <a href="#/trazabilidad" data-ruta="trazabilidad"><span class="ico">⛓</span>Trazabilidad</a>
+      <a href="#/experto" data-ruta="experto"><span class="ico">⚙</span>Modo experto</a>
+      <div class="nav-grupo">Ayuda</div>
+      <a href="#/estado" data-ruta="estado"><span class="ico">📊</span>¿Dónde estamos?</a>
+      <a href="#/estudio" data-ruta="estudio"><span class="ico">📚</span>Estudio completo</a>
+      <a href="#/diccionario" data-ruta="diccionario"><span class="ico">📖</span>Diccionario</a>
+    </nav>
+    <div class="sidebar-pie" id="version-pie">cargando versión…</div>
+  </aside>
+  <div class="principal">
+    <header class="barra">
+      <button class="btn-menu" id="btn-menu" aria-label="Abrir menú">☰</button>
+      <a class="btn btn-inicio" href="#/inicio" id="btn-inicio" data-volver-inicio title="Volver al inicio">⌂ <span class="txt-inicio">Inicio</span></a>
+      <div class="buscador" id="buscador">
+        <input type="search" id="buscar" placeholder="Buscar: localización, agua, faena, CAPEX…" aria-label="Buscar en el proyecto" autocomplete="off" data-buscar-global>
+        <div class="buscador-res" id="buscar-res" hidden></div>
+      </div>
+      <div class="escenario-actual" id="escenario-actual"></div>
+      <div class="barra-acciones">
+        <button class="btn" id="btn-escenarios">Escenarios</button>
+        <button class="btn" id="btn-guardar">Guardar</button>
+      </div>
+    </header>
+    <nav class="migas" id="migas" aria-label="Estás en"></nav>
+    <div id="alertas-globales"></div>
+    <main id="vista" tabindex="-1"></main>
+  </div>
+</div>
+<div id="tour" class="tour" hidden></div>
+<div id="popover" class="popover" hidden role="tooltip"></div>
+<div id="modal" class="modal" hidden></div>
+<div id="toast" class="toast" hidden></div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
