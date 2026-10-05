@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App Avícola V1</title>
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="marca">
+      <span class="logo" aria-hidden="true">◆</span>
+      <div><div class="marca-titulo">Proyecto Avícola</div><div class="marca-sub">App V1 · Motor V1</div></div>
+    </div>
+    <nav id="nav" aria-label="Navegación principal">
+      <a href="#/inicio" data-ruta="inicio"><span class="ico">⌂</span>Inicio</a>
+      <a href="#/simular" data-ruta="simular"><span class="ico">▶</span>Simular</a>
+      <a href="#/comparar" data-ruta="comparar"><span class="ico">⇄</span>Comparar</a>
+      <a href="#/optimizar" data-ruta="optimizar"><span class="ico">◎</span>Optimizar</a>
+      <a href="#/riesgos" data-ruta="riesgos"><span class="ico">⚠</span>Riesgos</a>
+      <a href="#/validacion" data-ruta="validacion"><span class="ico">✓</span>Validación</a>
+      <a href="#/evidencia" data-ruta="evidencia"><span class="ico">▤</span>Evidencia</a>
+      <a href="#/experto" data-ruta="experto"><span class="ico">⚙</span>Modo experto</a>
+    </nav>
+    <div class="sidebar-pie" id="version-pie">cargando versión…</div>
+  </aside>
+  <div class="principal">
+    <header class="barra">
+      <button class="btn-menu" id="btn-menu" aria-label="Abrir menú">☰</button>
+      <div class="escenario-actual" id="escenario-actual"></div>
+      <div class="barra-acciones">
+        <button class="btn" id="btn-escenarios">Escenarios</button>
+        <button class="btn btn-primario" id="btn-guardar">Guardar</button>
+      </div>
+    </header>
+    <div id="alertas-globales"></div>
+    <main id="vista" tabindex="-1"></main>
+  </div>
+</div>
+<div id="modal" class="modal" hidden></div>
+<div id="toast" class="toast" hidden></div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+
+# App v1: datos locales del usuario (escenarios guardados, staging, logs)
+app/datos_locales/

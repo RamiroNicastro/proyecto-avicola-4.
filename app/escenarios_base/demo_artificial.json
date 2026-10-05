@@ -1,0 +1,4719 @@
+{
+ "formato": "ESCENARIO_APP_AVICOLA",
+ "version_formato": 1,
+ "id": "demo_artificial",
+ "nombre": "DEMO_ARTIFICIAL — SOLO_DEMOSTRACION",
+ "descripcion": "Datos COMPLETAMENTE FICTICIOS para mostrar las funciones de la app. No usar como información del proyecto. Universo ARTIFICIAL_TEST (CASO_PRUEBA_ARTIFICIAL_NO_ES_PROYECTO).",
+ "tipo": "DEMO_ARTIFICIAL",
+ "solo_demostracion": true,
+ "creado": "2026-10-05T00:00:00",
+ "modificado": "2026-10-05T00:00:00",
+ "simple": {
+  "objetivo": "GANAR_MAS",
+  "capital": {
+   "no_se": true,
+   "valor": null,
+   "moneda": "USD",
+   "tc": null,
+   "tipo_tc": null,
+   "fecha_tc": null,
+   "fuente_tc": null,
+   "metrica": "PICO_FONDOS"
+  },
+  "demanda": [
+   {
+    "producto": "pechuga",
+    "canal": "supermercados",
+    "mercado": "INTERNO",
+    "categoria": "ASEGURADA",
+    "valor": 2.0,
+    "unidad": "t/dia",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "pechuga",
+    "canal": "supermercados",
+    "mercado": "INTERNO",
+    "categoria": "ESCENARIO",
+    "valor": 6.0,
+    "unidad": "t/dia",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "pata_muslo",
+    "canal": "supermercados",
+    "mercado": "INTERNO",
+    "categoria": "ESCENARIO",
+    "valor": 6.0,
+    "unidad": "t/dia",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "alas",
+    "canal": "mayoristas",
+    "mercado": "INTERNO",
+    "categoria": "POTENCIAL",
+    "valor": 2.0,
+    "unidad": "t/dia",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "menudencias",
+    "canal": "mayoristas",
+    "mercado": "INTERNO",
+    "categoria": "ESCENARIO",
+    "valor": 1.0,
+    "unidad": "t/dia",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "garras",
+    "canal": "mayoristas",
+    "mercado": "INTERNO",
+    "categoria": "ESCENARIO",
+    "valor": 1.0,
+    "unidad": "t/dia",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "carcasa_esqueleto",
+    "canal": "industria",
+    "mercado": "INTERNO",
+    "categoria": "ESCENARIO",
+    "valor": 1.0,
+    "unidad": "t/dia",
+    "toma_todo": true,
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "cuello",
+    "canal": "industria",
+    "mercado": "INTERNO",
+    "categoria": "ESCENARIO",
+    "valor": 1.0,
+    "unidad": "t/dia",
+    "toma_todo": true,
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   }
+  ],
+  "categorias_vendibles": [
+   "DOCUMENTADA",
+   "ASEGURADA",
+   "NEGOCIADA",
+   "INTERESADA",
+   "POTENCIAL",
+   "ESCENARIO"
+  ],
+  "alfa_negociada": null,
+  "precios_venta": [
+   {
+    "producto": "pechuga",
+    "canal": "supermercados",
+    "mercado": "INTERNO",
+    "valor": 3.1,
+    "moneda": "USD",
+    "unidad": "USD/kg",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "pata_muslo",
+    "canal": "supermercados",
+    "mercado": "INTERNO",
+    "valor": 1.9,
+    "moneda": "USD",
+    "unidad": "USD/kg",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "alas",
+    "canal": "mayoristas",
+    "mercado": "INTERNO",
+    "valor": 1.6,
+    "moneda": "USD",
+    "unidad": "USD/kg",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "menudencias",
+    "canal": "mayoristas",
+    "mercado": "INTERNO",
+    "valor": 1.0,
+    "moneda": "USD",
+    "unidad": "USD/kg",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "garras",
+    "canal": "mayoristas",
+    "mercado": "INTERNO",
+    "valor": 1.2,
+    "moneda": "USD",
+    "unidad": "USD/kg",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "carcasa_esqueleto",
+    "canal": "industria",
+    "mercado": "INTERNO",
+    "valor": 0.3,
+    "moneda": "USD",
+    "unidad": "USD/kg",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   },
+   {
+    "producto": "cuello",
+    "canal": "industria",
+    "mercado": "INTERNO",
+    "valor": 0.4,
+    "moneda": "USD",
+    "unidad": "USD/kg",
+    "fuente": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "estado": "ESCENARIO"
+   }
+  ],
+  "costos_unitarios": [],
+  "arquitectura": {
+   "modo": "AUTO",
+   "configuracion": null,
+   "variante": null
+  },
+  "escala": {
+   "modo": "AUTO",
+   "valor": null
+  },
+  "restricciones": {},
+  "horizonte_anios": 10
+ },
+ "experto": {
+  "comun": {
+   "valores": {
+    "horizonte_anios": 10,
+    "fecha_inicio": "2027-01-01",
+    "meses_preoperacion": 2,
+    "meses_construccion": 10,
+    "meses_commissioning": 2,
+    "tasa_descuento": 0.12,
+    "tasa_descuento_accionista": 0.15,
+    "impuestos.pct_iibb": 0.02,
+    "impuestos.pct_tasas_municipales": 0.005,
+    "impuestos.otros_impuestos_usd_anio": 0.0,
+    "impuestos.tasa_ganancias": 0.3,
+    "impuestos.anios_quebranto": 5,
+    "iva.modo": "EXCLUIDO",
+    "iva.alicuota_ventas": null,
+    "iva.alicuota_compras": null,
+    "iva.alicuota_capex": null,
+    "dias_pago.alimento": 30,
+    "dias_pago.pollitos": 21,
+    "dias_pago.servicios": 30,
+    "dias_pago.packaging": 30,
+    "dias_pago.logistica": 30,
+    "dias_pago.energia": 30,
+    "dias_stock.producto_terminado": 4,
+    "dias_stock.activo_biologico": 20,
+    "dias_stock.alimento": 7,
+    "dias_stock.packaging": 15,
+    "dias_stock.repuestos": 30,
+    "dias_stock.otros": 5,
+    "dias_caja_operativa": 5,
+    "valor_terminal.metodo": "SIN_VALOR_TERMINAL",
+    "tipo_tasa_descuento": "EFECTIVA_ANUAL",
+    "convencion_descuento": "MENSUAL",
+    "propiedad_rendimientos_validados": null,
+    "impuestos.iibb_aplica_domestico": true,
+    "impuestos.iibb_aplica_exportacion": false
+   },
+   "rampup_ineficiencias": {
+    "merma": null,
+    "eficiencia": null,
+    "costos_extra_usd_mes": null
+   },
+   "mix_demanda": null,
+   "demanda": [],
+   "categorias_demanda_usadas": [
+    "DOCUMENTADA",
+    "ASEGURADA",
+    "NEGOCIADA",
+    "INTERESADA",
+    "POTENCIAL",
+    "ESCENARIO"
+   ],
+   "alfa_negociada": null,
+   "precios": {},
+   "canales": {
+    "supermercados": {
+     "dias_cobro": 45,
+     "pct_descuentos": 0.03,
+     "pct_bonificaciones": 0.01,
+     "pct_devoluciones": 0.01,
+     "pct_comisiones": 0.0,
+     "costo_logistico_usd_kg": 0.1
+    },
+    "mayoristas": {
+     "dias_cobro": 21,
+     "pct_descuentos": 0.02,
+     "pct_bonificaciones": 0.0,
+     "pct_devoluciones": 0.005,
+     "pct_comisiones": 0.0,
+     "costo_logistico_usd_kg": 0.06
+    },
+    "industria": {
+     "dias_cobro": 30,
+     "pct_descuentos": 0.0,
+     "pct_bonificaciones": 0.0,
+     "pct_devoluciones": 0.0,
+     "pct_comisiones": 0.0,
+     "costo_logistico_usd_kg": 0.04
+    }
+   },
+   "inventarios": {
+    "alimento": {
+     "propiedad_empresa": true
+    },
+    "materias_primas": {
+     "propiedad_empresa": true,
+     "dias": 15
+    }
+   },
+   "inventario_max_meses": {},
+   "financiamiento": null,
+   "stress": {},
+   "override_precios": {},
+   "override_simulacion": {}
+  },
+  "por_alternativa": {
+   "DEMO-C0|BASE|2500|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 200000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C0",
+       "ESCALA": 2500,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "ESTRUCTURA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -1,
+        1.0
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_FACON",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 531250.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_FACON",
+         "UNIVERSO": "FAENA_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "facon"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_FACON",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1000000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_FACON",
+         "UNIVERSO": "ALIMENTO_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 281250.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 250000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 130582.58,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "IT_TRAZABILIDAD:sistemas",
+        "capex_usd": 100000.0,
+        "vida_util_anios": 5,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 100000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "OBRA_CIVIL:oficina",
+        "capex_usd": 100000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 100000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "deudas": [],
+     "politica_dividendos": null
+    }
+   },
+   "DEMO-C0|BASE|5000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 250000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C0",
+       "ESCALA": 5000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "ESTRUCTURA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -1,
+        1.0
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_FACON",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1062500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_FACON",
+         "UNIVERSO": "FAENA_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "facon"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_FACON",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 2000000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_FACON",
+         "UNIVERSO": "ALIMENTO_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 562500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 500000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 197926.19,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "IT_TRAZABILIDAD:sistemas",
+        "capex_usd": 125000.0,
+        "vida_util_anios": 5,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 125000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "OBRA_CIVIL:oficina",
+        "capex_usd": 125000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 125000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "deudas": [],
+     "politica_dividendos": null
+    }
+   },
+   "DEMO-C0|BASE|10000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 350000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C0",
+       "ESCALA": 10000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "ESTRUCTURA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -1,
+        1.0
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_FACON",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 2125000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_FACON",
+         "UNIVERSO": "FAENA_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "facon"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_FACON",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 4000000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_FACON",
+         "UNIVERSO": "ALIMENTO_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1125000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1000000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 300000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "IT_TRAZABILIDAD:sistemas",
+        "capex_usd": 175000.0,
+        "vida_util_anios": 5,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 175000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "OBRA_CIVIL:oficina",
+        "capex_usd": 175000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 175000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "deudas": [],
+     "politica_dividendos": null
+    }
+   },
+   "DEMO-C0|BASE|20000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 550000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C0",
+       "ESCALA": 20000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "ESTRUCTURA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -1,
+        1.0
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_FACON",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 4250000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_FACON",
+         "UNIVERSO": "FAENA_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "facon"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_FACON",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 8000000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_FACON",
+         "UNIVERSO": "ALIMENTO_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 2250000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 2000000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 454714.97,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C0",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "IT_TRAZABILIDAD:sistemas",
+        "capex_usd": 275000.0,
+        "vida_util_anios": 5,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 275000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "OBRA_CIVIL:oficina",
+        "capex_usd": 275000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 275000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "deudas": [],
+     "politica_dividendos": null
+    }
+   },
+   "DEMO-C1|BASE|2500|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 4125000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C1",
+       "ESCALA": 2500,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 137500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_COMPRADO",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 968750.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_COMPRADO",
+         "UNIVERSO": "ALIMENTO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 281250.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 250000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 304692.7,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 206250.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 206250.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 1650000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1650000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 1650000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1650000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 618750.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 618750.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 1650000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C1|BASE|5000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 5750000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C1",
+       "ESCALA": 5000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 275000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_COMPRADO",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1937500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_COMPRADO",
+         "UNIVERSO": "ALIMENTO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 562500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 500000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 461827.77,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 287500.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 287500.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 2300000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2300000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 2300000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2300000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 862500.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 862500.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 2300000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C1|BASE|10000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 9000000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C1",
+       "ESCALA": 10000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 550000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_COMPRADO",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 3875000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_COMPRADO",
+         "UNIVERSO": "ALIMENTO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1125000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1000000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 700000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 450000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 450000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 3600000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3600000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 3600000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3600000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 1350000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1350000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 3600000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C1|BASE|20000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 15500000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C1",
+       "ESCALA": 20000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1100000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_COMPRADO",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 7750000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_COMPRADO",
+         "UNIVERSO": "ALIMENTO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 2250000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 2000000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 1061001.6,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C1",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 775000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 775000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 6200000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 6200000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 6200000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 6200000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 2325000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2325000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 6200000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C2|BASE|2500|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 5125000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C2",
+       "ESCALA": 2500,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 137500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_FACON",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 937500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_FACON",
+         "UNIVERSO": "ALIMENTO_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 281250.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 187500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 75000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 369983.99,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 256250.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 256250.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 1793750.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1793750.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 1537500.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1537500.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 768750.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 768750.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 768750.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 768750.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 2050000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C2|BASE|5000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 7250000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C2",
+       "ESCALA": 5000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 275000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_FACON",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1875000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_FACON",
+         "UNIVERSO": "ALIMENTO_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 562500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 375000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 150000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 560790.86,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 362500.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 362500.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 2537500.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2537500.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 2175000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2175000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 1087500.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1087500.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 1087500.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1087500.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 2900000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C2|BASE|10000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 11500000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C2",
+       "ESCALA": 10000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 550000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_FACON",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 3750000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_FACON",
+         "UNIVERSO": "ALIMENTO_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1125000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 750000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 300000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 850000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 575000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 575000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 4025000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 4025000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 3450000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3450000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 1725000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1725000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 1725000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1725000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 4600000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C2|BASE|20000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 20000000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C2",
+       "ESCALA": 20000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1100000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-ALIMENTO_FACON",
+        "grupo_proveedor": "alimento",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 7500000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "ALIMENTO_FACON",
+         "UNIVERSO": "ALIMENTO_FACON",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-POLLITO_COMPRADO",
+        "grupo_proveedor": "pollitos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 2250000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "POLLITO_COMPRADO",
+         "UNIVERSO": "POLLITO_COMPRADO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_INTEGRADAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1500000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_INTEGRADAS",
+         "UNIVERSO": "GRANJAS_INTEGRADAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 600000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 1288359.08,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C2",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 1000000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1000000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 7000000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 7000000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 6000000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 6000000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 3000000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3000000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 3000000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3000000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 8000000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C3|BASE|2500|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 7250000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C3",
+       "ESCALA": 2500,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 137500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-PLANTA_ALIMENTO_PROPIA",
+        "grupo_proveedor": "granos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 843750.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "PLANTA_ALIMENTO_PROPIA",
+         "UNIVERSO": "PLANTA_ALIMENTO_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-INCUBACION_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 225000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "INCUBACION_PROPIA",
+         "UNIVERSO": "INCUBACION_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 262500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 31250.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "UNIVERSO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 522330.34,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 290000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 290000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 1885000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1885000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 1595000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1595000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 725000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 725000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 1450000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1450000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "ALIMENTO:planta",
+        "capex_usd": 725000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 725000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "INCUBACION:planta",
+        "capex_usd": 580000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 580000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 2900000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C3|BASE|5000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 10500000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C3",
+       "ESCALA": 5000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 275000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-PLANTA_ALIMENTO_PROPIA",
+        "grupo_proveedor": "granos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1687500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "PLANTA_ALIMENTO_PROPIA",
+         "UNIVERSO": "PLANTA_ALIMENTO_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-INCUBACION_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 450000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "INCUBACION_PROPIA",
+         "UNIVERSO": "INCUBACION_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 525000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 62500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "UNIVERSO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 791704.75,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 420000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 420000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 2730000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2730000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 2310000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2310000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 1050000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1050000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 2100000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2100000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "ALIMENTO:planta",
+        "capex_usd": 1050000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1050000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "INCUBACION:planta",
+        "capex_usd": 840000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 840000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 4200000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C3|BASE|10000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 17000000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C3",
+       "ESCALA": 10000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 550000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-PLANTA_ALIMENTO_PROPIA",
+        "grupo_proveedor": "granos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 3375000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "PLANTA_ALIMENTO_PROPIA",
+         "UNIVERSO": "PLANTA_ALIMENTO_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-INCUBACION_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 900000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "INCUBACION_PROPIA",
+         "UNIVERSO": "INCUBACION_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1050000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 125000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "UNIVERSO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 1200000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 680000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 680000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 4420000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 4420000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 3740000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3740000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 1700000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1700000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 3400000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3400000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "ALIMENTO:planta",
+        "capex_usd": 1700000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1700000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "INCUBACION:planta",
+        "capex_usd": 1360000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1360000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 6800000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-C3|BASE|20000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 30000000.0,
+      "capex_meta": {
+       "CONFIGURACION": "C3",
+       "ESCALA": 20000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1100000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-PLANTA_ALIMENTO_PROPIA",
+        "grupo_proveedor": "granos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 6750000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "PLANTA_ALIMENTO_PROPIA",
+         "UNIVERSO": "PLANTA_ALIMENTO_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-INCUBACION_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1800000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "INCUBACION_PROPIA",
+         "UNIVERSO": "INCUBACION_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 2100000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 250000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "UNIVERSO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 1818859.88,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "C3",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 1200000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1200000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 7800000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 7800000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 6600000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 6600000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 3000000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3000000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 6000000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 6000000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "ALIMENTO:planta",
+        "capex_usd": 3000000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3000000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "INCUBACION:planta",
+        "capex_usd": 2400000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2400000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 12000000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-CF|BASE|2500|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 9000000.0,
+      "capex_meta": {
+       "CONFIGURACION": "CF",
+       "ESCALA": 2500,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 137500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-PLANTA_ALIMENTO_PROPIA",
+        "grupo_proveedor": "granos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 831250.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "PLANTA_ALIMENTO_PROPIA",
+         "UNIVERSO": "PLANTA_ALIMENTO_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-INCUBACION_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 187500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "INCUBACION_PROPIA",
+         "UNIVERSO": "INCUBACION_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 262500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 18750.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "UNIVERSO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 652912.92,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 2500,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 360000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 360000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 1980000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1980000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 1800000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1800000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 810000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 810000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 1620000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1620000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "ALIMENTO:planta",
+        "capex_usd": 810000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 810000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "INCUBACION:planta",
+        "capex_usd": 720000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 720000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "REPRODUCTORAS:nucleo",
+        "capex_usd": 900000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 900000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 3600000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-CF|BASE|5000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 13000000.0,
+      "capex_meta": {
+       "CONFIGURACION": "CF",
+       "ESCALA": 5000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 275000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-PLANTA_ALIMENTO_PROPIA",
+        "grupo_proveedor": "granos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1662500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "PLANTA_ALIMENTO_PROPIA",
+         "UNIVERSO": "PLANTA_ALIMENTO_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-INCUBACION_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 375000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "INCUBACION_PROPIA",
+         "UNIVERSO": "INCUBACION_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 525000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 37500.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "UNIVERSO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 989630.93,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 5000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 520000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 520000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 2860000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2860000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 2600000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2600000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 1170000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1170000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 2340000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2340000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "ALIMENTO:planta",
+        "capex_usd": 1170000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1170000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "INCUBACION:planta",
+        "capex_usd": 1040000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1040000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "REPRODUCTORAS:nucleo",
+        "capex_usd": 1300000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1300000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 5200000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-CF|BASE|10000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 21000000.0,
+      "capex_meta": {
+       "CONFIGURACION": "CF",
+       "ESCALA": 10000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 550000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-PLANTA_ALIMENTO_PROPIA",
+        "grupo_proveedor": "granos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 3325000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "PLANTA_ALIMENTO_PROPIA",
+         "UNIVERSO": "PLANTA_ALIMENTO_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-INCUBACION_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 750000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "INCUBACION_PROPIA",
+         "UNIVERSO": "INCUBACION_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1050000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 75000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "UNIVERSO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 1500000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 10000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 840000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 840000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 4620000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 4620000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 4200000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 4200000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 1890000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1890000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 3780000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3780000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "ALIMENTO:planta",
+        "capex_usd": 1890000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1890000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "INCUBACION:planta",
+        "capex_usd": 1680000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1680000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "REPRODUCTORAS:nucleo",
+        "capex_usd": 2100000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2100000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 8400000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   },
+   "DEMO-CF|BASE|20000|ESCALA_UNICA": {
+    "etapas": [
+     {
+      "capex_usd": 37000000.0,
+      "capex_meta": {
+       "CONFIGURACION": "CF",
+       "ESCALA": 20000,
+       "VARIANTE": "BASE",
+       "MODULO": "TOTAL_ETAPA",
+       "UNIVERSO": "FAENA_PROPIA",
+       "ORIGEN": "ESCENARIO_USUARIO"
+      },
+      "curva_desembolso": [
+       [
+        -12,
+        0.3
+       ],
+       [
+        -6,
+        0.4
+       ],
+       [
+        -1,
+        0.3
+       ]
+      ],
+      "opex_rubros": [
+       {
+        "rubro": "DEMO-FAENA_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1100000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "FAENA_PROPIA",
+         "UNIVERSO": "FAENA_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       },
+       {
+        "rubro": "DEMO-PLANTA_ALIMENTO_PROPIA",
+        "grupo_proveedor": "granos",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 6650000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "PLANTA_ALIMENTO_PROPIA",
+         "UNIVERSO": "PLANTA_ALIMENTO_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "alimento"
+       },
+       {
+        "rubro": "DEMO-INCUBACION_PROPIA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 1500000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "INCUBACION_PROPIA",
+         "UNIVERSO": "INCUBACION_PROPIA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "pollito"
+       },
+       {
+        "rubro": "DEMO-GRANJAS_PROPIAS",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 2100000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "GRANJAS_PROPIAS",
+         "UNIVERSO": "GRANJAS_PROPIAS",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "electricidad"
+       },
+       {
+        "rubro": "DEMO-TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "variable",
+        "costo_pleno_usd_anio": 150000.0,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "UNIVERSO": "TRATAMIENTO_SUBPRODUCTOS_PROPIO",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        }
+       },
+       {
+        "rubro": "DEMO-ESTRUCTURA",
+        "grupo_proveedor": "servicios",
+        "naturaleza": "fijo",
+        "costo_pleno_usd_anio": 2273574.85,
+        "es_compra": true,
+        "dias_pago": 30.0,
+        "iva_credito": false,
+        "meta": {
+         "CONFIGURACION": "CF",
+         "ESCALA": 20000,
+         "VARIANTE": "BASE",
+         "MODULO": "ESTRUCTURA",
+         "UNIVERSO": "ESTRUCTURA",
+         "ORIGEN": "ESCENARIO_USUARIO"
+        },
+        "driver_riesgo": "salarios"
+       }
+      ],
+      "activos": [
+       {
+        "clase": "TERRENO:lote",
+        "capex_usd": 1480000.0,
+        "vida_util_anios": 0,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 1480000.0,
+        "depreciable": false
+       },
+       {
+        "clase": "OBRA_CIVIL:nave",
+        "capex_usd": 8140000.0,
+        "vida_util_anios": 30,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 8140000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "PROCESO:linea",
+        "capex_usd": 7400000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 7400000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "FRIO:camaras",
+        "capex_usd": 3330000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3330000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "GRANJAS:galpones",
+        "capex_usd": 6660000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 6660000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "ALIMENTO:planta",
+        "capex_usd": 3330000.0,
+        "vida_util_anios": 20,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3330000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "INCUBACION:planta",
+        "capex_usd": 2960000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 2960000.0,
+        "depreciable": true
+       },
+       {
+        "clase": "REPRODUCTORAS:nucleo",
+        "capex_usd": 3700000.0,
+        "vida_util_anios": 15,
+        "valor_residual_usd": 0.0,
+        "costo_reemplazo_usd": 3700000.0,
+        "depreciable": true
+       }
+      ],
+      "rampup": [
+       {
+        "mes": 1,
+        "utilizacion": 0.5,
+        "merma": 0.03,
+        "eficiencia": 0.9,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 4,
+        "utilizacion": 0.75,
+        "merma": 0.02,
+        "eficiencia": 0.95,
+        "costos_extra_usd_mes": 0.0
+       },
+       {
+        "mes": 9,
+        "utilizacion": 1.0,
+        "merma": 0.0,
+        "eficiencia": 1.0,
+        "costos_extra_usd_mes": 0.0
+       }
+      ]
+     }
+    ],
+    "financiamiento": {
+     "aportes": [],
+     "aporte_automatico": true,
+     "caja_minima_usd": 0.0,
+     "politica_dividendos": null,
+     "deudas": [
+      {
+       "id": "D1",
+       "monto": 14800000.0,
+       "tasa": 0.09,
+       "tipo_tasa": "EFECTIVA_ANUAL",
+       "base_tasa": "REAL",
+       "plazo_meses": 84,
+       "gracia_meses": 12,
+       "metodo": "FRANCES",
+       "frecuencia_meses": 1,
+       "mes_desembolso": 1,
+       "comision_pct": 0.0
+      }
+     ]
+    }
+   }
+  },
+  "base_valores": {
+   "mortalidad": 0.05,
+   "condenas": 0.01,
+   "traslado_fx": 0.5
+  },
+  "disponibilidad": {
+   "terreno_m2": 60000,
+   "agua_m3_dia": 600,
+   "potencia_kw": 1500,
+   "capacidad_linea_aves_h": null,
+   "facon_faena_aves_dia": 12000,
+   "m2_galpon_integrados": 250000,
+   "sitios_granja_confirmados": null,
+   "pollitos_semana": 120000,
+   "huevo_fertil_confirmado": null,
+   "alimento_t_semana": 900,
+   "facon_alimento_t_semana": 900,
+   "granos_t_semana": null,
+   "receptor_subproductos_confirmado": true,
+   "tratamiento_subproductos_habilitado": null,
+   "transporte_tercero_confirmado": true,
+   "frio_tercero_confirmado": true
+  },
+  "plantilla": null,
+  "analisis": {
+   "riesgo.peso.VAN_NEGATIVO_ESCENARIOS": 3.0,
+   "riesgo.peso.SENSIBILIDAD_VAN": 2.0,
+   "riesgo.peso.PICO_FONDOS_RELATIVO": 1.0,
+   "riesgo.peso.DEMANDA_NO_RESPALDADA": 1.0,
+   "decision.tolerancia_equivalencia": 0.05,
+   "montecarlo.n": 200,
+   "umbral.dscr_2d": 1.2,
+   "umbral.payback_2d": 6.0
+  },
+  "perfil_analisis": "RAPIDO",
+  "stress": [
+   {
+    "id": "ST-DEM",
+    "nombre": "Demanda −30 %",
+    "shocks": {
+     "demanda": -0.3
+    }
+   },
+   {
+    "id": "ST-ALI",
+    "nombre": "Alimento +20 %",
+    "shocks": {
+     "alimento": 0.2
+    }
+   },
+   {
+    "id": "ST-PRE",
+    "nombre": "Precio −10 %",
+    "shocks": {
+     "precio_venta": -0.1
+    }
+   },
+   {
+    "id": "ST-CAP",
+    "nombre": "CAPEX +25 %",
+    "shocks": {
+     "capex": 0.25
+    }
+   },
+   {
+    "id": "ST-FIN",
+    "nombre": "Financiero (tasa +50 %, cobro +30 días)",
+    "shocks": {
+     "tasa_descuento": 0.5,
+     "dias_cobro": 30
+    }
+   },
+   {
+    "id": "ST-COMB",
+    "nombre": "Combinado",
+    "shocks": {
+     "precio_venta": -0.1,
+     "alimento": 0.2,
+     "demanda": -0.2,
+     "capex": 0.25
+    }
+   }
+  ],
+  "distribuciones": [
+   {
+    "VARIABLE": "precio_venta",
+    "DISTRIBUCION": "TRIANGULAR",
+    "PARAMETROS": {
+     "min": -0.2,
+     "moda": 0.0,
+     "max": 0.15
+    },
+    "FUENTE": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "ESTADO": "ARTIFICIAL"
+   },
+   {
+    "VARIABLE": "alimento",
+    "DISTRIBUCION": "NORMAL_TRUNCADA",
+    "PARAMETROS": {
+     "media": 0.0,
+     "desvio": 0.1,
+     "min": -0.3,
+     "max": 0.4
+    },
+    "FUENTE": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "ESTADO": "ARTIFICIAL"
+   },
+   {
+    "VARIABLE": "demanda",
+    "DISTRIBUCION": "UNIFORME",
+    "PARAMETROS": {
+     "min": -0.2,
+     "max": 0.05
+    },
+    "FUENTE": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)",
+    "ESTADO": "ARTIFICIAL"
+   }
+  ],
+  "correlaciones": [
+   {
+    "A": "precio_venta",
+    "B": "alimento",
+    "RHO": 0.5,
+    "ESTADO": "ARTIFICIAL",
+    "FUENTE": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)"
+   },
+   {
+    "A": "demanda",
+    "B": "precio_venta",
+    "RHO": 0.0,
+    "ESTADO": "ARTIFICIAL",
+    "FUENTE": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)"
+   }
+  ],
+  "trayectorias": false
+ },
+ "procedencia": {
+  "*": "FICTICIO — SOLO_DEMOSTRACION (no es dato del proyecto)"
+ }
+}
