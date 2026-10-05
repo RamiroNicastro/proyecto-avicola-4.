@@ -38,7 +38,7 @@ Bases de valuación por defecto (`BASE_INVENTARIO`): alimento → rubros del gru
 - **No se supone que el supermercado pague contado**: sin `dias_cobro` el CT queda incompleto.
 - Cuentas por cobrar **sin IVA** (el IVA tiene módulo propio).
 - Sueldos y cargas devengados **fuera** de CxP por ahora (interfaz OPEX §6); los rubros sin grupo de proveedor no generan CxP.
-- **Crecer consume caja:** cada aumento de ventas aumenta CxC e inventarios antes de cobrar; el ΔCT del ramp-up y de cada expansión es negativo para la caja (caso de prueba CP-04: cobrar a 30 días baja el VAN de 51,63 a 44,16 en el caso artificial).
+- **Crecer consume caja:** cada aumento de ventas aumenta CxC e inventarios antes de cobrar; el ΔCT del ramp-up y de cada expansión es negativo para la caja (casos de prueba pre-tax con convención anual: cobrar a 30 días baja el VAN de 51,63 en CP-PRETAX-ANUAL a 44,16 en CP-COBRO-30D).
 
 ## 4. Capital de trabajo inicial (para fondos iniciales)
 

@@ -2,12 +2,13 @@
 
 **Alcance:** flujo de fondos por escenario, capital de trabajo, financiamiento, indicadores (VAN, TIR, repago, punto de equilibrio), sensibilidades y escenarios.
 
-**Estado (2026-10-04, sesión 19):** **MODELO FINANCIERO ESTRUCTURAL COMPLETADO v1.0** — motor mensual con modos EVIDENCIA y ESCENARIO, 56 tests y 20/20 mutaciones detectadas. **RENTABILIDAD DEL PROYECTO = NO CALCULABLE**: 0 de 61 corridas publicables (faltan precios, demanda A/B, OPEX y CAPEX costeables, cronograma, fiscal, tasa y financiamiento). Sin recomendación de arquitectura, escala ni financiamiento.
+**Estado (2026-10-04, sesión 19):** **MODELO FINANCIERO ESTRUCTURAL COMPLETADO v1.0** — motor mensual con modos EVIDENCIA y ESCENARIO, 70 tests y 25/25 mutaciones detectadas (auditoría final incluida). **RENTABILIDAD DEL PROYECTO = NO CALCULABLE**: 0 de 61 corridas publicables (faltan precios, demanda A/B, OPEX y CAPEX costeables, cronograma, fiscal, tasa y financiamiento). Sin recomendación de arquitectura, escala ni financiamiento.
 
 **Reglas específicas**
 - Documentar fórmulas, supuestos, unidades y fuentes junto al modelo.
 - Declarar criterio de tipo de cambio e inflación (DEC-006) y horizonte/tasa (DEC-007).
-- Dos modos que no se mezclan: EVIDENCIA (solo E1–E3; si falta un bloque: `NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE`) y ESCENARIO (inputs del usuario; todo rotulado `SIMULACION_HIPOTETICA_NO_VALIDADA`).
+- Dos modos que no se mezclan: EVIDENCIA (solo niveles dentro de `UMBRAL_EVIDENCIA_PUBLICACION`, default E1–E3, configurable; si falta un bloque: `NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE`) y ESCENARIO (inputs del usuario; todo rotulado `SIMULACION_HIPOTETICA_NO_VALIDADA`).
+- Tasas: la tasa de descuento es anual efectiva y se convierte a mensual con (1 + r)^(1/12) − 1; TIR mensual → anual con (1 + i)^12 − 1; deuda con tipo de tasa explícito. Casos de prueba con nombre propio (`CP-PRETAX-ANUAL`, `CP-AFTERTAX-ANUAL`, …).
 - Faltante = vacío, nunca 0. Proyecto (FCFF) ≠ accionista (FCFE). EBITDA ≠ caja. IVA ≠ costo.
 
 ## Uso

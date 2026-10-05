@@ -36,7 +36,7 @@ OPEX(mes) = Σ rubros  costo_pleno ÷ 12 × [ PCT_VARIABLE × u_efectiva ÷ efic
 | semifijo | 0 % | constante dentro de la etapa; salta al entrar una expansión (escalón) |
 | semivariable | declarado | sin % → PENDIENTE (no se reparte 50/50) |
 
-- **Solo** se usan rubros si OPEX publica `TOTAL_PRELIMINAR_USD_ANIO` y la arquitectura es costeable con evidencia E1–E3. Hoy ninguna lo es: el monto E4 parcial (p. ej. maíz Rosario) queda **solo en la traza**, nunca como costo total (tests E06, E12).
+- **Solo** se usan rubros si OPEX publica `TOTAL_PRELIMINAR_USD_ANIO` y la arquitectura es costeable con evidencia dentro del umbral (default E1–E3). Hoy ninguna lo es: el monto E4 parcial (p. ej. maíz Rosario) queda **solo en la traza**, nunca como costo total (tests E06, E12).
 - Antes del inicio de operación OPEX = 0: los preoperativos están en CAPEX (PRE-*; interfaz CAPEX §5).
 - En modo escenario el usuario puede cargar rubros propios (JSON) con las mismas claves.
 
@@ -57,6 +57,6 @@ Por activo o clase: `capex_usd`, `vida_util_anios`, `valor_residual_usd`, `costo
 | Otros impuestos operativos | USD/año, antes del EBITDA | `impuestos.otros_impuestos_usd_anio` — PENDIENTE |
 | Ganancias | Anual, al cierre de cada año del proyecto, sobre EBIT (vista proyecto) o EBIT − intereses − comisiones (vista accionista); quebrantos con vencimiento en `anios_quebranto`; sin anticipos (SUP-19-13); test N16 | `impuestos.tasa_ganancias`, `impuestos.anios_quebranto` — PENDIENTES (DPV-169) |
 | IVA | Módulo aparte, fuera del resultado ([`flujo_caja.md`](flujo_caja.md) §4) | `iva.*` — PENDIENTES |
-| Derechos de exportación | Deducción de la venta de exportación | `canales.exportacion.pct_derechos_exportacion` — PENDIENTE (DPV-015) |
+| Derechos de exportación | **Ubicación única:** deducción de la venta de exportación (`DERECHOS_EXPORTACION`, [`modelo_ingresos.md`](modelo_ingresos.md) §7). El módulo de impuestos **no** los acepta (`validar_entrada()` rechaza cualquier clave que no sea de su lista) y no se restan otra vez antes del EBITDA (test X01) | `canales.exportacion.pct_derechos_exportacion` — PENDIENTE (DPV-015) |
 
 El modelo corre **PRE-TAX** (sin ganancias) y **AFTER-TAX**. `BASE_FLUJO` indica cuál se usó para los indicadores. After-tax queda NO PUBLICABLE si faltan tasas o reglas (`PUBLICABLE_FLUJO_AFTER_TAX`).

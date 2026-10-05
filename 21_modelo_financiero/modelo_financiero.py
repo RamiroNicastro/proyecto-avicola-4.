@@ -17,7 +17,8 @@ variantes) consumiendo, sin modificarlos ni copiar sus fórmulas:
   * 02_clientes_demanda/escenarios_demanda.csv (escenarios comerciales de prueba: SUPUESTO, no demanda)
 
 DOS MODOS (nunca se mezclan)
-  EVIDENCIA : solo datos E1–E3 (cotización, precio directo, documento leído en original) y los supuestos
+  EVIDENCIA : solo datos dentro de UMBRAL_EVIDENCIA_PUBLICACION (default E1–E3, configurable en
+              inputs_financieros.csv sin tocar código; DEC-19-01 abierta) y los supuestos
               metodológicos permitidos (SUPUESTOS_METODOLOGICOS). Si falta un bloque material, NO publica
               (NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE) y lista exactamente qué falta.
   ESCENARIO : acepta inputs del usuario (precios, demanda, CAPEX, OPEX, utilización, ramp-up, financiamiento,
@@ -28,7 +29,10 @@ DOS MODOS (nunca se mezclan)
 MÉTODO TEMPORAL
   Motor interno MENSUAL (k = 0 es T0, instante de FECHA_INICIO; k = 1…12·H son meses) agregado a períodos de
   reporte: T0, meses 1…MESES_DETALLE (por defecto 24) y años posteriores. Flujos = suma; saldos = fin de
-  período. Descuento: fin de período, tasa anual efectiva, t = k/12 años.
+  período. Indicadores (convención MENSUAL por defecto): TASA_DESCUENTO anual EFECTIVA → mensual
+  (1 + r)^(1/12) − 1; VAN = Σ F_k ÷ (1 + i_m)^k (T0 sin descontar); TIR mensual → anual (1 + i)^12 − 1;
+  payback en meses y años = meses ÷ 12. Convención alternativa PERIODO_REPORTE: flujos agregados al fin de
+  cada período de reporte (declarada en cada corrida).
   Fases: PREOPERACION → CONSTRUCCION → COMMISSIONING → RAMP_UP → OPERACION_MADURA (duraciones = inputs).
 
 FÓRMULAS (identidades verificadas por tests)
@@ -50,7 +54,9 @@ FÓRMULAS (identidades verificadas por tests)
   FCFE                    = EBITDA − impuestos con deuda − CAPEX − ΔCT + flujo IVA − intereses − comisiones
                             + desembolsos de deuda − amortizaciones [+ valor terminal − deuda remanente]
   caja(k)                 = caja(k−1) + FCFE(k) + aportes(k) − dividendos(k)
-  deuda                   : saldo inicial + altas − amortización = saldo final ; interés = saldo × TNA × f ÷ 12
+  deuda                   : saldo inicial + altas − amortización = saldo final ; interés = saldo × tasa del período
+                            (EFECTIVA_ANUAL: (1+TEA)^(f/12) − 1 · NOMINAL_ANUAL: TNA × f ÷ 12 con capitalización = f ·
+                            PERIODICA: tasa del período = f); combinaciones ambiguas → error
   VAN = Σ F_t ÷ (1 + r)^t ; TIR única o NO_EXISTE / TIR_AMBIGUA ; payback simple y descontado o NO_RECUPERADO
   break-even (año maduro) : q* = fijos ÷ (margen de contribución por ave) ; u* = q* ÷ capacidad ;
                             precio* = precio medio × (variables + fijos) ÷ (ingreso neto − impuestos ∝ precio)
@@ -110,13 +116,24 @@ SALIDAS = {k: os.path.join(AQUI, f"{k}.csv") for k in (
 MODOS = ("EVIDENCIA", "ESCENARIO")
 ORIGENES = ("EVIDENCIA_REAL", "ESCENARIO_USUARIO", "SUPUESTO_MODELO", "PENDIENTE")
 NIVELES = ("E1", "E2", "E3", "E4", "E5")
-NIVELES_EVIDENCIA_ACEPTADOS = ("E1", "E2", "E3")          # SUP-19-02 (criterio provisional hasta DEC-084)
+# UMBRAL_EVIDENCIA_PUBLICACION: niveles que el modo evidencia acepta. Se lee de inputs_financieros.csv (variable
+# `umbral_evidencia_publicacion`, p. ej. "E1|E2|E3") para poder cambiarlo SIN tocar código (DEC-19-01 abierta).
+# Este valor es solo el default conservador si la fila no existe. E4 [PVDP] no pasa el default.
+UMBRAL_EVIDENCIA_DEFAULT = ("E1", "E2", "E3")             # SUP-19-02
+NIVELES_EVIDENCIA_ACEPTADOS = UMBRAL_EVIDENCIA_DEFAULT    # compatibilidad: default, no decisión
 ETIQUETA_SIM = "SIMULACION_HIPOTETICA_NO_VALIDADA"
 NO_PUB = "NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE"
 NO_DISP_ESC = "NO_DISPONIBLE_FALTAN_INPUTS_DEL_ESCENARIO"
 # Convenciones que el MODO EVIDENCIA admite como SUPUESTO_MODELO (no son datos económicos; SUP-19-03)
 SUPUESTOS_METODOLOGICOS = {"modelo_monetario", "base_tasa", "meses_detalle", "valor_terminal.metodo",
-                           "valor_terminal.recuperar_ct", "moneda_funcional", "convencion_descuento"}
+                           "valor_terminal.recuperar_ct", "moneda_funcional", "convencion_descuento",
+                           "tipo_tasa_descuento", "umbral_evidencia_publicacion"}
+# Convenciones de tasa (SUP-19-25/26). La tasa de descuento es ANUAL EFECTIVA salvo declaración expresa.
+TIPOS_TASA_DESCUENTO = ("EFECTIVA_ANUAL", "NOMINAL_ANUAL_CAP_MENSUAL")
+TIPOS_TASA_DEUDA = ("EFECTIVA_ANUAL", "NOMINAL_ANUAL", "PERIODICA")
+CONVENCIONES_DESCUENTO = ("MENSUAL", "PERIODO_REPORTE")
+CLAVES_IMPUESTOS = ("tasa_ganancias", "anios_quebranto", "pct_iibb", "pct_tasas_municipales", "otros_impuestos_usd_anio",
+                    "intereses_deducibles")   # los derechos de exportación NO van aquí: solo en canales.exportacion
 
 # Demanda (02 §1): A = asegurada / documentada; B = negociada; entre B y C = interesada; C/D = potencial
 CATEGORIAS_DEMANDA = ("DOCUMENTADA", "ASEGURADA", "NEGOCIADA", "INTERESADA", "POTENCIAL", "ESCENARIO")
@@ -274,14 +291,49 @@ class Traza:
                            "OBSERVACIONES": obs})
 
 
-def resolver(variable, modo, evidencia=None, usuario=None, supuesto=None):
+def tasa_periodica(tasa_anual_efectiva, meses):
+    """Tasa efectiva de un período de `meses` equivalente a una tasa ANUAL EFECTIVA: (1 + r)^(meses/12) − 1.
+    Nunca r/12 (eso solo vale para una tasa nominal anual convertible mensualmente, que debe declararse)."""
+    if tasa_anual_efectiva is None:
+        return None
+    if tasa_anual_efectiva <= -1:
+        raise ErrorFinanciero("tasa ≤ −100 %")
+    if "M22" in _MUT:
+        return tasa_anual_efectiva * meses / 12
+    return (1 + tasa_anual_efectiva) ** (meses / 12) - 1
+
+
+def tasa_anual_efectiva(tasa, tipo):
+    """Normaliza la tasa de descuento declarada a anual efectiva. Tipo obligatorio y explícito."""
+    if tasa is None:
+        return None
+    if tipo == "EFECTIVA_ANUAL":
+        return tasa
+    if tipo == "NOMINAL_ANUAL_CAP_MENSUAL":
+        return (1 + tasa / 12) ** 12 - 1
+    raise ErrorFinanciero(f"tipo de tasa de descuento {tipo!r}: declarar uno de {TIPOS_TASA_DESCUENTO}")
+
+
+def umbral_evidencia(filas=None):
+    """UMBRAL_EVIDENCIA_PUBLICACION desde inputs_financieros.csv; si la fila no existe, default conservador."""
+    filas = filas if filas is not None else leer_inputs()
+    f = [x for x in filas if x["ESCENARIO"] == "EVIDENCIA" and x["VARIABLE"] == "umbral_evidencia_publicacion"]
+    if not f or not f[0]["VALOR"].strip():
+        return UMBRAL_EVIDENCIA_DEFAULT
+    niv = tuple(x.strip() for x in f[0]["VALOR"].split("|") if x.strip())
+    if not niv or set(niv) - set(NIVELES):
+        raise ErrorFinanciero(f"umbral_evidencia_publicacion inválido: {f[0]['VALOR']!r} (niveles {NIVELES})")
+    return niv
+
+
+def resolver(variable, modo, evidencia=None, usuario=None, supuesto=None, umbral=None):
     """Jerarquía EVIDENCIA_REAL > ESCENARIO_USUARIO > SUPUESTO_MODELO > PENDIENTE.
     evidencia = (valor, nivel, fuente); usuario = valor; supuesto = (valor, fuente).
     Devuelve (valor, origen, nivel, fuente). El valor de escenario nunca reemplaza a una evidencia válida."""
     if modo not in MODOS:
         raise ErrorFinanciero(f"modo {modo!r} inválido")
     ev_ok = evidencia is not None and evidencia[0] is not None and (
-        evidencia[1] in NIVELES_EVIDENCIA_ACEPTADOS or ("M09" in _MUT and evidencia[1] == "E4"))
+        evidencia[1] in (umbral or UMBRAL_EVIDENCIA_DEFAULT) or ("M09" in _MUT and evidencia[1] == "E4"))
     if "M10" in _MUT and modo == "ESCENARIO" and usuario is not None:
         return usuario, "ESCENARIO_USUARIO", "", "usuario"
     if ev_ok:
@@ -338,6 +390,8 @@ def entrada_vacia(nombre="sin_nombre", modo="ESCENARIO"):
         "meses_preoperacion": None, "meses_construccion": None, "meses_commissioning": None,
         "modelo_monetario": "REAL", "inflacion_anual": None, "base_tasa": "REAL",
         "tasa_descuento": None, "tasa_descuento_accionista": None, "tasa_reinversion": None,
+        "tipo_tasa_descuento": "EFECTIVA_ANUAL", "convencion_descuento": "MENSUAL",
+        "umbral_evidencia": UMBRAL_EVIDENCIA_DEFAULT,
         "etapas": [],
         "productos": None, "validacion_rendimientos": False, "meta_productos": {},
         "demanda": None, "categorias_demanda_usadas": CATEGORIAS_DEMANDA_EVIDENCIA, "alfa_negociada": None,
@@ -391,6 +445,17 @@ def validar_entrada(P):
     if P["horizonte_anios"] is not None and (int(P["horizonte_anios"]) != P["horizonte_anios"] or P["horizonte_anios"] < 1
                                              or P["meses_detalle"] > 12 * P["horizonte_anios"]):
         raise ErrorFinanciero("horizonte entero ≥ 1 y ≥ meses de detalle")
+    if P["convencion_descuento"] not in CONVENCIONES_DESCUENTO:
+        raise ErrorFinanciero(f"convención de descuento: {CONVENCIONES_DESCUENTO}")
+    if P["tipo_tasa_descuento"] not in TIPOS_TASA_DESCUENTO:
+        raise ErrorFinanciero(f"tipo de tasa de descuento: {TIPOS_TASA_DESCUENTO}")
+    if set(P["impuestos"]) - set(CLAVES_IMPUESTOS):
+        raise ErrorFinanciero(f"claves de impuestos no admitidas {sorted(set(P['impuestos']) - set(CLAVES_IMPUESTOS))}: "
+                              "los derechos de exportación se cargan SOLO en canales.exportacion.pct_derechos_exportacion "
+                              "(deducción de la venta; ubicación única para evitar doble conteo)")
+    for c_, ch in (P["canales"] or {}).items():
+        if c_ != "exportacion" and ch and ch.get("pct_derechos_exportacion") is not None:
+            raise ErrorFinanciero("derechos de exportación solo en el canal exportacion")
     if P["valor_terminal"]["metodo"] not in METODOS_VT:
         raise ErrorFinanciero(f"valor terminal: {METODOS_VT}")
     prev = 0
@@ -433,6 +498,9 @@ def validar_entrada(P):
                 raise ErrorFinanciero(f"método de deuda {d['metodo']}")
             if d.get("moneda", "USD") != "USD":
                 raise ErrorFinanciero("deuda en moneda distinta de USD: cargar con TC explícito (módulo de moneda)")
+            if d.get("base_tasa") != P["modelo_monetario"]:
+                raise ErrorFinanciero(f"deuda {d.get('id')}: base de la tasa {d.get('base_tasa')!r} ≠ modelo "
+                                      f"{P['modelo_monetario']} (no se convierte en silencio)")
     return P
 
 
@@ -612,16 +680,42 @@ def flags_calculo(F, P):
 # ---------------------------------------------------------------------------------------------
 # 4. DEUDA (cronograma independiente de la operación)
 # ---------------------------------------------------------------------------------------------
+def tasa_deuda_periodo(d):
+    """Tasa efectiva de cada período de servicio (frecuencia f meses), según el TIPO declarado (SUP-19-26):
+      EFECTIVA_ANUAL : (1 + TEA)^(f/12) − 1
+      NOMINAL_ANUAL  : TNA × f ÷ 12, solo si la capitalización declarada coincide con la frecuencia de pago
+      PERIODICA      : tasa del período, solo si su período declarado coincide con la frecuencia de pago
+    Sin tipo, o con períodos que no coinciden → error (combinación ambigua bloqueada)."""
+    r, f, t = d.get("tasa"), d["frecuencia_meses"], d.get("tipo_tasa")
+    if r is None:
+        raise ErrorFinanciero(f"deuda {d['id']}: tasa PENDIENTE")
+    if "M24" in _MUT:
+        return r * f / 12
+    if t == "EFECTIVA_ANUAL":
+        return (1 + r) ** (f / 12) - 1
+    if t == "NOMINAL_ANUAL":
+        if d.get("capitalizacion_meses") != f:
+            raise ErrorFinanciero(f"deuda {d['id']}: TNA con capitalización {d.get('capitalizacion_meses')} ≠ frecuencia {f}: "
+                                  "convención ambigua (declarar la tasa como EFECTIVA_ANUAL o PERIODICA)")
+        return r * f / 12
+    if t == "PERIODICA":
+        if d.get("periodo_tasa_meses") != f:
+            raise ErrorFinanciero(f"deuda {d['id']}: tasa periódica de {d.get('periodo_tasa_meses')} meses ≠ frecuencia {f}")
+        return r
+    raise ErrorFinanciero(f"deuda {d['id']}: declarar tipo_tasa {TIPOS_TASA_DEUDA}")
+
+
 def cronograma_deuda(d, N):
-    """saldo_ini + alta − amortización = saldo_fin, mes a mes. Interés = saldo × TNA × f ÷ 12 en cada fecha de
-    pago (convención TNA; SUP-19-14). Gracia = solo intereses. Métodos: FRANCES, ALEMAN, BULLET, PERSONALIZADO."""
+    """saldo_ini + alta − amortización = saldo_fin, mes a mes. Interés = saldo × tasa del período de servicio
+    (`tasa_deuda_periodo`, según tipo declarado) en cada fecha de pago. Gracia = solo intereses.
+    Métodos: FRANCES, ALEMAN, BULLET, PERSONALIZADO."""
     z = lambda: [0.0] * (N + 1)
     alta, interes, amort, comision, s_ini, s_fin = z(), z(), z(), z(), z(), z()
-    S, r, f = d["monto"], d["tasa_anual"], d["frecuencia_meses"]
+    S, r, f = d["monto"], d["tasa"], d["frecuencia_meses"]
     m0, plazo, gracia = d["mes_desembolso"], d["plazo_meses"], d.get("gracia_meses", 0)
     if (plazo - gracia) % f or gracia % f or plazo <= gracia:
         raise ErrorFinanciero(f"deuda {d['id']}: plazo y gracia múltiplos de la frecuencia y plazo > gracia")
-    i = r * f / 12
+    i = tasa_deuda_periodo(d)
     n = (plazo - gracia) // f
     pagos = {}
     saldo = S
@@ -1011,7 +1105,8 @@ def simular(P):
             S["costo_iva_capex_mutante"][k] = S["capex_total"][k] * (iva_p.get("alicuota_capex") or 0.0)
         S["ebitda"][k] = (S["ingreso_neto"][k] - S["opex_total"][k] - S["costos_logistica_canal"][k]
                           - S["costos_exportacion"][k] - S["impuestos_sobre_ingresos"][k] - S["otros_impuestos"][k]
-                          - S["costos_extra_rampup"][k] - S["costo_iva_capex_mutante"][k])
+                          - S["costos_extra_rampup"][k] - S["costo_iva_capex_mutante"][k]
+                          - (S["derechos_exportacion"][k] if "M21" in _MUT else 0.0))
         S["ebit"][k] = S["ebitda"][k] - S["depreciacion"][k]
         # --- capital de trabajo (saldos a fin de mes; solo inventario propio) ---
         inv_tot = 0.0
@@ -1211,12 +1306,62 @@ def agregar(R, serie):
 # 6. INDICADORES (funciones puras: se prueban contra casos manuales)
 # ---------------------------------------------------------------------------------------------
 def van(flujos, tiempos, tasa):
-    """VAN = Σ F_i ÷ (1 + tasa)^t_i ; t en años (fin de período)."""
+    """VAN = Σ F_i ÷ (1 + tasa)^t_i ; tasa ANUAL EFECTIVA; t en años (fin de período). Con t = k/12 equivale a
+    descontar cada mes k con (1 + r)^(1/12) − 1 (ver van_periodico)."""
     if tasa is None or any(f is None for f in flujos):
         return None
     if tasa <= -1:
         raise ErrorFinanciero("tasa ≤ −100 %")
     return sum(f / (1 + tasa) ** (t - (1 / 12 if "M08" in _MUT and t > 0 else 0)) for f, t in zip(flujos, tiempos))
+
+
+def van_periodico(flujos, tasa_periodo):
+    """VAN de flujos equiespaciados: Σ F_k ÷ (1 + i)^k ; k = 0 es T0 (sin descontar). i = tasa del período
+    (mensual: tasa_periodica(r_anual_efectiva, 1))."""
+    if tasa_periodo is None or any(f is None for f in flujos):
+        return None
+    return sum(f / (1 + tasa_periodo) ** (k - (1 if "M08" in _MUT and k > 0 else 0)) for k, f in enumerate(flujos))
+
+
+def anualizar(tasa_periodo, periodos_por_anio=12):
+    """Tasa anual efectiva equivalente: (1 + i)^n − 1. Nunca i × n."""
+    if tasa_periodo is None:
+        return None
+    if "M23" in _MUT:
+        return tasa_periodo * periodos_por_anio
+    return (1 + tasa_periodo) ** periodos_por_anio - 1
+
+
+def indicadores(flujos, convencion, r_anual, r_reinv=None, tiempos_anios=None):
+    """VAN, TIR (periódica y anual efectiva), MIRR y payback (meses y años) de un flujo.
+    MENSUAL         : flujos = serie mensual del motor (k = 0…N); tasa mensual = (1 + r)^(1/12) − 1; TIR mensual → anual.
+    PERIODO_REPORTE : flujos agregados a períodos de reporte, descontados al fin de cada período (t en años)."""
+    out = {}
+    if convencion == "MENSUAL":
+        k = list(range(len(flujos)))
+        i_m = tasa_periodica(r_anual, 1)
+        out["VAN"] = van_periodico(flujos, i_m)
+        tm, est = tir(flujos, k, r_min=-0.5, r_max=2.0)      # tasa MENSUAL (−50 % a 200 % por mes)
+        out["TIR_MENSUAL"], out["TIR"], out["TIR_ESTADO"] = tm, anualizar(tm), est
+        out["MIRR"] = mirr(flujos, [x / 12 for x in k], r_anual, r_reinv)
+        pm, out["PAYBACK_SIMPLE_ESTADO"] = payback(flujos, k)
+        pdm, out["PAYBACK_DESCONTADO_ESTADO"] = payback(flujos, k, i_m) if i_m is not None else (None, "NO_CALCULABLE")
+    else:
+        t = tiempos_anios
+        out["VAN"] = van(flujos, t, r_anual)
+        ta, est = tir(flujos, t)
+        out["TIR"], out["TIR_ESTADO"] = ta, est
+        out["TIR_MENSUAL"] = tasa_periodica(ta, 1) if ta is not None else None
+        out["MIRR"] = mirr(flujos, t, r_anual, r_reinv)
+        pa, out["PAYBACK_SIMPLE_ESTADO"] = payback(flujos, t)
+        pda, out["PAYBACK_DESCONTADO_ESTADO"] = payback(flujos, t, r_anual) if r_anual is not None else (None, "NO_CALCULABLE")
+        pm = pa * 12 if pa is not None else None
+        pdm = pda * 12 if pda is not None else None
+    out["PAYBACK_SIMPLE_MESES"], out["PAYBACK_DESCONTADO_MESES"] = pm, pdm
+    div = 1 if "M25" in _MUT else 12
+    out["PAYBACK_SIMPLE_ANIOS"] = pm / div if pm is not None else None
+    out["PAYBACK_DESCONTADO_ANIOS"] = pdm / div if pdm is not None else None
+    return out
 
 
 def cambios_de_signo(flujos):
@@ -1232,7 +1377,11 @@ def tir(flujos, tiempos, r_min=-0.99, r_max=10.0, n_grilla=4000):
     cs = cambios_de_signo(flujos)
     if cs == 0:
         return None, "NO_EXISTE (el flujo no cambia de signo)"
-    f = lambda r: sum(x / (1 + r) ** t for x, t in zip(flujos, tiempos))
+    def f(r):
+        try:
+            return sum(x / (1 + r) ** t for x, t in zip(flujos, tiempos))
+        except (OverflowError, ZeroDivisionError):
+            return math.inf
     grid = [r_min + (r_max - r_min) * (i / n_grilla) ** 2 for i in range(n_grilla + 1)]
     raices = []
     prev_r, prev_v = grid[0], f(grid[0])
@@ -1255,7 +1404,7 @@ def tir(flujos, tiempos, r_min=-0.99, r_max=10.0, n_grilla=4000):
     if "M12" in _MUT and raices:
         return raices[0], "UNICA"
     if not raices:
-        return None, "NO_EXISTE_EN_RANGO (−99 % a 1.000 %)"
+        return None, f"NO_EXISTE_EN_RANGO ({r_min:.0%} a {r_max:.0%} por período)"
     if len(raices) > 1:
         return None, "TIR_AMBIGUA: raíces " + ", ".join(f"{x:.4%}" for x in raices)
     return raices[0], ("UNICA" if cs == 1 else "UNICA_FLUJO_NO_CONVENCIONAL (verificar con VAN)")
@@ -1399,7 +1548,8 @@ def publicabilidad(R):
             falt = ["sin deuda en la estructura: DSCR no aplica"]
         val = not falt
         if val:
-            extra = ETIQUETA_SIM if P["modo"] == "ESCENARIO" else "EVIDENCIA E1–E3 completa (umbral DEC-084 provisional)"
+            extra = ETIQUETA_SIM if P["modo"] == "ESCENARIO" else \
+                f"EVIDENCIA completa dentro del umbral {'|'.join(P['umbral_evidencia'])} (DEC-19-01 abierta)"
         pref = "TIR_NO_DEFINIDA_MATEMATICAMENTE" if falt and falt[0].startswith("TIR matemática") else \
             "NO_APLICA" if falt and falt[0].startswith("sin deuda") else (NO_PUB if P["modo"] == "EVIDENCIA" else NO_DISP_ESC)
         motivo = extra if val else pref + " — falta: " + " | ".join(falt)
@@ -1412,7 +1562,10 @@ def resultados(R):
     P = R["P"]
     out = {"ESCENARIO": P["nombre"], "MODO": P["modo"], "CONFIGURACION": P["configuracion"], "TRAYECTORIA": P["trayectoria"],
            "HORIZONTE_ANIOS": P["horizonte_anios"], "MODELO_MONETARIO": P["modelo_monetario"],
-           "ETIQUETA": ETIQUETA_SIM if P["modo"] == "ESCENARIO" else "MODO_EVIDENCIA"}
+           "ETIQUETA": ETIQUETA_SIM if P["modo"] == "ESCENARIO" else "MODO_EVIDENCIA",
+           "UMBRAL_EVIDENCIA": "|".join(P.get("umbral_evidencia") or UMBRAL_EVIDENCIA_DEFAULT),
+           "OVERRIDES_SIMULACION": ", ".join(P.get("overrides_simulacion") or []),
+           "CONVENCION_DESCUENTO": P["convencion_descuento"]}
     if R["N"] == 0:
         R["tir_estado"] = None
         pub = publicabilidad(R)
@@ -1423,17 +1576,26 @@ def resultados(R):
     per = R["periodos"]
     t = [p["T_ANIOS"] for p in per]
     ok = R["ok"]
-    base = "fcff" if ok["fcff_post"] else "fcff_pre"
-    fl = agregar(R, base)
-    out["BASE_FLUJO"] = "AFTER_TAX" if ok["fcff_post"] else "PRE_TAX"
-    out["VAN"] = van(fl, t, P["tasa_descuento"]) if ok["fcff_pre"] else None
-    out["TIR"], R["tir_estado"] = tir(fl, t) if ok["fcff_pre"] else (None, "NO_CALCULABLE")
-    out["TIR_ESTADO"] = R["tir_estado"]
-    out["MIRR"] = mirr(fl, t, P["tasa_descuento"], P["tasa_reinversion"]) if ok["fcff_pre"] else None
-    out["PAYBACK_SIMPLE_ANIOS"], out["PAYBACK_SIMPLE_ESTADO"] = payback(fl, t) if ok["fcff_pre"] else (None, "NO_CALCULABLE")
-    out["PAYBACK_DESCONTADO_ANIOS"], out["PAYBACK_DESCONTADO_ESTADO"] = (
-        payback(fl, t, P["tasa_descuento"]) if ok["fcff_pre"] and P["tasa_descuento"] is not None else (None, "NO_CALCULABLE"))
     S = R["series"]
+    base = "fcff" if ok["fcff_post"] else "fcff_pre"
+    conv = P["convencion_descuento"]
+    tipo = P["tipo_tasa_descuento"]
+    r_ef = tasa_anual_efectiva(P["tasa_descuento"], tipo)
+    r_acc = tasa_anual_efectiva(P["tasa_descuento_accionista"], tipo)
+    r_rei = tasa_anual_efectiva(P["tasa_reinversion"], tipo)
+    out["BASE_FLUJO"] = "AFTER_TAX" if ok["fcff_post"] else "PRE_TAX"
+    out["CONVENCION_DESCUENTO"] = conv
+    out["TASA_DESCUENTO_ANUAL_EFECTIVA"] = r_ef
+    out["TASA_DESCUENTO_MENSUAL_EQUIVALENTE"] = tasa_periodica(r_ef, 1)
+    if ok["fcff_pre"]:
+        fl = S[base] if conv == "MENSUAL" else agregar(R, base)
+        out.update(indicadores(fl, conv, r_ef, r_rei, t))
+    else:
+        out.update({k: None for k in ("VAN", "TIR", "TIR_MENSUAL", "MIRR", "PAYBACK_SIMPLE_MESES", "PAYBACK_SIMPLE_ANIOS",
+                                      "PAYBACK_DESCONTADO_MESES", "PAYBACK_DESCONTADO_ANIOS")})
+        out.update({"TIR_ESTADO": "NO_CALCULABLE", "PAYBACK_SIMPLE_ESTADO": "NO_CALCULABLE",
+                    "PAYBACK_DESCONTADO_ESTADO": "NO_CALCULABLE"})
+    R["tir_estado"] = out["TIR_ESTADO"]
     # capital requerido
     if S["capex_total"] is not None:
         out["CAPEX_INICIAL"] = sum(S["capex_inicial"])
@@ -1486,13 +1648,16 @@ def resultados(R):
     if S["fcfe"] is not None or S["fcfe_pre"] is not None:
         ser = "fcfe" if S["fcfe"] is not None else "fcfe_pre"
         fe = agregar(R, ser)
-        efectivo = [-a + d for a, d in zip(agregar(R, "aportes"), agregar(R, "dividendos"))]
+        if conv == "MENSUAL":
+            efectivo = [-a + d for a, d in zip(S["aportes"], S["dividendos"])]
+        else:
+            efectivo = [-a + d for a, d in zip(agregar(R, "aportes"), agregar(R, "dividendos"))]
         efectivo[-1] += S["caja"][N]
         out["BASE_FLUJO_ACCIONISTA"] = "AFTER_TAX" if ser == "fcfe" else "PRE_TAX"
         out["APORTES_TOTALES"] = sum(S["aportes"])
         out["DEUDA_TOMADA"] = sum(S["deuda_alta"])
-        out["VAN_ACCIONISTA"] = van(efectivo, t, P["tasa_descuento_accionista"])
-        out["TIR_ACCIONISTA"], out["TIR_ACCIONISTA_ESTADO"] = tir(efectivo, t)
+        ia = indicadores(efectivo, conv, r_acc, None, t)
+        out["VAN_ACCIONISTA"], out["TIR_ACCIONISTA"], out["TIR_ACCIONISTA_ESTADO"] = ia["VAN"], ia["TIR"], ia["TIR_ESTADO"]
         out["CAJA_MINIMA_LEDGER"] = min(S["caja"])
         R["flujo_accionista_efectivo"] = efectivo
         R["fcfe_agregado"] = fe
@@ -1507,8 +1672,9 @@ def resultados(R):
     bloqueo = {"PUBLICABLE_INGRESOS": ("VENTA_BRUTA_ULTIMO_ANIO", "INGRESO_NETO_ULTIMO_ANIO"),
                "PUBLICABLE_EBITDA": ("EBITDA_ULTIMO_ANIO", "MARGEN_EBITDA_ULTIMO_ANIO"),
                "PUBLICABLE_FLUJO": ("FONDOS_INICIALES", "PICO_REQUERIMIENTO_FONDOS", "OTROS_REQUERIMIENTOS_CAJA"),
-               "PUBLICABLE_VAN": ("VAN",), "PUBLICABLE_TIR": ("TIR", "MIRR"),
-               "PUBLICABLE_PAYBACK": ("PAYBACK_SIMPLE_ANIOS", "PAYBACK_DESCONTADO_ANIOS"),
+               "PUBLICABLE_VAN": ("VAN",), "PUBLICABLE_TIR": ("TIR", "TIR_MENSUAL", "MIRR"),
+               "PUBLICABLE_PAYBACK": ("PAYBACK_SIMPLE_ANIOS", "PAYBACK_DESCONTADO_ANIOS", "PAYBACK_SIMPLE_MESES",
+                                      "PAYBACK_DESCONTADO_MESES"),
                "PUBLICABLE_BREAK_EVEN": ("BE_UTILIZACION_EBITDA", "BE_AVES_ANIO_EBITDA", "BE_PRECIO_MEDIO_USD_KG_EBITDA"),
                "PUBLICABLE_FLUJO_ACCIONISTA": ("VAN_ACCIONISTA", "TIR_ACCIONISTA", "APORTES_TOTALES"),
                "PUBLICABLE_DSCR": ("DSCR_MINIMO",)}
@@ -1587,13 +1753,20 @@ def _correr_opex(co):
     return _CACHE[key]
 
 
-def capex_desde_modulo(cc):
+def _niveles_con_monto(T, prefijo):
+    niv = set()
+    for g, ls in (("E1_E2", ("E1", "E2")), ("E3", ("E3",)), ("E4", ("E4",)), ("E5", ("E5",))):
+        if T.get(f"N_CONCEPTOS_{g}"):
+            niv |= set(ls)
+    return niv
+
+
+def capex_desde_modulo(cc, umbral=None):
     """CAPEX total SOLO si el motor CAPEX publica TOTAL_PRELIMINAR y todo el monto es E1–E3. Un monto E4 parcial
     nunca se usa como total (devuelve None + motivo)."""
     filas, res, _ = _correr_capex(cc)
     T = res["TOTAL"]
-    e45 = (T["CAPEX_E4_USD"] or 0) + (T["CAPEX_E5_USD"] or 0)
-    if T["TOTAL_PRELIMINAR_USD"] is not None and e45 == 0:
+    if T["TOTAL_PRELIMINAR_USD"] is not None and _niveles_con_monto(T, "CAPEX") <= set(umbral or UMBRAL_EVIDENCIA_DEFAULT):
         niv = "E1" if not T["N_CONCEPTOS_E3"] else "E3"
         return T["TOTAL_PRELIMINAR_USD"], niv, ""
     parcial = T["MONTO_CON_PRECIO_USD"]
@@ -1617,13 +1790,12 @@ def activos_desde_boq(cc):
     return out, ""
 
 
-def opex_desde_modulo(co):
+def opex_desde_modulo(co, umbral=None):
     """Rubros = filas del registro OPEX (NATURALEZA, PCT_VARIABLE, GRUPO_PROVEEDOR) SOLO si OPEX publica total y la
     arquitectura es costeable con evidencia E1–E3. Si no, None + motivo (los montos E4 parciales no se usan)."""
     filas, res, DR, ct_rows, ct = _correr_opex(co)
     T = res["TOTAL"]
-    e45 = (T["OPEX_E4_USD_ANIO"] or 0) + (T["OPEX_E5_USD_ANIO"] or 0)
-    if T["TOTAL_PRELIMINAR_USD_ANIO"] is not None and e45 == 0:
+    if T["TOTAL_PRELIMINAR_USD_ANIO"] is not None and _niveles_con_monto(T, "OPEX") <= set(umbral or UMBRAL_EVIDENCIA_DEFAULT):
         rub = [{"rubro": f["COSTO_ID"] or f["CONCEPTO"], "grupo_proveedor": f["GRUPO_PROVEEDOR"], "naturaleza": f["NATURALEZA"],
                 "costo_pleno_usd_anio": f["COSTO_CALCULADO_USD_ANIO"], "pct_variable": f["PCT_VARIABLE"],
                 "es_compra": bool(f["GRUPO_PROVEEDOR"]), "dias_pago": None, "iva_credito": bool(f["GRUPO_PROVEEDOR"])}
@@ -1670,8 +1842,11 @@ def capex_trayectoria(cfg_nombre, escalas):
     return resumen
 
 
-def leer_precios(ruta=ARCHIVO_PRECIOS):
-    """Precios con evidencia (CON_PRECIO y E1–E3). Vacío = PENDIENTE; jamás 0. REFERENCIA_E4 nunca se usa sola."""
+def leer_precios(ruta=None, niveles=None):
+    """Precios con evidencia (CON_PRECIO y nivel dentro del umbral; default E1–E3). Vacío = PENDIENTE; jamás 0.
+    REFERENCIA_E4_NO_USABLE nunca se usa."""
+    ruta = ruta or ARCHIVO_PRECIOS
+    niveles = niveles or UMBRAL_EVIDENCIA_DEFAULT
     out, refs = {}, []
     for r in leer_csv(ruta):
         p = _num(r["PRECIO"])
@@ -1679,7 +1854,7 @@ def leer_precios(ruta=ARCHIVO_PRECIOS):
             if p is None or p <= 0:
                 raise ErrorFinanciero(f"{r['ID_PRECIO']}: CON_PRECIO exige precio > 0 (un faltante es vacío, nunca 0)")
             usd = a_usd(p, r["MONEDA"], _num(r.get("TC_USADO")), r.get("FECHA_TC"), r.get("TIPO_TC"))
-            if r["NIVEL_EVIDENCIA"] in NIVELES_EVIDENCIA_ACEPTADOS:
+            if r["NIVEL_EVIDENCIA"] in niveles:
                 out[f"{r['PRODUCTO']}|{r['CANAL']}|{r['MERCADO']}"] = {"tipo": "CONSTANTE", "usd_kg": usd,
                                                                        "nivel": r["NIVEL_EVIDENCIA"], "fuente": r["FUENTE"]}
             else:
@@ -1748,20 +1923,32 @@ def _get_path(P, path):
 
 
 VARIABLES_ESPECIALES = ("curva_rampup", "demanda_referencia_02", "mix_demanda", "dias_pago", "dias_stock",
-                        "propiedad_rendimientos_validados", "demanda", "financiamiento")
+                        "propiedad_rendimientos_validados", "demanda", "financiamiento", "umbral_evidencia_publicacion")
 
 
-def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usuario=None, escenario_capex=None):
+def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usuario=None, escenario_capex=None,
+                      configuracion_por_fase=None):
     """Arma la entrada del motor para una configuración del mapa y una escala o trayectoria. Capas:
-    evidencia (módulos y CSV con E1–E3) → escenario del usuario → plantilla/supuesto → PENDIENTE."""
+    evidencia (módulos y CSV dentro del UMBRAL_EVIDENCIA_PUBLICACION) → escenario del usuario → plantilla/supuesto
+    → PENDIENTE. Aparte, solo en escenario, la capa OVERRIDE_SIMULACION evalúa otro valor sin tocar el observado.
+    configuracion_por_fase: interfaz preparada; hoy solo admite la MISMA configuración en todas las etapas
+    (una transición C0→C1→C2→C3 no tiene CAPEX ni OPEX de transición modelados: LIMITACION_ACTUAL_EXPANSION)."""
     usuario = copy.deepcopy(usuario or {})
     if usuario and modo != "ESCENARIO":
         raise ErrorFinanciero("los inputs de usuario solo existen en MODO ESCENARIO")
+    cpf = list(configuracion_por_fase or usuario.get("configuracion_por_fase") or [configuracion] * len(escalas))
+    if len(cpf) != len(escalas):
+        raise ErrorFinanciero("configuracion_por_fase: una configuración por etapa")
+    if any(c_ != configuracion for c_ in cpf):
+        raise ErrorFinanciero(f"TRANSICION_DE_ARQUITECTURA_NO_MODELADA {cpf}: el motor solo expande la MISMA configuración "
+                              "por escala; el CAPEX/OPEX de pasar de una arquitectura a otra no existe en 19/20")
     P = entrada_vacia(nombre, modo)
     T = Traza(nombre, modo)
     P["configuracion"] = configuracion
     P["trayectoria"] = "→".join(str(e) for e in escalas)
     filas_in = leer_inputs()
+    umbral = umbral_evidencia(filas_in)
+    P["umbral_evidencia"] = umbral
     vals_usr = {k: v for k, v in usuario.get("valores", {}).items() if not k.startswith("_")}
     ev_rows = {f["VARIABLE"]: f for f in filas_in if f["ESCENARIO"] == "EVIDENCIA"}
     pl_rows = {f["VARIABLE"]: f for f in filas_in if plantilla and f["ESCENARIO"] == plantilla}
@@ -1772,7 +1959,7 @@ def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usua
         evid = (_valor_input(ev["VALOR"]), ev["NIVEL_EVIDENCIA"], ev["FUENTE"]) if ev and ev["ORIGEN"] == "EVIDENCIA_REAL" else None
         sup_row = ev if ev and ev["ORIGEN"] == "SUPUESTO_MODELO" else pl_rows.get(var)
         sup = (_valor_input(sup_row["VALOR"]), sup_row["ID_INPUT"]) if sup_row and sup_row["ORIGEN"] == "SUPUESTO_MODELO" else None
-        v, org, niv, fte = resolver(var, modo, evid, vals_usr.get(var), sup)
+        v, org, niv, fte = resolver(var, modo, evid, vals_usr.get(var), sup, umbral)
         resueltos[var] = v
         fila = ev or pl_rows.get(var) or {}
         T.add(var, v, fila.get("UNIDAD", ""), org, "inputs_financieros.csv" if org != "ESCENARIO_USUARIO" else "escenario del usuario",
@@ -1780,6 +1967,18 @@ def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usua
         base_var = var.split(".")[0]
         if v is not None and base_var not in VARIABLES_ESPECIALES:
             _set_path(P, var, v)
+    # 0. OVERRIDE_SIMULACION (solo escenario): evalúa otro valor; el observado queda en la traza y en la base intacta
+    P["overrides_simulacion"] = []
+    for var, v in (usuario.get("override_simulacion") or {}).items():
+        if var.startswith("_"):
+            continue
+        obs = resueltos.get(var)
+        resueltos[var] = v
+        if var.split(".")[0] not in VARIABLES_ESPECIALES:
+            _set_path(P, var, v)
+        P["overrides_simulacion"].append(var)
+        T.add(var, v, "", "ESCENARIO_USUARIO", "override_simulacion", var, "",
+              f"OVERRIDE_SIMULACION: VALOR_OBSERVADO={obs!r}; VALOR_EVALUADO_ESCENARIO={v!r}; {ETIQUETA_SIM}")
     # 1. productos (balance 04; rutas del preset; propiedad de subproductos en façon según contrato)
     cc0, co0 = configs(escenario_capex or f"{configuracion}-{escalas[0]}")
     destino_c = "contrato_facon" if cc0["faena"] == "facon" else "venta_directa"
@@ -1800,25 +1999,29 @@ def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usua
         e = etapa_vacia(f"E{j + 1}-{E}", E, mcx.dias_anio(cc), "INICIAL" if j == 0 else "FECHA")
         ue = usr_et[j] if j < len(usr_et) else {}
         if j == 0:
-            cap, niv, mot = capex_desde_modulo(cc)
+            cap, niv, mot = capex_desde_modulo(cc, umbral)
         else:
             st_ = [r for r in tray if r["ESCALA"] == E][0]
-            completo = st_["CONCEPTOS_SIN_COSTO_ETAPA"] == 0 and capex_desde_modulo(cc)[0] is not None
+            completo = st_["CONCEPTOS_SIN_COSTO_ETAPA"] == 0 and capex_desde_modulo(cc, umbral)[0] is not None
             cap, niv = (st_["CAPEX_ETAPA_CON_PRECIO_USD"], "E3") if completo else (None, "PENDIENTE")
             mot = (f"expansión {escalas[j - 1]}→{E}: {st_['CONCEPTOS_SIN_COSTO_ETAPA']} conceptos sin costo en la etapa "
                    "(prima de ampliación DPV-086)")
-        e["capex_usd"], o_, _, _ = resolver("capex_usd", modo, (cap, niv, "19_capex") if cap is not None else None, ue.get("capex_usd"))
+        e["capex_usd"], o_, _, _ = resolver("capex_usd", modo, (cap, niv, "19_capex") if cap is not None else None, ue.get("capex_usd"),
+                                            None, umbral)
         e["motivo_capex"] = mot
         T.add(f"{e['id']}.capex_usd", e["capex_usd"], "USD", o_, "19_capex/modelo_capex.py", "TOTAL_PRELIMINAR_USD" if j == 0 else
               "expansion(): CAPEX_ETAPA", niv if o_ == "EVIDENCIA_REAL" else "", mot)
-        rub, niv_o, mot_o = opex_desde_modulo(co)
-        e["opex_rubros"], o_, _, _ = resolver("opex_rubros", modo, (rub, niv_o, "20_opex") if rub is not None else None, ue.get("opex_rubros"))
+        rub, niv_o, mot_o = opex_desde_modulo(co, umbral)
+        e["opex_rubros"], o_, _, _ = resolver("opex_rubros", modo, (rub, niv_o, "20_opex") if rub is not None else None,
+                                              ue.get("opex_rubros"), None, umbral)
         e["motivo_opex"] = mot_o
         T.add(f"{e['id']}.opex_rubros", f"{len(e['opex_rubros'])} rubros" if e["opex_rubros"] else None, "USD/año escala plena",
               o_, "20_opex/modelo_opex.py", "registro_costos_operativos (COSTO_CALCULADO_USD_ANIO, NATURALEZA, PCT_VARIABLE)",
               niv_o if o_ == "EVIDENCIA_REAL" else "", mot_o)
         act, mot_a = activos_desde_boq(cc) if j == 0 else (None, "activos de expansión: vida útil PENDIENTE (DPV-167)")
-        e["activos"], o_, _, _ = resolver("activos", modo, (act, "E3", "19_capex") if act else None, ue.get("activos"))
+        e["activos"], o_, _, _ = resolver("activos", modo, (act, "E3", "19_capex") if act else None, ue.get("activos"),
+                                          None, umbral)
+        e["configuracion"] = cpf[j]
         T.add(f"{e['id']}.activos", "definidos" if e["activos"] else None, "clase", o_, "19_capex/boq_capex.csv",
               "VIDA_UTIL_ANIOS, VALOR_RESIDUAL, COSTO_REEMPLAZO", "", mot_a)
         curva = ue.get("rampup") or (curvas.get(nombre_curva) if nombre_curva else None)
@@ -1858,13 +2061,24 @@ def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usua
         T.add(f"inventario.{cat}.propiedad_empresa", prop[cat], "bool", "SUPUESTO_MODELO" if prop[cat] is not None else "PENDIENTE",
               "20_opex/capital_trabajo_opex.csv", "PROPIEDAD_EMPRESA / ENTRA_EN_CT", "", "solo stock propio entra al CT")
     # 4. precios
-    precios_ev, refs = leer_precios()
+    precios_ev, refs = leer_precios(None, umbral)
     P["precios"] = dict(precios_ev)
     for k, v in usuario.get("precios", {}).items():
         if isinstance(v, dict) and "por_anio" in v:
             v["por_anio"] = {int(a): x for a, x in v["por_anio"].items()}
         if k not in P["precios"] and modo == "ESCENARIO":
             P["precios"][k] = v                     # el escenario completa; nunca reemplaza una evidencia
+    for k, v in (usuario.get("override_precios") or {}).items():
+        if modo != "ESCENARIO" or k.startswith("_"):
+            continue
+        obs = P["precios"].get(k)
+        nuevo = dict(v)
+        nuevo.update({"origen": "OVERRIDE_SIMULACION", "observado": copy.deepcopy(obs)})
+        P["precios"][k] = nuevo
+        P["overrides_simulacion"].append(f"precio:{k}")
+        T.add(f"PRECIO_EVALUADO_ESCENARIO.{k}", v, "USD/kg", "ESCENARIO_USUARIO", "override_precios", k,
+              (obs or {}).get("nivel", ""), f"PRECIO_OBSERVADO={(obs or {}).get('usd_kg')!r} "
+              f"(fuente {(obs or {}).get('fuente', '—')}); la base no se modifica; {ETIQUETA_SIM}")
     for r in refs:
         T.add(f"precio_referencia.{r['ID_PRECIO']}", r["PRECIO"], f"{r['MONEDA']}/{r['UNIDAD']}", "PENDIENTE",
               "base_precios_venta.csv", r["ID_PRECIO"], r["NIVEL_EVIDENCIA"], "referencia E4 [PVDP]: NO se usa como precio")
@@ -1879,7 +2093,7 @@ def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usua
     lineas = []
     for f in filas_in:
         if f["ESCENARIO"] == "EVIDENCIA" and f["VARIABLE"].startswith("demanda.") and f["ORIGEN"] == "EVIDENCIA_REAL" and \
-                f["NIVEL_EVIDENCIA"] in NIVELES_EVIDENCIA_ACEPTADOS:
+                f["NIVEL_EVIDENCIA"] in umbral:
             prod, canal, merc, cat = f["VARIABLE"].split(".")[1:5]
             lineas.append({"id": f["ID_INPUT"], "producto": prod, "canal": canal, "mercado": merc, "categoria": cat,
                            "kg_mes": convertir_demanda(_valor_input(f["VALOR"]), f["UNIDAD"]), "prioridad": 1})
@@ -1935,46 +2149,79 @@ def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usua
 # ---------------------------------------------------------------------------------------------
 # 9. CORRIDAS DE REFERENCIA Y SALIDAS
 # ---------------------------------------------------------------------------------------------
+def id_corrida(modo, configuracion, escalas, variante=None, trayectoria=None, plantilla=None):
+    """Identificador único y reconstruible: MODO | CONFIGURACION | VARIANTE | ESCALAS | TRAYECTORIA | ESCENARIO."""
+    return "|".join((modo, configuracion, variante or "BASE", "-".join(str(e) for e in escalas),
+                     trayectoria or ("ESCALA_UNICA" if len(escalas) == 1 else "TRAYECTORIA_SIN_NOMBRE"),
+                     plantilla or ("SIN_PLANTILLA" if modo == "ESCENARIO" else "EVIDENCIA")))
+
+
 def corridas_referencia():
-    """MODO EVIDENCIA: las 24 configuraciones del mapa (5 bases × 4 escalas + 19 variantes a 10.000) y las cuatro
-    trayectorias de expansión de C1. MODO ESCENARIO: las tres plantillas × 5 bases a 10.000 y la plantilla BASE × 4
-    trayectorias de C1. Las plantillas NO tienen precios, mix ni cronograma: muestran qué falta (no se rellena)."""
+    """61 corridas = 42 MODO EVIDENCIA + 19 MODO ESCENARIO.
+    EVIDENCIA: 5 configuraciones base × 4 escalas (20) + 19 variantes del mapa a su escala de referencia (19) + C1 en
+    las 3 trayectorias multietapa T1–T3 (3). T4 (20.000 inicial) NO se repite en evidencia: es idéntica a C1-20000.
+    ESCENARIO: 3 plantillas × 5 configuraciones base a 10.000 (15) + plantilla BASE × C1 × 4 trayectorias (4).
+    Las plantillas no tienen precios, mix, cronograma ni impuestos: muestran qué falta (no se rellena)."""
     out = []
+
+    def add(nombre, modo, cfg, escalas, variante=None, trayectoria=None, plantilla=None):
+        out.append({"ID_CORRIDA": id_corrida(modo, cfg, escalas, variante, trayectoria, plantilla), "NOMBRE": nombre,
+                    "MODO": modo, "CONFIGURACION": cfg, "ESCALAS": tuple(escalas), "VARIANTE": variante,
+                    "TRAYECTORIA": trayectoria, "PLANTILLA": plantilla})
     for r in mapa_arquitecturas():
         if r["TIPO"] == "CONFIGURACION_BASE":
             for E in mcx.ESCALAS_REF:
-                out.append((f"EVI-{r['CONFIGURACION']}-{E}", r["CONFIGURACION"], (E,), "EVIDENCIA", None, None))
+                add(f"EVI-{r['CONFIGURACION']}-{E}", "EVIDENCIA", r["CONFIGURACION"], (E,))
         else:
             ref = r["ESCENARIO_REFERENCIA"]
-            out.append((f"EVI-{ref}", r["VARIANTE_DE"], (int(ref.split("-")[1]),), "EVIDENCIA", None, ref))
+            add(f"EVI-{ref}", "EVIDENCIA", r["VARIANTE_DE"], (int(ref.split("-")[1]),), ref)
     for t, esc in TRAYECTORIAS_FIN.items():
         if len(esc) > 1:
-            out.append((f"EVI-C1-{t}", "C1", esc, "EVIDENCIA", None, None))
+            add(f"EVI-C1-{t}", "EVIDENCIA", "C1", esc, None, t)
     for pl in PLANTILLAS:
         for cfg in ("C0", "C1", "C2", "C3", "CF"):
-            out.append((f"ESC-{pl.split('_')[1]}-{cfg}-10000", cfg, (10000,), "ESCENARIO", pl, None))
+            add(f"ESC-{pl.split('_')[1]}-{cfg}-10000", "ESCENARIO", cfg, (10000,), None, None, pl)
     for t, esc in TRAYECTORIAS_FIN.items():
-        out.append((f"ESC-BASE-C1-{t}", "C1", esc, "ESCENARIO", "PLANTILLA_BASE", None))
+        add(f"ESC-BASE-C1-{t}", "ESCENARIO", "C1", esc, None, t, "PLANTILLA_BASE")
     return out
 
 
-def correr_escenario(nombre, configuracion, escalas, modo, plantilla=None, usuario=None, escenario_capex=None):
+def firma_corrida(c):
+    """Contenido económico de una corrida (para detectar duplicados con nombres distintos)."""
+    partes = [c["MODO"], c["PLANTILLA"] or ""]
+    for E in c["ESCALAS"]:
+        cc, co = configs(c["VARIANTE"] if (c["VARIANTE"] and len(c["ESCALAS"]) == 1) else f"{c['CONFIGURACION']}-{E}")
+        partes.append(json.dumps({k: co[k] for k in sorted(co) if k != "nombre"}, sort_keys=True, default=str))
+    return "||".join(partes)
+
+
+def correr_escenario(nombre, configuracion, escalas, modo, plantilla=None, usuario=None, escenario_capex=None,
+                     meta=None):
     P, T = construir_entrada(nombre, configuracion, escalas, modo, plantilla, usuario, escenario_capex)
     R = simular(P)
     res = resultados(R)
     res["ESCALAS"] = "→".join(str(e) for e in escalas)
     res["PLANTILLA"] = plantilla or ""
+    meta = meta or {"ID_CORRIDA": id_corrida(modo, configuracion, escalas, escenario_capex, None, plantilla),
+                    "VARIANTE": escenario_capex, "TRAYECTORIA": None}
+    res["ID_CORRIDA"], res["VARIANTE"], res["TRAYECTORIA_ID"] = meta["ID_CORRIDA"], meta["VARIANTE"] or "BASE", \
+        meta["TRAYECTORIA"] or ("ESCALA_UNICA" if len(escalas) == 1 else "")
+    res["ALCANCE_EXPANSION"] = ("" if len(escalas) == 1 else
+                                "LIMITACION_ACTUAL_EXPANSION_C1 (corridas de referencia); misma configuración por escala, "
+                                "sin transición de arquitectura")
     return P, T, R, res
 
 
-CAMPOS_ESC = ["ESCENARIO", "MODO", "ETIQUETA", "CONFIGURACION", "ESCALAS", "PLANTILLA", "HORIZONTE_ANIOS", "MODELO_MONETARIO",
-              "BASE_FLUJO", "CAPEX_INICIAL", "CAPEX_EXPANSION", "CAPEX_REPOSICION", "CT_INICIAL", "CT_MAXIMO",
+CAMPOS_ESC = ["ID_CORRIDA", "ESCENARIO", "MODO", "ETIQUETA", "CONFIGURACION", "VARIANTE", "ESCALAS", "TRAYECTORIA_ID",
+              "PLANTILLA", "ALCANCE_EXPANSION", "UMBRAL_EVIDENCIA", "OVERRIDES_SIMULACION", "HORIZONTE_ANIOS",
+              "MODELO_MONETARIO", "CONVENCION_DESCUENTO", "TASA_DESCUENTO_ANUAL_EFECTIVA",
+              "TASA_DESCUENTO_MENSUAL_EQUIVALENTE", "BASE_FLUJO", "CAPEX_INICIAL", "CAPEX_EXPANSION", "CAPEX_REPOSICION", "CT_INICIAL", "CT_MAXIMO",
               "OTROS_REQUERIMIENTOS_CAJA", "FONDOS_INICIALES", "PICO_REQUERIMIENTO_FONDOS", "MES_VALLE_CAJA",
               "VENTA_BRUTA_ULTIMO_ANIO", "INGRESO_NETO_ULTIMO_ANIO", "EBITDA_ULTIMO_ANIO", "MARGEN_EBITDA_ULTIMO_ANIO",
               "U_TECNICA_ULTIMO_ANIO", "U_COMERCIAL_REQUERIDA_ULTIMO_ANIO", "U_EFECTIVA_ULTIMO_ANIO",
               "BE_UTILIZACION_EBITDA", "BE_AVES_ANIO_EBITDA", "BE_PRECIO_MEDIO_USD_KG_EBITDA", "BE_ESTADO",
-              "VAN", "TIR", "TIR_ESTADO", "MIRR", "PAYBACK_SIMPLE_ANIOS", "PAYBACK_SIMPLE_ESTADO",
-              "PAYBACK_DESCONTADO_ANIOS", "PAYBACK_DESCONTADO_ESTADO", "BASE_FLUJO_ACCIONISTA", "APORTES_TOTALES",
+              "VAN", "TIR", "TIR_MENSUAL", "TIR_ESTADO", "MIRR", "PAYBACK_SIMPLE_MESES", "PAYBACK_SIMPLE_ANIOS",
+              "PAYBACK_SIMPLE_ESTADO", "PAYBACK_DESCONTADO_MESES", "PAYBACK_DESCONTADO_ANIOS", "PAYBACK_DESCONTADO_ESTADO", "BASE_FLUJO_ACCIONISTA", "APORTES_TOTALES",
               "DEUDA_TOMADA", "VAN_ACCIONISTA", "TIR_ACCIONISTA", "TIR_ACCIONISTA_ESTADO", "CAJA_MINIMA_LEDGER",
               "DSCR_MINIMO"] + [x for f in FLAGS for x in (f, f + "_MOTIVO")] + ["FALTANTES"]
 
@@ -2085,8 +2332,13 @@ def construir_salidas(verbose=True):
     tablas = {k: [] for k in ("escenarios_financieros", "estado_resultados", "flujo_caja_proyecto", "flujo_accionista",
                               "capital_trabajo_financiero", "deuda", "break_even", "completitud_financiera",
                               "mapa_drivers_financieros")}
-    for nombre, cfg, escalas, modo, pl, ref in corridas_referencia():
-        P, T, R, res = correr_escenario(nombre, cfg, escalas, modo, pl, None, ref)
+    corr = corridas_referencia()
+    ids = [c["ID_CORRIDA"] for c in corr]
+    if len(ids) != len(set(ids)):
+        raise ErrorFinanciero("ID_CORRIDA duplicado")
+    for c in corr:
+        P, T, R, res = correr_escenario(c["NOMBRE"], c["CONFIGURACION"], c["ESCALAS"], c["MODO"], c["PLANTILLA"], None,
+                                        c["VARIANTE"], c)
         tablas["escenarios_financieros"].append(res)
         for tabla, series in (("estado_resultados", SERIES_ER), ("flujo_caja_proyecto", SERIES_FCFF),
                               ("flujo_accionista", SERIES_ACC), ("capital_trabajo_financiero", SERIES_CT),
@@ -2120,14 +2372,15 @@ def construir_salidas(verbose=True):
 def caso_prueba(H=5, M=0, capex=100.0, ventas_anio=100.0, opex_fijo=60.0, opex_var=0.0, demanda_kg_mes=1.0, escala=1,
                 dias=12, tasa=0.10, tasa_gan=None, quebranto=5, dias_cobro=0.0, dias_pago=0.0, pre=0, con=0, com=0, curva=None,
                 deudas=None, aportes=None, vida=5, iva=None, modelo="REAL", inflacion=None, curva_desembolso=None,
-                activos=None, inventario_max=0, nombre="CASO_PRUEBA", pct_desc=0.0, dividendos=None):
+                activos=None, inventario_max=0, nombre="CASO_PRUEBA", pct_desc=0.0, dividendos=None,
+                convencion="MENSUAL"):
     """Caso controlado: 1 producto de 1 kg/ave; capacidad = escala × días ÷ 12 aves/mes; precio = ventas_anio ÷ 12
     por kg con demanda de 1 kg/mes a plena capacidad. Con los valores por defecto: CAPEX 100 en T0, ventas 100/año,
     OPEX fijo 60/año → EBITDA 40/año."""
     P = entrada_vacia(nombre, "ESCENARIO")
     P.update(horizonte_anios=H, meses_detalle=M, meses_preoperacion=pre, meses_construccion=con, meses_commissioning=com,
              tasa_descuento=tasa, modelo_monetario=modelo, base_tasa=modelo, inflacion_anual=inflacion,
-             fecha_inicio="2030-01-01")
+             fecha_inicio="2030-01-01", convencion_descuento=convencion)
     P["productos"] = {"pollo_entero": {"kg_ave": 1.0, "categoria_ingreso": "PRODUCTO_PRINCIPAL", "nombre": "prueba"}}
     e = etapa_vacia("E1", escala, dias)
     rub = [{"rubro": "fijo", "grupo_proveedor": "servicios", "naturaleza": "fijo", "costo_pleno_usd_anio": opex_fijo,
@@ -2158,27 +2411,49 @@ def caso_prueba(H=5, M=0, capex=100.0, ventas_anio=100.0, opex_fijo=60.0, opex_v
     return P
 
 
-CAMPOS_CASOS = ["CASO", "DESCRIPCION", "VAN", "TIR", "TIR_ESTADO", "PAYBACK_SIMPLE_ANIOS", "PAYBACK_DESCONTADO_ANIOS",
+CAMPOS_CASOS = ["CASO", "DESCRIPCION", "CONVENCION_DESCUENTO", "TASA_FISCAL_TEST", "DEPRECIACION_ANUAL",
+                "BASE_IMPONIBLE_ANUAL", "IMPUESTO_ANUAL", "FCFF_ANUAL", "BASE_FLUJO", "VAN", "TIR", "TIR_MENSUAL",
+                "TIR_ESTADO", "PAYBACK_SIMPLE_MESES", "PAYBACK_SIMPLE_ANIOS", "PAYBACK_DESCONTADO_ANIOS",
                 "EBITDA_ULTIMO_ANIO", "BE_UTILIZACION_EBITDA", "FONDOS_INICIALES", "PICO_REQUERIMIENTO_FONDOS",
                 "VALOR_ESPERADO_MANUAL", "ETIQUETA"]
+# Casos de prueba ARTIFICIALES con nombre propio (nunca "el caso artificial" a secas). Comunes: CAPEX 100 en T0;
+# ingresos 100/año; OPEX fijo 60/año; ΔCT 0; sin CAPEX posterior; horizonte 5 años; valor terminal 0; tasa anual
+# efectiva 10 %. NO son parámetros del proyecto: la tasa fiscal de test (30 %) solo existe aquí.
+CASOS_PRUEBA = (
+    ("CP-PRETAX-ANUAL", "PRE-TAX: tasa_ganancias = None; flujos a fin de año (PERIODO_REPORTE anual)",
+     dict(convencion="PERIODO_REPORTE"), None,
+     "FCFF 40/año; VAN = −100 + 40 × 3,790787 = 51,6315; TIR 28,65 %; payback 2,5 años = 30 meses"),
+    ("CP-AFTERTAX-ANUAL", "AFTER-TAX: tasa fiscal de TEST 30 %; depreciación lineal 100 ÷ 5 = 20/año; fin de año",
+     dict(convencion="PERIODO_REPORTE", tasa_gan=0.30), 0.30,
+     "base imponible = EBITDA 40 − depreciación 20 = 20; impuesto 0,3 × 20 = 6; FCFF 34/año; VAN 28,887; "
+     "TIR 20,76 %; payback 100 ÷ 34 = 2,94 años"),
+    ("CP-PRETAX-MENSUAL", "Mismo caso PRE-TAX con la convención por defecto del motor: flujo de 40/12 cada mes",
+     dict(convencion="MENSUAL"), None,
+     "VAN = −100 + Σ_{k=1..60} (40/12) ÷ 1,1^(k/12) ≈ 58,46; payback 30 meses = 2,5 años (difiere del anual por la "
+     "oportunidad de los flujos, no por error)"),
+    ("CP-SIN-RECUPERO", "PRE-TAX anual con OPEX fijo 120/año (EBITDA −20/año)",
+     dict(convencion="PERIODO_REPORTE", opex_fijo=120.0), None, "TIR NO_EXISTE; payback NO_RECUPERADO; pico de fondos 200"),
+    ("CP-COBRO-30D", "CP-PRETAX-ANUAL con cobro a 30 días",
+     dict(convencion="PERIODO_REPORTE", dias_cobro=30.0), None,
+     "CxC = 8,333 × 30 ÷ 30,4167 = 8,22 (ΔCT solo en el primer mes); VAN ≈ 44,16"),
+)
 
 
 def casos_prueba_resumen():
-    casos = [
-        ("CP-01", "CAPEX 100 en T0; ventas 100/año; OPEX fijo 60/año; 5 años; 10 %; pre-tax", caso_prueba(),
-         "VAN = −100 + 40 × 3,790787 = 51,6315; TIR = 28,65 %; payback = 2,5 años; BE u = 60 %"),
-        ("CP-02", "CP-01 con ganancias 30 % y depreciación lineal 5 años", caso_prueba(tasa_gan=0.30),
-         "FCFF = 40 − 0,3 × (40 − 20) = 34; VAN = 28,887; payback = 2,94"),
-        ("CP-03", "CP-01 sin ventas suficientes: OPEX 120/año", caso_prueba(opex_fijo=120.0),
-         "EBITDA −20/año; NO_RECUPERADO; TIR NO_EXISTE"),
-        ("CP-04", "CP-01 con cobro a 30 días", caso_prueba(dias_cobro=30.0),
-         "CxC = ventas mensuales × 30 ÷ 30,4167; ΔCT solo en el primer mes"),
-    ]
     out = []
-    for cid, desc, P, esperado in casos:
-        R = simular(P)
+    for cid, desc, kw, tg, esperado in CASOS_PRUEBA:
+        R = simular(caso_prueba(**kw))
         r = resultados(R)
+        dep = agregar(R, "depreciacion")
+        imp = agregar(R, "impuesto_operativo") if R["series"]["impuesto_operativo"] is not None else None
+        fl = agregar(R, "fcff" if r["BASE_FLUJO"] == "AFTER_TAX" else "fcff_pre")
+        y1 = [p["PERIODO"] for p in R["periodos"]].index("A01") if "A01" in [p["PERIODO"] for p in R["periodos"]] else None
         out.append({"CASO": cid, "DESCRIPCION": desc, **{k: r.get(k) for k in CAMPOS_CASOS if k in r},
+                    "TASA_FISCAL_TEST": tg if tg is not None else "0 (sin ganancias: PRE_TAX)",
+                    "DEPRECIACION_ANUAL": dep[y1] if y1 is not None else sum(dep[1:13]),
+                    "BASE_IMPONIBLE_ANUAL": (agregar(R, "ebit")[y1] if (tg is not None and y1 is not None) else "no aplica"),
+                    "IMPUESTO_ANUAL": (imp[y1] if (imp and y1 is not None) else 0.0),
+                    "FCFF_ANUAL": fl[y1] if y1 is not None else sum(R["series"]["fcff_pre"][1:13]),
                     "VALOR_ESPERADO_MANUAL": esperado, "ETIQUETA": "CASO_PRUEBA_ARTIFICIAL (no es escenario del proyecto)"})
     return out
 
@@ -2220,8 +2495,8 @@ def ejecutar_tests(verbose=True):
 
     @test("I02", "EBITDA = ingreso neto − OPEX operativo (sin depreciación, intereses, CAPEX ni CT)")
     def _():
-        P = caso_prueba(opex_var=12.0, dias_cobro=45, deudas=[{"id": "D", "monto": 50.0, "tasa_anual": 0.1, "plazo_meses": 24,
-                                                              "gracia_meses": 0, "metodo": "FRANCES", "frecuencia_meses": 1,
+        P = caso_prueba(opex_var=12.0, dias_cobro=45, deudas=[{"id": "D", "monto": 50.0, "tasa": 0.1, "tipo_tasa": "NOMINAL_ANUAL", "base_tasa": "REAL", "plazo_meses": 24,
+                                                              "gracia_meses": 0, "metodo": "FRANCES", "capitalizacion_meses": 1, "frecuencia_meses": 1,
                                                               "mes_desembolso": 0}])
         S = simular(P)["series"]
         for k in range(61):
@@ -2270,8 +2545,8 @@ def ejecutar_tests(verbose=True):
     @test("I07", "Deuda: saldo inicial + altas − amortización = saldo final; continuidad entre meses")
     def _():
         for met in ("FRANCES", "ALEMAN", "BULLET"):
-            d = cronograma_deuda({"id": "D", "monto": 100.0, "tasa_anual": 0.12, "plazo_meses": 36, "gracia_meses": 6,
-                                  "metodo": met, "frecuencia_meses": 3, "mes_desembolso": 2}, 60)
+            d = cronograma_deuda({"id": "D", "monto": 100.0, "tasa": 0.12, "tipo_tasa": "NOMINAL_ANUAL", "base_tasa": "REAL", "plazo_meses": 36, "gracia_meses": 6,
+                                  "metodo": met, "capitalizacion_meses": 3, "frecuencia_meses": 3, "mes_desembolso": 2}, 60)
             for k in range(61):
                 assert _cerca(d["saldo_ini"][k] + d["alta"][k] - d["amort"][k], d["saldo_fin"][k], 1e-9)
                 if k:
@@ -2281,8 +2556,8 @@ def ejecutar_tests(verbose=True):
     @test("I08", "Caja del accionista cierra período a período (con dividendos)")
     def _():
         P = caso_prueba(dividendos={"pct_caja_excedente": 0.5, "caja_minima_usd": 5.0},
-                        deudas=[{"id": "D", "monto": 40.0, "tasa_anual": 0.1, "plazo_meses": 24, "gracia_meses": 0,
-                                 "metodo": "ALEMAN", "frecuencia_meses": 6, "mes_desembolso": 0}], aportes=[(0, 60.0)])
+                        deudas=[{"id": "D", "monto": 40.0, "tasa": 0.1, "tipo_tasa": "NOMINAL_ANUAL", "base_tasa": "REAL", "plazo_meses": 24, "gracia_meses": 0,
+                                 "metodo": "ALEMAN", "capitalizacion_meses": 6, "frecuencia_meses": 6, "mes_desembolso": 0}], aportes=[(0, 60.0)])
         S = simular(P)["series"]
         caja = 0.0
         for k in range(61):
@@ -2491,7 +2766,7 @@ def ejecutar_tests(verbose=True):
         corr = corridas_referencia()
         for r in mapa:
             if r["TIPO"] == "VARIANTE":
-                assert any(c[5] == r["ESCENARIO_REFERENCIA"] for c in corr)
+                assert any(c["VARIANTE"] == r["ESCENARIO_REFERENCIA"] for c in corr)
                 cc, co = configs(r["ESCENARIO_REFERENCIA"])
                 assert mcx.etiqueta_arquitectura(cc) == mcx.etiqueta_arquitectura(mo.config_capex(co))
         cc, co = configs("C3-10000")
@@ -2530,7 +2805,7 @@ def ejecutar_tests(verbose=True):
     @test("N01", "VAN contra caso manual (−100; 40 × 5; 10 %)")
     def _():
         assert _cerca(van([-100, 40, 40, 40, 40, 40], [0, 1, 2, 3, 4, 5], 0.10), 51.63147, 1e-6)
-        r = resultados(simular(caso_prueba()))
+        r = resultados(simular(caso_prueba(convencion="PERIODO_REPORTE")))
         assert _cerca(r["VAN"], 51.63147, 1e-5) and r["BASE_FLUJO"] == "PRE_TAX"
 
     @test("N02", "TIR correcta en flujos simples conocidos")
@@ -2590,16 +2865,16 @@ def ejecutar_tests(verbose=True):
 
     @test("N09", "FCFF independiente de la financiación")
     def _():
-        d = [{"id": "D", "monto": 70.0, "tasa_anual": 0.15, "plazo_meses": 36, "gracia_meses": 12, "metodo": "FRANCES",
-              "frecuencia_meses": 6, "mes_desembolso": 0, "comision_pct": 0.01}]
+        d = [{"id": "D", "monto": 70.0, "tasa": 0.15, "tipo_tasa": "NOMINAL_ANUAL", "base_tasa": "REAL", "plazo_meses": 36, "gracia_meses": 12, "metodo": "FRANCES",
+              "capitalizacion_meses": 6, "frecuencia_meses": 6, "mes_desembolso": 0, "comision_pct": 0.01}]
         a = simular(caso_prueba(tasa_gan=0.3))["series"]
         b = simular(caso_prueba(tasa_gan=0.3, deudas=d, aportes=[(0, 30.0)]))["series"]
         assert all(_cerca(x, y, 1e-12) for x, y in zip(a["fcff"], b["fcff"]))
 
     @test("N10", "El flujo del accionista sí responde a la deuda (y al escudo fiscal de intereses)")
     def _():
-        d = [{"id": "D", "monto": 70.0, "tasa_anual": 0.15, "plazo_meses": 36, "gracia_meses": 12, "metodo": "FRANCES",
-              "frecuencia_meses": 6, "mes_desembolso": 0}]
+        d = [{"id": "D", "monto": 70.0, "tasa": 0.15, "tipo_tasa": "NOMINAL_ANUAL", "base_tasa": "REAL", "plazo_meses": 36, "gracia_meses": 12, "metodo": "FRANCES",
+              "capitalizacion_meses": 6, "frecuencia_meses": 6, "mes_desembolso": 0}]
         a = simular(caso_prueba(tasa_gan=0.3))["series"]
         b = simular(caso_prueba(tasa_gan=0.3, deudas=d, aportes=[(0, 30.0)]))["series"]
         assert _cerca(b["fcfe"][0] - a["fcfe"][0], 70.0, 1e-9)
@@ -2607,20 +2882,20 @@ def ejecutar_tests(verbose=True):
 
     @test("N11", "Cronograma de deuda: francés cuota constante, alemán amortización constante, bullet")
     def _():
-        f = cronograma_deuda({"id": "F", "monto": 100.0, "tasa_anual": 0.12, "plazo_meses": 12, "metodo": "FRANCES",
-                              "frecuencia_meses": 1, "mes_desembolso": 0}, 24)
+        f = cronograma_deuda({"id": "F", "monto": 100.0, "tasa": 0.12, "tipo_tasa": "NOMINAL_ANUAL", "base_tasa": "REAL", "plazo_meses": 12, "metodo": "FRANCES",
+                              "capitalizacion_meses": 1, "frecuencia_meses": 1, "mes_desembolso": 0}, 24)
         cuotas = {round(f["interes"][k] + f["amort"][k], 9) for k in range(1, 13)}
         assert len(cuotas) == 1 and _cerca(list(cuotas)[0], 8.884879, 1e-6)
-        a = cronograma_deuda({"id": "A", "monto": 120.0, "tasa_anual": 0.1, "plazo_meses": 12, "metodo": "ALEMAN",
-                              "frecuencia_meses": 3, "mes_desembolso": 0}, 24)
+        a = cronograma_deuda({"id": "A", "monto": 120.0, "tasa": 0.1, "tipo_tasa": "NOMINAL_ANUAL", "base_tasa": "REAL", "plazo_meses": 12, "metodo": "ALEMAN",
+                              "capitalizacion_meses": 3, "frecuencia_meses": 3, "mes_desembolso": 0}, 24)
         assert all(_cerca(a["amort"][k], 30.0) for k in (3, 6, 9, 12))
-        b = cronograma_deuda({"id": "B", "monto": 100.0, "tasa_anual": 0.10, "plazo_meses": 12, "metodo": "BULLET",
-                              "frecuencia_meses": 12, "mes_desembolso": 0}, 24)
+        b = cronograma_deuda({"id": "B", "monto": 100.0, "tasa": 0.10, "tipo_tasa": "NOMINAL_ANUAL", "base_tasa": "REAL", "plazo_meses": 12, "metodo": "BULLET",
+                              "capitalizacion_meses": 12, "frecuencia_meses": 12, "mes_desembolso": 0}, 24)
         assert _cerca(b["interes"][12], 10.0) and _cerca(b["amort"][12], 100.0)
 
     @test("N12", "DSCR = CFADS ÷ servicio de deuda; no publicable sin deuda")
     def _():
-        d = [{"id": "D", "monto": 50.0, "tasa_anual": 0.1, "plazo_meses": 24, "metodo": "ALEMAN", "frecuencia_meses": 12,
+        d = [{"id": "D", "monto": 50.0, "tasa": 0.1, "tipo_tasa": "NOMINAL_ANUAL", "base_tasa": "REAL", "plazo_meses": 24, "metodo": "ALEMAN", "capitalizacion_meses": 12, "frecuencia_meses": 12,
               "mes_desembolso": 0}]
         R = simular(caso_prueba(tasa_gan=0.3, deudas=d, aportes=[(0, 50.0)]))
         r = resultados(R)
@@ -2724,6 +2999,189 @@ def ejecutar_tests(verbose=True):
         assert [e["entrada"]["tipo"] for e in P["etapas"]] == ["INICIAL", "FECHA", "FECHA"] and \
             all(e["capex_usd"] is None for e in P["etapas"])
 
+    # ---------------- auditoría final: casos explícitos, tasas, IDs, exportación, umbral, overrides ----------------
+    @test("C01", "CP-PRETAX-ANUAL: FCFF 40/año, VAN 51,63, TIR 28,65 %, payback 2,5 años = 30 meses")
+    def _():
+        R = simular(caso_prueba(convencion="PERIODO_REPORTE"))
+        r = resultados(R)
+        assert r["BASE_FLUJO"] == "PRE_TAX" and r["CONVENCION_DESCUENTO"] == "PERIODO_REPORTE"
+        assert R["series"]["impuesto_operativo"] is None              # sin tasa fiscal: no hay after-tax
+        assert all(_cerca(x, 40.0, 1e-9) for x in agregar(R, "fcff_pre")[1:])
+        assert _cerca(r["VAN"], 51.631470, 1e-6) and _cerca(r["TIR"], 0.2864929, 1e-5)
+        assert _cerca(r["PAYBACK_SIMPLE_ANIOS"], 2.5) and _cerca(r["PAYBACK_SIMPLE_MESES"], 30.0)
+
+    @test("C02", "CP-AFTERTAX-ANUAL: tasa test 30 %, depreciación 20, base 20, impuesto 6, FCFF 34; VAN 28,89, TIR 20,76 %")
+    def _():
+        R = simular(caso_prueba(convencion="PERIODO_REPORTE", tasa_gan=0.30))
+        r = resultados(R)
+        assert r["BASE_FLUJO"] == "AFTER_TAX"
+        assert all(_cerca(x, 20.0, 1e-9) for x in agregar(R, "depreciacion")[1:])
+        assert all(_cerca(x, 20.0, 1e-9) for x in agregar(R, "ebit")[1:])
+        assert all(_cerca(x, 6.0, 1e-9) for x in agregar(R, "impuesto_operativo")[1:])
+        assert all(_cerca(x, 34.0, 1e-9) for x in agregar(R, "fcff")[1:])
+        assert _cerca(r["VAN"], -100 + 34 * sum(1.1 ** -y for y in range(1, 6)), 1e-9) and _cerca(r["VAN"], 28.8868, 1e-4)
+        assert _cerca(r["TIR"], 0.207616, 1e-5) and _cerca(r["PAYBACK_SIMPLE_ANIOS"], 100 / 34, 1e-9)
+        assert all(f["VALOR"] == "" for f in leer_inputs() if f["VARIABLE"] == "impuestos.tasa_ganancias")
+
+    @test("C03", "CP-PRETAX-MENSUAL: misma economía, convención mensual; VAN contra fórmula independiente")
+    def _():
+        r = resultados(simular(caso_prueba()))
+        esperado = -100 + sum((40 / 12) / 1.1 ** (k / 12) for k in range(1, 61))
+        assert r["CONVENCION_DESCUENTO"] == "MENSUAL" and _cerca(r["VAN"], esperado, 1e-9) and abs(r["VAN"] - 51.63) > 1
+        assert _cerca(r["PAYBACK_SIMPLE_MESES"], 30.0) and _cerca(r["PAYBACK_SIMPLE_ANIOS"], 2.5)
+        ids = [c[0] for c in CASOS_PRUEBA]
+        assert len(ids) == len(set(ids)) and all(c[0].startswith("CP-") and ("TAX" in c[0] or "-" in c[0][3:]) for c in CASOS_PRUEBA)
+
+    @test("R01", "Tasa anual efectiva → mensual = (1 + r)^(1/12) − 1 (nunca r/12 salvo nominal declarada)")
+    def _():
+        assert _cerca(tasa_periodica(0.10, 1), 1.1 ** (1 / 12) - 1, 1e-15) and abs(tasa_periodica(0.10, 1) - 0.10 / 12) > 3e-4
+        assert _cerca(tasa_periodica(0.126825030131969, 1), 0.01, 1e-12)
+        assert _cerca(tasa_anual_efectiva(0.12, "NOMINAL_ANUAL_CAP_MENSUAL"), 1.01 ** 12 - 1, 1e-15)
+        assert _lanza(tasa_anual_efectiva, 0.1, "ANUAL")
+        P = caso_prueba(tasa=0.12)
+        P["tipo_tasa_descuento"] = "NOMINAL_ANUAL_CAP_MENSUAL"
+        r = resultados(simular(P))
+        assert _cerca(r["TASA_DESCUENTO_MENSUAL_EQUIVALENTE"], 0.01, 1e-12)
+
+    @test("R02", "VAN mensual: T0 sin descontar; cada mes k descontado k períodos con la tasa mensual equivalente")
+    def _():
+        f = [-100.0] + [10.0] * 12
+        assert _cerca(van_periodico(f, 0.01), -100 + 10 * (1 - 1.01 ** -12) / 0.01, 1e-12)
+        assert van_periodico([5.0], 0.5) == 5.0
+        assert _cerca(van_periodico(f, tasa_periodica(0.10, 1)), van(f, [k / 12 for k in range(13)], 0.10), 1e-12)
+        R = simular(caso_prueba(tasa=0.10))
+        assert _cerca(resultados(R)["VAN"], van_periodico(R["series"]["fcff_pre"], tasa_periodica(0.10, 1)), 1e-12)
+
+    @test("R03", "TIR: periódica mensual primero; anual efectiva = (1 + i)^12 − 1 (no × 12); ambigüedad detectada")
+    def _():
+        cuota = 100 * 0.01 / (1 - 1.01 ** -12)
+        o = indicadores([-100.0] + [cuota] * 12, "MENSUAL", 0.10)
+        assert _cerca(o["TIR_MENSUAL"], 0.01, 1e-8) and _cerca(o["TIR"], 1.01 ** 12 - 1, 1e-7) and abs(o["TIR"] - 0.12) > 6e-3
+        o = indicadores([-100.0, 230.0, -132.0], "MENSUAL", 0.10)
+        assert o["TIR"] is None and o["TIR_ESTADO"].startswith("TIR_AMBIGUA")
+        assert indicadores([10.0, 20.0], "MENSUAL", 0.1)["TIR_ESTADO"].startswith("NO_EXISTE")
+
+    @test("R04", "Payback en meses y años = meses ÷ 12 (sin confundir índice de período con meses)")
+    def _():
+        o = indicadores([-100.0] + [10.0] * 24, "MENSUAL", 0.10)
+        assert _cerca(o["PAYBACK_SIMPLE_MESES"], 10.0) and _cerca(o["PAYBACK_SIMPLE_ANIOS"], 10 / 12)
+        R = simular(caso_prueba(H=4, M=24, convencion="PERIODO_REPORTE"))
+        r = resultados(R)                          # períodos: T0, M01…M24, A03, A04 → el índice NO es el mes
+        assert _cerca(r["PAYBACK_SIMPLE_MESES"], 30.0) and _cerca(r["PAYBACK_SIMPLE_ANIOS"], 2.5)
+
+    @test("R05", "Deuda: tasa EFECTIVA_ANUAL / NOMINAL_ANUAL / PERIODICA coherente con la frecuencia; ambiguas bloqueadas")
+    def _():
+        base = {"id": "D", "monto": 100.0, "plazo_meses": 12, "metodo": "FRANCES", "frecuencia_meses": 1, "mes_desembolso": 0}
+        for extra in ({"tasa": 1.01 ** 12 - 1, "tipo_tasa": "EFECTIVA_ANUAL"},
+                      {"tasa": 0.12, "tipo_tasa": "NOMINAL_ANUAL", "capitalizacion_meses": 1},
+                      {"tasa": 0.01, "tipo_tasa": "PERIODICA", "periodo_tasa_meses": 1}):
+            d = cronograma_deuda(dict(base, **extra), 12)
+            assert _cerca(d["interes"][1], 1.0, 1e-9) and _cerca(d["interes"][1] + d["amort"][1], 8.884879, 1e-6)
+        b = cronograma_deuda(dict(base, metodo="BULLET", frecuencia_meses=12, tasa=0.10, tipo_tasa="EFECTIVA_ANUAL"), 12)
+        assert _cerca(b["interes"][12], 10.0)
+        q = cronograma_deuda(dict(base, metodo="ALEMAN", frecuencia_meses=3, tasa=0.10, tipo_tasa="EFECTIVA_ANUAL"), 12)
+        assert _cerca(q["interes"][3], 100 * (1.1 ** 0.25 - 1), 1e-12)
+        assert _lanza(cronograma_deuda, dict(base, tasa=0.12), 12)
+        assert _lanza(cronograma_deuda, dict(base, tasa=0.12, tipo_tasa="NOMINAL_ANUAL", capitalizacion_meses=12), 12)
+        assert _lanza(cronograma_deuda, dict(base, tasa=0.03, tipo_tasa="PERIODICA", periodo_tasa_meses=3), 12)
+
+    @test("R06", "Real ↔ real y nominal ↔ nominal: incompatibilidades de tasa o de deuda dan error explícito")
+    def _():
+        d = [{"id": "D", "monto": 50.0, "tasa": 0.1, "tipo_tasa": "EFECTIVA_ANUAL", "base_tasa": "NOMINAL",
+              "plazo_meses": 12, "metodo": "ALEMAN", "frecuencia_meses": 12, "mes_desembolso": 0}]
+        assert _lanza(simular, caso_prueba(deudas=d))
+        d[0]["base_tasa"] = "REAL"
+        assert not _lanza(simular, caso_prueba(deudas=d))
+        assert _lanza(simular, caso_prueba(modelo="NOMINAL", inflacion=0.03, deudas=d))
+        P = caso_prueba(modelo="NOMINAL", inflacion=0.03)
+        P["base_tasa"] = "REAL"
+        assert _lanza(simular, P)
+
+    @test("U01", "UMBRAL_EVIDENCIA_PUBLICACION configurable sin tocar código; default E1–E3; E4 no pasa el default")
+    def _():
+        filas = leer_inputs()
+        assert umbral_evidencia(filas) == ("E1", "E2", "E3")
+        mod = [dict(f, VALOR="E1|E2|E3|E4") if f["VARIABLE"] == "umbral_evidencia_publicacion" else f for f in filas]
+        u = umbral_evidencia(mod)
+        assert "E4" in u and resolver("x", "EVIDENCIA", (10.0, "E4", "F"), umbral=u)[1] == "EVIDENCIA_REAL"
+        assert resolver("x", "EVIDENCIA", (10.0, "E4", "F"))[1] == "PENDIENTE"
+        assert _lanza(umbral_evidencia, [dict(f, VALOR="E9") if f["VARIABLE"] == "umbral_evidencia_publicacion" else f
+                                         for f in filas])
+        P, Tz, R, r = correr_escenario("t", "C1", (10000,), "EVIDENCIA")
+        assert r["UMBRAL_EVIDENCIA"] == "E1|E2|E3"
+
+    @test("O01", "OVERRIDE_SIMULACION: evalúa otro valor sobre una evidencia sin sobrescribir el dato observado")
+    def _():
+        global ARCHIVO_PRECIOS
+        import tempfile
+        orig = ARCHIVO_PRECIOS
+        filas = leer_csv(orig)
+        cab = list(filas[0].keys())
+        nueva = dict(filas[0], PRECIO="2.0", MONEDA="USD", NIVEL_EVIDENCIA="E2", ESTADO="CON_PRECIO", FUENTE="TEST")
+        k = f"{nueva['PRODUCTO']}|{nueva['CANAL']}|{nueva['MERCADO']}"
+        with tempfile.NamedTemporaryFile("w", suffix=".csv", delete=False, encoding="utf-8", newline="") as fh:
+            w = csv.DictWriter(fh, fieldnames=cab)
+            w.writeheader()
+            w.writerows([nueva] + filas[1:])
+            tmp = fh.name
+        try:
+            ARCHIVO_PRECIOS = tmp
+            antes = open(tmp, encoding="utf-8").read()
+            P, Tz = construir_entrada("t", "C1", (10000,), "ESCENARIO", None,
+                                      {"precios": {k: {"tipo": "CONSTANTE", "usd_kg": 9.0}}})
+            assert P["precios"][k]["usd_kg"] == 2.0                     # el escenario no pisa la evidencia
+            P, Tz = construir_entrada("t", "C1", (10000,), "ESCENARIO", None,
+                                      {"override_precios": {k: {"tipo": "CONSTANTE", "usd_kg": 3.0}},
+                                       "valores": {"horizonte_anios": 10}, "override_simulacion": {"horizonte_anios": 15}})
+            assert P["precios"][k]["usd_kg"] == 3.0 and P["precios"][k]["observado"]["usd_kg"] == 2.0
+            assert P["horizonte_anios"] == 15 and resultados(simular(P))["ETIQUETA"] == ETIQUETA_SIM
+            txt = json.dumps(Tz.filas, ensure_ascii=False)
+            assert "PRECIO_OBSERVADO=2.0" in txt and "VALOR_OBSERVADO=10" in txt
+            assert open(tmp, encoding="utf-8").read() == antes and leer_precios()[0][k]["usd_kg"] == 2.0
+            assert _lanza(construir_entrada, "t", "C1", (10000,), "EVIDENCIA", None, {"override_precios": {k: {}}})
+        finally:
+            ARCHIVO_PRECIOS = orig
+            os.unlink(tmp)
+
+    @test("X01", "Derechos de exportación: una sola ubicación (deducción de la venta), nunca dos veces")
+    def _():
+        P = caso_prueba()
+        P["impuestos"]["pct_derechos_exportacion"] = 0.1
+        assert _lanza(simular, P)
+        P = caso_prueba()
+        P["canales"]["supermercados"]["pct_derechos_exportacion"] = 0.1
+        assert _lanza(simular, P)
+        P = caso_prueba()
+        P["demanda"][0].update(canal="exportacion", mercado="EXPORTACION")
+        P["precios"] = {"pollo_entero|exportacion|EXPORTACION": {"tipo": "CONSTANTE", "usd_kg": 100 / 12}}
+        P["canales"] = {"exportacion": dict(P["canales"]["supermercados"], pct_derechos_exportacion=0.10,
+                                            costo_exportacion_usd_kg=0.0)}
+        S = simular(P)["series"]
+        assert _cerca(sum(S["derechos_exportacion"]), 0.10 * sum(S["venta_bruta"]), 1e-12)
+        assert _cerca(sum(S["ingreso_neto"]), 0.90 * sum(S["venta_bruta"]), 1e-12)
+        assert _cerca(sum(S["ebitda"]), sum(S["ingreso_neto"]) - sum(S["opex_total"]), 1e-12)
+
+    @test("ID01", "61 corridas con ID_CORRIDA único, reconstruible y sin duplicados de contenido")
+    def _():
+        corr = corridas_referencia()
+        assert len(corr) == 61 and sum(c["MODO"] == "EVIDENCIA" for c in corr) == 42
+        ids = [c["ID_CORRIDA"] for c in corr]
+        assert len(set(ids)) == 61 and len({c["NOMBRE"] for c in corr}) == 61
+        for c in corr:
+            modo, cfg, var, esc, tray, pl = c["ID_CORRIDA"].split("|")
+            assert (modo, cfg) == (c["MODO"], c["CONFIGURACION"]) and esc == "-".join(map(str, c["ESCALAS"]))
+            assert var == (c["VARIANTE"] or "BASE") and pl == (c["PLANTILLA"] or "EVIDENCIA")
+        assert len({firma_corrida(c) for c in corr}) == 61
+
+    @test("EX01", "Expansión: misma configuración por escala (cualquier base); transición de arquitectura bloqueada")
+    def _():
+        assert _lanza(construir_entrada, "t", "C1", (5000, 10000), "EVIDENCIA", None, None, None, ["C1", "C2"])
+        r = capex_trayectoria("C3", (5000, 10000))
+        assert [x["TIPO"] for x in r] == ["INICIAL", "EXPANSION"]
+        assert {c["CONFIGURACION"] for c in corridas_referencia() if len(c["ESCALAS"]) > 1} == {"C1"}
+        P, Tz = construir_entrada("t", "C1", (5000, 10000), "EVIDENCIA")
+        assert [e["configuracion"] for e in P["etapas"]] == ["C1", "C1"]
+
     fallas = []
     for tid, desc, fn in T:
         try:
@@ -2750,6 +3208,9 @@ MUTACIONES = {
     "M15": "la expansión suma capacidad desde el gatillo (sin obra)", "M16": "el inventario crea producto",
     "M17": "el IVA del CAPEX se trata como costo", "M18": "la amortización de deuda no se registra",
     "M19": "los dividendos no salen de la caja", "M20": "se publica EBITDA con OPEX incompleto",
+    "M21": "los derechos de exportación se restan dos veces", "M22": "tasa mensual = anual ÷ 12",
+    "M23": "TIR anual = TIR mensual × 12", "M24": "la deuda ignora el tipo de tasa (siempre TNA × f ÷ 12)",
+    "M25": "payback en años = meses (sin ÷ 12)",
 }
 
 

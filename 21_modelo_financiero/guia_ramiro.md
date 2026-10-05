@@ -4,7 +4,7 @@
 
 ## 0. Lo primero: qué dice hoy el modelo
 
-**Todavía no puede decir si el proyecto gana o pierde plata.** No es un problema del modelo: faltan precios de venta, volúmenes de clientes, costos cotizados, cronograma de obra, impuestos y tasa de descuento. El modelo lo dice explícitamente con `NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE` y lista qué falta ([`evidencia_financiera.md`](evidencia_financiera.md)). Lo que sí está listo es la **máquina**: probada con 56 controles y 20 errores sembrados a propósito, todos detectados.
+**Todavía no puede decir si el proyecto gana o pierde plata.** No es un problema del modelo: faltan precios de venta, volúmenes de clientes, costos cotizados, cronograma de obra, impuestos y tasa de descuento. El modelo lo dice explícitamente con `NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE` y lista qué falta ([`evidencia_financiera.md`](evidencia_financiera.md)). Lo que sí está listo es la **máquina**: probada con 70 controles y 25 errores sembrados a propósito, todos detectados.
 
 Tiene **dos modos**:
 - **Evidencia:** solo usa datos respaldados (cotizaciones, contratos, documentos leídos). Hoy no publica nada.
@@ -36,7 +36,7 @@ Cada vez que la planta vende más, antes de cobrar tenés que comprar más alime
 
 ## 7. Por qué vender a 30 días puede generar falta de efectivo
 
-*Ejemplo inventado:* si vendés 1.000 por día y el supermercado paga a 30 días, durante el primer mes despachaste 30.000 y no cobraste nada, pero ya pagaste el pollo, el alimento y los sueldos. Esos 30.000 son capital de trabajo que alguien tiene que poner. En el caso de prueba del modelo, cobrar a 30 días baja el VAN del ejemplo artificial de 51,6 a 44,2. **El modelo no supone que el supermercado pague contado.**
+*Ejemplo inventado:* si vendés 1.000 por día y el supermercado paga a 30 días, durante el primer mes despachaste 30.000 y no cobraste nada, pero ya pagaste el pollo, el alimento y los sueldos. Esos 30.000 son capital de trabajo que alguien tiene que poner. En los casos de prueba del modelo (artificiales, antes de impuestos), cobrar a 30 días baja el VAN de 51,6 (`CP-PRETAX-ANUAL`) a 44,2 (`CP-COBRO-30D`). **El modelo no supone que el supermercado pague contado.**
 
 ## 8. VAN (valor actual neto)
 

@@ -35,7 +35,7 @@ FLUJO EFECTIVO DEL ACCIONISTA = − aportes + dividendos (+ caja remanente al ci
 | `FONDOS_INICIALES` | CAPEX inicial + `CT_INICIAL` + `OTROS_REQUERIMIENTOS_CAJA` | Concepto de la interfaz CAPEX §1. `CT_INICIAL` = máximo CT hasta el fin del ramp-up; `OTROS` = máximo saldo de IVA a favor antes de operar + intereses y comisiones antes de operar + reservas declaradas (SUP-19-19) |
 | `PICO_REQUERIMIENTO_FONDOS` | − mínimo del FCFF acumulado (y `MES_VALLE_CAJA`) | Lo que realmente hay que fondear: incluye las **pérdidas del ramp-up** y el ΔCT. Responde "¿cuánto financiamiento necesita durante el ramp-up?" |
 
-En el caso de prueba CP-03 (EBITDA negativo) los fondos iniciales son 100 pero el pico es 200: un proyecto que pierde dinero consume más que su CAPEX.
+En el caso de prueba CP-SIN-RECUPERO (pre-tax, EBITDA negativo) los fondos iniciales son 100 pero el pico es 200: un proyecto que pierde dinero consume más que su CAPEX.
 
 ## 4. IVA (módulo separado; no es costo económico)
 

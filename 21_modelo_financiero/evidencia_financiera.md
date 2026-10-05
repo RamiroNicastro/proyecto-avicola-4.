@@ -37,6 +37,8 @@ Reflejan **qué concepto tiene precio**, no el costo de cada opción (T18-14): n
 
 ## 4. Qué puede usarse hoy para decidir
 
+**Umbral usado:** `UMBRAL_EVIDENCIA_PUBLICACION = E1|E2|E3` (default conservador configurable en `inputs_financieros.csv`; DEC-19-01 abierta; columna `UMBRAL_EVIDENCIA` de cada corrida). Con cualquier umbral razonable el resultado no cambia hoy: no existen precios ni totales de CAPEX/OPEX, y los únicos montos son E4 parciales.
+
 | Sí (como herramienta) | No (todavía) |
 |---|---|
 | La **estructura** del modelo: qué datos faltan, en qué orden y por qué bloquean cada resultado | Cualquier cifra de rentabilidad del proyecto |

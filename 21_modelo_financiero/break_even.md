@@ -35,7 +35,7 @@ Se publican dos versiones: base **EBITDA** (equilibrio operativo) y base **EBIT*
 ## 3. Validación
 
 - Test N07: caso simple p = 10, cv = 6, CF = 400, capacidad 200 → q* = 100, u* = 50 %; con p ≤ cv → `NO_EXISTE`.
-- En el motor, caso artificial con ventas 100/año, variable 24, fijos 60: u* = 60 ÷ 76 = 78,9 % y precio* = 84 ÷ 12 por kg.
+- En el motor (test N07: caso de prueba pre-tax con ingresos 100/año, OPEX variable 24/año y fijo 60/año): u* = 60 ÷ 76 = 78,9 % y precio* = 84 ÷ 12 por kg.
 
 ## 4. Límites
 

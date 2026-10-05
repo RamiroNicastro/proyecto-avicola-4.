@@ -4,6 +4,16 @@
 
 > **No se supone que crecer por fases sea mejor** ni se elige trayectoria o gatillo (DEC-033, DEC-035, DEC-19-05 abiertas).
 
+## 0. Alcance real (auditoría 2026-10-05)
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿Por qué las corridas de referencia de trayectorias son solo de C1? | **A) Limitación deliberada de las corridas actuales: `LIMITACION_ACTUAL_EXPANSION_C1`.** Se eligió C1 como única configuración de referencia para mostrar la estructura sin multiplicar corridas incompletas (todo el CAPEX por etapa está PENDIENTE) |
+| ¿El motor puede aplicar una trayectoria de escala a otra configuración? | **B) Sí, pero solo a la MISMA configuración base que crece en escala** (C0, C1, C2, C3 o CF): `capex_trayectoria(cfg, escalas)` usa `expansion()` de 19_capex con `preset(cfg)` (test EX01 lo verifica con C3). Las **variantes** se evalúan a escala única (SUP-19-22) |
+| ¿Puede pasar de una arquitectura a otra (C0→C1→C2→C3)? | **No.** No existe CAPEX ni OPEX de transición entre arquitecturas en 19/20, y no se inventa. La interfaz `configuracion_por_fase` está preparada (una configuración por etapa; queda registrada en cada etapa), pero cualquier valor distinto de la configuración inicial se rechaza con `TRANSICION_DE_ARQUITECTURA_NO_MODELADA` (test EX01) |
+
+Por eso este módulo **no** debe presentarse como expansión genérica de cualquier arquitectura: es expansión de escala dentro de una misma configuración base. Cada corrida multietapa lleva `ALCANCE_EXPANSION` en [`escenarios_financieros.csv`](escenarios_financieros.csv).
+
 ## 1. Trayectorias evaluables
 
 | ID | Escalas (aves/día operativo) | Etapas |

@@ -54,30 +54,39 @@ El **motor** no lee archivos: recibe una entrada `P` (dict con valores ya resuel
 |---|---|---|---|
 | `mapa_arquitecturas()` | mapa de arquitecturas | 24 configuraciones (5 bases + 19 variantes); las M0–MF de 14B se excluyen (no son configuraciones económicas) | No redefine nada (test E09) |
 | `configs()` | `escenarios_referencia()` de CAPEX y `escenarios_opex()` de OPEX | (config CAPEX, config OPEX) con la **misma arquitectura**; una variante de un solo módulo corre el otro con los mismos inputs (T18-16) | E09 |
-| `capex_desde_modulo()` | `mcx.correr()` → `TOTAL_PRELIMINAR_USD`, `CAPEX_E4/E5_USD` | CAPEX total solo si existe y es E1–E3 | Monto E4 parcial → solo traza (E06, E12) |
+| `capex_desde_modulo()` | `mcx.correr()` → `TOTAL_PRELIMINAR_USD`, conceptos por nivel | CAPEX total solo si existe y todos sus niveles están dentro del umbral | Monto E4 parcial → solo traza (E06, E12) |
 | `activos_desde_boq()` | BOQ: `VIDA_UTIL_ANIOS`, `VALOR_RESIDUAL`, `COSTO_REEMPLAZO` | Activos para depreciación y reposición | Hoy vacíos (DPV-167) |
 | `opex_desde_modulo()` | `mo.correr()` → registro por concepto (`NATURALEZA`, `PCT_VARIABLE`, `GRUPO_PROVEEDOR`) | Rubros por concepto | Solo si OPEX publica total y la arquitectura es costeable |
 | `propiedad_inventarios()` | `capital_trabajo()` de OPEX (`ENTRA_EN_CT`) | Propiedad por categoría de inventario | Stock de terceros no entra |
 | `capex_trayectoria()` | `mcx.expansion()` con su lógica de acciones por etiqueta | CAPEX por etapa de una trayectoria | Reemplaza `TRAYECTORIAS` del módulo solo durante la llamada y lo restaura (test N20) |
 | `productos_balance()` | `mb.balance()` + `me.ITEMS` | kg comerciales por ave y producto | Reproduce `me.kg_por_ave()` (test F09); rutas exclusivas |
-| `leer_precios()` | `base_precios_venta.csv` | Precios E1–E3; referencias E4 aparte | Precio vacío ≠ 0 (test E10) |
+| `leer_precios()` | `base_precios_venta.csv` | Precios dentro del umbral; referencias E4 aparte | Precio vacío ≠ 0 (test E10) |
 | `construir_entrada()` | todo lo anterior + inputs + JSON | Entrada `P` + `Traza` | Jerarquía de `resolver()` |
 
 ## 4. Corridas de referencia (`corridas_referencia()`)
 
-| Modo | Corridas | Contenido |
-|---|---|---|
-| EVIDENCIA | 42 | C0, C1, C2, C3, CF × 2.500 / 5.000 / 10.000 / 20.000 (20); las 19 variantes del mapa a 10.000; C1 en tres trayectorias de expansión |
-| ESCENARIO | 19 | Plantillas CONSERVADOR / BASE / EXPANSIVO × 5 configuraciones a 10.000 (15); plantilla BASE × 4 trayectorias de C1 |
+**61 corridas = 42 (EVIDENCIA) + 19 (ESCENARIO):**
+
+| Modo | Bloque | Cantidad | Cálculo |
+|---|---|---|---|
+| EVIDENCIA | Configuraciones base del mapa × escalas de referencia | 20 | {C0, C1, C2, C3, CF} × {2.500, 5.000, 10.000, 20.000} |
+| EVIDENCIA | Variantes del mapa a su escala de referencia | 19 | Filas `VARIANTE` de `mapa_arquitecturas_economicas.csv` (todas a 10.000) |
+| EVIDENCIA | Trayectorias multietapa de C1 | 3 | T1 2.500→5.000→10.000→20.000; T2 5.000→10.000→20.000; T3 10.000→20.000. T4 (20.000 inicial) **no** se repite: es idéntica a `C1-20000` |
+| ESCENARIO | Plantillas × configuraciones base a 10.000 | 15 | {CONSERVADOR, BASE, EXPANSIVO} × {C0, C1, C2, C3, CF} |
+| ESCENARIO | Plantilla BASE × trayectorias de C1 | 4 | T1, T2, T3, T4 (aquí T4 no duplica nada: ninguna plantilla corre C1 a 20.000) |
+
+Las 5 filas M0–MF del mapa son referencias de madurez de 14B, no configuraciones económicas: no se corren.
+
+**Identificador único (`ID_CORRIDA`, `id_corrida()`):** `MODO|CONFIGURACION|VARIANTE|ESCALAS|TRAYECTORIA|ESCENARIO`, p. ej. `EVIDENCIA|C1|BASE|10000|ESCALA_UNICA|EVIDENCIA`, `EVIDENCIA|C1|C1-10000-congelado_tercero|10000|ESCALA_UNICA|EVIDENCIA`, `ESCENARIO|C1|BASE|5000-10000-20000|T2_5000_10000_20000|PLANTILLA_BASE`. Cada campo se reconstruye desde el ID. `construir_salidas()` se detiene si hay IDs repetidos, y el test ID01 verifica además que no haya **dos corridas con el mismo contenido** bajo nombres distintos (`firma_corrida()`: modo, plantilla y configuración OPEX completa de cada etapa). El nombre legible (`ESCENARIO`, p. ej. `EVI-C1-10000`) se conserva como columna aparte.
 
 Las plantillas **no** tienen precios, mix, cronograma, impuestos ni financiamiento (no se rellenan arbitrariamente): sirven para mostrar qué falta. Un escenario completo lo arma el usuario con el JSON ([`guia_ramiro.md`](guia_ramiro.md) §17).
 
 ## 5. Comandos
 
 ```
-python3 21_modelo_financiero/modelo_financiero.py                 # 56 tests + 10 CSV de salida
+python3 21_modelo_financiero/modelo_financiero.py                 # 70 tests + 10 CSV de salida
 python3 21_modelo_financiero/modelo_financiero.py --solo-tests
-python3 21_modelo_financiero/modelo_financiero.py --mutaciones    # 20 errores sembrados, todos detectados
+python3 21_modelo_financiero/modelo_financiero.py --mutaciones    # 25 errores sembrados, todos detectados
 python3 21_modelo_financiero/modelo_financiero.py --escenario mi.json --salida carpeta/
 ```
 
@@ -96,6 +105,6 @@ El script se detiene con código 1 si falla cualquier test. No escribe en `19_ca
 | [`break_even.csv`](break_even.csv) | corrida × base (EBITDA / EBIT) | margen de contribución, fijos, q*, u*, precio* |
 | [`completitud_financiera.csv`](completitud_financiera.csv) | corrida × bloque | estado COMPLETO / PARCIAL / PENDIENTE / NO_APLICA, qué falta, registros |
 | [`mapa_drivers_financieros.csv`](mapa_drivers_financieros.csv) | corrida × variable | traza completa |
-| [`casos_prueba_motor.csv`](casos_prueba_motor.csv) | caso artificial | resultados de los casos de prueba (no son escenarios del proyecto) |
+| [`casos_prueba_motor.csv`](casos_prueba_motor.csv) | caso de prueba con nombre propio (CP-PRETAX-ANUAL, CP-AFTERTAX-ANUAL, …) | resultados de los casos de prueba (no son escenarios del proyecto) |
 
 Sin línea de tiempo (hoy, todas las corridas del proyecto), los archivos periódicos tienen **una fila por corrida** con `FASE = SIN_LINEA_DE_TIEMPO` y el motivo.

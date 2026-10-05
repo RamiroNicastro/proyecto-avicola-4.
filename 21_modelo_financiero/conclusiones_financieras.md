@@ -1,6 +1,6 @@
 # Conclusiones de la sesión 19 — modelo financiero integral
 
-**Fecha:** 2026-10-04 · **Estado:** MODELO FINANCIERO ESTRUCTURAL COMPLETADO v1.0 (56 tests, 20/20 mutaciones). **RENTABILIDAD DEL PROYECTO = NO CALCULABLE** con la evidencia actual. No se recomienda arquitectura, escala, financiamiento ni gatillo.
+**Fecha:** 2026-10-04 · **Estado:** MODELO FINANCIERO ESTRUCTURAL COMPLETADO v1.0 (70 tests, 25/25 mutaciones). **RENTABILIDAD DEL PROYECTO = NO CALCULABLE** con la evidencia actual. No se recomienda arquitectura, escala, financiamiento ni gatillo.
 
 ## 1. Qué se construyó
 
@@ -23,7 +23,7 @@ Un motor mensual que conecta demanda → utilización → producción → ventas
 ## 4. Hallazgos del diseño (críticos)
 
 1. **No hay un solo bloque completo en ninguna configuración**: ingresos y costos están a la vez sin datos. El cuello de botella es comercial (precios y demanda), no de modelado.
-2. **El capital necesario no es el CAPEX**: con ramp-up y cobro a plazo, el pico de fondos supera al CAPEX inicial (casos CP-03 y CP-04). USD 2 M no puede compararse con nada todavía.
+2. **El capital necesario no es el CAPEX**: con ramp-up y cobro a plazo, el pico de fondos supera al CAPEX inicial (casos de prueba CP-SIN-RECUPERO y CP-COBRO-30D). USD 2 M no puede compararse con nada todavía.
 3. **El modo evidencia exige hoy rendimientos validados en planta** (DPV-060): aunque hubiera precios, los ingresos seguirían sin publicarse en ese modo hasta el ensayo o hasta que se decida aceptar el balance 04 como metodología (DEC-19-01).
 4. **C0 no puede tener ingresos de subproductos** hasta conocer el contrato de façon; **C0 tampoco tiene propiedad definida** del alimento y materias primas (DEC-024), por lo que su CT es incompleto por diseño.
 5. **Crecer por fases** cambia el CAPEX por etapa (72–75 conceptos sin costo por etapa en C1) y requiere la prima de ampliación y el valor residual de lo reemplazado: sin eso, cualquier comparación entre trayectorias sería artificial.

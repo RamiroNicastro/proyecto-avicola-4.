@@ -14,7 +14,7 @@ Todos son **criterios de modelo** (cómo se calcula), no datos económicos.
 | ID provisional | Supuesto | Dónde se usa | Relación |
 |---|---|---|---|
 | SUP-19-01 | **Jerarquía de inputs:** EVIDENCIA_REAL > ESCENARIO_USUARIO > SUPUESTO_MODELO > PENDIENTE; el escenario completa faltantes, nunca reemplaza una evidencia ni escribe sobre la base | `resolver()`, `construir_entrada()` | SUP-164 |
-| SUP-19-02 | **Umbral provisional del modo evidencia:** 100 % de bloques materiales con evidencia **E1–E3**; E4 `[PVDP]` y E5 excluidos | `NIVELES_EVIDENCIA_ACEPTADOS`, `publicabilidad()` | DEC-084, DEC-19-01 |
+| SUP-19-02 | **`UMBRAL_EVIDENCIA_PUBLICACION` configurable** (fila `umbral_evidencia_publicacion` de `inputs_financieros.csv`, se cambia sin tocar código). Default conservador **E1–E3** con 100 % de bloques materiales; E4 `[PVDP]` y E5 no pasan el default. Cada corrida registra el umbral usado. **No es la decisión de DEC-19-01** | `umbral_evidencia()`, `resolver()`, `publicabilidad()` | DEC-084, DEC-19-01 |
 | SUP-19-03 | **Supuestos metodológicos admitidos en modo evidencia:** modelo real, base de la tasa, meses de detalle, método de valor terminal por defecto, recupero de CT, moneda funcional, convención de descuento | `SUPUESTOS_METODOLOGICOS` | — |
 | SUP-19-04 | **Tiempo:** motor mensual (k = 0 es T0); descuento a fin de período con tasa anual efectiva y t = k/12 | `simular()`, `van()` | DEC-007 |
 | SUP-19-05 | **Categorías de demanda:** DOCUMENTADA y ASEGURADA = A; NEGOCIADA = B (× α, DEC-014); INTERESADA entre B y C; POTENCIAL = C/D; ESCENARIO = hipótesis del usuario. El modo evidencia solo vende A | `_lineas_contables()` | 02 §1, SUP-004, DEC-014 |
@@ -26,7 +26,7 @@ Todos son **criterios de modelo** (cómo se calcula), no datos económicos.
 | SUP-19-11 | **Capital de trabajo por días** sobre `DIAS_MES = 365 ÷ 12`: inventario = días × costo de la base; CxC = ingreso neto (sin IVA) × días de cobro; CxP = compras × días de pago; sueldos fuera de CxP; caja operativa sin política = 0 `NO_ASIGNADA` (convención de 20) | `simular()` | interfaz OPEX §6, DEC-091 |
 | SUP-19-12 | **Valor terminal por defecto = SIN_VALOR_TERMINAL**; sin recupero de CT; la deuda remanente al cierre se cancela en el FCFE | `valor_terminal`, `simular()` | DEC-19-03 |
 | SUP-19-13 | **Ganancias** anual al cierre de cada año del proyecto, sin anticipos; quebrantos con vencimiento; intereses y comisiones deducibles en la vista con deuda; el valor terminal no se grava; base = depreciación contable (aproximación hasta DPV-169) | `simular()` | DPV-169 |
-| SUP-19-14 | **Deuda:** interés = saldo × TNA × frecuencia ÷ 12; gracia solo intereses; un desembolso por tramo; moneda USD | `cronograma_deuda()` | DEC-092 |
+| SUP-19-14 | **Deuda:** interés = saldo × tasa del período de servicio según `tipo_tasa` declarado (ver SUP-19-26); gracia solo intereses; un desembolso por tramo; moneda USD; `base_tasa` = modelo monetario | `cronograma_deuda()`, `tasa_deuda_periodo()` | DEC-092 |
 | SUP-19-15 | **IVA simplificado:** débito sobre venta interna neta de descuentos, bonificaciones y devoluciones; crédito sobre compras marcadas y CAPEX; arrastre del saldo a favor; efecto de caja = −Δ saldo; exportación sin débito; sin recupero anticipado, percepciones ni retenciones | `simular()` | DPV-169, DPV-043 |
 | SUP-19-16 | **Inventario de producto:** FIFO; por defecto sin arrastre (`inventario_max_meses = 0`): el excedente no vendido se informa y no se monetiza | `simular()` | DEC-058 |
 | SUP-19-17 | **Asignación de ventas:** por prioridad de la línea; prorrata dentro de la misma prioridad; `toma_todo` solo recibe lo que sobra | `simular()` | — |
@@ -37,6 +37,11 @@ Todos son **criterios de modelo** (cómo se calcula), no datos económicos.
 | SUP-19-22 | **Trayectorias** solo para configuraciones base (`expansion()` de CAPEX parte de `preset()`); las variantes se evalúan a escala única | `capex_trayectoria()` | T18-16 |
 | SUP-19-23 | **Stress:** devaluación = valor USD × (1 + traslado × d) ÷ (1 + d) solo en ítems ARS con traslado declarado; mortalidad = factor (1 − m_base) ÷ (1 − m_nueva) sobre el rubro de pollitos | `simular()` | DEC-006 |
 | SUP-19-24 | **Costos comerciales:** logística del canal (adicional al OPEX de 20) y costos de exportación = OPEX comercial antes del EBITDA; comisiones y derechos de exportación = deducciones de la venta | `simular()` | DPV-039, DPV-015 |
+| SUP-19-25 | **Tasas y descuento:** `TASA_DESCUENTO` anual efectiva (o nominal anual cap. mensual declarada y convertida); tasa mensual = (1 + r)^(1/12) − 1, nunca r/12; convención por defecto **MENSUAL** (cada flujo mensual descontado en su mes; T0 sin descontar); alternativa `PERIODO_REPORTE` declarada; TIR mensual → anual (1 + i)^12 − 1; payback en meses y años = meses ÷ 12 | `tasa_periodica()`, `tasa_anual_efectiva()`, `van_periodico()`, `anualizar()`, `indicadores()` | DEC-007, DEC-19-08 |
+| SUP-19-26 | **Tasa de deuda con tipo obligatorio:** EFECTIVA_ANUAL → (1 + TEA)^(f/12) − 1; NOMINAL_ANUAL → TNA × f ÷ 12 solo si capitalización = frecuencia; PERIODICA → solo si su período = frecuencia; cualquier otra combinación → error | `tasa_deuda_periodo()` | DEC-092 |
+| SUP-19-27 | **Capa `OVERRIDE_SIMULACION`** (solo escenario): permite evaluar un valor distinto del observado (precio u otra variable) registrando `VALOR/PRECIO_OBSERVADO` y `VALOR/PRECIO_EVALUADO_ESCENARIO`; la base de evidencia no se modifica; la corrida queda rotulada `SIMULACION_HIPOTETICA_NO_VALIDADA` | `construir_entrada()` | SUP-19-01 |
+| SUP-19-28 | **Derechos de exportación: ubicación única** = deducción de la venta de exportación (`canales.exportacion.pct_derechos_exportacion`); el módulo de impuestos rechaza esa clave y no se restan otra vez antes del EBITDA | `validar_entrada()`, `simular()` | DPV-015, SUP-19-24 |
+| SUP-19-29 | **Corridas con `ID_CORRIDA` único** `MODO\|CONFIGURACION\|VARIANTE\|ESCALAS\|TRAYECTORIA\|ESCENARIO`; sin duplicados de contenido; trayectorias de referencia solo para C1 (`LIMITACION_ACTUAL_EXPANSION_C1`); `configuracion_por_fase` preparada pero sin transiciones de arquitectura | `id_corrida()`, `firma_corrida()`, `construir_entrada()` | DEC-033 |
 
 ## 2. Datos por validar propuestos (`datos_por_validar.md`)
 
@@ -65,7 +70,7 @@ Todos son **criterios de modelo** (cómo se calcula), no datos económicos.
 | DEC-19-05 | NEGOCIO | **Gatillos de expansión:** por fecha o por condición (utilización, demanda asegurada, caja, DSCR, año) y sus umbrales | DEC-033, DEC-035, gates G0–G3 de 23 |
 | DEC-19-06 | NEGOCIO | **Política de dividendos y caja mínima** | DEC-092 |
 | DEC-19-07 | NEGOCIO | **Política de excedentes de producto** (vender fresco, congelar, canal de liquidación) | DEC-058 |
-| DEC-19-08 | METODOLÓGICA | **Base de flujo para publicar indicadores** (¿solo after-tax?) y si el break-even oficial es EBITDA o EBIT | DEC-084 |
+| DEC-19-08 | METODOLÓGICA | **Base de flujo para publicar indicadores** (¿solo after-tax?), si el break-even oficial es EBITDA o EBIT, y si la convención oficial de descuento es MENSUAL (default) o PERIODO_REPORTE | DEC-084 |
 
 ## 4. Fuentes (`registro_fuentes.csv`)
 
@@ -77,7 +82,7 @@ Propuesta de fila para el tablero:
 
 | Módulo | Modelo preliminar | Evidencia de campo | Síntesis |
 |---|---|---|---|
-| Modelo financiero (`21`) | **MODELO FINANCIERO ESTRUCTURAL COMPLETADO** v1.0 (motor mensual; modos EVIDENCIA y ESCENARIO; 24 configuraciones del mapa + trayectorias; 56 tests, 20/20 mutaciones). **RENTABILIDAD = NO CALCULABLE**: 0 de 61 corridas publicables; ningún bloque completo | Pendiente — precios, demanda A/B, OPEX y CAPEX costeables, fiscal, tasa, financiamiento | [`conclusiones_financieras.md`](conclusiones_financieras.md) |
+| Modelo financiero (`21`) | **MODELO FINANCIERO ESTRUCTURAL COMPLETADO** v1.0 (motor mensual; modos EVIDENCIA y ESCENARIO; 24 configuraciones del mapa + trayectorias de escala de C1; 70 tests, 25/25 mutaciones). **RENTABILIDAD = NO CALCULABLE**: 0 de 61 corridas publicables; ningún bloque completo | Pendiente — precios, demanda A/B, OPEX y CAPEX costeables, fiscal, tasa, financiamiento | [`conclusiones_financieras.md`](conclusiones_financieras.md) |
 
 Matriz central: [`matriz_completitud_economica.csv`](../00_gestion_proyecto/matriz_completitud_economica.csv) puede referenciar [`completitud_financiera.csv`](completitud_financiera.csv) para los bloques financieros (sin cambiar estados: siguen PENDIENTE / PARCIAL).
 
@@ -93,3 +98,18 @@ Términos a agregar: **FCFF** (flujo libre del proyecto), **FCFE** (flujo libre 
 | T19-02 | **Capital requerido vs CAPEX:** el pico de fondos (pérdidas del ramp-up + ΔCT + IVA) puede superar ampliamente el CAPEX inicial; USD 2 M no es comparable con nada todavía | Datos del §5 de `evidencia_financiera.md` |
 | T19-03 | **Plantillas vacías:** las plantillas CONSERVADOR / BASE / EXPANSIVO no producen resultados sin inputs del promotor (decisión deliberada de no rellenar) | Escenarios del promotor |
 | T19-04 | **Trayectorias sin prima de ampliación ni valor residual:** comparar 2.500 → 20.000 con 20.000 directo hoy sería artificial | DPV-086, DPV-167 |
+
+## 8. Auditoría financiera final (2026-10-05)
+
+| Punto | Resultado |
+|---|---|
+| Discrepancia 28,89 vs 51,63 | Eran dos casos distintos informados como uno: after-tax (tasa fiscal de test 30 %, FCFF 34) y pre-tax (sin ganancias, FCFF 40), ambos con convención de fin de año no declarada. Ahora: `CP-PRETAX-ANUAL`, `CP-AFTERTAX-ANUAL`, `CP-PRETAX-MENSUAL`, `CP-SIN-RECUPERO`, `CP-COBRO-30D` (tests C01–C03) |
+| Tasas, VAN, TIR, payback | SUP-19-25 (tests R01–R04) |
+| Deuda | SUP-19-26 (test R05) |
+| Real vs nominal | Error explícito ante cualquier mezcla, incluida la deuda (tests N08, R06) |
+| Umbral de evidencia | Configurable (SUP-19-02, test U01) |
+| Escenario vs evidencia | `OVERRIDE_SIMULACION` (SUP-19-27, test O01) |
+| Derechos de exportación | Ubicación única (SUP-19-28, test X01) |
+| 61 corridas | IDs únicos y reconstruibles (SUP-19-29, test ID01) |
+| Expansión | `LIMITACION_ACTUAL_EXPANSION_C1`; misma configuración por escala; transiciones bloqueadas (test EX01) |
+| Tests | 70/70; mutaciones 25/25 |

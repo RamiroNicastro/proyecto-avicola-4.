@@ -45,6 +45,7 @@ EVI-C0-2500,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE,
 EVI-C0-2500,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C0-2500,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C0-2500,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C0-2500,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C0-2500,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C0-2500,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C0-2500,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -85,6 +86,8 @@ EVI-C0-2500,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_financ
 EVI-C0-2500,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C0-2500,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C0-2500,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C0-2500,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C0-2500,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C0-2500,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C0-2500,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C0-2500,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = contrato_facon; modelo físico sin ensayo en planta (DPV-060)"
@@ -167,6 +170,7 @@ EVI-C0-5000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE,
 EVI-C0-5000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C0-5000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C0-5000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C0-5000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C0-5000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C0-5000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C0-5000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -207,6 +211,8 @@ EVI-C0-5000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_financ
 EVI-C0-5000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C0-5000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C0-5000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C0-5000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C0-5000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C0-5000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C0-5000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C0-5000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = contrato_facon; modelo físico sin ensayo en planta (DPV-060)"
@@ -289,6 +295,7 @@ EVI-C0-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE
 EVI-C0-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C0-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C0-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C0-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C0-10000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C0-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C0-10000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -329,6 +336,8 @@ EVI-C0-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_finan
 EVI-C0-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C0-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C0-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C0-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C0-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C0-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C0-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C0-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = contrato_facon; modelo físico sin ensayo en planta (DPV-060)"
@@ -411,6 +420,7 @@ EVI-C0-20000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE
 EVI-C0-20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C0-20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C0-20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C0-20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C0-20000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C0-20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C0-20000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -451,6 +461,8 @@ EVI-C0-20000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_finan
 EVI-C0-20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C0-20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C0-20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C0-20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C0-20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C0-20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C0-20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C0-20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = contrato_facon; modelo físico sin ensayo en planta (DPV-060)"
@@ -533,6 +545,7 @@ EVI-C1-2500,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE,
 EVI-C1-2500,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-2500,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-2500,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-2500,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-2500,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-2500,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-2500,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -573,6 +586,8 @@ EVI-C1-2500,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_financ
 EVI-C1-2500,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-2500,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-2500,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-2500,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-2500,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-2500,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-2500,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-2500,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -655,6 +670,7 @@ EVI-C1-5000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE,
 EVI-C1-5000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-5000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-5000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-5000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-5000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-5000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-5000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -695,6 +711,8 @@ EVI-C1-5000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_financ
 EVI-C1-5000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-5000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-5000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-5000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-5000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-5000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-5000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-5000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -777,6 +795,7 @@ EVI-C1-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE
 EVI-C1-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -817,6 +836,8 @@ EVI-C1-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_finan
 EVI-C1-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -899,6 +920,7 @@ EVI-C1-20000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE
 EVI-C1-20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-20000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-20000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -939,6 +961,8 @@ EVI-C1-20000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_finan
 EVI-C1-20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -1021,6 +1045,7 @@ EVI-C2-2500,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE,
 EVI-C2-2500,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C2-2500,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C2-2500,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C2-2500,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C2-2500,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C2-2500,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C2-2500,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -1061,6 +1086,8 @@ EVI-C2-2500,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_financ
 EVI-C2-2500,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C2-2500,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C2-2500,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C2-2500,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C2-2500,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C2-2500,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C2-2500,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C2-2500,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -1143,6 +1170,7 @@ EVI-C2-5000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE,
 EVI-C2-5000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C2-5000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C2-5000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C2-5000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C2-5000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C2-5000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C2-5000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -1183,6 +1211,8 @@ EVI-C2-5000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_financ
 EVI-C2-5000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C2-5000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C2-5000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C2-5000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C2-5000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C2-5000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C2-5000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C2-5000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -1265,6 +1295,7 @@ EVI-C2-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE
 EVI-C2-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C2-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C2-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C2-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C2-10000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C2-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C2-10000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -1305,6 +1336,8 @@ EVI-C2-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_finan
 EVI-C2-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C2-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C2-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C2-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C2-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C2-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C2-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C2-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -1387,6 +1420,7 @@ EVI-C2-20000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE
 EVI-C2-20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C2-20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C2-20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C2-20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C2-20000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C2-20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C2-20000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -1427,6 +1461,8 @@ EVI-C2-20000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_finan
 EVI-C2-20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C2-20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C2-20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C2-20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C2-20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C2-20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C2-20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C2-20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -1509,6 +1545,7 @@ EVI-C3-2500,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE,
 EVI-C3-2500,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C3-2500,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C3-2500,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C3-2500,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C3-2500,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C3-2500,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C3-2500,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -1549,6 +1586,8 @@ EVI-C3-2500,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_financ
 EVI-C3-2500,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C3-2500,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C3-2500,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C3-2500,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C3-2500,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C3-2500,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C3-2500,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C3-2500,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -1631,6 +1670,7 @@ EVI-C3-5000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE,
 EVI-C3-5000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C3-5000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C3-5000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C3-5000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C3-5000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C3-5000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C3-5000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -1671,6 +1711,8 @@ EVI-C3-5000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_financ
 EVI-C3-5000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C3-5000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C3-5000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C3-5000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C3-5000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C3-5000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C3-5000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C3-5000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -1753,6 +1795,7 @@ EVI-C3-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE
 EVI-C3-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C3-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C3-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C3-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C3-10000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C3-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C3-10000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -1793,6 +1836,8 @@ EVI-C3-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_finan
 EVI-C3-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C3-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C3-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C3-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C3-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C3-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C3-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C3-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -1875,6 +1920,7 @@ EVI-C3-20000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE
 EVI-C3-20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C3-20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C3-20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C3-20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C3-20000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C3-20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C3-20000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -1915,6 +1961,8 @@ EVI-C3-20000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_finan
 EVI-C3-20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C3-20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C3-20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C3-20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C3-20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C3-20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C3-20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C3-20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -1997,6 +2045,7 @@ EVI-CF-2500,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE,
 EVI-CF-2500,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-CF-2500,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-CF-2500,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-CF-2500,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-CF-2500,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-CF-2500,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-CF-2500,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -2037,6 +2086,8 @@ EVI-CF-2500,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_financ
 EVI-CF-2500,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-CF-2500,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-CF-2500,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-CF-2500,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-CF-2500,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-CF-2500,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-CF-2500,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-CF-2500,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -2119,6 +2170,7 @@ EVI-CF-5000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE,
 EVI-CF-5000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-CF-5000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-CF-5000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-CF-5000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-CF-5000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-CF-5000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-CF-5000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -2159,6 +2211,8 @@ EVI-CF-5000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_financ
 EVI-CF-5000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-CF-5000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-CF-5000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-CF-5000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-CF-5000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-CF-5000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-CF-5000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-CF-5000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -2241,6 +2295,7 @@ EVI-CF-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE
 EVI-CF-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-CF-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-CF-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-CF-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-CF-10000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-CF-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-CF-10000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -2281,6 +2336,8 @@ EVI-CF-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_finan
 EVI-CF-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-CF-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-CF-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-CF-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-CF-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-CF-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-CF-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-CF-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -2363,6 +2420,7 @@ EVI-CF-20000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PENDIENTE
 EVI-CF-20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-CF-20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-CF-20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-CF-20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-CF-20000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-CF-20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-CF-20000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -2403,6 +2461,8 @@ EVI-CF-20000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_finan
 EVI-CF-20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-CF-20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-CF-20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-CF-20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-CF-20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-CF-20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-CF-20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-CF-20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -2485,6 +2545,7 @@ EVI-C0-10000-FACON-MP-EMPRESA,canales.supermercados.pct_bonificaciones,,fracció
 EVI-C0-10000-FACON-MP-EMPRESA,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C0-10000-FACON-MP-EMPRESA,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C0-10000-FACON-MP-EMPRESA,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C0-10000-FACON-MP-EMPRESA,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C0-10000-FACON-MP-EMPRESA,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C0-10000-FACON-MP-EMPRESA,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C0-10000-FACON-MP-EMPRESA,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -2525,6 +2586,8 @@ EVI-C0-10000-FACON-MP-EMPRESA,propiedad_rendimientos_validados,,bool,TODOS,PENDI
 EVI-C0-10000-FACON-MP-EMPRESA,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C0-10000-FACON-MP-EMPRESA,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C0-10000-FACON-MP-EMPRESA,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C0-10000-FACON-MP-EMPRESA,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C0-10000-FACON-MP-EMPRESA,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C0-10000-FACON-MP-EMPRESA,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C0-10000-FACON-MP-EMPRESA,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C0-10000-FACON-MP-EMPRESA,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = contrato_facon; modelo físico sin ensayo en planta (DPV-060)"
@@ -2607,6 +2670,7 @@ EVI-C0-10000-FACON-MP-ELABORADOR,canales.supermercados.pct_bonificaciones,,fracc
 EVI-C0-10000-FACON-MP-ELABORADOR,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C0-10000-FACON-MP-ELABORADOR,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C0-10000-FACON-MP-ELABORADOR,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C0-10000-FACON-MP-ELABORADOR,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C0-10000-FACON-MP-ELABORADOR,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C0-10000-FACON-MP-ELABORADOR,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C0-10000-FACON-MP-ELABORADOR,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -2647,6 +2711,8 @@ EVI-C0-10000-FACON-MP-ELABORADOR,propiedad_rendimientos_validados,,bool,TODOS,PE
 EVI-C0-10000-FACON-MP-ELABORADOR,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C0-10000-FACON-MP-ELABORADOR,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C0-10000-FACON-MP-ELABORADOR,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C0-10000-FACON-MP-ELABORADOR,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C0-10000-FACON-MP-ELABORADOR,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C0-10000-FACON-MP-ELABORADOR,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C0-10000-FACON-MP-ELABORADOR,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C0-10000-FACON-MP-ELABORADOR,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = contrato_facon; modelo físico sin ensayo en planta (DPV-060)"
@@ -2729,6 +2795,7 @@ EVI-C2-10000-FACON-MP-EMPRESA,canales.supermercados.pct_bonificaciones,,fracció
 EVI-C2-10000-FACON-MP-EMPRESA,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C2-10000-FACON-MP-EMPRESA,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C2-10000-FACON-MP-EMPRESA,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C2-10000-FACON-MP-EMPRESA,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C2-10000-FACON-MP-EMPRESA,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C2-10000-FACON-MP-EMPRESA,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C2-10000-FACON-MP-EMPRESA,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -2769,6 +2836,8 @@ EVI-C2-10000-FACON-MP-EMPRESA,propiedad_rendimientos_validados,,bool,TODOS,PENDI
 EVI-C2-10000-FACON-MP-EMPRESA,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C2-10000-FACON-MP-EMPRESA,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C2-10000-FACON-MP-EMPRESA,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C2-10000-FACON-MP-EMPRESA,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C2-10000-FACON-MP-EMPRESA,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C2-10000-FACON-MP-EMPRESA,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C2-10000-FACON-MP-EMPRESA,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C2-10000-FACON-MP-EMPRESA,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -2851,6 +2920,7 @@ EVI-C1-10000-congelado_tercero,canales.supermercados.pct_bonificaciones,,fracci�
 EVI-C1-10000-congelado_tercero,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-congelado_tercero,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-congelado_tercero,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-congelado_tercero,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-congelado_tercero,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-congelado_tercero,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-congelado_tercero,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -2891,6 +2961,8 @@ EVI-C1-10000-congelado_tercero,propiedad_rendimientos_validados,,bool,TODOS,PEND
 EVI-C1-10000-congelado_tercero,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-congelado_tercero,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-congelado_tercero,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-congelado_tercero,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-congelado_tercero,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-congelado_tercero,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-congelado_tercero,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-congelado_tercero,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -2973,6 +3045,7 @@ EVI-C1-10000-congelado_propio,canales.supermercados.pct_bonificaciones,,fracció
 EVI-C1-10000-congelado_propio,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-congelado_propio,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-congelado_propio,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-congelado_propio,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-congelado_propio,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-congelado_propio,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-congelado_propio,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -3013,6 +3086,8 @@ EVI-C1-10000-congelado_propio,propiedad_rendimientos_validados,,bool,TODOS,PENDI
 EVI-C1-10000-congelado_propio,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-congelado_propio,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-congelado_propio,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-congelado_propio,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-congelado_propio,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-congelado_propio,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-congelado_propio,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-congelado_propio,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -3095,6 +3170,7 @@ EVI-C1-10000-subprod_basico,canales.supermercados.pct_bonificaciones,,fracción,
 EVI-C1-10000-subprod_basico,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-subprod_basico,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-subprod_basico,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-subprod_basico,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-subprod_basico,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-subprod_basico,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-subprod_basico,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -3135,6 +3211,8 @@ EVI-C1-10000-subprod_basico,propiedad_rendimientos_validados,,bool,TODOS,PENDIEN
 EVI-C1-10000-subprod_basico,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-subprod_basico,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-subprod_basico,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-subprod_basico,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-subprod_basico,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-subprod_basico,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-subprod_basico,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-subprod_basico,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -3217,6 +3295,7 @@ EVI-C1-10000-llave_en_mano,canales.supermercados.pct_bonificaciones,,fracción,T
 EVI-C1-10000-llave_en_mano,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-llave_en_mano,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-llave_en_mano,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-llave_en_mano,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-llave_en_mano,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-llave_en_mano,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-llave_en_mano,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -3257,6 +3336,8 @@ EVI-C1-10000-llave_en_mano,propiedad_rendimientos_validados,,bool,TODOS,PENDIENT
 EVI-C1-10000-llave_en_mano,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-llave_en_mano,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-llave_en_mano,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-llave_en_mano,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-llave_en_mano,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-llave_en_mano,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-llave_en_mano,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-llave_en_mano,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -3339,6 +3420,7 @@ EVI-C1-10000-manual,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PE
 EVI-C1-10000-manual,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-manual,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-manual,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-manual,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-manual,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-manual,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-manual,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -3379,6 +3461,8 @@ EVI-C1-10000-manual,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,input
 EVI-C1-10000-manual,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-manual,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-manual,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-manual,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-manual,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-manual,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-manual,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-manual,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -3461,6 +3545,7 @@ EVI-C1-10000-auto,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PEND
 EVI-C1-10000-auto,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-auto,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-auto,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-auto,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-auto,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-auto,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-auto,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -3501,6 +3586,8 @@ EVI-C1-10000-auto,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_
 EVI-C1-10000-auto,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-auto,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-auto,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-auto,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-auto,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-auto,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-auto,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-auto,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -3583,6 +3670,7 @@ EVI-C1-10000-6dias,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PEN
 EVI-C1-10000-6dias,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-6dias,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-6dias,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-6dias,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-6dias,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-6dias,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-6dias,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -3623,6 +3711,8 @@ EVI-C1-10000-6dias,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs
 EVI-C1-10000-6dias,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-6dias,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-6dias,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-6dias,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-6dias,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-6dias,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-6dias,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-6dias,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -3705,6 +3795,7 @@ EVI-C1-10000-parque,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PE
 EVI-C1-10000-parque,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-parque,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-parque,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-parque,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-parque,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-parque,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-parque,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -3745,6 +3836,8 @@ EVI-C1-10000-parque,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,input
 EVI-C1-10000-parque,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-parque,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-parque,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-parque,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-parque,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-parque,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-parque,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-parque,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -3827,6 +3920,7 @@ EVI-C1-10000-rural,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PEN
 EVI-C1-10000-rural,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-rural,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-rural,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-rural,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-rural,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-rural,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-rural,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -3867,6 +3961,8 @@ EVI-C1-10000-rural,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs
 EVI-C1-10000-rural,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-rural,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-rural,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-rural,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-rural,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-rural,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-rural,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-rural,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -3949,6 +4045,7 @@ EVI-C1-10000-reserva20000,canales.supermercados.pct_bonificaciones,,fracción,TO
 EVI-C1-10000-reserva20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-reserva20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-reserva20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-reserva20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-reserva20000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-reserva20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-reserva20000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -3989,6 +4086,8 @@ EVI-C1-10000-reserva20000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE
 EVI-C1-10000-reserva20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-reserva20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-reserva20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-reserva20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-reserva20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-reserva20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-reserva20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-reserva20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -4071,6 +4170,7 @@ EVI-C1-10000-GN-RED,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PE
 EVI-C1-10000-GN-RED,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-GN-RED,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-GN-RED,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-GN-RED,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-GN-RED,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-GN-RED,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-GN-RED,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -4111,6 +4211,8 @@ EVI-C1-10000-GN-RED,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,input
 EVI-C1-10000-GN-RED,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-GN-RED,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-GN-RED,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-GN-RED,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-GN-RED,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-GN-RED,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-GN-RED,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-GN-RED,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -4193,6 +4295,7 @@ EVI-C1-10000-LIMPIEZA-TERC,canales.supermercados.pct_bonificaciones,,fracción,T
 EVI-C1-10000-LIMPIEZA-TERC,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-LIMPIEZA-TERC,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-LIMPIEZA-TERC,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-LIMPIEZA-TERC,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-LIMPIEZA-TERC,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-LIMPIEZA-TERC,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-LIMPIEZA-TERC,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -4233,6 +4336,8 @@ EVI-C1-10000-LIMPIEZA-TERC,propiedad_rendimientos_validados,,bool,TODOS,PENDIENT
 EVI-C1-10000-LIMPIEZA-TERC,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-LIMPIEZA-TERC,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-LIMPIEZA-TERC,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-LIMPIEZA-TERC,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-LIMPIEZA-TERC,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-LIMPIEZA-TERC,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-LIMPIEZA-TERC,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-LIMPIEZA-TERC,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -4315,6 +4420,7 @@ EVI-C1-10000-MANT-CONTRATO,canales.supermercados.pct_bonificaciones,,fracción,T
 EVI-C1-10000-MANT-CONTRATO,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-MANT-CONTRATO,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-MANT-CONTRATO,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-MANT-CONTRATO,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-MANT-CONTRATO,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-MANT-CONTRATO,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-MANT-CONTRATO,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -4355,6 +4461,8 @@ EVI-C1-10000-MANT-CONTRATO,propiedad_rendimientos_validados,,bool,TODOS,PENDIENT
 EVI-C1-10000-MANT-CONTRATO,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-MANT-CONTRATO,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-MANT-CONTRATO,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-MANT-CONTRATO,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-MANT-CONTRATO,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-MANT-CONTRATO,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-MANT-CONTRATO,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-MANT-CONTRATO,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -4437,6 +4545,7 @@ EVI-C1-10000-FLETE-POR-UNIDAD,canales.supermercados.pct_bonificaciones,,fracció
 EVI-C1-10000-FLETE-POR-UNIDAD,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-FLETE-POR-UNIDAD,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-FLETE-POR-UNIDAD,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-FLETE-POR-UNIDAD,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-FLETE-POR-UNIDAD,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-FLETE-POR-UNIDAD,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-FLETE-POR-UNIDAD,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -4477,6 +4586,8 @@ EVI-C1-10000-FLETE-POR-UNIDAD,propiedad_rendimientos_validados,,bool,TODOS,PENDI
 EVI-C1-10000-FLETE-POR-UNIDAD,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-FLETE-POR-UNIDAD,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-FLETE-POR-UNIDAD,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-FLETE-POR-UNIDAD,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-FLETE-POR-UNIDAD,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-FLETE-POR-UNIDAD,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-FLETE-POR-UNIDAD,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-FLETE-POR-UNIDAD,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -4559,6 +4670,7 @@ EVI-C1-10000-PAGO-KG-VIVO,canales.supermercados.pct_bonificaciones,,fracción,TO
 EVI-C1-10000-PAGO-KG-VIVO,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-PAGO-KG-VIVO,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-PAGO-KG-VIVO,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-PAGO-KG-VIVO,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-PAGO-KG-VIVO,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-PAGO-KG-VIVO,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-PAGO-KG-VIVO,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -4599,6 +4711,8 @@ EVI-C1-10000-PAGO-KG-VIVO,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE
 EVI-C1-10000-PAGO-KG-VIVO,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-PAGO-KG-VIVO,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-PAGO-KG-VIVO,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-PAGO-KG-VIVO,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-PAGO-KG-VIVO,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-PAGO-KG-VIVO,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-PAGO-KG-VIVO,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-PAGO-KG-VIVO,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -4681,6 +4795,7 @@ EVI-C1-10000-HALAL,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PEN
 EVI-C1-10000-HALAL,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-10000-HALAL,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-10000-HALAL,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-10000-HALAL,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-10000-HALAL,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-10000-HALAL,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-10000-HALAL,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -4721,6 +4836,8 @@ EVI-C1-10000-HALAL,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs
 EVI-C1-10000-HALAL,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-10000-HALAL,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-10000-HALAL,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-10000-HALAL,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-10000-HALAL,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-10000-HALAL,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-10000-HALAL,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-10000-HALAL,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -4803,6 +4920,7 @@ EVI-C1-T1_2500_5000_10000_20000,canales.supermercados.pct_bonificaciones,,fracci
 EVI-C1-T1_2500_5000_10000_20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-T1_2500_5000_10000_20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-T1_2500_5000_10000_20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-T1_2500_5000_10000_20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-T1_2500_5000_10000_20000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-T1_2500_5000_10000_20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-T1_2500_5000_10000_20000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -4843,6 +4961,8 @@ EVI-C1-T1_2500_5000_10000_20000,propiedad_rendimientos_validados,,bool,TODOS,PEN
 EVI-C1-T1_2500_5000_10000_20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-T1_2500_5000_10000_20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-T1_2500_5000_10000_20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-T1_2500_5000_10000_20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-T1_2500_5000_10000_20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-T1_2500_5000_10000_20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-T1_2500_5000_10000_20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-T1_2500_5000_10000_20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -4940,6 +5060,7 @@ EVI-C1-T2_5000_10000_20000,canales.supermercados.pct_bonificaciones,,fracción,T
 EVI-C1-T2_5000_10000_20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-T2_5000_10000_20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-T2_5000_10000_20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-T2_5000_10000_20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-T2_5000_10000_20000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-T2_5000_10000_20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-T2_5000_10000_20000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -4980,6 +5101,8 @@ EVI-C1-T2_5000_10000_20000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENT
 EVI-C1-T2_5000_10000_20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-T2_5000_10000_20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-T2_5000_10000_20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-T2_5000_10000_20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-T2_5000_10000_20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-T2_5000_10000_20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-T2_5000_10000_20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-T2_5000_10000_20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -5072,6 +5195,7 @@ EVI-C1-T3_10000_20000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,
 EVI-C1-T3_10000_20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,EVIDENCIA,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 EVI-C1-T3_10000_20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,EVIDENCIA,PENDIENTE,Descuentos en factura (DPV-039)
 EVI-C1-T3_10000_20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,EVIDENCIA,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+EVI-C1-T3_10000_20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,EVIDENCIA,,IN-102
 EVI-C1-T3_10000_20000,curva_rampup,,nombre de curva,TODOS,PENDIENTE,inputs_financieros.csv,IN-016,EVIDENCIA,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 EVI-C1-T3_10000_20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,EVIDENCIA,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 EVI-C1-T3_10000_20000,dias_caja_operativa,,días de OPEX,TODOS,PENDIENTE,inputs_financieros.csv,IN-087,EVIDENCIA,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
@@ -5112,6 +5236,8 @@ EVI-C1-T3_10000_20000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inp
 EVI-C1-T3_10000_20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,EVIDENCIA,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 EVI-C1-T3_10000_20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,EVIDENCIA,PENDIENTE,Costo del capital propio (DPV-001)
 EVI-C1-T3_10000_20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,EVIDENCIA,PENDIENTE,Solo para MIRR (opcional)
+EVI-C1-T3_10000_20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,EVIDENCIA,,IN-103
+EVI-C1-T3_10000_20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,EVIDENCIA,,IN-101
 EVI-C1-T3_10000_20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,EVIDENCIA,,IN-013
 EVI-C1-T3_10000_20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,EVIDENCIA,,IN-014
 EVI-C1-T3_10000_20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,EVIDENCIA,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -5199,6 +5325,7 @@ ESC-CONSERVADOR-C0-10000,canales.supermercados.pct_bonificaciones,,fracción,TOD
 ESC-CONSERVADOR-C0-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-CONSERVADOR-C0-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-CONSERVADOR-C0-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-CONSERVADOR-C0-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-CONSERVADOR-C0-10000,curva_rampup,CONSERVADOR,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-089
 ESC-CONSERVADOR-C0-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-CONSERVADOR-C0-10000,demanda_referencia_02,ESC-CON,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-090,ESCENARIO,,IN-090
@@ -5240,6 +5367,8 @@ ESC-CONSERVADOR-C0-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,
 ESC-CONSERVADOR-C0-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-CONSERVADOR-C0-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-CONSERVADOR-C0-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-CONSERVADOR-C0-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-CONSERVADOR-C0-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-CONSERVADOR-C0-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-CONSERVADOR-C0-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-CONSERVADOR-C0-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = contrato_facon; modelo físico sin ensayo en planta (DPV-060)"
@@ -5324,6 +5453,7 @@ ESC-CONSERVADOR-C1-10000,canales.supermercados.pct_bonificaciones,,fracción,TOD
 ESC-CONSERVADOR-C1-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-CONSERVADOR-C1-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-CONSERVADOR-C1-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-CONSERVADOR-C1-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-CONSERVADOR-C1-10000,curva_rampup,CONSERVADOR,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-089
 ESC-CONSERVADOR-C1-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-CONSERVADOR-C1-10000,demanda_referencia_02,ESC-CON,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-090,ESCENARIO,,IN-090
@@ -5365,6 +5495,8 @@ ESC-CONSERVADOR-C1-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,
 ESC-CONSERVADOR-C1-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-CONSERVADOR-C1-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-CONSERVADOR-C1-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-CONSERVADOR-C1-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-CONSERVADOR-C1-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-CONSERVADOR-C1-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-CONSERVADOR-C1-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-CONSERVADOR-C1-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -5449,6 +5581,7 @@ ESC-CONSERVADOR-C2-10000,canales.supermercados.pct_bonificaciones,,fracción,TOD
 ESC-CONSERVADOR-C2-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-CONSERVADOR-C2-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-CONSERVADOR-C2-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-CONSERVADOR-C2-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-CONSERVADOR-C2-10000,curva_rampup,CONSERVADOR,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-089
 ESC-CONSERVADOR-C2-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-CONSERVADOR-C2-10000,demanda_referencia_02,ESC-CON,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-090,ESCENARIO,,IN-090
@@ -5490,6 +5623,8 @@ ESC-CONSERVADOR-C2-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,
 ESC-CONSERVADOR-C2-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-CONSERVADOR-C2-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-CONSERVADOR-C2-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-CONSERVADOR-C2-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-CONSERVADOR-C2-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-CONSERVADOR-C2-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-CONSERVADOR-C2-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-CONSERVADOR-C2-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -5574,6 +5709,7 @@ ESC-CONSERVADOR-C3-10000,canales.supermercados.pct_bonificaciones,,fracción,TOD
 ESC-CONSERVADOR-C3-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-CONSERVADOR-C3-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-CONSERVADOR-C3-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-CONSERVADOR-C3-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-CONSERVADOR-C3-10000,curva_rampup,CONSERVADOR,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-089
 ESC-CONSERVADOR-C3-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-CONSERVADOR-C3-10000,demanda_referencia_02,ESC-CON,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-090,ESCENARIO,,IN-090
@@ -5615,6 +5751,8 @@ ESC-CONSERVADOR-C3-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,
 ESC-CONSERVADOR-C3-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-CONSERVADOR-C3-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-CONSERVADOR-C3-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-CONSERVADOR-C3-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-CONSERVADOR-C3-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-CONSERVADOR-C3-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-CONSERVADOR-C3-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-CONSERVADOR-C3-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -5699,6 +5837,7 @@ ESC-CONSERVADOR-CF-10000,canales.supermercados.pct_bonificaciones,,fracción,TOD
 ESC-CONSERVADOR-CF-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-CONSERVADOR-CF-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-CONSERVADOR-CF-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-CONSERVADOR-CF-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-CONSERVADOR-CF-10000,curva_rampup,CONSERVADOR,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-089
 ESC-CONSERVADOR-CF-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-CONSERVADOR-CF-10000,demanda_referencia_02,ESC-CON,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-090,ESCENARIO,,IN-090
@@ -5740,6 +5879,8 @@ ESC-CONSERVADOR-CF-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,
 ESC-CONSERVADOR-CF-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-CONSERVADOR-CF-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-CONSERVADOR-CF-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-CONSERVADOR-CF-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-CONSERVADOR-CF-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-CONSERVADOR-CF-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-CONSERVADOR-CF-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-CONSERVADOR-CF-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -5824,6 +5965,7 @@ ESC-BASE-C0-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PEND
 ESC-BASE-C0-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-BASE-C0-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-BASE-C0-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-BASE-C0-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-BASE-C0-10000,curva_rampup,BASE,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-093
 ESC-BASE-C0-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-BASE-C0-10000,demanda_referencia_02,ESC-BAS,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-094,ESCENARIO,,IN-094
@@ -5865,6 +6007,8 @@ ESC-BASE-C0-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_
 ESC-BASE-C0-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-BASE-C0-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-BASE-C0-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-BASE-C0-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-BASE-C0-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-BASE-C0-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-BASE-C0-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-BASE-C0-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = contrato_facon; modelo físico sin ensayo en planta (DPV-060)"
@@ -5949,6 +6093,7 @@ ESC-BASE-C1-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PEND
 ESC-BASE-C1-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-BASE-C1-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-BASE-C1-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-BASE-C1-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-BASE-C1-10000,curva_rampup,BASE,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-093
 ESC-BASE-C1-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-BASE-C1-10000,demanda_referencia_02,ESC-BAS,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-094,ESCENARIO,,IN-094
@@ -5990,6 +6135,8 @@ ESC-BASE-C1-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_
 ESC-BASE-C1-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-BASE-C1-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-BASE-C1-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-BASE-C1-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-BASE-C1-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-BASE-C1-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-BASE-C1-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-BASE-C1-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -6074,6 +6221,7 @@ ESC-BASE-C2-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PEND
 ESC-BASE-C2-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-BASE-C2-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-BASE-C2-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-BASE-C2-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-BASE-C2-10000,curva_rampup,BASE,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-093
 ESC-BASE-C2-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-BASE-C2-10000,demanda_referencia_02,ESC-BAS,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-094,ESCENARIO,,IN-094
@@ -6115,6 +6263,8 @@ ESC-BASE-C2-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_
 ESC-BASE-C2-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-BASE-C2-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-BASE-C2-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-BASE-C2-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-BASE-C2-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-BASE-C2-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-BASE-C2-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-BASE-C2-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -6199,6 +6349,7 @@ ESC-BASE-C3-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PEND
 ESC-BASE-C3-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-BASE-C3-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-BASE-C3-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-BASE-C3-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-BASE-C3-10000,curva_rampup,BASE,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-093
 ESC-BASE-C3-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-BASE-C3-10000,demanda_referencia_02,ESC-BAS,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-094,ESCENARIO,,IN-094
@@ -6240,6 +6391,8 @@ ESC-BASE-C3-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_
 ESC-BASE-C3-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-BASE-C3-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-BASE-C3-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-BASE-C3-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-BASE-C3-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-BASE-C3-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-BASE-C3-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-BASE-C3-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -6324,6 +6477,7 @@ ESC-BASE-CF-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS,PEND
 ESC-BASE-CF-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-BASE-CF-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-BASE-CF-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-BASE-CF-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-BASE-CF-10000,curva_rampup,BASE,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-093
 ESC-BASE-CF-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-BASE-CF-10000,demanda_referencia_02,ESC-BAS,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-094,ESCENARIO,,IN-094
@@ -6365,6 +6519,8 @@ ESC-BASE-CF-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,inputs_
 ESC-BASE-CF-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-BASE-CF-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-BASE-CF-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-BASE-CF-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-BASE-CF-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-BASE-CF-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-BASE-CF-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-BASE-CF-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -6449,6 +6605,7 @@ ESC-EXPANSIVO-C0-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS
 ESC-EXPANSIVO-C0-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-EXPANSIVO-C0-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-EXPANSIVO-C0-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-EXPANSIVO-C0-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-EXPANSIVO-C0-10000,curva_rampup,RAPIDO,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-097
 ESC-EXPANSIVO-C0-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-EXPANSIVO-C0-10000,demanda_referencia_02,ESC-EXP,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-098,ESCENARIO,,IN-098
@@ -6490,6 +6647,8 @@ ESC-EXPANSIVO-C0-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,in
 ESC-EXPANSIVO-C0-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-EXPANSIVO-C0-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-EXPANSIVO-C0-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-EXPANSIVO-C0-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-EXPANSIVO-C0-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-EXPANSIVO-C0-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-EXPANSIVO-C0-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-EXPANSIVO-C0-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = contrato_facon; modelo físico sin ensayo en planta (DPV-060)"
@@ -6574,6 +6733,7 @@ ESC-EXPANSIVO-C1-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS
 ESC-EXPANSIVO-C1-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-EXPANSIVO-C1-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-EXPANSIVO-C1-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-EXPANSIVO-C1-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-EXPANSIVO-C1-10000,curva_rampup,RAPIDO,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-097
 ESC-EXPANSIVO-C1-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-EXPANSIVO-C1-10000,demanda_referencia_02,ESC-EXP,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-098,ESCENARIO,,IN-098
@@ -6615,6 +6775,8 @@ ESC-EXPANSIVO-C1-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,in
 ESC-EXPANSIVO-C1-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-EXPANSIVO-C1-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-EXPANSIVO-C1-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-EXPANSIVO-C1-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-EXPANSIVO-C1-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-EXPANSIVO-C1-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-EXPANSIVO-C1-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-EXPANSIVO-C1-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -6699,6 +6861,7 @@ ESC-EXPANSIVO-C2-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS
 ESC-EXPANSIVO-C2-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-EXPANSIVO-C2-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-EXPANSIVO-C2-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-EXPANSIVO-C2-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-EXPANSIVO-C2-10000,curva_rampup,RAPIDO,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-097
 ESC-EXPANSIVO-C2-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-EXPANSIVO-C2-10000,demanda_referencia_02,ESC-EXP,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-098,ESCENARIO,,IN-098
@@ -6740,6 +6903,8 @@ ESC-EXPANSIVO-C2-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,in
 ESC-EXPANSIVO-C2-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-EXPANSIVO-C2-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-EXPANSIVO-C2-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-EXPANSIVO-C2-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-EXPANSIVO-C2-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-EXPANSIVO-C2-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-EXPANSIVO-C2-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-EXPANSIVO-C2-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -6824,6 +6989,7 @@ ESC-EXPANSIVO-C3-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS
 ESC-EXPANSIVO-C3-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-EXPANSIVO-C3-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-EXPANSIVO-C3-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-EXPANSIVO-C3-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-EXPANSIVO-C3-10000,curva_rampup,RAPIDO,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-097
 ESC-EXPANSIVO-C3-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-EXPANSIVO-C3-10000,demanda_referencia_02,ESC-EXP,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-098,ESCENARIO,,IN-098
@@ -6865,6 +7031,8 @@ ESC-EXPANSIVO-C3-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,in
 ESC-EXPANSIVO-C3-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-EXPANSIVO-C3-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-EXPANSIVO-C3-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-EXPANSIVO-C3-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-EXPANSIVO-C3-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-EXPANSIVO-C3-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-EXPANSIVO-C3-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-EXPANSIVO-C3-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -6949,6 +7117,7 @@ ESC-EXPANSIVO-CF-10000,canales.supermercados.pct_bonificaciones,,fracción,TODOS
 ESC-EXPANSIVO-CF-10000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-EXPANSIVO-CF-10000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-EXPANSIVO-CF-10000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-EXPANSIVO-CF-10000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-EXPANSIVO-CF-10000,curva_rampup,RAPIDO,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-097
 ESC-EXPANSIVO-CF-10000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-EXPANSIVO-CF-10000,demanda_referencia_02,ESC-EXP,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-098,ESCENARIO,,IN-098
@@ -6990,6 +7159,8 @@ ESC-EXPANSIVO-CF-10000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENTE,in
 ESC-EXPANSIVO-CF-10000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-EXPANSIVO-CF-10000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-EXPANSIVO-CF-10000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-EXPANSIVO-CF-10000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-EXPANSIVO-CF-10000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-EXPANSIVO-CF-10000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-EXPANSIVO-CF-10000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-EXPANSIVO-CF-10000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -7074,6 +7245,7 @@ ESC-BASE-C1-T1_2500_5000_10000_20000,canales.supermercados.pct_bonificaciones,,f
 ESC-BASE-C1-T1_2500_5000_10000_20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-BASE-C1-T1_2500_5000_10000_20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-BASE-C1-T1_2500_5000_10000_20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-BASE-C1-T1_2500_5000_10000_20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-BASE-C1-T1_2500_5000_10000_20000,curva_rampup,BASE,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-093
 ESC-BASE-C1-T1_2500_5000_10000_20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-BASE-C1-T1_2500_5000_10000_20000,demanda_referencia_02,ESC-BAS,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-094,ESCENARIO,,IN-094
@@ -7115,6 +7287,8 @@ ESC-BASE-C1-T1_2500_5000_10000_20000,propiedad_rendimientos_validados,,bool,TODO
 ESC-BASE-C1-T1_2500_5000_10000_20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-BASE-C1-T1_2500_5000_10000_20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-BASE-C1-T1_2500_5000_10000_20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-BASE-C1-T1_2500_5000_10000_20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-BASE-C1-T1_2500_5000_10000_20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-BASE-C1-T1_2500_5000_10000_20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-BASE-C1-T1_2500_5000_10000_20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-BASE-C1-T1_2500_5000_10000_20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -7214,6 +7388,7 @@ ESC-BASE-C1-T2_5000_10000_20000,canales.supermercados.pct_bonificaciones,,fracci
 ESC-BASE-C1-T2_5000_10000_20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-BASE-C1-T2_5000_10000_20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-BASE-C1-T2_5000_10000_20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-BASE-C1-T2_5000_10000_20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-BASE-C1-T2_5000_10000_20000,curva_rampup,BASE,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-093
 ESC-BASE-C1-T2_5000_10000_20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-BASE-C1-T2_5000_10000_20000,demanda_referencia_02,ESC-BAS,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-094,ESCENARIO,,IN-094
@@ -7255,6 +7430,8 @@ ESC-BASE-C1-T2_5000_10000_20000,propiedad_rendimientos_validados,,bool,TODOS,PEN
 ESC-BASE-C1-T2_5000_10000_20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-BASE-C1-T2_5000_10000_20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-BASE-C1-T2_5000_10000_20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-BASE-C1-T2_5000_10000_20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-BASE-C1-T2_5000_10000_20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-BASE-C1-T2_5000_10000_20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-BASE-C1-T2_5000_10000_20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-BASE-C1-T2_5000_10000_20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -7349,6 +7526,7 @@ ESC-BASE-C1-T3_10000_20000,canales.supermercados.pct_bonificaciones,,fracción,T
 ESC-BASE-C1-T3_10000_20000,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-BASE-C1-T3_10000_20000,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-BASE-C1-T3_10000_20000,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-BASE-C1-T3_10000_20000,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-BASE-C1-T3_10000_20000,curva_rampup,BASE,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-093
 ESC-BASE-C1-T3_10000_20000,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-BASE-C1-T3_10000_20000,demanda_referencia_02,ESC-BAS,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-094,ESCENARIO,,IN-094
@@ -7390,6 +7568,8 @@ ESC-BASE-C1-T3_10000_20000,propiedad_rendimientos_validados,,bool,TODOS,PENDIENT
 ESC-BASE-C1-T3_10000_20000,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-BASE-C1-T3_10000_20000,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-BASE-C1-T3_10000_20000,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-BASE-C1-T3_10000_20000,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-BASE-C1-T3_10000_20000,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-BASE-C1-T3_10000_20000,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-BASE-C1-T3_10000_20000,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-BASE-C1-T3_10000_20000,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"
@@ -7479,6 +7659,7 @@ ESC-BASE-C1-T4_20000_inicial,canales.supermercados.pct_bonificaciones,,fracción
 ESC-BASE-C1-T4_20000_inicial,canales.supermercados.pct_comisiones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-032,ESCENARIO,PENDIENTE,Comisiones comerciales y fees (DPV-039)
 ESC-BASE-C1-T4_20000_inicial,canales.supermercados.pct_descuentos,,fracción de venta bruta,TODOS,PENDIENTE,inputs_financieros.csv,IN-029,ESCENARIO,PENDIENTE,Descuentos en factura (DPV-039)
 ESC-BASE-C1-T4_20000_inicial,canales.supermercados.pct_devoluciones,,fracción,TODOS,PENDIENTE,inputs_financieros.csv,IN-031,ESCENARIO,PENDIENTE,Devoluciones y mermas del canal (DPV-039)
+ESC-BASE-C1-T4_20000_inicial,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-102,ESCENARIO,,IN-102
 ESC-BASE-C1-T4_20000_inicial,curva_rampup,BASE,nombre de curva,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-016,ESCENARIO,,IN-093
 ESC-BASE-C1-T4_20000_inicial,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,TODOS,PENDIENTE,inputs_financieros.csv,IN-017,ESCENARIO,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
 ESC-BASE-C1-T4_20000_inicial,demanda_referencia_02,ESC-BAS,id de 02,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-094,ESCENARIO,,IN-094
@@ -7520,6 +7701,8 @@ ESC-BASE-C1-T4_20000_inicial,propiedad_rendimientos_validados,,bool,TODOS,PENDIE
 ESC-BASE-C1-T4_20000_inicial,tasa_descuento,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-010,ESCENARIO,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 ESC-BASE-C1-T4_20000_inicial,tasa_descuento_accionista,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-011,ESCENARIO,PENDIENTE,Costo del capital propio (DPV-001)
 ESC-BASE-C1-T4_20000_inicial,tasa_reinversion,,fracción/año efectiva,TODOS,PENDIENTE,inputs_financieros.csv,IN-012,ESCENARIO,PENDIENTE,Solo para MIRR (opcional)
+ESC-BASE-C1-T4_20000_inicial,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-103,ESCENARIO,,IN-103
+ESC-BASE-C1-T4_20000_inicial,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-101,ESCENARIO,,IN-101
 ESC-BASE-C1-T4_20000_inicial,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-013,ESCENARIO,,IN-013
 ESC-BASE-C1-T4_20000_inicial,valor_terminal.recuperar_ct,FALSE,bool,TODOS,SUPUESTO_MODELO,inputs_financieros.csv,IN-014,ESCENARIO,,IN-014
 ESC-BASE-C1-T4_20000_inicial,kg_ave.pollo_entero,0,kg comercial/ave,TODOS,SUPUESTO_MODELO,04_balance_masa/modelo_balance_masa.py vía 23_plan_expansion/modelo_escala.py ITEMS,pollo_entero,ESCENARIO,,"config. B, 2,9 kg vivo, destino C = venta_directa; modelo físico sin ensayo en planta (DPV-060)"

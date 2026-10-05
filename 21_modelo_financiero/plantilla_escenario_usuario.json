@@ -39,6 +39,8 @@
     "dias_stock.otros": null,
     "dias_caja_operativa": null,
     "valor_terminal.metodo": "SIN_VALOR_TERMINAL",
+    "tipo_tasa_descuento": "EFECTIVA_ANUAL",
+    "convencion_descuento": "MENSUAL",
     "propiedad_rendimientos_validados": null
   },
   "rampup_ineficiencias": {"merma": null, "eficiencia": null, "costos_extra_usd_mes": null},
@@ -62,6 +64,12 @@
   "inventarios": {},
   "inventario_max_meses": {},
   "financiamiento": null,
-  "_financiamiento": "{\"aportes\": [[mes, monto]], \"aporte_automatico\": false, \"caja_minima_usd\": null, \"deudas\": [{\"id\": \"D1\", \"monto\": null, \"tasa_anual\": null, \"plazo_meses\": null, \"gracia_meses\": 0, \"metodo\": \"FRANCES|ALEMAN|BULLET|PERSONALIZADO\", \"frecuencia_meses\": 1, \"mes_desembolso\": null, \"comision_pct\": 0}], \"politica_dividendos\": null}",
-  "stress": {}
+  "_financiamiento": "{\"aportes\": [[mes, monto]], \"aporte_automatico\": false, \"caja_minima_usd\": null, \"deudas\": [{\"id\": \"D1\", \"monto\": null, \"tasa\": null, \"tipo_tasa\": \"EFECTIVA_ANUAL|NOMINAL_ANUAL|PERIODICA\", \"capitalizacion_meses\": null, \"periodo_tasa_meses\": null, \"base_tasa\": \"REAL\", \"plazo_meses\": null, \"gracia_meses\": 0, \"metodo\": \"FRANCES|ALEMAN|BULLET|PERSONALIZADO\", \"frecuencia_meses\": 1, \"mes_desembolso\": null, \"comision_pct\": 0}], \"politica_dividendos\": null}",
+  "stress": {},
+  "override_precios": {},
+  "_override_precios": "SOLO SIMULACIÓN: evalúa otro precio aunque exista uno observado; el observado queda en la traza y la base no se toca. Clave 'producto|canal|mercado' → {\"tipo\": \"CONSTANTE\", \"usd_kg\": null}",
+  "override_simulacion": {},
+  "_override_simulacion": "SOLO SIMULACIÓN: variable punteada → valor evaluado (p. ej. \"impuestos.pct_iibb\": null); se registra VALOR_OBSERVADO y VALOR_EVALUADO_ESCENARIO",
+  "configuracion_por_fase": null,
+  "_configuracion_por_fase": "Interfaz preparada: hoy solo admite la MISMA configuración en todas las etapas (TRANSICION_DE_ARQUITECTURA_NO_MODELADA)"
 }
