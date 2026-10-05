@@ -124,6 +124,9 @@ NIVELES_EVIDENCIA_ACEPTADOS = UMBRAL_EVIDENCIA_DEFAULT    # compatibilidad: defa
 ETIQUETA_SIM = "SIMULACION_HIPOTETICA_NO_VALIDADA"
 NO_PUB = "NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE"
 NO_DISP_ESC = "NO_DISPONIBLE_FALTAN_INPUTS_DEL_ESCENARIO"
+# Interfaz de performance (sesión 20): resultados(R, calcular_tir=False) omite SOLO la TIR. La métrica queda en este
+# estado (no es 0 ni un faltante de datos); el default True reproduce exactamente la sesión 19.
+TIR_NO_CALCULADA = "NO_CALCULADA"
 # Convenciones que el MODO EVIDENCIA admite como SUPUESTO_MODELO (no son datos económicos; SUP-19-03)
 SUPUESTOS_METODOLOGICOS = {"modelo_monetario", "base_tasa", "meses_detalle", "valor_terminal.metodo",
                            "valor_terminal.recuperar_ct", "moneda_funcional", "convencion_descuento",
@@ -1332,8 +1335,9 @@ def anualizar(tasa_periodo, periodos_por_anio=12):
     return (1 + tasa_periodo) ** periodos_por_anio - 1
 
 
-def indicadores(flujos, convencion, r_anual, r_reinv=None, tiempos_anios=None):
+def indicadores(flujos, convencion, r_anual, r_reinv=None, tiempos_anios=None, calcular_tir=True):
     """VAN, TIR (periódica y anual efectiva), MIRR y payback (meses y años) de un flujo.
+    calcular_tir=False (interfaz de performance, sesión 20): TIR = None con estado TIR_NO_CALCULADA; el resto, idéntico.
     MENSUAL         : flujos = serie mensual del motor (k = 0…N); tasa mensual = (1 + r)^(1/12) − 1; TIR mensual → anual.
     PERIODO_REPORTE : flujos agregados a períodos de reporte, descontados al fin de cada período (t en años)."""
     out = {}
@@ -1341,7 +1345,7 @@ def indicadores(flujos, convencion, r_anual, r_reinv=None, tiempos_anios=None):
         k = list(range(len(flujos)))
         i_m = tasa_periodica(r_anual, 1)
         out["VAN"] = van_periodico(flujos, i_m)
-        tm, est = tir(flujos, k, r_min=-0.5, r_max=2.0)      # tasa MENSUAL (−50 % a 200 % por mes)
+        tm, est = tir(flujos, k, r_min=-0.5, r_max=2.0) if calcular_tir else (None, TIR_NO_CALCULADA)  # tasa MENSUAL
         out["TIR_MENSUAL"], out["TIR"], out["TIR_ESTADO"] = tm, anualizar(tm), est
         out["MIRR"] = mirr(flujos, [x / 12 for x in k], r_anual, r_reinv)
         pm, out["PAYBACK_SIMPLE_ESTADO"] = payback(flujos, k)
@@ -1349,7 +1353,7 @@ def indicadores(flujos, convencion, r_anual, r_reinv=None, tiempos_anios=None):
     else:
         t = tiempos_anios
         out["VAN"] = van(flujos, t, r_anual)
-        ta, est = tir(flujos, t)
+        ta, est = tir(flujos, t) if calcular_tir else (None, TIR_NO_CALCULADA)
         out["TIR"], out["TIR_ESTADO"] = ta, est
         out["TIR_MENSUAL"] = tasa_periodica(ta, 1) if ta is not None else None
         out["MIRR"] = mirr(flujos, t, r_anual, r_reinv)
@@ -1542,6 +1546,9 @@ def publicabilidad(R):
         if "M20" in _MUT and fl == "PUBLICABLE_EBITDA":
             falt = [x for x in falt if not x.startswith("OPEX")]
         extra = ""
+        if fl == "PUBLICABLE_TIR" and not falt and R.get("tir_estado") == TIR_NO_CALCULADA:
+            out[fl] = (False, f"{TIR_NO_CALCULADA}: TIR no solicitada en esta evaluación (calcular_tir=False)")
+            continue
         if fl == "PUBLICABLE_TIR" and not falt and R.get("tir_estado") and not R["tir_estado"].startswith("UNICA"):
             falt = [f"TIR matemática: {R['tir_estado']}"]
         if fl == "PUBLICABLE_DSCR" and not falt and not (P["financiamiento"] or {}).get("deudas"):
@@ -1557,8 +1564,9 @@ def publicabilidad(R):
     return out
 
 
-def resultados(R):
-    """Indicadores sobre los períodos de reporte. Nunca devuelve un número para un flag FALSE."""
+def resultados(R, calcular_tir=True):
+    """Indicadores sobre los períodos de reporte. Nunca devuelve un número para un flag FALSE.
+    calcular_tir=False: interfaz de performance (sesión 20); omite solo TIR / TIR_ACCIONISTA (estado NO_CALCULADA)."""
     P = R["P"]
     out = {"ESCENARIO": P["nombre"], "MODO": P["modo"], "CONFIGURACION": P["configuracion"], "TRAYECTORIA": P["trayectoria"],
            "HORIZONTE_ANIOS": P["horizonte_anios"], "MODELO_MONETARIO": P["modelo_monetario"],
@@ -1589,7 +1597,7 @@ def resultados(R):
     out["TASA_DESCUENTO_MENSUAL_EQUIVALENTE"] = tasa_periodica(r_ef, 1)
     if ok["fcff_pre"]:
         fl = S[base] if conv == "MENSUAL" else agregar(R, base)
-        out.update(indicadores(fl, conv, r_ef, r_rei, t))
+        out.update(indicadores(fl, conv, r_ef, r_rei, t, calcular_tir))
     else:
         out.update({k: None for k in ("VAN", "TIR", "TIR_MENSUAL", "MIRR", "PAYBACK_SIMPLE_MESES", "PAYBACK_SIMPLE_ANIOS",
                                       "PAYBACK_DESCONTADO_MESES", "PAYBACK_DESCONTADO_ANIOS")})
@@ -1656,7 +1664,7 @@ def resultados(R):
         out["BASE_FLUJO_ACCIONISTA"] = "AFTER_TAX" if ser == "fcfe" else "PRE_TAX"
         out["APORTES_TOTALES"] = sum(S["aportes"])
         out["DEUDA_TOMADA"] = sum(S["deuda_alta"])
-        ia = indicadores(efectivo, conv, r_acc, None, t)
+        ia = indicadores(efectivo, conv, r_acc, None, t, calcular_tir)
         out["VAN_ACCIONISTA"], out["TIR_ACCIONISTA"], out["TIR_ACCIONISTA_ESTADO"] = ia["VAN"], ia["TIR"], ia["TIR_ESTADO"]
         out["CAJA_MINIMA_LEDGER"] = min(S["caja"])
         R["flujo_accionista_efectivo"] = efectivo

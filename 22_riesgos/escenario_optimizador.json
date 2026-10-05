@@ -1,0 +1,119 @@
+{
+  "_comentario": "UNIVERSO ESCENARIO del optimizador (sesión 20). Todo null = PENDIENTE. 'comun' tiene la MISMA estructura que 21_modelo_financiero/plantilla_escenario_usuario.json y se aplica a todas las alternativas; 'por_alternativa' completa o reemplaza por ID de alternativa (CONFIG|VARIANTE|ESCALAS|TRAYECTORIA, p. ej. 'C1|BASE|10000|ESCALA_UNICA', 'C1|C1-10000-HALAL|10000|ESCALA_UNICA', 'C1|BASE|5000-10000-20000|T2_5000_10000_20000'), típicamente 'etapas' con capex_usd, curva_desembolso, opex_rubros y activos. Resultados rotulados SIMULACION_HIPOTETICA_NO_VALIDADA. Nada de este archivo entra al universo EVIDENCIA.",
+  "plantilla": null,
+  "_plantilla": "PLANTILLA_CONSERVADOR | PLANTILLA_BASE | PLANTILLA_EXPANSIVO | null (aporta curva de ramp-up ilustrativa SUP-19-09 y demanda de prueba de 02)",
+  "comun": {
+    "valores": {
+      "horizonte_anios": null,
+      "fecha_inicio": null,
+      "meses_preoperacion": null,
+      "meses_construccion": null,
+      "meses_commissioning": null,
+      "tasa_descuento": null,
+      "tasa_descuento_accionista": null,
+      "impuestos.pct_iibb": null,
+      "impuestos.pct_tasas_municipales": null,
+      "impuestos.otros_impuestos_usd_anio": null,
+      "impuestos.tasa_ganancias": null,
+      "impuestos.anios_quebranto": null,
+      "iva.modo": null,
+      "iva.alicuota_ventas": null,
+      "iva.alicuota_compras": null,
+      "iva.alicuota_capex": null,
+      "dias_pago.alimento": null,
+      "dias_pago.pollitos": null,
+      "dias_pago.servicios": null,
+      "dias_pago.packaging": null,
+      "dias_pago.logistica": null,
+      "dias_pago.energia": null,
+      "dias_stock.producto_terminado": null,
+      "dias_stock.activo_biologico": null,
+      "dias_stock.alimento": null,
+      "dias_stock.packaging": null,
+      "dias_stock.repuestos": null,
+      "dias_stock.otros": null,
+      "dias_caja_operativa": null,
+      "valor_terminal.metodo": "SIN_VALOR_TERMINAL",
+      "tipo_tasa_descuento": "EFECTIVA_ANUAL",
+      "convencion_descuento": "MENSUAL",
+      "propiedad_rendimientos_validados": null
+    },
+    "rampup_ineficiencias": {
+      "merma": null,
+      "eficiencia": null,
+      "costos_extra_usd_mes": null
+    },
+    "mix_demanda": null,
+    "_mix_demanda": "fracciones por producto sobre la demanda de referencia de 02, p. ej. {\"pollo_entero\": null, \"pata_muslo\": null}",
+    "demanda": [],
+    "_demanda": "líneas {producto, canal, mercado (INTERNO|EXPORTACION), categoria (ESCENARIO|NEGOCIADA|...), valor, unidad (kg/dia|t/dia|t/mes|t/anio), prioridad, toma_todo}",
+    "categorias_demanda_usadas": [
+      "DOCUMENTADA",
+      "ASEGURADA",
+      "NEGOCIADA",
+      "INTERESADA",
+      "POTENCIAL",
+      "ESCENARIO"
+    ],
+    "alfa_negociada": null,
+    "precios": {},
+    "_precios": "clave 'producto|canal|mercado' → {\"tipo\": \"CONSTANTE\", \"usd_kg\": null} o {\"tipo\": \"SERIE\", \"base\": \"REAL\", \"por_anio\": {\"1\": null}}",
+    "canales": {
+      "supermercados": {
+        "dias_cobro": null,
+        "pct_descuentos": null,
+        "pct_bonificaciones": null,
+        "pct_devoluciones": null,
+        "pct_comisiones": null,
+        "costo_logistico_usd_kg": null
+      }
+    },
+    "inventarios": {},
+    "inventario_max_meses": {},
+    "financiamiento": null,
+    "_financiamiento": "{\"aportes\": [[mes, monto]], \"aporte_automatico\": false, \"caja_minima_usd\": null, \"deudas\": [{\"id\": \"D1\", \"monto\": null, \"tasa\": null, \"tipo_tasa\": \"EFECTIVA_ANUAL|NOMINAL_ANUAL|PERIODICA\", \"capitalizacion_meses\": null, \"periodo_tasa_meses\": null, \"base_tasa\": \"REAL\", \"plazo_meses\": null, \"gracia_meses\": 0, \"metodo\": \"FRANCES|ALEMAN|BULLET|PERSONALIZADO\", \"frecuencia_meses\": 1, \"mes_desembolso\": null, \"comision_pct\": 0}], \"politica_dividendos\": null}",
+    "stress": {},
+    "override_precios": {},
+    "_override_precios": "SOLO SIMULACIÓN: evalúa otro precio aunque exista uno observado; el observado queda en la traza y la base no se toca. Clave 'producto|canal|mercado' → {\"tipo\": \"CONSTANTE\", \"usd_kg\": null}",
+    "override_simulacion": {},
+    "_override_simulacion": "SOLO SIMULACIÓN: variable punteada → valor evaluado (p. ej. \"impuestos.pct_iibb\": null); se registra VALOR_OBSERVADO y VALOR_EVALUADO_ESCENARIO"
+  },
+  "por_alternativa": {},
+  "_por_alternativa_ejemplo": {
+    "C1|BASE|10000|ESCALA_UNICA": {
+      "etapas": [
+        {
+          "capex_usd": null,
+          "curva_desembolso": null,
+          "opex_rubros": null,
+          "activos": null
+        }
+      ]
+    }
+  },
+  "base_valores": {
+    "mortalidad": null,
+    "condenas": null,
+    "traslado_fx": null
+  },
+  "_base_valores": "Valores base para variables REQUIERE_BASE (fracciones): mortalidad en granja, condenas, traslado de una devaluación a precios en ARS (0–1). Sin ellos esas sensibilidades quedan NO_CALCULABLE.",
+  "disponibilidad": {
+    "terreno_m2": null,
+    "agua_m3_dia": null,
+    "potencia_kw": null,
+    "capacidad_linea_aves_h": null,
+    "facon_faena_aves_dia": null,
+    "m2_galpon_integrados": null,
+    "sitios_granja_confirmados": null,
+    "pollitos_semana": null,
+    "huevo_fertil_confirmado": null,
+    "alimento_t_semana": null,
+    "facon_alimento_t_semana": null,
+    "granos_t_semana": null,
+    "receptor_subproductos_confirmado": null,
+    "tratamiento_subproductos_habilitado": null,
+    "transporte_tercero_confirmado": null,
+    "frio_tercero_confirmado": null
+  },
+  "_disponibilidad": "Disponibilidades físicas para los gates (sin dato → FACTIBILIDAD_PENDIENTE, nunca FACTIBLE). Booleanos: true/false/null."
+}
