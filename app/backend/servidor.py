@@ -11,10 +11,12 @@ import threading
 import traceback
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import unquote, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 from . import almacen as A
 from . import escenario as ES
+from . import estudio as EST
+from . import estudio_contenido as ESTC
 from . import exportar as X
 from . import motor as M
 from . import proyecto as PR
@@ -59,6 +61,19 @@ RUTAS_GET = {
     "/api/evidencia": lambda q: PR.evidencia(),
     "/api/trazabilidad": lambda q: PR.trazabilidad(),
     "/api/riesgos_cualitativos": lambda q: PR.riesgos_cualitativos(),
+    "/api/estudio": lambda q: EST.indice(),
+    "/api/cadena": lambda q: EST.cadena(),
+    "/api/localizacion": lambda q: EST.localizacion(),
+    "/api/proceso": lambda q: EST.proceso(q.get("escala") or 10000),
+    "/api/productos_ave": lambda q: EST.productos(),
+    "/api/arquitecturas": lambda q: EST.arquitecturas(),
+    "/api/escalas": lambda q: EST.escalas(),
+    "/api/glosario": lambda q: EST.glosario(),
+    "/api/estado_proyecto": lambda q: EST.estado_proyecto(),
+    "/api/seguir": lambda q: EST.que_hacer_agrupado(),
+    "/api/buscar": lambda q: EST.buscar(q.get("q") or ""),
+    "/api/textos": lambda q: {"ayudas": ESTC.AYUDAS, "estados": ESTC.ESTADOS, "confianza": ESTC.ETIQUETAS_CONFIANZA},
+    "/api/doc_estudio": lambda q: EST.documento_estudio(q.get("ruta") or ""),
     "/api/staging": lambda q: {"filas": A.staging_listar(), "tipos": list(A.TIPOS_DATO),
                                "nota": "STAGING: datos cargados a mano, SIN clasificar. No son evidencia ni entran al motor."},
 }
@@ -92,12 +107,22 @@ RUTAS_TEXTO = {   # respuestas no JSON
 }
 
 
-def manejar(metodo, ruta, body=None):
+def manejar(metodo, ruta, body=None, query=None):
     """Despacho sin HTTP (lo usan los tests de flujo). Devuelve (status, tipo, contenido)."""
     try:
         with LOCK:
             if metodo == "GET" and ruta in RUTAS_GET:
-                return 200, "json", {"ok": True, "datos": S._limpio(RUTAS_GET[ruta]({}))}
+                try:
+                    return 200, "json", {"ok": True, "datos": S._limpio(RUTAS_GET[ruta](query or {}))}
+                except KeyError as e:
+                    if ruta in ("/api/doc_estudio",):
+                        raise ErrorPeticion("Documento no disponible desde la app.")
+                    raise e
+            if metodo == "GET" and ruta.startswith("/api/estudio/"):
+                try:
+                    return 200, "json", {"ok": True, "datos": S._limpio(EST.modulo(ruta.rsplit("/", 1)[1]))}
+                except KeyError:
+                    return 404, "json", {"ok": False, "error": {"codigo": "NO_ENCONTRADO", "mensaje": "Ese tema no existe en el estudio."}}
             if metodo == "GET" and ruta.startswith("/api/escenarios/"):
                 return 200, "json", {"ok": True, "datos": A.leer(ruta.rsplit("/", 1)[1])}
             if metodo == "GET" and ruta.startswith("/api/documento/"):
@@ -176,9 +201,11 @@ class Manejador(BaseHTTPRequestHandler):
             raise ErrorPeticion("El cuerpo de la petición no es JSON válido.")
 
     def do_GET(self):
-        ruta = urlparse(self.path).path
+        u = urlparse(self.path)
+        ruta = u.path
         if ruta.startswith("/api/"):
-            return self._responder(*manejar("GET", ruta))
+            q = {k: v[0] for k, v in parse_qs(u.query).items()}
+            return self._responder(*manejar("GET", ruta, None, q))
         return self._estatico(ruta)
 
     def do_POST(self):

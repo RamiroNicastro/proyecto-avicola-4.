@@ -2,12 +2,14 @@
 import { api } from "../api.js";
 import { h, etq, etqOrigen, cargando, errorBox, tabla, bannerUniverso } from "../ui.js";
 import { progreso } from "./validacion.js";
+import { semaforoEstado } from "./estado.js";
 
 export async function render() {
   const raiz = h("div", {}, h("h1", {}, "Datos reales / evidencia"), cargando());
-  let r;
-  try { r = await api.get("/api/evidencia"); } catch (e) { raiz.lastChild.replaceWith(errorBox(e)); return raiz; }
+  let r, est;
+  try { [r, est] = await Promise.all([api.get("/api/evidencia"), api.get("/api/estado_proyecto")]); } catch (e) { raiz.lastChild.replaceWith(errorBox(e)); return raiz; }
   raiz.lastChild.remove();
+  raiz.append(h("div", { class: "titular", "data-intro-evidencia": "" }, est.intro), semaforoEstado(est));
   const pub = Object.entries(r.publicables);
   raiz.append(bannerUniverso({ universo: "EVIDENCIA" }),
     h("div", { class: "panel" }, h("h2", {}, "¿Qué resultados del proyecto son publicables hoy?"),

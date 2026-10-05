@@ -5,7 +5,7 @@ from datetime import date
 
 from . import motor as M
 
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.1.0"
 APP_FECHA = "2026-10-05"
 _CACHE = {}
 

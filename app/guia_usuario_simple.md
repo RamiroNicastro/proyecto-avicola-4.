@@ -1,45 +1,62 @@
 # Guía de usuario — modo simple
 
-Para dueño, inversor o gerente. No hace falta saber de modelos: la app pregunta poco y explica los resultados en lenguaje claro. **Todo lo que calcula es una simulación del escenario que usted carga** (o de la demo ficticia).
+Para alguien **sin conocimientos de ingeniería, finanzas ni del proyecto**. La app sirve para dos cosas: **ENTENDER EL PROYECTO** y **SIMULAR / TOMAR DECISIONES**. Todo lo que calcula es una **simulación** del escenario que se carga (o de la demo ficticia): nunca un dato real.
 
 ## 1. Empezar
 
 1. En la terminal, desde la carpeta del proyecto: `python3 app/app.py`. Se abre el navegador en `http://127.0.0.1:8765/`.
-2. Pantalla **¿QUÉ QUERÉS HACER?**: Simular un negocio · Comparar alternativas · Optimizar · Ver riesgos · Qué me falta validar · Ver datos / evidencia · Modo experto.
-3. ¿Primera vez? **Abrir demo** (datos inventados, rótulo ✱ SOLO DEMOSTRACIÓN) o **Empezar un escenario vacío**.
-4. Arriba se ve siempre el escenario actual, su tipo y si hay cambios sin guardar. **Guardar** lo guarda en su computadora (los presets y la demo se guardan como copia).
+2. La primera vez aparece **«¿QUERÉS UN RECORRIDO DE 2 MINUTOS?»**: **EMPEZAR RECORRIDO** abre la demo (datos ficticios) y guía 6 pasos (escenario → resultado → comparación → stress → optimizador → validación); **IR DIRECTO A LA APP** lo saltea. La elección se recuerda en el navegador.
+3. **Inicio** («PROYECTO AVÍCOLA — NICAS & DOIPE») tiene cuatro botones grandes: **ENTENDER EL PROYECTO**, **SIMULAR UN ESCENARIO**, **COMPARAR / OPTIMIZAR** y **QUÉ FALTA VALIDAR**; debajo, **¿Dónde estamos parados?** y las preguntas clave (cómo funciona el negocio, dónde podría estar la planta, qué pasa dentro de la planta, qué sale de un pollo, las 5 arquitecturas, qué significa cada escala). El modo experto queda como enlace secundario.
 
-## 2. Simular un negocio (7 pasos)
+## 2. Moverse por la app
 
-| Paso | Qué carga | Cómo lo usa el motor |
+| Elemento | Para qué |
+|---|---|
+| **Barra lateral** | Agrupada en PROYECTO (Inicio, Cómo funciona, Mercado, Producción, Planta y procesos, Productos, Localización, Logística, Infraestructura, Organización), ECONOMÍA (Inversión, Costos, Finanzas, Riesgos), DECISIÓN (Simular, Comparar, Optimizar, Qué falta validar, Para seguir avanzando), AVANZADO (Evidencia, Trazabilidad, Modo experto) y AYUDA (¿Dónde estamos?, Estudio completo, Diccionario) |
+| **⌂ Inicio** | Siempre visible arriba a la izquierda |
+| **Buscador** | Arriba: escribir «localización», «agua», «10.000», «faena», «CAPEX», «pollitos», «Chaco», «halal»… y Enter lleva a la sección |
+| **Migas de pan** | Debajo de la barra: dónde estás (p. ej. INICIO › PROYECTO › PLANTA Y PROCESOS › PLANTA DE FAENA); cada parte es un enlace |
+| **«?»** | Junto a términos técnicos (VAN, TIR, DSCR, CAPEX, OPEX, FCR, FTE, rendering, façon, ramp-up…): explicación de 1–3 frases |
+| **Diccionario** | Todos los términos del glosario del proyecto, con búsqueda |
+
+## 3. Entender el proyecto
+
+- **Estudio completo**: los 26 temas (mercado, demanda, producción, balance de masa, productos, subproductos, proceso, maquinaria, agua, efluentes, energía, frío, normativa, exportación, localización, logística, layout, RR. HH., incubación, alimento, CAPEX, OPEX, capital de trabajo, finanzas, riesgos, optimizador).
+- Cada tema responde **cinco preguntas**: ¿Qué es? · ¿Por qué importa? · ¿Qué modelamos? · ¿Qué sabemos hoy? · ¿Qué falta validar? (casilleros ☐ con los datos por validar del registro). Cada dato lleva un **chip de confianza**: ✔ Validado · ≈ Estimación · ~ Supuesto · ? Sin verificar (PVDP) · … Pendiente. Hoy ningún dato está validado en campo. **Ver fuentes** lista los documentos; **Ver detalle técnico** abre el documento original.
+- **¿Cómo funciona el negocio?**: la cadena huevo/pollito → crianza → alimento → granjas → captura → transporte vivo → faena → enfriamiento → trozado → empaque → frío → logística → cliente, con las ramas subproductos, efluentes, rendering y exportación. Tocar un bloque muestra qué es y los números que ya calculó el estudio.
+- **¿Dónde podría estar la planta?**: 13 regiones de 5 provincias, criterios (cercanía comercial, productores, servicios, logística, puertos…), condiciones duras y condicionales de un terreno y el estado de la información. **Todavía no existe una ubicación ganadora porque faltan datos de campo.** El esquema de distancias es un orden de magnitud no medido: no es un mapa ni un puntaje.
+- **¿Qué pasa dentro de la planta?**: las etapas en orden; cada una muestra qué pasa, equipos de referencia (no son especificación ni cotización), capacidad para la escala elegida, agua y energía, riesgos y pendientes.
+- **¿Qué sale de un pollo?**: cada parte en kg por ave del balance de masa. Las rutas (entero / trozado / deshuesado; carcasa vendida / CMS / rendering) son **alternativas**: no se suman.
+- **Las 5 arquitecturas**: C0 Arranque asset-light, C1 Planta de faena propia, C2 Integración selectiva, C3 Mayor integración, CF Arquitectura futura, con PROPIO / TERCERIZADO / MIXTO / FUTURO para faena, granjas, pollitos, alimento, flota, frío, subproductos, rendering y reproductoras (definición exacta debajo de cada casilla).
+- **¿Qué significa cada escala?**: 2.500 / 5.000 / 10.000 / 20.000 aves por día → aves por año, producto, pollitos, alimento, galpones, superficie, terreno, personal, agua, energía y demanda necesaria. **Capacidad no significa que vayamos a vender todo.**
+- **¿Dónde estamos parados?**: MOTOR ✅ COMPLETO · DATOS FÍSICOS ⚠ PARCIALES · DATOS ECONÓMICOS ⚠ MUY INCOMPLETOS · EVIDENCIA 0 % · DECISIÓN REAL ⛔ NO DISPONIBLE; qué está terminado, qué falta, qué se puede simular y qué no se puede decidir todavía.
+
+## 4. Simular un escenario (5 preguntas)
+
+«Paso X de 5», con **ATRÁS** y **CONTINUAR** (volver atrás no borra nada).
+
+| Paso | Pregunta | «No sé» significa |
 |---|---|---|
-| 1 · Objetivo | Ganar más · Invertir menos · Recuperar rápido · Reducir riesgo · Crecer · Balanceado | Se traduce a un objetivo del optimizador y se muestra cuál (MAX_VAN, MIN_FONDOS_INICIALES, MIN_PAYBACK, MAX_ROBUSTEZ, MAX_CRECIMIENTO, BALANCEADO). Balanceado pide **sus** pesos; sin pesos no ordena (PESOS_NO_DEFINIDOS) |
-| 2 · Capital | Monto en USD o ARS, o **No sé** | «No sé» = sin restricción de capital. **USD 2 M no es un valor por defecto.** ARS exige tipo de cambio, tipo de TC y fecha |
-| 3 · Demanda | Líneas producto · canal · categoría · volumen (kg/día, t/día, t/mes, t/año) | **Que un cliente pueda comprar no significa que la demanda esté asegurada.** ASEGURADA / DOCUMENTADA necesitan respaldo; POTENCIAL / ESCENARIO son hipótesis. La app no convierte potencial en asegurada. «Toma todo» = canal de liquidación (demanda supuesta ilimitada) |
-| 4 · Precios | Venta por producto y canal; costos de alimento, pollito y façon | Cada valor lleva unidad, fuente y estado: **Validado** (declarado por usted), **Cotización**, **Escenario** (simulación) o **No sé** (queda PENDIENTE, nunca 0). Los costos unitarios se convierten a costo anual con la cantidad que calcula el módulo de costos para cada alternativa |
-| 5 · Arquitectura | **Automática** (el optimizador prueba las válidas) o **Quiero probar** C0, C1, C2, C3, CF | «¿Qué significa esto?» explica cada una en simple, con su definición técnica |
-| 6 · Escala | 2.500 · 5.000 · 10.000 · 20.000 aves/día, intermedia (2.500–20.000) o AUTO | Fuera del rango que el motor puede evaluar no se ofrece |
-| 7 · Restricciones | Máximo capital, payback máximo, VAN mínimo, TIR mínima, DSCR mínimo, riesgo máximo, terreno máximo, demanda disponible; horizonte | Todas opcionales; se aplican como obligatorias (HARD). La «demanda disponible» se usa en la consulta de demanda del motor |
+| 1 | ¿Qué querés lograr? (Ganar más · Invertir menos · Recuperar rápido · Reducir riesgo · Crecer · Balanceado) | Se ordena por «Ganar más» solo como referencia |
+| 2 | ¿Cuánto capital querés simular? | Sin límite de capital: la simulación no dice si la plata alcanza. **USD 2 M no se usa por defecto** |
+| 3 | ¿Cuánta demanda querés simular? (producto, t/día y respaldo) | Sin demanda no hay ventas: no se calculan ingresos, EBITDA, VAN, TIR ni payback. **Los ~90 supermercados no son demanda por sí solos** |
+| 4 | ¿Automático o una alternativa? (arquitectura y tamaño) | — («Automático» prueba todas) |
+| 5 | ¿Tenés precios o costos propios? | Sin precios no se calcula rentabilidad. Costo vacío = pendiente (nunca 0) |
 
-Luego **SIMULAR**.
+**Balanceado**: cada criterio lleva un % y el total tiene que dar **100 %** (botón **REPARTIR POR IGUAL**). Sin pesos **no se ejecuta** (y eso no significa «no invertir»). «Recuperar rápido» no es un criterio del balanceado del motor: si es lo más importante, elegí ese objetivo.
 
-> Lo que no está en estos pasos (CAPEX, OPEX por módulo, impuestos, tasas, financiamiento, ramp-up) se carga en el **modo experto**. Si falta, el resultado lo dice.
+**⚙ Ajustar supuestos** (opcional): moneda y tipo de cambio, escala intermedia, todos los campos de demanda y precios, condiciones que la alternativa debe cumplir y horizonte. Lo demás (CAPEX, OPEX por módulo, impuestos, tasa, deuda, stress) está en el modo experto.
 
-## 3. Leer el resultado
+## 5. Leer el resultado
 
-- **Rótulo** arriba: ◇ SIMULACIÓN HIPOTÉTICA (o ✱ SOLO DEMOSTRACIÓN). Nunca es un dato real.
-- **Tarjetas**: Alternativa · Inversión (CAPEX, capital de trabajo, fondos iniciales, pico de fondos) · Negocio (ventas, facturación, EBITDA, margen) · Retorno (VAN, TIR, payback) · Deuda (DSCR) · Riesgo (semáforo, robustez, score ordinal) · Evidencia (cobertura, respaldo comercial) · Principal limitación · Qué hacer ahora.
-- Cada número viene con una frase: p. ej. «En este escenario el proyecto crearía valor por encima de la tasa de descuento usada (12 %)», o «El flujo cubriría 1,45 veces el servicio de deuda en el período más ajustado».
-- **NO CALCULABLE**: si falta un dato no se muestra USD 0, 0 % ni 0 años; se muestra NO CALCULABLE y debajo qué falta («Falta precio de venta», «Falta CAPEX completo»…).
-- **Semáforo**: 🟢 VERDE evaluable, cumple todo, físico confirmado y 100 % evidencia · 🟡 AMARILLO evaluable con evidencia o físico pendiente · 🔴 ROJO incumple una restricción obligatoria o un requisito físico · ⚪ GRIS no evaluable. Siempre con texto (botón «leyenda»).
-- **¿Por qué me da este resultado?**: drivers principales, restricciones, datos usados (motor / escenario / pendientes), sensibilidades, qué cambiaría la decisión y la segunda alternativa.
-- **NO_INVERTIR_AUN**: si gana, no es un fracaso. Significa que, con las restricciones y datos cargados, ninguna inversión productiva cumple los criterios; se muestran las reglas reales del motor (SQ-1…SQ-6) y caminos posibles (asset-light o validar más información).
-- **Exportar**: JSON (escenario), CSV (resultado con etiquetas) y **Resumen imprimible** (HTML para imprimir o guardar como PDF).
+1. **Una frase arriba**: «Con los datos que cargaste, esta alternativa es la que mejor cumple tu objetivo dentro de la simulación.» o «Todavía faltan datos para calcular rentabilidad.» (si la regla de decisión indica no comprometer capital, lo dice y aclara que **no es un fracaso**).
+2. **Hasta 6 números**: Inversión, VAN, TIR, Payback, EBITDA y DSCR mínimo del horizonte (o pico de fondos si no hay deuda), cada uno con su «?» y una frase: VAN «Cuánto valor genera el proyecto por encima de la rentabilidad mínima que le exigís.», TIR «Rentabilidad implícita estimada del escenario.», Payback «Tiempo aproximado para recuperar la inversión.», EBITDA «Resultado operativo antes de intereses, impuestos y depreciaciones.»
+3. Si un número no se puede calcular se explica en castellano («No se puede calcular todavía porque falta el precio de venta.») y el **código técnico** queda debajo, en chico.
+4. **DSCR mínimo del horizonte**: el período más ajustado de toda la proyección. Si cae en el arranque (ramp-up) se avisa: no significa que la deuda sea impagable; se muestra también el más bajo en operación madura.
+5. Acordeones: **VER INVERSIÓN · VER RENTABILIDAD · VER RIESGOS · VER DETALLES TÉCNICOS** (tarjetas completas, semáforo, alertas, «¿por qué me da este resultado?», exportaciones y gráficos).
 
-## 4. Otras pantallas
+## 6. Decidir qué hacer
 
-- **Comparar**: elegir 2 a 5 alternativas. Si una no es comparable (faltan datos u otra base), la app lo explica y no la ordena.
-- **Optimizar**: objetivo, capital, demanda, restricciones, riesgo y horizonte → mejor alternativa **del escenario**, segunda, diferencia, por qué gana, qué podría hacerla perder, restricciones y datos faltantes.
-- **Riesgos**: ¿Qué pasa si…? (−30 % a +30 %), tornado, 2D, stress editable, puntos de quiebre («¿hasta dónde aguanta?») y Monte Carlo (NO DISPONIBLE si no hay distribuciones respaldadas; si corre, es probabilidad **simulada**).
-- **Validación**: los 12 paquetes (clientes, planta, alimento, pollitos, granjas, utilities, terreno, logística, RR. HH., impuestos, financiamiento, exportación), a quién pedir qué, en qué unidad y qué desbloquea; prioridad del motor con empates; progreso separado en estructura / física / económica / evidencia; carga de cotizaciones a STAGING.
-- **Evidencia**: qué datos reales hay hoy (solo lectura).
+- **Qué falta validar**: checklist por tema (clientes, planta, alimento, pollitos, granjas, utilities, terreno, logística, RR. HH., impuestos, financiamiento, exportación): estado, a quién pedir, qué pedir, unidad, por qué importa y qué destraba. Ningún casillero se marca sin evidencia.
+- **Para seguir avanzando**: qué hacer ahora, por prioridad del motor. Los empates se muestran como empates («PRIORIDAD 1 — EMPATE»).
+- **Comparar / Optimizar / Riesgos**: si todavía no hay datos suficientes, la pantalla explica qué hacer y ofrece **CREAR ESCENARIO**.

@@ -15,7 +15,11 @@ El simulador HTML previo (`23_plan_expansion/simulador_html/`) **no** se usa com
 ## 2. Capas
 
 ```
-NAVEGADOR (web/)            vistas: inicio · simular (modo simple) · comparar · optimizar · riesgos · validación · evidencia · experto
+NAVEGADOR (web/)            app.js: router con migas de pan, barra lateral agrupada, buscador global · tour.js: primer uso y recorrido
+                            de la demo · md.js: markdown seguro · ui.js: «?» de ayuda, estados en castellano, estados vacíos
+                            vistas: inicio · estudio (índice, grupos, fichas de 5 preguntas) · cadena · localización · proceso ·
+                            productos · arquitecturas · escalas · diccionario · estado · seguir · buscar · simular (5 preguntas +
+                            resultado simple) · comparar · optimizar · riesgos · validación (checklist) · evidencia · experto
    │  fetch JSON
 SERVIDOR (backend/servidor.py)   rutas /api/* ; errores → mensaje de usuario + log ; lock para las llamadas al motor
    │
@@ -27,6 +31,8 @@ MOTOR (sin cambios)   21 modelo_financiero: construir_entrada / simular / result
                       22 motor_riesgo: Evaluador / sensibilidad_oneway / tornado / sensibilidad_2d / correr_stress / punto_quiebre / monte_carlo
                       22 modelo_optimizador: alternativas_reales / correr_universo / consultas / limitacion_principal / que_hacer_ahora
                       20 modelo_opex: correr (solo para costear precios unitarios del modo simple, sobre una copia en memoria)
+ESTUDIO (backend/estudio.py + estudio_contenido.py, solo lectura)  resumen en lenguaje simple de las conclusiones de cada módulo;
+                      tablas de 05, 07, 08, 10, 23, arquitecturas_maestras.csv, glosario.md, estado_proyecto.md; índice de búsqueda
 LECTURA DEL PROYECTO (backend/proyecto.py, solo lectura)  plan_validacion_final.md · prioridad_validacion.csv · que_hacer_ahora.csv ·
                       datos_por_validar.md · cobertura_motor.csv · trazabilidad_end_to_end.csv · base_precios_venta.csv · …
 ```
@@ -73,6 +79,7 @@ La barra lateral y todo export muestran: **versión de la app** (`backend/versio
 3. Optimización completa de muchas alternativas completas: 10–40 s (se muestra «calculando»). Sin cálculo en segundo plano ni cancelación.
 4. Un solo usuario local; sin autenticación (servir solo en `127.0.0.1`). Las llamadas al motor se serializan.
 5. Los precios unitarios de costo del modo simple solo cubren alimento comprado (ALI-A-PT), pollito comprado (POL-COMPRA) y façon de faena (FAE-FACON); el resto del OPEX se carga por rubro en el modo experto.
-6. El objetivo BALANCEADO sin pesos: el motor devuelve NINGUNA + SQ-1; la app lo presenta como PESOS_NO_DEFINIDOS (TF-077).
-7. DSCR mínimo incluye períodos de ramp-up (TF-078): la app muestra el valor del motor con su explicación.
+6. El objetivo BALANCEADO sin pesos: el motor devolvería NINGUNA + SQ-1 (TF-077); desde la v1.1 la app **no lo ejecuta** (400 PESOS_NO_DEFINIDOS, SIMULAR deshabilitado hasta que los pesos sumen 100 %) y nunca lo muestra como NO_INVERTIR_AUN (SUP-244). «Recuperación» (payback) no es componente del balanceado del motor.
+7. DSCR mínimo incluye períodos de ramp-up (TF-078, abierta): la app lo rotula «DSCR mínimo del horizonte», indica el período y la fase donde cae (mismas series `cfads` / `servicio_deuda` del motor), avisa si es el arranque y muestra el mínimo en operación madura como lectura complementaria (SUP-245). Nunca afirma que la deuda sea impagable.
+9. Contenido de «Entender el proyecto»: resume conclusiones ya escritas; si una conclusión se actualiza, `estudio_contenido.py` debe actualizarse a mano (test U01 verifica que DPV y documentos existan, no el texto).
 8. Sin PowerPoint, sin informe de inversores: el resumen imprimible (HTML listo para PDF) es la base para la presentación futura.

@@ -408,6 +408,25 @@ def a_motor(esc):
             "solo_demostracion": bool(esc.get("solo_demostracion"))}
 
 
+def verificar_pesos_balanceado(esc):
+    """BALANCEADO sin pesos declarados NO se ejecuta (la app no inventa pesos y no lo confunde con NO_INVERTIR_AUN).
+    Se leen con la misma función del optimizador (mopt.pesos_balanceado) sobre inputs del repo + parámetros del escenario.
+    Si el componente «riesgo» tiene peso, el score de riesgo necesita sus propios pesos (riesgo.peso.*)."""
+    if esc["simple"].get("objetivo") != "BALANCEADO":
+        return None
+    inp = dict(M.inputs_riesgo()[0])
+    inp.update(esc["experto"].get("analisis") or {})
+    w, origen = mopt.pesos_balanceado(inp)
+    if w is None:
+        raise ErrorEscenario("PESOS_NO_DEFINIDOS: el objetivo BALANCEADO necesita que declares cuánto pesa cada criterio "
+                             "(rentabilidad, menor inversión, riesgo, liquidez, robustez, crecimiento). Sin pesos no se ejecuta: "
+                             "la app no inventa pesos. Esto NO significa «no invertir».")
+    if w.get("riesgo") and not any(mr.num(inp.get(f"riesgo.peso.{c}")) for c in mopt.COMPONENTES_RIESGO):
+        raise ErrorEscenario("RIESGO_SIN_PESOS: le diste peso al riesgo, pero el puntaje de riesgo necesita sus propios pesos "
+                             "(Ajustar supuestos → pesos del score de riesgo). Poné 0 % en riesgo o definilos.")
+    return {"pesos": w, "origen": origen}
+
+
 def verificar_override_total(esc):
     """OVERRIDE_TOTAL_ARQUITECTURA (TF-004) solo con confirmación explícita del usuario en la app: la corrida pierde parte de
     la trazabilidad automática. Sin confirmación → error claro; con confirmación, el motor la rotula

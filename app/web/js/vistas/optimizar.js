@@ -86,7 +86,8 @@ export async function render() {
   const raiz = h("div");
   const res = h("div");
   function dibujar() {
-    raiz.replaceChildren(h("h1", {}, "Buscar mejor alternativa"), h("p", { class: "mut" }, "La «mejor» lo es DENTRO DEL ESCENARIO y para el objetivo elegido. NO_INVERTIR_AUN es un resultado posible."),
+    raiz.replaceChildren(h("h1", {}, "◎ Buscar la mejor alternativa"), h("p", { class: "mut" }, "La «mejor» lo es DENTRO DEL ESCENARIO y para el objetivo elegido. «No invertir todavía» también es un resultado posible."),
+      h("div", { class: "fila-btn" }, h("a", { class: "btn", href: "#/comparar", "data-ir": "comparar" }, "⇄ Prefiero comparar alternativas a mano")),
       formulario(dibujar), h("div", { class: "fila-btn" }, h("button", { class: "btn btn-primario btn-grande", "data-optimizar": "", onclick: correr }, "OPTIMIZAR")), res);
   }
   async function correr() {

@@ -1,6 +1,6 @@
 // COMPARAR ALTERNATIVAS (#18): 2 a 5 alternativas; no se compara si COMPARABILIDAD = FALSE.
 import { E, pedir } from "../estado.js";
-import { h, etq, fmt, alertas, disclaimer, cargando, errorBox, bannerUniverso, semaforo, tabla, toast } from "../ui.js";
+import { h, etq, fmt, alertas, disclaimer, cargando, errorBox, bannerUniverso, semaforo, tabla, toast, vacio } from "../ui.js";
 
 let seleccion = [];
 
@@ -53,6 +53,10 @@ export async function render() {
   let alts;
   try { alts = await pedir("alternativas", "/api/alternativas"); } catch (e) { lista.replaceChildren(errorBox(e)); return raiz; }
   seleccion = seleccion.filter((id) => alts.alternativas.some((a) => a.id === id));
+  if (!alts.alternativas.some((a) => a.completa)) {
+    res.append(vacio("⇄", "Todavía no simulaste ningún escenario con datos suficientes para comparar: ninguna alternativa tiene su resultado calculable. Cargá tus datos en SIMULAR (o abrí la demo) y volvé.",
+      "CREAR ESCENARIO", "#/simular", { "data-vacio-comparar": "" }));
+  }
   const boton = h("button", { class: "btn btn-primario btn-grande", "data-comparar": "", onclick: correr }, "COMPARAR");
   function actualizar() { boton.disabled = seleccion.length < 2 || seleccion.length > 5; boton.textContent = `COMPARAR (${seleccion.length})`; }
   lista.replaceChildren(bannerUniverso(alts), tabla(alts.alternativas.filter((a) => a.tipo !== "NO_INVERTIR_AUN"), [

@@ -78,15 +78,16 @@ export function bannerUniverso(r) {
   if (r.solo_demostracion) {
     return h("div", { class: "banner banner-demo", role: "note" }, h("span", { class: "ico" }, "✱"),
       h("div", {}, h("b", {}, "Solo demostración — datos ficticios"),
-        "DEMO_ARTIFICIAL: números inventados para mostrar la app. Universo ARTIFICIAL_TEST del motor (CASO_PRUEBA_ARTIFICIAL_NO_ES_PROYECTO). No es información del proyecto."));
+        "Números inventados para mostrar cómo funciona la app. No es información del proyecto.",
+        h("span", { class: "codigo-tecnico" }, "Código técnico: DEMO_ARTIFICIAL · universo ARTIFICIAL_TEST (CASO_PRUEBA_ARTIFICIAL_NO_ES_PROYECTO)")));
   }
   if (r.universo === "EVIDENCIA") {
     return h("div", { class: "banner banner-evi" }, h("span", { class: "ico" }, "✔"),
-      h("div", {}, h("b", {}, "Datos reales / evidencia"), "Solo datos con evidencia E1–E3 (umbral configurable, DEC-084)."));
+      h("div", {}, h("b", {}, "Datos reales / evidencia"), "Solo datos con evidencia verificada (niveles E1–E3; umbral en discusión, DEC-084)."));
   }
   return h("div", { class: "banner banner-sim", role: "note" }, h("span", { class: "ico" }, "◇"),
-    h("div", {}, h("b", {}, "Simulación hipotética"), "Resultado calculado por el motor sobre los datos y supuestos de ESTE escenario (",
-      h("code", {}, r.etiqueta || "SIMULACION_HIPOTETICA_NO_VALIDADA"), "). No es evidencia ni pronóstico."));
+    h("div", {}, h("b", {}, "Simulación hipotética"), "Resultado calculado con los datos y supuestos de ESTE escenario. No es un dato real ni un pronóstico.",
+      h("span", { class: "codigo-tecnico" }, "Código técnico: " + (r.etiqueta || "SIMULACION_HIPOTETICA_NO_VALIDADA"))));
 }
 
 export function semaforo(color, leyendas) {
@@ -112,6 +113,7 @@ export function itemValor(it) {
   const clave = it.estado === "NO_APLICA" ? "NO_APLICA" : (it.estado === "PENDIENTE" ? "PENDIENTE" : "NO_CALCULABLE");
   return h("div", { class: "item nocalc" }, h("div", { class: "lab" }, it.etiqueta, etq(clave, titulo)),
     h("div", { class: "val" }, titulo),
+    it.estado === "NO_CALCULABLE" ? h("div", { class: "exp estado-cast" }, porQueFalta(it.faltan)) : null,
     (it.faltan && it.faltan.length) ? h("div", { class: "faltan" },
       h("ul", { class: "lista-faltan" }, it.faltan.slice(0, 3).map((f) => h("li", {}, f.texto + "."))),
       it.faltan.length > 3 ? h("div", { class: "peq mut" }, `y ${it.faltan.length - 3} bloque(s) más`) : null,
@@ -147,11 +149,82 @@ export function cargando(texto = "Calculando con el motor…") {
 }
 
 export function errorBox(e) {
-  const msg = e?.message || "Error inesperado en la interfaz.";
+  let msg = e?.message || "Error inesperado en la interfaz.";
   if (!(e instanceof ErrorApp) && !e?.codigo) console.error(e);
-  return h("div", { class: "banner banner-error", role: "alert", "data-error": e?.codigo || "ERROR" }, h("span", { class: "ico" }, "✕"),
-    h("div", {}, h("b", {}, e?.codigo || "Error"), msg, e?.ref ? h("div", { class: "peq mut" }, "Referencia para el log: " + e.ref) : null));
+  const cod = e?.codigo || "ERROR";
+  if (msg.startsWith(cod + ":")) msg = msg.slice(cod.length + 1).trim();
+  const titulo = TEXTOS.estados[cod] ? TEXTOS.estados[cod] : (cod === "ENTRADA_INVALIDA" ? "Revisá los datos cargados" : "No se pudo completar la acción");
+  const bloqueo = ["PESOS_NO_DEFINIDOS", "RIESGO_SIN_PESOS"].includes(cod);
+  return h("div", { class: "banner " + (bloqueo ? "banner-pend" : "banner-error"), role: "alert", "data-error": cod }, h("span", { class: "ico" }, bloqueo ? "⚖" : "✕"),
+    h("div", {}, h("b", {}, titulo), msg, h("span", { class: "codigo-tecnico" }, "Código técnico: " + cod),
+      e?.ref ? h("div", { class: "peq mut" }, "Referencia para el registro de errores: " + e.ref) : null));
 }
+
+// ---------- textos del backend: ayudas (1–3 frases) y estados en castellano ----------
+export const TEXTOS = { ayudas: {}, estados: {}, confianza: {} };
+export function cargarTextos(t) { Object.assign(TEXTOS, t || {}); }
+
+// Botón «?» con una explicación corta del término (ayuda contextual).
+export function ayuda(termino, texto) {
+  const t = texto || TEXTOS.ayudas[termino] || TEXTOS.ayudas[String(termino).toUpperCase()];
+  if (!t) return null;
+  return h("button", { class: "q", type: "button", "aria-label": "¿Qué es " + termino + "?", "data-ayuda": termino,
+    onclick: (ev) => { ev.preventDefault(); ev.stopPropagation(); mostrarPopover(ev.currentTarget, termino, t); } }, "?");
+}
+function mostrarPopover(ancla, titulo, texto) {
+  const p = document.getElementById("popover");
+  if (!p) return;
+  p.replaceChildren(h("b", {}, titulo), h("span", {}, texto));
+  p.hidden = false;
+  const r = ancla.getBoundingClientRect();
+  const w = Math.min(320, window.innerWidth - 20);
+  p.style.left = Math.max(10, Math.min(r.left, window.innerWidth - w - 10)) + "px";
+  p.style.top = (r.bottom + 6 + 160 > window.innerHeight ? Math.max(10, r.top - 150) : r.bottom + 6) + "px";
+  p.dataset.popoverDe = titulo;
+}
+document.addEventListener("click", (ev) => { const p = document.getElementById("popover"); if (p && !p.hidden && !p.contains(ev.target)) p.hidden = true; });
+document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") { const p = document.getElementById("popover"); if (p) p.hidden = true; } });
+
+// Estado técnico → frase en castellano, con el código como dato secundario.
+export function estadoTexto(codigo, detalle) {
+  const txt = TEXTOS.estados[codigo] || detalle || codigo;
+  return h("span", { class: "estado-cast", "data-estado": codigo }, txt, h("span", { class: "codigo-tecnico" }, "Código técnico: " + codigo));
+}
+
+// Bloque del motor que falta → frase simple («No se puede calcular todavía porque …»).
+const FALTA_CAST = { IMPUESTOS_INGRESOS: "falta definir el tratamiento fiscal (impuestos sobre los ingresos)", PRECIOS: "falta el precio de venta",
+  DEMANDA: "falta la demanda", CAPEX: "falta el monto de la inversión (CAPEX)", OPEX: "faltan los costos operativos (OPEX)", DESCUENTO: "falta la tasa de descuento",
+  FINANCIAMIENTO: "falta definir cómo se financia", TIEMPO: "falta el horizonte o el cronograma", RAMPUP: "falta la curva de arranque (ramp-up)",
+  CANALES: "faltan las condiciones comerciales de los canales", CT: "faltan datos de capital de trabajo", IVA: "falta el tratamiento del IVA",
+  GANANCIAS: "falta el impuesto a las ganancias", DEPRECIACION: "falta la vida útil de los activos", REPOSICION: "falta el costo de reposición de activos",
+  VALOR_TERMINAL: "falta el valor terminal", PRODUCCION: "faltan datos de producción" };
+export function porQueFalta(faltan) {
+  if (!faltan?.length) return "No se puede calcular todavía porque faltan datos.";
+  const xs = faltan.slice(0, 2).map((f) => FALTA_CAST[f.bloque] || (f.texto || "").toLowerCase());
+  return "No se puede calcular todavía porque " + xs.join(" y ") + (faltan.length > 2 ? ` (y ${faltan.length - 2} dato(s) más)` : "") + ".";
+}
+
+// Estado vacío: explica qué hacer y ofrece una acción.
+export function vacio(icono, texto, cta, accion, attrs = {}) {
+  return h("div", { class: "vacio", "data-vacio": "", ...attrs }, h("div", { class: "i", "aria-hidden": "true" }, icono), h("p", {}, texto),
+    cta ? (typeof accion === "string" ? h("a", { class: "btn btn-primario btn-grande", href: accion, "data-cta": "" }, cta)
+      : h("button", { class: "btn btn-primario btn-grande", onclick: accion, "data-cta": "" }, cta)) : null);
+}
+
+// Chip de confianza de un dato del estudio (Validado / Estimación / Supuesto / PVDP / Pendiente).
+const CONF_CORTO = { VERIFICADO: "✔ Validado", ESTIMACION: "≈ Estimación", SUPUESTO: "~ Supuesto", PVDP: "? Sin verificar (PVDP)", PENDIENTE: "… Pendiente" };
+export function conf(etiqueta, n) {
+  return h("span", { class: "conf conf-" + etiqueta, title: TEXTOS.confianza[etiqueta] || etiqueta, "data-conf": etiqueta }, CONF_CORTO[etiqueta] || etiqueta, n ? ` · ${n}` : "");
+}
+
+// En pantallas simples no se muestran rutas de archivos ni códigos: «carpeta/archivo_x.csv» → «archivo x»; «ECOSISTEMA_AVICOLA» → «ecosistema avicola».
+export function sinRutas(t) {
+  return String(t ?? "").replace(/`?(?:[\w.-]+\/)*([\w-]+)\.(?:csv|md|py|json|jsonl|html)`?/g, (_, b) => b.replace(/_/g, " "))
+    .replace(/\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b/g, (c) => c.replace(/_/g, " ").toLowerCase());   // códigos → palabras
+}
+
+// Número formateado para textos simples.
+export function num(v, d = 0) { return v === null || v === undefined ? "—" : nf(d).format(v); }
 
 // ---------- tabla: ordenar / filtrar / buscar / exportar CSV (#43) ----------
 export function tabla(filas, columnas, opciones = {}) {

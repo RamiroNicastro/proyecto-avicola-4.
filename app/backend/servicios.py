@@ -255,6 +255,7 @@ def _correr(ctx, ids=None, con_consultas=True):
 
 
 def optimizar(esc):
+    ES.verificar_pesos_balanceado(ES.validar(esc))
     ctx = contexto(esc)
 
     def calc():
@@ -334,6 +335,30 @@ def series_anuales(R, res):
     return out
 
 
+def dscr_detalle(R, res):
+    """Dónde cae el DSCR mínimo del horizonte (TF-078): mismos períodos de reporte y series (cfads, servicio_deuda) que el
+    motor usa para DSCR_MINIMO; la app solo identifica el período y su fase (construcción / ramp-up / operación madura)."""
+    S = R.get("series") or {}
+    if res.get("DSCR_MINIMO") is None or S.get("cfads") is None or S.get("servicio_deuda") is None:
+        return None
+    cf, sv = mf.agregar(R, "cfads"), mf.agregar(R, "servicio_deuda")
+    per = R.get("periodos") or []
+    filas = [(p["PERIODO"], p["FASE"], c / s) for p, c, s in zip(per, cf, sv) if s > 1e-9]
+    if not filas:
+        return None
+    pmin = min(filas, key=lambda x: x[2])
+    madura = [x for x in filas if set(x[1].split("→")) == {"OPERACION_MADURA"}]
+    en_arranque = any(f in pmin[1] for f in ("RAMP_UP", "COMMISSIONING", "CONSTRUCCION", "PREOPERACION"))
+    return {"dscr_minimo": res["DSCR_MINIMO"], "periodo": pmin[0], "fase": pmin[1], "incluye_rampa": en_arranque,
+            "dscr_minimo_operacion_madura": min(x[2] for x in madura) if madura else None,
+            "periodo_operacion_madura": min(madura, key=lambda x: x[2])[0] if madura else None,
+            "periodos": [{"periodo": a, "fase": b, "dscr": c} for a, b, c in filas],
+            "nota": "DSCR mínimo del horizonte: el período más ajustado de toda la proyección. "
+                    + ("Cae en el arranque (ramp-up / construcción), cuando la planta todavía no produce a pleno: no significa "
+                       "que la deuda sea impagable en régimen (TF-078 abierta)." if en_arranque else
+                       "No cae en el arranque.")}
+
+
 def detalle_alternativa(ctx, aid):
     alt = ctx.alt(aid)
     b = ctx.E.base(alt)
@@ -350,6 +375,7 @@ def detalle_alternativa(ctx, aid):
             "faltantes": {k: v for k, v in R["faltantes"].items() if v},
             "estado_bloques": estados, "cobertura_bloques": mf.cobertura_bloques(estados),
             "completitud": mf.completitud(P, R, T), "series": series_anuales(R, res), "traza": traza,
+            "dscr": dscr_detalle(R, res) if res.get("PUBLICABLE_DSCR") else None,
             "notas_motor": R.get("notas", []), "productos_kg_ave": {p: x["kg_ave"] for p, x in (P.get("productos") or {}).items()},
             "dias_operativos": [e["dias_operativos_anio"] for e in P["etapas"]],
             "demanda_lineas": [{k: v for k, v in l.items()} for l in (P.get("demanda") or [])]}
@@ -366,6 +392,7 @@ def id_simple(ctx):
 
 
 def simular(esc, aid=None):
+    ES.verificar_pesos_balanceado(ES.validar(esc))
     ctx = contexto(esc)
 
     def calc():

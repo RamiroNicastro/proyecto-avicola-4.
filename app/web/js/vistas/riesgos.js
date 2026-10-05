@@ -1,7 +1,7 @@
 // RIESGOS (#22–#27): ¿qué pasa si…?, tornado, 2D, stress, puntos de quiebre, Monte Carlo y matriz cualitativa.
 import { api } from "../api.js";
 import { E, pedir } from "../estado.js";
-import { h, etq, fmt, fmtShock, disclaimer, cargando, errorBox, bannerUniverso, tabla, pestanas, campo, numOrNull } from "../ui.js";
+import { h, etq, fmt, fmtShock, disclaimer, cargando, errorBox, bannerUniverso, tabla, pestanas, campo, numOrNull, vacio } from "../ui.js";
 import { tornado as gTornado, heatmap, lineas, barras, histograma, sinDatos } from "../graficos.js";
 
 const SHOCKS_REL = [-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3];
@@ -165,11 +165,17 @@ async function matriz() {
       { k: "CLASE_INHERENTE", t: "Clase" }, { k: "ESTADO_MITIGACION", t: "Mitigación" }, { k: "DRIVERS", t: "Drivers" }], { nombre: "matriz_riesgos", alto: "460px" }));
 }
 
-export async function render() {
-  const raiz = h("div", {}, h("h1", {}, "Riesgos"), h("p", { class: "mut" }, "Sensibilidades y stress sobre el escenario actual (simulación). La matriz cualitativa es del proyecto."));
+export async function render(params, query) {
+  if (query?.tab) pestanaAct = query.tab;
+  const raiz = h("div", {}, h("h1", {}, "⚠ ¿Qué pasa si algo cambia?"), h("p", { class: "mut" }, "Probá qué le pasa al resultado si sube el alimento, baja el precio o cambia la demanda (sobre el escenario actual: es una simulación)."));
   let alts;
   try { alts = await pedir("alternativas", "/api/alternativas"); } catch (e) { raiz.append(errorBox(e)); return raiz; }
   const completas = alts.alternativas.filter((a) => a.completa);
+  if (!completas.length) {
+    raiz.append(vacio("⚠", "Todavía no hay ninguna alternativa con datos suficientes para probar riesgos. Primero cargá un escenario con precios, costos y demanda (o abrí la demo).",
+      "CREAR ESCENARIO", "#/simular"), h("p", { class: "mut peq" }, "Mientras tanto podés ver el registro de riesgos del proyecto en ", h("a", { href: "#/estudio/riesgos" }, "Riesgos (estudio)"), "."));
+    return raiz;
+  }
   let alt = completas.some((a) => a.id === E.alternativa) ? E.alternativa : completas[0]?.id;
   const zona = h("div");
   function dibujar() {

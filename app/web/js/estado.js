@@ -19,6 +19,7 @@ function persistir() {
 
 export function setEscenario(esc, sinGuardar = false) {
   E.escenario = esc; E.sinGuardar = sinGuardar; E.res = {}; E.alternativa = null;
+  E.cargas = (E.cargas || 0) + 1;      // cada escenario abierto reinicia el asistente en el paso 1
   persistir(); avisar();
 }
 

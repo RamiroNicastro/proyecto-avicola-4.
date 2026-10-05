@@ -299,8 +299,10 @@ const TABS = [["tiempo", "Tiempo, tasas y ramp-up", tabTiempo], ["demanda", "Dem
   ["stress", "Stress y status quo", tabStress], ["dist", "Distribuciones y correlaciones", tabDistribuciones], ["optimizador", "Optimizador (pesos y restricciones)", tabOptimizador],
   ["fisico", "Factibilidad física", tabFisico], ["evidencia", "Evidencia", tabEvidencia], ["trazabilidad", "Trazabilidad", tabTrazabilidad], ["json", "JSON", tabJSON]];
 
-export async function render() {
-  return h("div", {}, h("h1", {}, "Modo experto"), h("p", { class: "mut" }, "Todos los inputs del motor. Vacío = PENDIENTE (nunca 0). Todo lo que se edita aquí es ESCENARIO: la evidencia central no se modifica."),
+export async function render(params, query, ruta) {
+  if (ruta === "trazabilidad") pestanaAct = "trazabilidad";
+  else if (query?.tab) pestanaAct = query.tab;
+  return h("div", {}, h("h1", {}, ruta === "trazabilidad" ? "Trazabilidad (modo experto)" : "Modo experto"), h("p", { class: "mut" }, "Todos los inputs del motor. Vacío = PENDIENTE (nunca 0). Todo lo que se edita aquí es ESCENARIO: la evidencia central no se modifica."),
     E.escenario?.solo_demostracion ? h("div", { class: "banner banner-demo" }, h("span", { class: "ico" }, "✱"), h("div", {}, h("b", {}, "Demo: datos ficticios"), "Puede editarse; al guardar se crea una copia.")) : null,
     pestanas(TABS.map(([id, t]) => ({ id, t })), (id, cont) => {
       pestanaAct = id;

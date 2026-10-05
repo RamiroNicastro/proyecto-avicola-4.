@@ -61,7 +61,7 @@ class Flujos(unittest.TestCase):
     def test_flujo1_crear_cargar_simular_ver(self):
         st, html = self.c.get("/")
         self.assertEqual(st, 200)
-        self.assertIn("App Avícola", html)
+        self.assertIn("Proyecto Avícola", html)
         esc = self.ok(*self.c.post("/api/nuevo", {"nombre": "flujo 1"}))
         esc["simple"]["objetivo"] = "GANAR_MAS"
         esc["simple"]["arquitectura"] = {"modo": "MANUAL", "configuracion": "C1", "variante": None}

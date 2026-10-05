@@ -174,10 +174,20 @@ class T05NoInvertirAun(unittest.TestCase):
         self.assertTrue(all((x or {}).get("RANK") is None for x in sq["ranking"].values()))
 
     def test_balanceado_sin_pesos_no_es_no_invertir(self):
+        """BALANCEADO sin pesos NO se ejecuta (bloqueo PESOS_NO_DEFINIDOS) y nunca se presenta como NO_INVERTIR_AUN."""
         e = demo_esc()
         e["simple"]["objetivo"] = "BALANCEADO"
-        r = S.simular(e)
-        self.assertEqual(r["resultado"], "PESOS_NO_DEFINIDOS")
+        for fn in (S.simular, S.optimizar):
+            with self.assertRaises(ES.ErrorEscenario) as cm:
+                fn(e)
+            self.assertTrue(str(cm.exception).startswith("PESOS_NO_DEFINIDOS"))
+            self.assertNotIn("NO_INVERTIR_AUN", str(cm.exception))
+        st, _, c = SV.manejar("POST", "/api/simular", {"escenario": e})
+        self.assertEqual((st, c["error"]["codigo"]), (400, "PESOS_NO_DEFINIDOS"))
+        e["experto"]["analisis"].update({f"balanceado.peso.{k}": 20 for k in ("rentabilidad", "capital", "liquidez", "robustez", "crecimiento")})
+        o = S.optimizar(e)                                       # con pesos declarados sí se ejecuta
+        self.assertEqual(o["decision_principal"]["OBJETIVO"], "BALANCEADO")
+        self.assertNotEqual(o["decision_principal"].get("PESOS_BALANCEADO"), "PESOS_NO_DEFINIDOS")
 
 
 class T06Comparabilidad(unittest.TestCase):
