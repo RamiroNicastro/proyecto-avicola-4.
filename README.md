@@ -43,6 +43,7 @@ Reglas de trabajo (fuentes, clasificación de datos, unidades): [`CLAUDE.md`](CL
 | `23_plan_expansion` | Etapas de crecimiento e integración |
 | `24_inversores` | Material para el grupo inversor |
 | `25_fuentes` | Bibliografía y registro de fuentes |
+| `26_presentacion` | **Paquete ejecutivo V1**: presentación (PPTX/PDF), guion, resumen de 1 página y trazabilidad — ver [`26_presentacion/README.md`](26_presentacion/README.md) |
 | `app` | **App V1** local sobre el motor (modo simple + experto): `python3 app/app.py` — ver [`app/README.md`](app/README.md) |
 
 Cada carpeta temática (`01`–`24`) contiene un `README.md` con su alcance y preguntas clave.

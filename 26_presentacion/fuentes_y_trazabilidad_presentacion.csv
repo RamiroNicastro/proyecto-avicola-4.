@@ -1,0 +1,52 @@
+ID,LAMINA,AFIRMACION,VALOR_MOSTRADO,ETIQUETA,DOCUMENTO_FUENTE,SECCION,IDS_REGISTRO,OBSERVACIONES
+PR-001,"1-2,23",Estado del motor,MOTOR_V1 = COMPLETO ESTRUCTURALMENTE,ESTADO,00_gestion_proyecto/auditoria_final_motor_v1.md,§30 Conclusión; §26,—,"Mensaje central repetido en láminas 1, 2 y 23"
+PR-002,"1-2,17,23",Estado de la app,APP_V1 = LISTA (v1.1.0),ESTADO,app/README.md,encabezado (APP_V1_FUNCIONAL = SÍ),—,"También en estado_proyecto.md, tablero 'App V1'"
+PR-003,"1-2,23",Listo para decisión real,LISTO_DECISION_REAL = NO (FALSE en los 25 módulos),ESTADO,00_gestion_proyecto/completitud_final_motor.csv,columna LISTO_DECISION_REAL,—,
+PR-004,"2,5",Módulos del motor,25 módulos terminados estructuralmente; ninguno validado en campo,ESTADO,00_gestion_proyecto/completitud_final_motor.csv,25 filas,,Exportación figura como módulo futuro
+PR-005,"2,A3",Pruebas de integración,70/70,ESTADO,00_gestion_proyecto/auditoria_final_motor_v1.md,§30; §25,—,
+PR-006,"2,19",Datos por validar validados,0 de 180 DPV,PENDIENTE,00_gestion_proyecto/auditoria_final_motor_v1.md,§27,DPV-001 a DPV-180,
+PR-007,3,Punto de partida,"Carnicería familiar en AMBA; sin granjas, planta, terreno ni maquinaria",SUPUESTO,00_gestion_proyecto/estado_proyecto.md,Situación de partida,SUP-003; SUP-004,
+PR-008,"3,13",Capital de referencia,~USD 2 M no comprometido; no es límite ni default,SUPUESTO,00_gestion_proyecto/estado_proyecto.md,Situación de partida,SUP-003; DEC-010; SUP-221,Nunca comparado contra CAPEX en el deck
+PR-009,"3,6",Canal potencial,"~90 supermercados, demanda no validada",PENDIENTE,00_gestion_proyecto/estado_proyecto.md,Situación de partida,SUP-004; DPV-020; SUP-193,
+PR-010,4,Alimento = mayor flujo físico,cualitativo,ESTIMACIÓN,23_plan_expansion/conclusiones_escala.md,§1 punto 5,—,
+PR-011,6,Categorías de demanda,Escenario / Potencial / Interesada / Negociada / Asegurada,ESTADO,00_gestion_proyecto/auditoria_final_motor_v1.md,§6 Demanda,DEC-014; SUP-193,La lámina simplifica A/B/B–C/C–D/ESCENARIO en lenguaje simple
+PR-012,"6,8",Demanda documentada (A+B),≈ 0,PENDIENTE,23_plan_expansion/conclusiones_escala.md,§1 punto 1,DPV-002; DPV-020; DPV-037; DPV-040,También auditoria §27 (demanda contable = 0)
+PR-013,7,Definición de C0–CF,faena/granjas/pollito/alimento/flota por arquitectura,ESTADO,00_gestion_proyecto/arquitecturas_maestras.csv,"filas C0, C1, C2, C3, CF",DEC-001; DEC-033; DEC-103,C2: 25 % granjas propias en el preset; CF: rendering y reproductoras FUTURO
+PR-014,7,Ninguna arquitectura costeable,NO COSTEABLE en las 5,PENDIENTE,00_gestion_proyecto/arquitecturas_maestras.csv,columna ESTADO,—,
+PR-015,8,Aves por año por escala (5 d/sem),"625.000 / 1,25 M / 2,5 M / 5,0 M",ESTIMACIÓN,23_plan_expansion/conclusiones_escala.md,§2 Tabla comparativa,SUP-052,250 días operativos/año
+PR-016,8,Pollitos BB por semana plena,13.197 / 26.395 / 52.790 / 105.580 (redondeado a 13.200 / 26.400 / 52.800 / 105.600),ESTIMACIÓN,23_plan_expansion/conclusiones_escala.md,§2 Tabla comparativa,—,
+PR-017,8,Alimento t/año,3.091 / 6.181 / 12.362 / 24.724 (redondeado),ESTIMACIÓN,23_plan_expansion/conclusiones_escala.md,§2 Tabla comparativa,—,
+PR-018,8,Demanda para llenar cada escala,"4,1 / 8,2 / 16,4 / 32,8 t peso comercial/día calendario (ave completa, cota inferior)",ESTIMACIÓN,23_plan_expansion/conclusiones_escala.md,§1 punto 3,—,
+PR-019,8,kg/local/día si todo fuera a 90 locales,46 / 91 / 182 / 365,ESCENARIO,23_plan_expansion/conclusiones_escala.md,§1 punto 3,SUP-004,Ilustrativo: los 90 locales no son demanda
+PR-020,8,Utilización respaldada por evidencia,0 % en las cuatro escalas,PENDIENTE,23_plan_expansion/conclusiones_escala.md,§1 punto 1,—,
+PR-021,8,Sexto día,+20 % de volumen anual con la misma capacidad diaria,ESTIMACIÓN,23_plan_expansion/conclusiones_escala.md,§0 punto 6; §1 punto 6,—,
+PR-022,9,Etapas del proceso,32 etapas (12 en la versión simple),ESTIMACIÓN,05_proceso_industrial/conclusiones_proceso.md,§1 Flujo industrial; app (cadena),—,Capacidad garantizada = dato del RFQ (DPV-097); real = campo (DPV-088)
+PR-023,10,"kg por pollo de 2,9 kg (ruta trozado)","pechuga c/hueso 0,784; pata-muslo 0,631; carcasa-esqueleto 0,393; alas 0,208; plumas 0,151; vísceras no comestibles 0,130; patas 0,113; menudencias 0,110; sangre 0,099; cuello 0,075; cabeza 0,072",ESTIMACIÓN,04_balance_masa/conclusiones_balance.md,"§1 (balance medio) y §3 (cortes, 2,9 kg, medio)",DPV-060; DEC-028,Rendimientos de referencia; falta ensayo en planta. La app muestra kg comerciales del mix (incluyen agua retenida): no se mezclan
+PR-024,10,Rutas excluyentes,entero / trozado / deshuesado; carcasa vendida / CMS / rendering,ESTADO,00_gestion_proyecto/auditoria_final_motor_v1.md,§8 Balance de masa,—,Glosario: 'Ruta alternativa'
+PR-025,11,Corredores estudiados,"13 corredores en 5 provincias, sin orden",ESTADO,10_localizacion/regiones_preliminares.md,tabla de corredores,DEC-003,
+PR-026,11,Celdas verificadas de la matriz,0 de 624,PENDIENTE,10_localizacion/conclusiones_localizacion.md,Resultado central,DEC-003,
+PR-027,11,Gates duros y condicionales,"duros: uso de suelo, agua, efluentes, energía; condicionales: riesgo hídrico, vecinos, receptor de subproductos, gas, potencia, agua con tratamiento, acceso",ESTADO,10_localizacion/conclusiones_localizacion.md,§4,DEC-052,El pedido mencionaba vecinos y logística como hard gates: en el estudio son condicionales; el deck sigue al estudio
+PR-028,11,Contacto en Chaco,peso 0 en todos los perfiles,ESTADO,00_gestion_proyecto/auditoria_final_motor_v1.md,§11,—,
+PR-029,12,Terreno conceptual,"19.868–43.660 m² (2.500–20.000 aves/día), orden de magnitud",ESTIMACIÓN,19_capex/conclusiones_capex.md,§5 punto 4,DEC-063; DPV-087,Terreno a adquirir = decisión
+PR-030,12,Programa de áreas,"54 áreas, 9 zonas; sin layout constructivo",ESTADO,00_gestion_proyecto/estado_proyecto.md,Tablero: Layout y obra civil (09),—,
+PR-031,13,Conceptos de CAPEX,175 conceptos; 167 sin precio; 8 con referencia E4 [PVDP],PENDIENTE,19_capex/conclusiones_capex.md,§2 Resultado central,DPV-160; DPV-161; DPV-087; DPV-162; DPV-163,
+PR-032,13,Cobertura por conceptos CAPEX,"0 % (C0); 1,3 % (C1); 2,3 % (C2); 1,4 % (C3/CF)",PENDIENTE,19_capex/conclusiones_capex.md,§2,DEC-084,
+PR-033,13,CAPEX total,NO DISPONIBLE en todas las arquitecturas,PENDIENTE,00_gestion_proyecto/auditoria_final_motor_v1.md,§13,—,Montos E4 parciales de 19 NO se muestran
+PR-034,14,Cobertura OPEX,"estructural 100 % · física 57/62/56/43 % · costeo por bloques 9,5/7,7/4,9/0 % (C0/C1/C2/C3-CF)",PENDIENTE,20_opex/conclusiones_opex.md,§2 tabla de coberturas,DPV-050; DPV-047; DPV-148; DPV-052; DPV-006; DPV-175,Etiquetas del gráfico redondeadas a entero; valores exactos en la nota de la lámina
+PR-035,14,"OPEX total, costo por ave y CT",PENDIENTES; ninguna arquitectura costeable,PENDIENTE,20_opex/conclusiones_opex.md,§2,DPV-175,Montos parciales E4 de 20 NO se muestran
+PR-036,15,Corridas financieras publicables,"0 de 61 corridas de referencia (42 EVIDENCIA + 19 ESCENARIO, todas no publicables)",PENDIENTE,21_modelo_financiero/escenarios_financieros.csv,columnas MODO y PUBLICABLE_VAN,—,La app muestra '0 de 42' (cuenta solo MODO = EVIDENCIA); la auditoría §30 cita 0 de 61: ambas consistentes
+PR-037,"15,16",Alternativas del optimizador con VAN publicable,0 de 54 (OPTIMIZACION_REAL_NO_DISPONIBLE),PENDIENTE,22_riesgos/conclusiones_riesgo_optimizacion.md,§2 punto 1,TF-010,
+PR-038,15,Pico de fondos ≠ CAPEX,hallazgo cualitativo,ESTIMACIÓN,21_modelo_financiero/conclusiones_financieras.md,§4 punto 2,—,Sin montos
+PR-039,16,Monte Carlo del proyecto,NO DISPONIBLE (sin distribuciones respaldadas),PENDIENTE,00_gestion_proyecto/auditoria_final_motor_v1.md,§17,DPV-180,
+PR-040,16,Registro de riesgos,34 riesgos; probabilidad del proyecto PENDIENTE,PENDIENTE,22_riesgos/conclusiones_riesgo_optimizacion.md,§2 punto 5,SUP-224,
+PR-041,16,NO_INVERTIR_AUN,alternativa de decisión por reglas SQ-1…SQ-6,ESTADO,00_gestion_proyecto/auditoria_final_motor_v1.md,§18,SUP-214,
+PR-042,17-18,Funciones de la app,"modo simple (5 preguntas), modo experto, 26 temas, diccionario, checklist",ESTADO,app/guia_usuario_simple.md,§3–§6,—,Capturas reales tomadas con Playwright de la app local v1.1.0 (commit 58f9504)
+PR-043,19,Paquetes de validación,"12 paquetes; P1: clientes, planta, alimento, pollitos, granjas; P2: utilities, terreno, logística, RR. HH., impuestos, financiamiento; P4: exportación",PENDIENTE,00_gestion_proyecto/plan_validacion_final.md,§1 Mapa de paquetes,—,
+PR-044,20,Roadmap,"5 fases, sin fechas",ESTADO,00_gestion_proyecto/plan_validacion_final.md,§3 Qué cambia en el motor,—,Fases redactadas para el deck; las fases 1–2 corresponden a paquetes P1
+PR-045,21,Decisiones abiertas,104 DEC abiertas; 0 cerradas,PENDIENTE,00_gestion_proyecto/auditoria_final_motor_v1.md,§28,DEC-001; DEC-033; DEC-003; DEC-020; DEC-023; DEC-024; DEC-074; DEC-092; DEC-097; DEC-098,
+PR-046,A2,Niveles de evidencia,E1 cotización; E2 precio directo; E3 benchmark leído en original; E4 secundario/PVDP; E5 supuesto,ESTADO,19_capex/evidencia_costos.md,tabla de niveles,SUP-190; DEC-084,Umbral por defecto E1–E3
+PR-047,A2,Cobertura de evidencia,0 % (0 de 16 bloques aplicables),PENDIENTE,00_gestion_proyecto/auditoria_final_motor_v1.md,§23; §26,—,
+PR-048,A3,Mutaciones de integración detectadas,15/15,ESTADO,00_gestion_proyecto/auditoria_final_motor_v1.md,§25,—,
+PR-049,A3,Pruebas por motor,CAPEX 82; OPEX 78; financiero 70; riesgo/optimizador 69,ESTADO,00_gestion_proyecto/registro_tests_final.csv,"filas 19, 20, 21, 22",—,
+PR-050,A3,Pruebas de la app,52 Python + 19 flujos en navegador,ESTADO,00_gestion_proyecto/estado_proyecto.md,Tablero: App V1,—,
+PR-051,A4,Tensiones,"76 (71 abiertas, 4 corregidas, 1 mitigada)",PENDIENTE,00_gestion_proyecto/auditoria_final_motor_v1.md,§24,TF-001 a TF-076,
