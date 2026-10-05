@@ -38,7 +38,7 @@ Por combinación: COMB-0001 (C1 + 13 variantes) 20 · COMB-1385 (C0 + B1 + B2) 9
 
 `COMPARABILIDAD = FALSE` si difieren universo, horizonte, modelo real/nominal, base de la tasa, convención, tipo y valor de la tasa, moneda, base de flujo (pre/after-tax), tratamiento fiscal o definición de producto, o si **faltan bloques económicos** (VAN no publicable). `PARCIAL` si solo difiere la cobertura de evidencia (se rankea, declarado). `NO_APLICA` para NO_INVERTIR_AUN. Una alternativa FALSE no participa en rankings, dominancia ni Pareto (aparece como `NO_EVALUABLE`): un CAPEX/OPEX/precio faltante nunca se interpreta como 0 (tests COMP-02, AUD-14; mutaciones R12, R13, R27).
 
-`COBERTURA_EVIDENCIA` = bloques del motor completos en **modo evidencia** ÷ 17 para la misma configuración y escala: mide confianza, no rentabilidad (SUP-228).
+`COBERTURA_EVIDENCIA` = bloques **CON_EVIDENCIA** ÷ bloques **aplicables** del motor en **modo evidencia** para la misma configuración y escala (`mf.estado_bloques()`, `mf.cobertura_bloques()`): un bloque `NO_APLICA` (p. ej., valor terminal SIN_VALOR_TERMINAL, IVA EXCLUIDO, reposición sin vidas menores al horizonte) sale del denominador; un bloque `VACIO` (sin faltantes declarados pero sin contenido, p. ej., reposición sin activos) o `PENDIENTE` nunca suma. Corrección de la auditoría final 21 (TF-011): antes se contaban dos bloques vacíos como completos (11,8 % sin evidencia); hoy el proyecto tiene 0 %. Mide confianza, no rentabilidad (SUP-228). Una corrida con `OVERRIDE_TOTAL_ARQUITECTURA` solo es comparable con otras de override total (firma `OVERRIDE_TOTAL`, TF-004).
 
 ## 4. Semáforo (sin cortes económicos)
 

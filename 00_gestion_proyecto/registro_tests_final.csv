@@ -24,8 +24,8 @@ SUITE,MODULO,COMANDO,TESTS,MUTACIONES,RESULTADO,OBSERVACIONES
 22,Riesgo y optimizador,python3 22_riesgos/modelo_optimizador.py --solo-tests,69/69,,OK,
 22m,Riesgo y optimizador,python3 22_riesgos/modelo_optimizador.py --mutaciones,,27/27,OK,escribe 22_riesgos/cobertura_mutaciones.csv
 sim,Simulador HTML v0.1,node validar_simulador.js,20/20,,OK,se corre desde 23_plan_expansion/simulador_html
-INT,Integración final del motor,python3 00_gestion_proyecto/tests_integracion_motor.py,61/61,,OK,tests de integración final (sesión 21)
-INTm,Integración final del motor,(incluida en INT),,11/11,OK,mutaciones de integración (misma corrida que INT)
+INT,Integración final del motor,python3 00_gestion_proyecto/tests_integracion_motor.py,70/70,,OK,tests de integración final (sesión 21)
+INTm,Integración final del motor,(incluida en INT),,15/15,OK,mutaciones de integración (misma corrida que INT)
 08,Maquinaria conceptual,—,,,NO_APLICA,sin suite propia: catálogo consumido y probado por 19 (CAPEX)
 16,Normativa,—,,,NO_APLICA,"documental, sin modelo"
 01/17,Mercado y exportación,—,,,NO_APLICA,"documentales, sin modelo (exportación = módulo futuro de mercado)"

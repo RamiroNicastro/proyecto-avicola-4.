@@ -141,7 +141,7 @@ Consume el motor financiero como función de evaluación (E2E05: VAN del optimiz
 | Paquetes RFQ (equipos en dos lotes) | SUP-160; T16-01/T16-02 | registrado (TF de T16-01/02) |
 | Derechos de exportación (venta y costo) | ubicación única (SUP-210) | sin doble conteo (FI04) |
 | IVA en el EBITDA | IVA solo como flujo de caja | sin doble conteo (FI04) |
-| IVA de CAPEX con `IVA_INCIERTO` + crédito fiscal | — | **potencial**, hoy sin efecto (TF-076) |
+| IVA de CAPEX con `IVA_INCIERTO` + crédito fiscal | crédito solo con declaración explícita por etapa; CAPEX de 19 con `IVA_INCIERTO` no se usa (SUP-238) | **mitigado en el motor** (TF-076; IV01–IV02, m15) |
 | CT completo en cada período | ΔCT | sin doble conteo (E2E02, m03) |
 | Deuda en el FCFF | FCFF sin financiación | sin doble conteo (FI01, m04) |
 
@@ -163,11 +163,11 @@ USD constantes de 2026-10-01 (modelo REAL, SUP-195). Moneda original, TC, fecha 
 - **Ida y vuelta (EV01):** aplicar stress y overrides en escenario no cambia la entrada de evidencia (en memoria) ni los archivos de evidencia (hash idéntico); el universo EVIDENCIA rechaza shocks y rechaza inputs de usuario. **Nunca ocurre simulación → base de evidencia.**
 - Precios E4 `[PVDP]` = `REFERENCIA_E4_NO_USABLE`; ninguno se usa (EV03; mutación m05 detectada).
 - Publicabilidad: un número nunca se publica con su flag FALSE; en el proyecto, 0 indicadores publicables en las 5 arquitecturas (FI05); un faltante de CAPEX, OPEX o precio da NO PUBLICABLE con motivo, nunca 0 (FA01; m06).
-- Coberturas separadas (estructural, física, económica, evidencia) en [`cobertura_motor.csv`](cobertura_motor.csv) (CV01). La cobertura de evidencia del optimizador cuenta dos bloques vacuos (TF-011).
+- Coberturas separadas (estructural, física, económica, evidencia) en [`cobertura_motor.csv`](cobertura_motor.csv) (CV01). La cobertura de evidencia distingue CON_EVIDENCIA / PENDIENTE / VACIO / NO_APLICA y se calcula sobre bloques aplicables: hoy **0 %** en el proyecto (TF-011 corregida, CV02–CV03).
 
 ## 24. Tensiones
 
-[`tensiones_finales.csv`](tensiones_finales.csv): **76** (74 abiertas, 2 corregidas). TF-001 a TF-011 y TF-076 son nuevas de esta auditoría; TF-012 a TF-075 indexan las tensiones abiertas T12, T14, T16, T17, T18, T19 y T20 con su ID original. Ninguna tensión de negocio se resolvió. Principales abiertas: precios casi inexistentes en CAPEX y OPEX (TF-053, TF-054); rendimientos del balance sin ensayo (TF-069); pico de fondos vs CAPEX vs USD 2 M (TF-070); upstream sin RR. HH. ni utilities (TF-058); OPEX/CAPEX del usuario sin control de completitud de arquitectura en escenarios (TF-004); comparabilidad imposible hoy (TF-010).
+[`tensiones_finales.csv`](tensiones_finales.csv): **76** (71 abiertas, 4 corregidas —TF-004, TF-008, TF-009, TF-011—, 1 mitigada en el motor —TF-076—; TF-005 sigue abierta en su contenido fiscal con defensa técnica implementada, §31). TF-001 a TF-011 y TF-076 son nuevas de esta auditoría; TF-012 a TF-075 indexan las tensiones abiertas T12, T14, T16, T17, T18, T19 y T20 con su ID original. Ninguna tensión de negocio se resolvió. Principales abiertas: precios casi inexistentes en CAPEX y OPEX (TF-053, TF-054); rendimientos del balance sin ensayo (TF-069); pico de fondos vs CAPEX vs USD 2 M (TF-070); upstream sin RR. HH. ni utilities (TF-058); regla fiscal de la base del IIBB (TF-005); comparabilidad imposible hoy (TF-010).
 
 ## 25. Tests integrados
 
@@ -187,8 +187,9 @@ USD constantes de 2026-10-01 (modelo REAL, SUP-195). Moneda original, TC, fecha 
 | Riesgo | RI01–RI05 | one-way / two-way; stress; quiebres; Monte Carlo; frecuencia ≠ probabilidad |
 | Optimizador (puntos 36–42, 53) | OP01–OP07 | solución conocida; status quo; comparabilidad; Pareto; robustez; C0; factibilidades; empates |
 | Cobertura y tablas | CV01, TB01, MU00 | cuatro coberturas; campos de las tablas finales; detectores sin falsos positivos |
+| Defensas de cierre (§31) | OV01–OV03, CV02–CV03, FS01–FS02, IV01–IV02 | overrides incompatibles rechazados; override total con flag; bloque vacío no suma; NO_APLICA no penaliza; IIBB de exportación no se asume; regla fiscal pendiente bloquea; IVA de CAPEX incierto ni crédito ni costo |
 
-**Mutaciones de integración (punto 54): 11/11 detectadas** — m01 duplicar masa vendida · m02 duplicar electricidad · m03 CT total en lugar de ΔCT · m04 deuda en el FCFF · m05 precio E4 como validado · m06 faltante → 0 · m07 ventas > demanda · m08 arquitectura distinta en CAPEX y OPEX · m09 C0 desconocido como 0 · m10 rankear alternativa no comparable · m11 NO_INVERTIR_AUN con TIR/VAN ficticios. Resultado de todas las suites en [`registro_tests_final.csv`](registro_tests_final.csv).
+**Mutaciones de integración (punto 54): 15/15 detectadas** — m12 override sin verificar arquitectura · m13 bloque VACIO contado como evidencia · m14 IIBB de exportación con regla pendiente · m15 crédito de IVA de CAPEX con IVA incierto · y las 11 originales: m01 duplicar masa vendida · m02 duplicar electricidad · m03 CT total en lugar de ΔCT · m04 deuda en el FCFF · m05 precio E4 como validado · m06 faltante → 0 · m07 ventas > demanda · m08 arquitectura distinta en CAPEX y OPEX · m09 C0 desconocido como 0 · m10 rankear alternativa no comparable · m11 NO_INVERTIR_AUN con TIR/VAN ficticios. Resultado de todas las suites en [`registro_tests_final.csv`](registro_tests_final.csv).
 
 **Salidas generadas vs código (punto 65):** se regeneraron las salidas de los 15 modelos y del simulador HTML después de todos los cambios: todas las salidas versionadas son **idénticas byte a byte** salvo (a) `prioridad_validacion.csv` y `que_hacer_ahora.csv` de 22 (solo la columna nueva `POTENCIAL_DE_CAMBIAR_DECISION`) y (b) los metadatos `generado` y `commit_repositorio` de `simulador_data.json/.js` (contenido idéntico; se conserva la versión versionada). `cobertura_mutaciones.csv` de 22 se reproduce exactamente en una copia limpia de `main` (una diferencia observada al correr las mutaciones mientras se editaban archivos no es del código).
 
@@ -201,7 +202,7 @@ USD constantes de 2026-10-01 (modelo REAL, SUP-195). Moneda original, TC, fecha 
 | Motor estructural (todos los módulos, interfaces, identidades, etiquetas, tests) | **COMPLETO** |
 | Cobertura física (cantidades dimensionadas) | **PARCIAL**: CAPEX 84–95 % de conceptos con cantidad; OPEX 43–62 % de bloques en las bases (hasta 73 % en variantes); upstream sin RR. HH. ni utilities |
 | Cobertura económica (precios) | **CASI NULA**: CAPEX 0–2,3 % de conceptos; OPEX 0–10 % de bloques; precios de venta 0 |
-| Cobertura de evidencia (E1–E3) | **NULA** en datos económicos (0 conceptos E1–E3); 15 de 17 bloques del motor sin evidencia |
+| Cobertura de evidencia (E1–E3) | **0 %**: 0 conceptos E1–E3 en CAPEX y OPEX; 0 de 16 bloques aplicables del motor con evidencia (15 PENDIENTES, 1 VACIO; valor terminal NO_APLICA) |
 
 Un módulo puede estar `LISTO_APP = TRUE` y `LISTO_DECISION_REAL = FALSE`: es el caso de todos los módulos del motor ([`completitud_final_motor.csv`](completitud_final_motor.csv)).
 
@@ -215,7 +216,7 @@ Un módulo puede estar `LISTO_APP = TRUE` y `LISTO_DECISION_REAL = FALSE`: es el
 
 ## 29. Interfaz app
 
-Contrato en [`interfaz_app_v1.md`](interfaz_app_v1.md): inputs (objetivo, capital, demanda, precios, arquitectura, escala, shocks, restricciones), outputs (inversión, OPEX, fondos, ingresos, EBITDA, VAN/TIR, payback, riesgo, robustez, ranking, faltantes, qué hacer ahora) y etiquetas obligatorias (evidencia, escenario, pendiente, no comparable, no calculado, simulación). La app debe agregar un control que el motor aún no tiene: completitud de arquitectura cuando el usuario carga su propio OPEX/CAPEX en escenarios (TF-004).
+Contrato en [`interfaz_app_v1.md`](interfaz_app_v1.md): inputs (objetivo, capital, demanda, precios, arquitectura, escala, shocks, restricciones), outputs (inversión, OPEX, fondos, ingresos, EBITDA, VAN/TIR, payback, riesgo, robustez, ranking, faltantes, qué hacer ahora) y etiquetas obligatorias (evidencia, escenario, pendiente, no comparable, no calculado, simulación). El control de compatibilidad y completitud de arquitectura de los CAPEX/OPEX del usuario quedó en el motor (TF-004 corregida, §31); la app solo transmite los metadatos y muestra los rechazos.
 
 ## 30. Conclusión
 
@@ -223,9 +224,22 @@ Contrato en [`interfaz_app_v1.md`](interfaz_app_v1.md): inputs (objetivo, capita
 
 | Dimensión | Estado |
 |---|---|
-| **MOTOR ESTRUCTURAL** | **COMPLETO**: todas las suites de módulo y de integración pasan; 11/11 mutaciones de integración detectadas; C0–CF idénticas en todos los módulos; sin doble conteos detectados; sin IDs provisionales activos |
+| **MOTOR ESTRUCTURAL** | **COMPLETO**: todas las suites de módulo y de integración pasan (70/70 tests de integración); 15/15 mutaciones de integración detectadas; C0–CF idénticas en todos los módulos; sin doble conteos detectados; sin IDs provisionales activos |
 | **DATOS REALES** | **INCOMPLETOS**: 0 DPV validados; 0 precios de venta, 0 conceptos de CAPEX y OPEX con evidencia E1–E3; demanda contable = 0; ninguna arquitectura costeable |
 | **DECISIÓN DE INVERSIÓN** | **NO DISPONIBLE AÚN**: 0 de 61 corridas financieras y 0 de 54 alternativas del optimizador tienen indicadores publicables en modo evidencia (`OPTIMIZACION_REAL_NO_DISPONIBLE`) |
-| **LISTO PARA LA APP v1** | **SÍ como motor de escenarios rotulados**, con el contrato de [`interfaz_app_v1.md`](interfaz_app_v1.md) y el control de completitud de TF-004 |
+| **LISTO PARA LA APP v1** | **SÍ como motor de escenarios rotulados**, con el contrato de [`interfaz_app_v1.md`](interfaz_app_v1.md) (los overrides de usuario se validan en el motor, TF-004) |
 
 Esta auditoría **no** recomienda comprar o no comprar una planta, invertir un monto, ni elegir una arquitectura o escala: con los datos actuales no hay base para hacerlo.
+
+## 31. Correcciones de cierre (antes del PR del motor v1)
+
+Cuatro hallazgos técnicos de esta auditoría se corrigieron en el motor sin ampliar alcance, sin información fiscal nueva y **sin cambiar ningún resultado del proyecto** (las salidas de 21 solo agregan las filas de las reglas IIBB pendientes; en 22 solo cambia `COBERTURA_EVIDENCIA`, de 0,1176 a 0).
+
+| Tensión | Defensa implementada | Estado |
+|---|---|---|
+| **TF-004** overrides de CAPEX/OPEX | Todo CAPEX (`capex_meta`, activos) y todo rubro OPEX (`meta`) del usuario declara CONFIGURACION, ESCALA, VARIANTE, MODULO, UNIVERSO y ORIGEN; antes de consumirlo se verifica contra [`arquitecturas_maestras.csv`](arquitecturas_maestras.csv) y los módulos de CAPEX/OPEX de la corrida (`contexto_override()`, `verificar_override()`). Incompatible (p. ej., CAPEX de C3 en C1, OPEX de planta propia en façon, alimento propio con alimento comprado) o sin metadatos → `OVERRIDE_INCOMPATIBLE_CON_ARQUITECTURA` (ni se corrige ni se usa). Un OPEX de usuario que no cubre todos los módulos de la arquitectura deja el bloque OPEX pendiente. Override sin control solo con `OVERRIDE_TOTAL_ARQUITECTURA = TRUE` → `SIMULACION_HIPOTETICA_OVERRIDE_TOTAL`, `TRAZABILIDAD = PARCIAL`, comparable solo con otras corridas de override total (SUP-236) | **CORREGIDA** |
+| **TF-011** cobertura de evidencia | `estado_bloques()`: CON_EVIDENCIA / PENDIENTE / VACIO / NO_APLICA; `cobertura_bloques()` = CON_EVIDENCIA ÷ aplicables. NO_APLICA sale del denominador; VACIO y PENDIENTE no suman. Recalculadas las cuatro coberturas de [`cobertura_motor.csv`](cobertura_motor.csv) sin mezclarlas (SUP-228 corregido) | **CORREGIDA** (proyecto: 0 %) |
+| **TF-005** IIBB y exportaciones | Base separada en ventas domésticas y de exportación; reglas `iibb_aplica_domestico` / `iibb_aplica_exportacion` (IIBB_APLICA_DOMESTICO / IIBB_APLICA_EXPORTACION) **PENDIENTES** (IN-104, IN-105); con alícuota > 0 y regla vacía → `NO_CALCULABLE_REGLA_FISCAL_PENDIENTE` (EBITDA y after-tax no publicables). No se asume alcanzada ni exenta; no se cargó alícuota (SUP-237) | **ABIERTA** en contenido fiscal (DPV-043, DPV-169) con defensa técnica implementada |
+| **TF-076** IVA de CAPEX incierto | Crédito fiscal solo con declaración explícita por etapa (base neta, IVA declarado, tasa, condición fiscal, elegibilidad y criterio); si no, `CREDITO_FISCAL_IVA_CAPEX = PENDIENTE`: ni crédito en caja ni costo; un CAPEX de 19 con `IVA_INCIERTO` no se usa como total (SUP-238) | **MITIGADA EN EL MOTOR**; contenido fiscal pendiente (DPV-093, DPV-169) |
+
+Tests nuevos: OV01–OV03, CV02–CV03, FS01–FS02, IV01–IV02 (integración) y N15 ampliado (21). Mutaciones nuevas detectadas: m12–m15. No se cerró ningún DPV fiscal.

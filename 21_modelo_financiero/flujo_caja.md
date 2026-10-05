@@ -43,9 +43,11 @@ En el caso de prueba CP-SIN-RECUPERO (pre-tax, EBITDA negativo) los fondos inici
 |---|---|
 | `null` | PENDIENTE: el flujo no es publicable (el IVA del CAPEX es un requerimiento de fondos material) |
 | `EXCLUIDO` | Declaración del usuario: flujos sin IVA, efecto financiero ignorado (rotulado) |
-| `SIMPLIFICADO` | Débito = alícuota × venta interna neta de descuentos, bonificaciones y devoluciones; crédito = alícuota × compras marcadas + alícuota de bienes de capital × CAPEX; el saldo a favor se **arrastra**; efecto de caja = − Δ saldo a favor (SUP-201). Sin recupero anticipado, percepciones ni retenciones (DPV-169) |
+| `SIMPLIFICADO` | Débito = alícuota × venta interna neta de descuentos, bonificaciones y devoluciones; crédito = alícuota × compras marcadas + IVA de CAPEX **solo de etapas con `iva_capex` declarado** (ver abajo); el saldo a favor se **arrastra**; efecto de caja = − Δ saldo a favor (SUP-201). Sin recupero anticipado, percepciones ni retenciones (DPV-169) |
 
 El IVA del CAPEX **no** entra al EBITDA (test N15; mutación M17). La exportación no genera débito.
+
+**Crédito fiscal del IVA de CAPEX (auditoría final 21, TF-076):** con `SIMPLIFICADO`, el crédito del IVA de cada etapa (inicial, expansión y reposición) solo se incorpora a caja si la etapa declara `iva_capex` = {`base`: NETA, `iva_estado`: DECLARADO, `tasa`, `condicion_fiscal`, `elegible_credito`: TRUE, `criterio`} (`iva_capex_declarado()`). Con IVA `DESCONOCIDO` / `INCIERTO` / `NO_DECLARADO` o datos incompletos: `CREDITO_FISCAL_IVA_CAPEX = PENDIENTE` (faltante del bloque IVA: el flujo no se publica) y el monto queda solo como base informativa (`iva_capex_pendiente_base`): **ni costo ni crédito**. Un CAPEX de 19 con conceptos `IVA_INCIERTO` no se usa como total (`capex_desde_modulo()`). La alícuota global `iva.alicuota_capex` ya no genera crédito por sí sola. Tests N15 e integración IV01–IV02; mutación de integración m15.
 
 ## 5. Valor residual / terminal (no se elige método)
 

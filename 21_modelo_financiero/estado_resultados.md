@@ -11,7 +11,7 @@
 − OPEX variable − OPEX fijo − OPEX semifijo − OPEX semivariable        (rubros de 20_opex)
 − costos extra del ramp-up
 − costos logísticos del canal − costos de exportación                   (comerciales, adicionales al OPEX de 20)
-− impuestos sobre ingresos (IIBB + tasas municipales, % de la venta bruta) − otros impuestos fijos
+− impuestos sobre ingresos (IIBB sobre la base declarada por mercado + tasas municipales, % de la venta bruta) − otros impuestos fijos
 = EBITDA                                                                 (sin depreciación, intereses, CAPEX ni CT)
 − depreciación contable
 = EBIT
@@ -53,7 +53,7 @@ Por activo o clase: `capex_usd`, `vida_util_anios`, `valor_residual_usd`, `costo
 
 | Impuesto | Tratamiento | Input (hoy) |
 |---|---|---|
-| Ingresos brutos y tasas municipales | % de la venta bruta; antes del EBITDA | `impuestos.pct_iibb`, `impuestos.pct_tasas_municipales` — PENDIENTES (DPV-043) |
+| Ingresos brutos y tasas municipales | IIBB: % de la venta bruta **doméstica** y/o **de exportación** según las reglas `impuestos.iibb_aplica_domestico` / `iibb_aplica_exportacion` (TRUE / FALSE; vacío = PENDIENTE: con alícuota > 0 el bloque queda `NO_CALCULABLE_REGLA_FISCAL_PENDIENTE` y el EBITDA no se publica; no se asume alcanzada ni exenta, TF-005); tasas municipales: % de la venta bruta total; antes del EBITDA | `impuestos.pct_iibb`, `impuestos.pct_tasas_municipales` — PENDIENTES (DPV-043) |
 | Otros impuestos operativos | USD/año, antes del EBITDA | `impuestos.otros_impuestos_usd_anio` — PENDIENTE |
 | Ganancias | Anual, al cierre de cada año del proyecto, sobre EBIT (vista proyecto) o EBIT − intereses − comisiones (vista accionista); quebrantos con vencimiento en `anios_quebranto`; sin anticipos (SUP-199); test N16 | `impuestos.tasa_ganancias`, `impuestos.anios_quebranto` — PENDIENTES (DPV-169) |
 | IVA | Módulo aparte, fuera del resultado ([`flujo_caja.md`](flujo_caja.md) §4) | `iva.*` — PENDIENTES |

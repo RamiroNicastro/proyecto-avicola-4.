@@ -353,8 +353,9 @@ _COB = {}
 
 
 def cobertura_evidencia(alt):
-    """Fracción de bloques del motor completos EN MODO EVIDENCIA para la misma configuración y escala(s).
-    No es una probabilidad: mide cuánto del resultado descansa en evidencia dentro del umbral (E1–E3 por defecto)."""
+    """Fracción de bloques APLICABLES del motor con evidencia presente EN MODO EVIDENCIA (misma configuración y
+    escala): CON_EVIDENCIA ÷ (bloques − NO_APLICA). Un bloque VACIO (sin faltantes pero sin contenido) o PENDIENTE no
+    suma (auditoría final 21, TF-011). No es una probabilidad: mide cuánto descansa en evidencia dentro del umbral."""
     if alt["tipo"] == SQ:
         return None, "NO_APLICA (status quo)"
     if alt["universo"] == "ARTIFICIAL_TEST":
@@ -364,9 +365,11 @@ def cobertura_evidencia(alt):
         var = None if alt["variante"] == "BASE" else alt["variante"]
         with redirect_stdout(io.StringIO()):
             P, _ = mf.construir_entrada("COB", alt["configuracion"], alt["escalas"], "EVIDENCIA", None, None, var)
-        F = mf.disponibilidad(P)
-        sin = [b for b, v in F.items() if v]
-        _COB[key] = ((len(F) - len(sin)) / len(F), "bloques sin evidencia: " + ", ".join(sin) if sin else "todos los bloques con evidencia")
+        est = mf.estado_bloques(P)                 # TF-011: VACIO y PENDIENTE no suman; NO_APLICA sale del denominador
+        cob = mf.cobertura_bloques(est)
+        por = {e: [b for b, x in est.items() if x == e] for e in mf.ESTADOS_BLOQUE}
+        nota = "; ".join(f"{e} ({len(v)}): {', '.join(v)}" for e, v in por.items() if v)
+        _COB[key] = (cob if cob is not None else 0.0, nota)
     return _COB[key]
 
 
@@ -456,7 +459,8 @@ def firma_comparabilidad(E, alt):
             "BASE_TASA": P["base_tasa"], "CONVENCION": P["convencion_descuento"], "TIPO_TASA": P["tipo_tasa_descuento"],
             "TASA": P["tasa_descuento"], "MONEDA": mf.MONEDA, "BASE_FLUJO": None,
             "PRODUCTO": (P.get("meta_productos") or {}).get("config_producto", "DECLARADO_EN_CASO"),
-            "FISCAL": "AFTER_TAX" if P["impuestos"].get("tasa_ganancias") is not None else "PRE_TAX"}
+            "FISCAL": "AFTER_TAX" if P["impuestos"].get("tasa_ganancias") is not None else "PRE_TAX",
+            "OVERRIDE_TOTAL": bool(P.get("override_total"))}
 
 
 def comparabilidad(fa, ref, cob_max=None):
@@ -471,7 +475,8 @@ def comparabilidad(fa, ref, cob_max=None):
     if ref is None:
         return "FALSE", "sin referencia comparable"
     mot = [f"{k} {fs[k]!r} ≠ {ref[k]!r}" for k in ("UNIVERSO", "HORIZONTE", "MODELO_MONETARIO", "BASE_TASA", "CONVENCION",
-                                                     "TIPO_TASA", "TASA", "MONEDA", "BASE_FLUJO", "PRODUCTO", "FISCAL")
+                                                     "TIPO_TASA", "TASA", "MONEDA", "BASE_FLUJO", "PRODUCTO", "FISCAL",
+                                                     "OVERRIDE_TOTAL")
            if fs.get(k) != ref.get(k)]
     if mot:
         return "FALSE", "; ".join(mot)

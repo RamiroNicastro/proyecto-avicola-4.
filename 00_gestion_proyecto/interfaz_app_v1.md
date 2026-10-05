@@ -33,10 +33,12 @@ Formato: el JSON del modo escenario de 21 ([`plantilla_escenario_usuario.json`](
 | Calendario | variante `C1-6dias` (300 d) o base (250 d) | días operativos/año | días arbitrarios NO_SOPORTADOS (TF-001) | 250 d (5 días/semana) |
 | Tiempo | `valores.horizonte_anios`, `meses_preoperacion`, `meses_construccion`, `meses_commissioning`, `fecha_inicio` | años; meses | horizonte entero ≥ 1 | `TIEMPO` faltante |
 | Tasa | `valores.tasa_descuento`, `tasa_descuento_accionista`, `tipo_tasa_descuento`, `convencion_descuento` | anual efectiva (o nominal cap. mensual declarada) | real vs nominal mezclados → error (SUP-195) | `DESCUENTO` faltante |
-| CAPEX y OPEX del usuario | `etapas[].capex_usd`, `curva_desembolso`, `opex_rubros`, `activos` | USD; USD/año a escala plena | Σ activos = CAPEX; curva suma 1 | se usan los de 19/20 solo si su total es publicable; si no, faltante |
+| CAPEX y OPEX del usuario | `etapas[].capex_usd` + `capex_meta`, `activos`, `opex_rubros[]` (cada uno con `meta`), `curva_desembolso` | USD; USD/año a escala plena | metadatos CONFIGURACION, ESCALA, VARIANTE, MODULO, UNIVERSO, ORIGEN obligatorios y compatibles con [`arquitecturas_maestras.csv`](arquitecturas_maestras.csv) y los módulos de la corrida → si no, `OVERRIDE_INCOMPATIBLE_CON_ARQUITECTURA`; OPEX debe cubrir todos los módulos de la arquitectura; Σ activos = CAPEX; curva suma 1 | se usan los de 19/20 solo si su total es publicable; si no, faltante |
+| Override total | `OVERRIDE_TOTAL_ARQUITECTURA` = TRUE | — | solo TRUE / FALSE | sin flag no hay override sin control; con flag la corrida es `SIMULACION_HIPOTETICA_OVERRIDE_TOTAL` con trazabilidad parcial |
+| IVA del CAPEX | `etapas[].iva_capex` {base NETA, iva_estado DECLARADO, tasa, condicion_fiscal, elegible_credito, criterio} | fracción | IVA incierto → `CREDITO_FISCAL_IVA_CAPEX = PENDIENTE` | sin crédito ni costo; flujo no publicable con IVA SIMPLIFICADO |
 | Ramp-up | `plantilla` (curva ilustrativa SUP-196) o `etapas[].rampup`; `rampup_ineficiencias` | fracción por mes | — | `RAMPUP` faltante |
 | CT | `dias_pago.*`, `dias_stock.*`, `dias_caja_operativa`, `inventarios` | días | propiedad del inventario según arquitectura | `CT` faltante |
-| Impuestos e IVA | `impuestos.*`, `iva.*` | fracción; USD/año | claves no admitidas → error | `IMPUESTOS_INGRESOS`, `GANANCIAS`, `IVA` faltantes |
+| Impuestos e IVA | `impuestos.*` (incluye las reglas `iibb_aplica_domestico` / `iibb_aplica_exportacion`), `iva.*` | fracción; TRUE/FALSE | claves no admitidas → error; con IIBB > 0 y regla vacía → `NO_CALCULABLE_REGLA_FISCAL_PENDIENTE` | `IMPUESTOS_INGRESOS`, `GANANCIAS`, `IVA` faltantes |
 | Financiamiento | `financiamiento` {aportes, deudas (tipo de tasa obligatorio), politica_dividendos, caja_minima_usd} | USD; meses | tasa sin tipo o ambigua → error (SUP-200) | `FINANCIAMIENTO` faltante (no bloquea el FCFF) |
 | **Shocks** | one-way (`sensibilidad.variables`, `shocks_*`), 2D (`sens2d.pares`), stress (`escenarios_stress.csv` o `stress` del JSON) | relativo / días / meses | solo en ESCENARIO; en EVIDENCIA → error | sin shocks |
 | Valores base para shocks absolutos | `base_valores` {mortalidad, condenas, traslado_fx} | fracción | — | esas sensibilidades = NO_CALCULABLE |
@@ -70,16 +72,16 @@ Formato: el JSON del modo escenario de 21 ([`plantilla_escenario_usuario.json`](
 |---|---|---|
 | **Evidencia** | `MODO_EVIDENCIA`; `EVIDENCIA_REAL` con nivel dentro del umbral | dato observado E1–E3 (o el umbral declarado) |
 | **Escenario** | `ESCENARIO_USUARIO`, `SUPUESTO_MODELO` en modo escenario, `ESCENARIO` (categoría de demanda) | hipótesis del usuario o plantilla ilustrativa |
-| **Simulación** | `SIMULACION_HIPOTETICA_NO_VALIDADA`, `OVERRIDE_SIMULACION`, `PROBABILIDAD_SIMULADA_NO_HISTORICA`, `SUPUESTO_INDEPENDENCIA_ESCENARIO` | resultado calculado sobre hipótesis; no es evidencia ni pronóstico |
-| **Pendiente** | `PENDIENTE`, `NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE`, `NO_DISPONIBLE_FALTAN_INPUTS_DEL_ESCENARIO`, `FACTIBILIDAD_PENDIENTE`, `DESCONOCIDO` | falta un dato: mostrar qué falta y el DPV/DEC |
-| **No comparable** | `COMPARABILIDAD = FALSE`, `NO_EVALUABLE`, `PARETO_NO_INFORMATIVO_MUESTRA_INSUFICIENTE`, `TRANSICION_DE_ARQUITECTURA_NO_MODELADA` | no entra a rankings, dominancia ni Pareto |
+| **Simulación** | `SIMULACION_HIPOTETICA_NO_VALIDADA`, `SIMULACION_HIPOTETICA_OVERRIDE_TOTAL` (con trazabilidad parcial), `OVERRIDE_SIMULACION`, `PROBABILIDAD_SIMULADA_NO_HISTORICA`, `SUPUESTO_INDEPENDENCIA_ESCENARIO` | resultado calculado sobre hipótesis; no es evidencia ni pronóstico |
+| **Pendiente** | `PENDIENTE`, `VACIO` (bloque sin contenido), `NO_CALCULABLE_REGLA_FISCAL_PENDIENTE`, `CREDITO_FISCAL_IVA_CAPEX = PENDIENTE`, `NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE`, `NO_DISPONIBLE_FALTAN_INPUTS_DEL_ESCENARIO`, `FACTIBILIDAD_PENDIENTE`, `DESCONOCIDO` | falta un dato: mostrar qué falta y el DPV/DEC |
+| **No comparable** | `OVERRIDE_INCOMPATIBLE_CON_ARQUITECTURA` (rechazado), override total frente a corridas verificadas, `COMPARABILIDAD = FALSE`, `NO_EVALUABLE`, `PARETO_NO_INFORMATIVO_MUESTRA_INSUFICIENTE`, `TRANSICION_DE_ARQUITECTURA_NO_MODELADA` | no entra a rankings, dominancia ni Pareto |
 | **No calculado** | `NO_CALCULADA` (TIR en modo rápido), `NO_CALCULADO` (potencial de cambiar la decisión), `NO_CALCULABLE`, `NO_SOPORTADA_POR_INTERFAZ`, `NO_DISPONIBLE_POR_FALTA_DE_DISTRIBUCIONES`, `TIR_NO_DEFINIDA_MATEMATICAMENTE` | el motor no lo calculó (por diseño o por falta de método); no es 0 |
 | No aplica | `NO_APLICA`, `NO_APLICA_STATUS_QUO`, `NO_REQUERIDO_POR_ARQUITECTURA` | el concepto no existe para esa alternativa (0 estructural) |
 | Caso de prueba | `CASO_PRUEBA_ARTIFICIAL_NO_ES_PROYECTO`, ámbito `ARTIFICIAL_TEST` | nunca mostrar como resultado del proyecto |
 
 ## 5. Reglas que la app debe hacer cumplir (además de las del motor)
 
-1. **Completitud de arquitectura en escenarios (TF-004):** si el usuario carga su propio OPEX o CAPEX para una arquitectura, la app exige los bloques obligatorios de esa arquitectura (`20_opex/completitud_arquitecturas_opex.csv`, BOQ de `19_capex`) antes de evaluar; si no, rotula la alternativa como **no comparable**.
+1. **Overrides de arquitectura (TF-004, corregida en el motor):** la app envía los metadatos de cada CAPEX/OPEX del usuario y muestra el rechazo `OVERRIDE_INCOMPATIBLE_CON_ARQUITECTURA` tal cual; ofrece `OVERRIDE_TOTAL_ARQUITECTURA` solo como declaración explícita y rotula esas corridas con su etiqueta y la pérdida de trazabilidad.
 2. **Canal de liquidación (`toma_todo`) (TF-006):** se muestra como "demanda supuesta ilimitada" con los kg que absorbe.
 3. **NO_INVERTIR_AUN** se muestra como alternativa de decisión con su regla (SQ-1…SQ-6), nunca con VAN, TIR ni posición en un ranking (SUP-214).
 4. **Probabilidades:** la app distingue probabilidad simulada, histórica (frecuencia sectorial) y del proyecto; esta última hoy es `PENDIENTE` (SUP-224).
