@@ -1,0 +1,13 @@
+ID_STRESS,NOMBRE,VARIABLE,VALOR_SHOCK,UNIDAD,ESTADO,ORIGEN,OBSERVACIONES
+ST-01,STRESS_DEMANDA,demanda,-0.30,fracción (relativo),ILUSTRATIVO_EDITABLE,"21 STRESS_PREDEFINIDOS DEMANDA_-30 (plantilla, no pronóstico)",SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-02,STRESS_ALIMENTO,alimento,0.20,fracción (relativo),ILUSTRATIVO_EDITABLE,21 STRESS_PREDEFINIDOS ALIMENTO_+20,SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-03,STRESS_PRECIO,precio_venta,-0.10,fracción (relativo),ILUSTRATIVO_EDITABLE,21 STRESS_PREDEFINIDOS PRECIO_POLLO_-10,SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-04,STRESS_CAPEX,capex,0.25,fracción (relativo),ILUSTRATIVO_EDITABLE,21 STRESS_PREDEFINIDOS CAPEX_+25,SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-05,STRESS_RAMP_UP,rampup,1.0,fracción (relativo),ILUSTRATIVO_EDITABLE,"21 STRESS_PREDEFINIDOS RAMPUP_LENTO_x2 (factor 2 = shock +1,0)",SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-06,STRESS_FINANCIERO,tasa_descuento,,fracción (relativo),PENDIENTE,sin magnitud: el usuario la declara,SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-06,STRESS_FINANCIERO,dias_cobro,,días,PENDIENTE,sin magnitud: el usuario la declara,SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-07,STRESS_COMBINADO,precio_venta,-0.10,fracción (relativo),ILUSTRATIVO_EDITABLE,combinación de ST-03,SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-07,STRESS_COMBINADO,alimento,0.20,fracción (relativo),ILUSTRATIVO_EDITABLE,combinación de ST-02,SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-07,STRESS_COMBINADO,demanda,-0.30,fracción (relativo),ILUSTRATIVO_EDITABLE,combinación de ST-01,SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-07,STRESS_COMBINADO,capex,0.25,fracción (relativo),ILUSTRATIVO_EDITABLE,combinación de ST-04,SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades
+ST-08,STRESS_EXPORTACION_CERRADA,exportacion_disponible,,fracción (relativo),DESACTIVADO,variable discreta: se evalúa con stress.corte_exportacion_desde_mes del motor cuando el escenario tenga exportación,SUP-20-12: magnitudes ilustrativas y editables; no son pronósticos ni probabilidades

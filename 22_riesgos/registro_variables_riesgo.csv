@@ -1,0 +1,60 @@
+ID,CATEGORIA,DESCRIPCION,TIPO_SHOCK,SOPORTE,CAMPO_MOTOR,BLOQUE_MOTOR,DPV,NOTA,MONOTONIA_VAN_ESPERADA,RANGO_QUIEBRE,SHOCKS_CONFIGURADOS
+precio_venta,COMERCIAL,Todos los precios de venta,RELATIVO,SOPORTADA,precios.*,PRECIOS,"DPV-013, DPV-039, DPV-070",,CRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+precio_pollo_entero,COMERCIAL,Precio del pollo entero,RELATIVO,SOPORTADA,precios.pollo_entero|*,PRECIOS,DPV-013,,CRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+precio_cortes,COMERCIAL,"Precios de cortes (pechuga, pata-muslo, alas)",RELATIVO,SOPORTADA,precios.<corte>|*,PRECIOS,DPV-013,,CRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+precio_menudencias,COMERCIAL,Precios de menudencias,RELATIVO,SOPORTADA,precios.<menudencia>|*,PRECIOS,DPV-013,,CRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+precio_patas_garras,COMERCIAL,Precio de patas / garras,RELATIVO,SOPORTADA,precios.garras|*,PRECIOS,"DPV-013, DPV-026",,CRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+precio_subproductos,COMERCIAL,"Precios de subproductos y coproductos (C, carcasa, CMS, piel, rendering)",RELATIVO,SOPORTADA,precios.<subproducto>|*,PRECIOS,DEC-027,,CRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+demanda,COMERCIAL,Volumen demandado (todas las líneas),RELATIVO,SOPORTADA,stress.demanda,DEMANDA,"DPV-002, DPV-020, DPV-037, DPV-040",Monótona solo si la planta no está limitada por capacidad (más demanda que capacidad no vende más),NO_MONOTONA / NO_APLICA,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+mix,COMERCIAL,Mix de productos,DISCRETO,DISCRETA,demanda[].producto,DEMANDA,DPV-037,,NO_MONOTONA / NO_APLICA,-0.95 a 3,
+dias_cobro,COMERCIAL,Plazo de cobro (todos los canales),ABSOLUTO_DIAS,SOPORTADA,canales.*.dias_cobro,CT,"DPV-039, DPV-175",,DECRECIENTE,-365 a 365,-30|-20|-10|0|10|20|30
+descuentos,COMERCIAL,Descuentos en factura (todos los canales),RELATIVO,SOPORTADA,canales.*.pct_descuentos,CANALES,DPV-039,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+devoluciones,COMERCIAL,Devoluciones (todos los canales),RELATIVO,SOPORTADA,canales.*.pct_devoluciones,CANALES,DPV-039,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+canal,COMERCIAL,Reparto por canal,DISCRETO,DISCRETA,demanda[].canal,DEMANDA,DPV-039,,NO_MONOTONA / NO_APLICA,-0.95 a 3,
+utilizacion,OPERATIVA,Utilización técnica (curva de ramp-up; tope 100 %),RELATIVO,SOPORTADA,etapas[].rampup.utilizacion,RAMPUP,DEC-090,"Si la demanda limita las ventas, más utilización técnica no cambia nada",CRECIENTE,-0.95 a 0,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+peso_vivo,OPERATIVA,Peso vivo de faena,RELATIVO,APROXIMACION,productos.*.kg_ave + rubros alimento,PRODUCCION,DPV-060,SUP-20-04: linealidad no verificada,NO_MONOTONA / NO_APLICA,-0.5 a 0.5,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+mortalidad,OPERATIVA,Mortalidad en granja,RELATIVO,REQUIERE_BASE,stress.mortalidad,OPEX,DPV-019,Semántica del motor: solo encarece el pollito por ave faenada,DECRECIENTE,0 a 20,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+fcr,OPERATIVA,Conversión alimenticia (FCR),RELATIVO,APROXIMACION,rubros alimento × FCR/FCR_base,OPEX,DPV-019,SUP-20-05: costo de alimento ∝ FCR a precio y peso constantes,DECRECIENTE,-0.5 a 5,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+rendimiento_faena,OPERATIVA,Rendimiento comestible de faena,RELATIVO,APROXIMACION,productos.*.kg_ave,PRODUCCION,DPV-060,SUP-20-06: masa adicional sale de subproductos,CRECIENTE,-0.5 a 0.3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+condenas,OPERATIVA,Condenas / decomisos,RELATIVO,REQUIERE_BASE,productos.*.kg_ave,PRODUCCION,DPV-060,,DECRECIENTE,0 a 20,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+merma,OPERATIVA,Merma del ramp-up,RELATIVO,SOPORTADA,etapas[].rampup.merma,RAMPUP,DEC-090,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+eficiencia_linea,OPERATIVA,Eficiencia de línea (variables ÷ eficiencia),RELATIVO,SOPORTADA,etapas[].rampup.eficiencia,RAMPUP,"DEC-090, DPV-097",,CRECIENTE,-0.9 a 0.5,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+dias_operativos,OPERATIVA,Días operativos por año,DISCRETO,NO_SOPORTADA_POR_INTERFAZ,etapas[].dias_operativos_anio,PRODUCCION,DEC-033,,NO_MONOTONA / NO_APLICA,-0.95 a 3,
+rampup,OPERATIVA,Velocidad del ramp-up (factor de estiramiento),RELATIVO,SOPORTADA,stress.rampup_lento_factor,RAMPUP,DEC-090,,DECRECIENTE,-0.9 a 5,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+alimento,COSTO,Alimento balanceado (todo el costo de alimento),RELATIVO,SOPORTADA,etapas[].opex_rubros[alimento].costo_pleno_usd_anio,OPEX,"DPV-050, DPV-155, DPV-157",,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+maiz,COSTO,Maíz (solo planta de alimento propia o façon B1),RELATIVO,SOPORTADA,etapas[].opex_rubros[maiz].costo_pleno_usd_anio,OPEX,DPV-157,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+soja,COSTO,Harina / expeller de soja,RELATIVO,SOPORTADA,etapas[].opex_rubros[soja].costo_pleno_usd_anio,OPEX,DPV-157,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+pollito,COSTO,Pollito BB / huevo fértil,RELATIVO,SOPORTADA,etapas[].opex_rubros[pollito].costo_pleno_usd_anio,OPEX,"DPV-006, DPV-047",,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+gas,COSTO,Gas / combustible térmico,RELATIVO,SOPORTADA,etapas[].opex_rubros[gas].costo_pleno_usd_anio,OPEX,"DPV-052, DEC-045",,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+electricidad,COSTO,Energía eléctrica,RELATIVO,SOPORTADA,etapas[].opex_rubros[electricidad].costo_pleno_usd_anio,OPEX,"DPV-052, DPV-095",,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+agua,COSTO,Agua,RELATIVO,SOPORTADA,etapas[].opex_rubros[agua].costo_pleno_usd_anio,OPEX,DPV-053,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+salarios,COSTO,Salarios y cargas,RELATIVO,SOPORTADA,etapas[].opex_rubros[salarios].costo_pleno_usd_anio,OPEX,"DPV-148, DPV-146",,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+packaging,COSTO,Packaging,RELATIVO,SOPORTADA,etapas[].opex_rubros[packaging].costo_pleno_usd_anio,OPEX,DPV-172,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+mantenimiento,COSTO,Mantenimiento,RELATIVO,SOPORTADA,etapas[].opex_rubros[mantenimiento].costo_pleno_usd_anio,OPEX,"DEC-088, DPV-150",,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+logistica,COSTO,Logística (flete y flota),RELATIVO,SOPORTADA,etapas[].opex_rubros[logistica].costo_pleno_usd_anio,OPEX,"DPV-042, DPV-054, DPV-084",,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+facon,COSTO,Tarifas de façon (faena / alimento),RELATIVO,SOPORTADA,etapas[].opex_rubros[facon].costo_pleno_usd_anio,OPEX,"DPV-006, DPV-155",,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+opex_total,COSTO,Todo el OPEX (stress nativo del motor),RELATIVO,SOPORTADA,stress.opex,OPEX,,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+capex,INVERSION,"CAPEX total (desembolsos, activos y reposiciones; incluye sobrecostos y contingencia global)",RELATIVO,SOPORTADA,stress.capex,CAPEX,"DPV-097, DPV-086, DPV-167",,DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+capex_equipos,INVERSION,CAPEX del bloque equipos,RELATIVO,SOPORTADA,etapas[].activos[clase PROCESO/EQUIPOS],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+capex_obra,INVERSION,CAPEX del bloque obra,RELATIVO,SOPORTADA,etapas[].activos[clase OBRA_CIVIL/OBRA],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+capex_frio,INVERSION,CAPEX del bloque frio,RELATIVO,SOPORTADA,etapas[].activos[clase FRIO],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+capex_efluentes,INVERSION,CAPEX del bloque efluentes,RELATIVO,SOPORTADA,etapas[].activos[clase EFLUENTES],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+capex_terreno,INVERSION,CAPEX del bloque terreno,RELATIVO,SOPORTADA,etapas[].activos[clase TERRENO],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+capex_instalacion,INVERSION,CAPEX del bloque instalacion,RELATIVO,SOPORTADA,etapas[].activos[clase INSTALACION],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+capex_importacion,INVERSION,CAPEX del bloque importacion,RELATIVO,SOPORTADA,etapas[].activos[clase IMPORTACION],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+capex_contingencia,INVERSION,CAPEX del bloque contingencia,RELATIVO,SOPORTADA,etapas[].activos[clase CONTINGENCIA],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+fx,FINANCIERA,Devaluación del ARS (solo ítems con moneda_original ARS),RELATIVO,REQUIERE_BASE,stress.devaluacion,PRECIOS,DPV-20-04,,NO_MONOTONA / NO_APLICA,-0.5 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+tasa_descuento,FINANCIERA,Tasa de descuento (anual efectiva),RELATIVO,SOPORTADA,tasa_descuento,DESCUENTO,"DEC-007, DPV-001",,DECRECIENTE,-0.99 a 20,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+tasa_deuda,FINANCIERA,Tasa de la deuda,RELATIVO,SOPORTADA,financiamiento.deudas[].tasa,FINANCIAMIENTO,DEC-092,No cambia el VAN del proyecto (FCFF): usar VAN_ACCIONISTA o DSCR,NO_MONOTONA / NO_APLICA,-0.99 a 20,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+plazo_deuda,FINANCIERA,Plazo de la deuda,ABSOLUTO_MESES,SOPORTADA,financiamiento.deudas[].plazo_meses,FINANCIAMIENTO,DEC-092,,NO_MONOTONA / NO_APLICA,-120 a 120,-24|-12|0|12|24
+dias_pago,FINANCIERA,Días de pago a proveedores,ABSOLUTO_DIAS,SOPORTADA,etapas[].opex_rubros[].dias_pago,CT,DPV-175,,CRECIENTE,-365 a 365,-30|-20|-10|0|10|20|30
+tasa_ganancias,FINANCIERA,Alícuota de ganancias,RELATIVO,SOPORTADA,impuestos.tasa_ganancias,GANANCIAS,DPV-169,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+iibb,FINANCIERA,Ingresos brutos,RELATIVO,SOPORTADA,impuestos.pct_iibb,IMPUESTOS_INGRESOS,DPV-043,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+recuperacion_iva,FINANCIERA,Plazo de recupero del IVA,DISCRETO,NO_SOPORTADA_POR_INTERFAZ,iva,IVA,DPV-169,,NO_MONOTONA / NO_APLICA,-0.95 a 3,
+exportacion_disponible,ESTRATEGICA,Exportación disponible / cerrada,DISCRETO,DISCRETA,stress.corte_exportacion_desde_mes,ESTRATEGICA,"DPV-015, DPV-024",,NO_MONOTONA / NO_APLICA,-0.95 a 3,
+halal,ESTRATEGICA,Certificación halal,DISCRETO,DISCRETA,variante C1-HALAL,ESTRATEGICA,DPV-101,,NO_MONOTONA / NO_APLICA,-0.95 a 3,
+integrados_disponibles,ESTRATEGICA,Disponibilidad de productores integrados,DISCRETO,DISCRETA,gate PRODUCCION_PRIMARIA,ESTRATEGICA,DPV-048,,NO_MONOTONA / NO_APLICA,-0.95 a 3,
+proveedor_alimento,ESTRATEGICA,Proveedor de alimento disponible,DISCRETO,DISCRETA,gate ALIMENTO,ESTRATEGICA,"DPV-050, DPV-155",,NO_MONOTONA / NO_APLICA,-0.95 a 3,
+faena_tercerizada,ESTRATEGICA,Capacidad de faena a façon disponible,DISCRETO,DISCRETA,gate FACON_FAENA,ESTRATEGICA,DPV-006,,NO_MONOTONA / NO_APLICA,-0.95 a 3,
+financiamiento,ESTRATEGICA,Financiamiento disponible,DISCRETO,DISCRETA,restricción CAPITAL / DEUDA,ESTRATEGICA,"DEC-092, DPV-001",,NO_MONOTONA / NO_APLICA,-0.95 a 3,
+terreno_utilities,ESTRATEGICA,"Terreno, potencia y agua disponibles",DISCRETO,DISCRETA,gates TERRENO/AGUA/POTENCIA,ESTRATEGICA,"DPV-087, DPV-095, DPV-053",,NO_MONOTONA / NO_APLICA,-0.95 a 3,
