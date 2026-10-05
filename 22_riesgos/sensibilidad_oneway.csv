@@ -1,3 +1,3 @@
-ESTADO,NOTA,UNIVERSO
-NO_CALCULABLE,universo EVIDENCIA: la evidencia no se perturba; ninguna alternativa completa y comparable en el universo (ver resultados_optimizador.csv: DATOS_FALTANTES),EVIDENCIA
-NO_CALCULABLE,ninguna alternativa completa y comparable en el universo (ver resultados_optimizador.csv: DATOS_FALTANTES),ESCENARIO
+AMBITO,ESTADO,NOTA,UNIVERSO
+PROYECTO,NO_CALCULABLE,universo EVIDENCIA: la evidencia no se perturba; ninguna alternativa completa y comparable en el universo (ver resultados_optimizador.csv: DATOS_FALTANTES),EVIDENCIA
+PROYECTO,NO_CALCULABLE,ninguna alternativa completa y comparable en el universo (ver resultados_optimizador.csv: DATOS_FALTANTES),ESCENARIO

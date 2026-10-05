@@ -1,0 +1,28 @@
+MUTACION,DESCRIPCION,REQUERIDA_EN_ENCARGO,TEST_QUE_LA_DETECTA,RESULTADO
+R01,quitar el límite de capital,quitar límite de capital,"OPT-02, OPT-05",DETECTADA
+R02,permitir ventas > demanda (motor M02),permitir ventas > demanda,"OPT-03, OPT-14",DETECTADA
+R03,convertir faltante en cero,convertir faltante en cero,"OPT-07, COMP-03, QUI-07",DETECTADA
+R04,elegir siempre máximo VAN ignorando el objetivo y el riesgo,elegir siempre máximo VAN ignorando riesgo,OPT-13,DETECTADA
+R05,excluir NO_INVERTIR_AUN,excluir NO_INVERTIR_AUN,"OPT-06, OPT-15",DETECTADA
+R06,duplicar subproductos (esqueleto + CMS; motor M11),duplicar subproductos,"OPT-20, COMP-03",DETECTADA
+R07,ignorar el CAPEX en fondos,ignorar CAPEX,"OPT-02, OPT-21",DETECTADA
+R08,ignorar el capital de trabajo,ignorar capital de trabajo,OPT-21,DETECTADA
+R09,el shock se filtra a otra variable,adicional (auditoría),"SENS-01, SENS-06, QUI-02, QUI-03, QUI-04, QUI-05, QUI-06",DETECTADA
+R10,tornado por impacto con signo,adicional (auditoría),SENS-05,DETECTADA
+R11,Monte Carlo sin semilla / sin caché,adicional (auditoría),"MC-01, OPT-10",DETECTADA
+R12,rankear sin comparabilidad,adicional (auditoría),"OPT-17, COMP-01, COMP-02",DETECTADA
+R13,costos faltantes completados con 0,convertir faltante en cero (costos del motor),"OPT-17, COMP-02",DETECTADA
+R14,restricción HARD tratada como SOFT,adicional (auditoría),"OPT-01, OPT-04, OPT-05, OPT-11",DETECTADA
+R15,dominancia no estricta,adicional (auditoría),OPT-07,DETECTADA
+R16,punto de quiebre devuelve el borde del rango,adicional (auditoría),QUI-07,DETECTADA
+R17,aceptar Monte Carlo sin respaldo,adicional (auditoría),MC-04,DETECTADA
+R18,probabilidad numérica para niveles cualitativos,adicional (auditoría),"RIE-01, RIE-02, AUD-07",DETECTADA
+R19,la mitigación borra el riesgo inherente,adicional (auditoría),RIE-03,DETECTADA
+R20,invertir el ranking y la frontera de Pareto,invertir ranking/frontera Pareto,"OPT-08, OPT-13, AUD-14",DETECTADA
+R21,eliminar la etiqueta de simulación hipotética,eliminar etiqueta de simulación hipotética,COMP-04,DETECTADA
+R22,requerimiento físico DESCONOCIDO de C0 tomado como 0,adicional (auditoría),AUD-10,DETECTADA
+R23,frecuencia sectorial convertida en probabilidad,adicional (auditoría),"RIE-02, RIE-03, AUD-06",DETECTADA
+R24,NO_INVERTIR_AUN tratado como proyecto con ceros,adicional (auditoría),"OPT-05, OPT-06, OPT-13, AUD-09",DETECTADA
+R25,desempatar la prioridad por posición,adicional (auditoría),AUD-13,DETECTADA
+R26,correlación pendiente tratada como 0 sin rotular,adicional (auditoría),RIE-04,DETECTADA
+R27,alternativas no comparables en dominancia y Pareto,adicional (auditoría),AUD-14,DETECTADA

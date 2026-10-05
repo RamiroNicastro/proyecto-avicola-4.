@@ -12,7 +12,7 @@ DOS UNIVERSOS (nunca se rankean juntos)
               OPTIMIZACION_REAL_NO_DISPONIBLE + qué datos la bloquean (prioridad_validacion.csv).
   ESCENARIO : inputs hipotéticos del usuario (escenario_optimizador.json). Todo se rotula
               SIMULACION_HIPOTETICA_NO_VALIDADA; la "mejor" alternativa lo es DENTRO DEL ESCENARIO.
-  Aparte, CASO_ARTIFICIAL (casos_prueba/): alternativas ART-* inventadas para probar la maquinaria.
+  Aparte, ARTIFICIAL_TEST (casos_prueba/): alternativas ART-* inventadas para probar la maquinaria.
 
 ESPACIO DE DECISIONES
   Configuraciones del mapa (C0–CF + 19 variantes) × escalas de `inputs_riesgo_optimizacion.csv` (2.500 a 20.000,
@@ -88,12 +88,30 @@ def configuraciones_mapa():
     return out
 
 
+CLASES_ESPACIO = ("FISICAMENTE_INVALIDA", "FISICAMENTE_POSIBLE_NO_MODELADA_ECONOMICAMENTE", "HABILITADA_EN_MAPA_PARA_EVALUACION")
+
+
+def n_alternativas_mapa(inp, base, var):
+    """Alternativas económicas que genera una fila del mapa: base → escalas + trayectorias multietapa; variante → 1."""
+    if var is not None:
+        return 0 if mr.como_lista(inp.get("espacio.incluir_variantes")) == [False] else 1
+    esc = [e for e in mr.como_lista(inp.get("espacio.escalas")) if mcx.RANGO_ESCALA[0] <= int(e) <= mcx.RANGO_ESCALA[1]]
+    tr = [t for t in mr.como_lista(inp.get("espacio.trayectorias")) if len(mf.TRAYECTORIAS_FIN.get(t, ())) > 1]
+    return len(esc) + len(tr)
+
+
 def espacio_decisiones(inp):
-    """Enumera TODAS las combinaciones de atributos y las clasifica (nada se descarta en silencio)."""
+    """Enumera TODAS las combinaciones de atributos y las clasifica (nada se descarta en silencio):
+      FISICAMENTE_INVALIDA                            validar_config() de 19 la rechaza (motivo informado)
+      FISICAMENTE_POSIBLE_NO_MODELADA_ECONOMICAMENTE  CAPEX la acepta, pero no existe en el mapa: no se le inventa
+                                                      CAPEX/OPEX y no se evalúa (DPV-20-03)
+      HABILITADA_EN_MAPA_PARA_EVALUACION              coincide con configuraciones del mapa → genera alternativas económicas
+    Las alternativas económicas = Σ sobre las filas del mapa de n_alternativas_mapa() (+ NO_INVERTIR_AUN)."""
     mapa = {}
     for base, var, esc in configuraciones_mapa():
         cc, _ = mf.configs(var or f"{base}-10000")
-        mapa.setdefault(_dims(cc), []).append(var or base)
+        mapa.setdefault(_dims(cc), []).append((var or base, n_alternativas_mapa(inp, base, var) if base in
+                                               mr.como_lista(inp.get("espacio.configuraciones")) else 0))
     filas = []
     ops = [mcx.OPCIONES[k] for k in DIMENSIONES[:7]] + [(False, True), (False, True)]
     c2 = mcx.preset("C2")
@@ -104,20 +122,24 @@ def espacio_decisiones(inp):
         c["fraccion_granjas_propias"] = {"integradas": 0.0, "propias": 1.0, "mixto": c2["fraccion_granjas_propias"]}[d["granjas"]]
         if d["flota"] == "mixto":
             c["flota_por_flujo"] = copy.deepcopy(c2["flota_por_flujo"])
+        en, n_alt = [], 0
         try:
             mcx.validar_config(c)
-            en = mapa.get(combo)
-            clase = "EN_MAPA_EVALUADA" if en else "VALIDA_NO_MAPEADA_NO_EVALUADA"
-            motivo = ("configuraciones " + ", ".join(en)) if en else (
-                "físicamente válida para CAPEX, pero la interfaz financiera solo consume configuraciones del mapa "
-                "(configs() de 21); requiere ampliar el mapa (DPV-20-03)")
+            en = mapa.get(combo) or []
+            n_alt = sum(n for _, n in en)
+            clase = CLASES_ESPACIO[2] if en else CLASES_ESPACIO[1]
+            motivo = ("configuraciones del mapa: " + ", ".join(x for x, _ in en)) if en else (
+                "físicamente posible para CAPEX, pero no está en el mapa de arquitecturas: no hay CAPEX/OPEX modelado "
+                "(no se inventa) y no se evalúa; requiere ampliar el mapa (DPV-20-03)")
         except mcx.ErrorCapex as e:
-            clase, motivo = "INVALIDA_FISICAMENTE", str(e)
-        filas.append({**{k.upper(): v for k, v in d.items()}, "CLASIFICACION": clase, "MOTIVO": motivo})
+            clase, motivo = CLASES_ESPACIO[0], str(e)
+        filas.append({"ID_COMBINACION": f"COMB-{len(filas) + 1:04d}", **{k.upper(): v for k, v in d.items()},
+                      "CLASIFICACION": clase, "CONFIGURACIONES_DEL_MAPA": ", ".join(x for x, _ in en),
+                      "ALTERNATIVAS_ECONOMICAS": n_alt, "MOTIVO": motivo})
     lo, hi = mcx.RANGO_ESCALA
     for E in mr.como_lista(inp.get("espacio.escalas")):
         ok = lo <= E <= hi
-        filas.append({"FAENA": "—", "CLASIFICACION": "ESCALA_EVALUADA" if ok else "ESCALA_INVALIDA",
+        filas.append({"ID_COMBINACION": f"ESC-{E}", "FAENA": "—", "CLASIFICACION": "ESCALA_EVALUADA" if ok else "ESCALA_INVALIDA",
                       "MOTIVO": f"escala {E} aves/día " + ("dentro" if ok else "fuera") + f" del rango estudiado {lo}–{hi}"
                       + ("" if E in mcx.ESCALAS_REF or not ok else " (intermedia: CALCULO_MODELO_FUENTE en CAPEX)")})
     return filas
@@ -200,7 +222,16 @@ def _drv(D, k):
     return x["VALOR"][1], x["ESTADO_EVIDENCIA"]
 
 
-def _gate(nombre, req, unidad, disp, dpv, sentido="<=", nota=""):
+REQ_ESTADOS = ("DIMENSIONADO", "NO_REQUERIDO_POR_ARQUITECTURA", "DESCONOCIDO")
+
+
+def _gate(nombre, req, unidad, disp, dpv, sentido="<=", nota="", estado_req=None):
+    """Gate físico. ESTADO_REQUERIMIENTO distingue un 0 ESTRUCTURAL (NO_REQUERIDO_POR_ARQUITECTURA: la arquitectura no
+    tiene el activo que consume el recurso) de un dato DESCONOCIDO (requerimiento no dimensionado): nunca se iguala a 0."""
+    estado_req = estado_req or ("DESCONOCIDO" if req is None else "DIMENSIONADO")
+    if estado_req == "NO_REQUERIDO_POR_ARQUITECTURA":
+        return {"GATE": nombre, "REQUERIDO": 0.0, "UNIDAD": unidad, "DISPONIBLE": disp, "ESTADO": NA, "DPV": dpv,
+                "ESTADO_REQUERIMIENTO": estado_req, "NOTA": nota or "la arquitectura no requiere este recurso propio"}
     if isinstance(disp, bool) or (req is True):
         est = FACTIBLE if disp is True else (NO_FACTIBLE if disp is False else PEND)
     elif req is None:
@@ -210,7 +241,7 @@ def _gate(nombre, req, unidad, disp, dpv, sentido="<=", nota=""):
     else:
         est = FACTIBLE if (req <= disp + 1e-9 if sentido == "<=" else req >= disp - 1e-9) else NO_FACTIBLE
     return {"GATE": nombre, "REQUERIDO": req, "UNIDAD": unidad, "DISPONIBLE": disp, "ESTADO": est, "DPV": dpv,
-            "NOTA": nota or ("dato de disponibilidad no declarado" if disp is None and req is not None else
+            "ESTADO_REQUERIMIENTO": estado_req, "NOTA": nota or ("dato de disponibilidad no declarado" if disp is None and req is not None else
                              ("requerimiento no dimensionado por los módulos físicos" if req is None else ""))}
 
 
@@ -245,6 +276,16 @@ def factibilidad_fisica_real(alt):
                            "DPV-097", nota=f"garantizada {evg}"))
     else:
         gates.append(_gate("FACON_FAENA", float(E), "aves/día", disp.get("facon_faena_aves_dia"), "DPV-006"))
+        # Faena a façon: la PLANTA de faena, su terreno industrial, frío y utilities NO son de la empresa
+        # (NO_REQUERIDO_POR_ARQUITECTURA para ese componente), pero los módulos propios restantes (oficina/IT/estructura
+        # del CAPEX de C0, y frío, flota, alimento, granjas o incubación propios si la variante los tuviera) no tienen
+        # requerimiento dimensionado → DESCONOCIDO (no 0).
+        propios = modulos_propios_facon(cc)
+        for nombre, unidad, clave, dpv in (("TERRENO", "m²", "terreno_m2", "DPV-087"), ("AGUA", "m³/día", "agua_m3_dia", "DPV-053"),
+                                           ("POTENCIA", "kW", "potencia_kw", "DPV-095")):
+            gates.append(_gate(nombre, None, unidad, disp.get(clave), dpv, estado_req="DESCONOCIDO",
+                               nota="planta de faena: NO_REQUERIDO_POR_ARQUITECTURA; módulos propios sin dimensionar: "
+                                    + ", ".join(propios)))
     m2, ev = _drv(D, "m2_galpon")
     frac = cc.get("fraccion_granjas_propias") or 0.0
     if cc["granjas"] in ("integradas", "mixto"):
@@ -275,6 +316,24 @@ def factibilidad_fisica_real(alt):
     return {"ESTADO": estado_fisico(gates), "gates": gates}
 
 
+def modulos_propios_facon(cc):
+    """Módulos propios de una arquitectura con faena a façon que pueden consumir terreno, agua o potencia."""
+    m = ["oficina / IT / estructura (CAPEX de C0 en el mapa)"]
+    if cc["frio"] != "C_congelado_tercero":
+        m.append(f"frío propio ({cc['frio']})")
+    if cc["flota"] != "tercero":
+        m.append(f"flota propia ({cc['flota']})")
+    if cc["alimento"] == "propia":
+        m.append("planta de alimento propia")
+    if cc["granjas"] != "integradas":
+        m.append(f"granjas propias ({cc['granjas']})")
+    if cc["pollito"] == "incubacion":
+        m.append("incubación propia")
+    if cc["subproductos"] != "A_externo":
+        m.append(f"subproductos ({cc['subproductos']})")
+    return m
+
+
 def estado_fisico(gates):
     est = [g["ESTADO"] for g in gates]
     if NO_FACTIBLE in est:
@@ -295,8 +354,8 @@ def cobertura_evidencia(alt):
     No es una probabilidad: mide cuánto del resultado descansa en evidencia dentro del umbral (E1–E3 por defecto)."""
     if alt["tipo"] == SQ:
         return None, "NO_APLICA (status quo)"
-    if alt["universo"] == "CASO_ARTIFICIAL":
-        return 0.0, "CASO_ARTIFICIAL: ningún bloque tiene evidencia"
+    if alt["universo"] == "ARTIFICIAL_TEST":
+        return 0.0, "ARTIFICIAL_TEST: ningún bloque tiene evidencia"
     key = (alt["configuracion"], alt["variante"], alt["escalas"])
     if key not in _COB:
         var = None if alt["variante"] == "BASE" else alt["variante"]
@@ -317,7 +376,7 @@ RESTRICCIONES = {   # nombre → (métrica, sentido, fuente de la métrica)
     "TIR": ("TIR", ">=", "met"), "DSCR": ("DSCR", ">=", "met"), "DEMANDA_ASEGURADA": ("DEMANDA_ASEGURADA_PCT", ">=", "met"),
     "UTILIZACION": ("UTILIZACION", ">=", "met"), "SUPERFICIE_TERRENO": ("TERRENO", "<=", "fis"),
     "AGUA": ("AGUA", "<=", "fis"), "POTENCIA": ("POTENCIA", "<=", "fis"), "CAPACIDAD": ("CAPACIDAD_FINAL_AVES_DIA", "<=", "met"),
-    "DEUDA": ("DEUDA", "<=", "met"), "RIESGO": ("RIESGO_SCORE", "<=", "ficha")}
+    "DEUDA": ("DEUDA", "<=", "met"), "RIESGO": ("SCORE_ORDINAL_RIESGO", "<=", "ficha")}
 RETORNO = {"PAYBACK", "VAN", "TIR", "DSCR", "DEMANDA_ASEGURADA", "UTILIZACION", "RIESGO"}
 
 
@@ -349,12 +408,12 @@ def valor_restriccion(ficha, nombre, inp):
     if src == "met":
         return mr.valor_metrica(ficha["ev"], met)
     if src == "fis":
-        if ficha["alt"]["tipo"] == SQ:
-            return 0.0
         g = next((g for g in (ficha["fisico"] or {}).get("gates", []) if g["GATE"] == met), None)
-        if g is None and ficha["alt"]["tipo"] == ASSET_LIGHT:
-            return 0.0                                  # sin planta propia: no requiere terreno, agua ni potencia propios
-        return None if g is None else g["REQUERIDO"]
+        if "R22" in mr._MUT and ficha["alt"]["tipo"] == ASSET_LIGHT and (g is None or g["REQUERIDO"] is None):
+            return 0.0                                  # mutación: un requerimiento DESCONOCIDO se toma como 0
+        if g is None:
+            return None                                 # sin gate: desconocido (nunca 0)
+        return 0.0 if g.get("ESTADO_REQUERIMIENTO") == "NO_REQUERIDO_POR_ARQUITECTURA" else g["REQUERIDO"]
     return ficha.get(met)
 
 
@@ -363,8 +422,9 @@ def evaluar_restricciones(ficha, restr, inp):
     for r in restr:
         nombre, lim = r["NOMBRE"], r["VALOR"]
         sentido = RESTRICCIONES[nombre][1]
-        if ficha["alt"]["tipo"] == SQ and nombre in RETORNO:
-            out.append(dict(r, VALOR_ALTERNATIVA=None, ESTADO="NO_APLICA_STATUS_QUO", VIOLACION_REL=0.0))
+        if ficha["alt"]["tipo"] == SQ:
+            out.append(dict(r, VALOR_ALTERNATIVA=None, ESTADO="NO_APLICA_STATUS_QUO", VIOLACION_REL=0.0,
+                            NOTA="alternativa de decisión, no proyecto productivo: no se le aplican métricas ni restricciones"))
             continue
         v = valor_restriccion(ficha, nombre, inp)
         if nombre == "PAYBACK" and v is None and str(ficha["ev"]["met"].get("PAYBACK_ESTADO")).startswith("NO_RECUPERADO"):
@@ -399,7 +459,7 @@ def firma_comparabilidad(E, alt):
 def comparabilidad(fa, ref, cob_max=None):
     """TRUE / FALSE / PARCIAL con motivos. FALSE: no se rankea. PARCIAL: se rankea con la diferencia declarada."""
     if fa["alt"]["tipo"] == SQ:
-        return "TRUE", "status quo: VAN incremental 0 en cualquier base"
+        return "NO_APLICA", "alternativa de decisión (status quo): fuera de rankings, dominancia y Pareto"
     if "R12" in mr._MUT:
         return "TRUE", ""
     if not fa["completa"]:
@@ -427,7 +487,8 @@ def ficha(E, alt, inp, restr):
     bloques = sorted({x.split(":")[0].strip() for x in (f["faltantes"] or "").split("||") if x.strip()})
     f["faltantes_cortos"] = ", ".join(bloques) or ev["motivo"]
     if alt["tipo"] == SQ:
-        f["fisico"] = {"ESTADO": FACTIBLE, "gates": [_gate("STATUS_QUO", True, "—", True, "", nota="sin inversión")]}
+        f["fisico"] = {"ESTADO": NA, "gates": [_gate("STATUS_QUO", 0.0, "—", None, "", estado_req="NO_REQUERIDO_POR_ARQUITECTURA",
+                                                     nota="sin inversión: no aplica factibilidad física")]}
     elif alt.get("fisico") is not None:
         f["fisico"] = {"ESTADO": estado_fisico(alt["fisico"]), "gates": alt["fisico"]}
     else:
@@ -486,12 +547,12 @@ def finalizar_fichas(fichas, inp):
             f["R_COMERCIAL"] = "NO_RESPALDADO (0 % de la capacidad con demanda DOCUMENTADA/ASEGURADA)"
         else:
             f["R_COMERCIAL"] = f"PARCIAL ({da:.0%} de la capacidad con demanda DOCUMENTADA/ASEGURADA)" if da < 1 - 1e-9 else "RESPALDADO"
-        evaluable = f["COMPARABILIDAD"] != "FALSE" and f["ev"]["estado"] in ("OK", "STATUS_QUO")
+        evaluable = f["COMPARABILIDAD"] not in ("FALSE", "NO_APLICA") and f["ev"]["estado"] == "OK"
         if not evaluable:
             f["SEMAFORO"] = "GRIS"
         elif f["HARD_INCUMPLE"] or f["F_FISICA"] == NO_FACTIBLE:
             f["SEMAFORO"] = "ROJO"
-        elif (f["alt"]["tipo"] == SQ or (f["cobertura"] == 1.0 and f["F_FISICA"] == FACTIBLE)) and not f["HARD_PENDIENTE"]:
+        elif f["cobertura"] == 1.0 and f["F_FISICA"] == FACTIBLE and not f["HARD_PENDIENTE"]:
             f["SEMAFORO"] = "VERDE"
         else:
             f["SEMAFORO"] = "AMARILLO"
@@ -501,6 +562,8 @@ def finalizar_fichas(fichas, inp):
 def rankeable(f, inp):
     """Condiciones para entrar a un ranking (todas; las razones de exclusión se informan)."""
     mot = []
+    if f["alt"]["tipo"] == SQ and "R24" not in mr._MUT:
+        return ["STATUS_QUO: alternativa de decisión, no proyecto productivo (ver DECISION_ESCENARIO / REGLAS_STATUS_QUO)"]
     if f["COMPARABILIDAD"] == "FALSE":
         mot.append("NO_COMPARABLE: " + f["COMPARABILIDAD_MOTIVO"])
     if f["F_FISICA"] == NO_FACTIBLE:
@@ -534,11 +597,15 @@ def escenarios_robustez(inp, stresses):
 
 def robustez(E, fichas, inp, restr, escenarios):
     crit = inp.get("robustez.criterio") or "PCT_VAN_NO_NEGATIVO"
-    nmin = int(inp.get("robustez.min_escenarios") or 1)
+    nmin = int(inp.get("robustez.min_escenarios") or 3)
     for f in fichas:
         f["ESC"] = {}
-        r = {"N_ESCENARIOS": 0, "CRITERIO": crit}
-        if not f["completa"] and f["alt"]["tipo"] != SQ:
+        r = {"N_ESCENARIOS": 0, "CRITERIO": crit, "MIN_ESCENARIOS": nmin}
+        if f["alt"]["tipo"] == SQ:
+            f["ROB"] = dict(r, ESTADO="NO_APLICA_STATUS_QUO", NOTA="alternativa de decisión: no se le mide robustez financiera")
+            f["ROBUSTEZ"] = None
+            continue
+        if not f["completa"]:
             f["ROB"] = dict(r, ESTADO="PENDIENTE", NOTA="alternativa no evaluable")
             f["ROBUSTEZ"] = None
             continue
@@ -557,7 +624,7 @@ def robustez(E, fichas, inp, restr, escenarios):
                 pbs.append(m["PAYBACK"])
             elif str(m.get("PAYBACK_ESTADO")).startswith("NO_RECUPERADO"):
                 nrec += 1
-            pseudo = {"alt": f["alt"], "ev": ev, "fisico": f["fisico"], "RIESGO_SCORE": f.get("RIESGO_SCORE")}
+            pseudo = {"alt": f["alt"], "ev": ev, "fisico": f["fisico"], "SCORE_ORDINAL_RIESGO": f.get("SCORE_ORDINAL_RIESGO")}
             rc = evaluar_restricciones(pseudo, [x for x in restr if x["TIPO"] == "HARD"], inp)
             cumple += all(x["ESTADO"] in ("CUMPLE", "NO_APLICA_STATUS_QUO") for x in rc)
         n = len(vans)
@@ -567,14 +634,13 @@ def robustez(E, fichas, inp, restr, escenarios):
                  N_NO_RECUPERADO=nrec, PCT_CUMPLE_HARD=(cumple / len(escenarios)) if escenarios else None,
                  NOTA="escenarios deterministas de stress y extremos one-way (no probabilísticos)")
         if n < nmin:
-            r.update(ESTADO="PENDIENTE", NOTA=f"{n} escenarios evaluables < mínimo {nmin}")
+            r.update(ESTADO="PENDIENTE", NOTA=f"{n} escenarios evaluables (sin contar la base) < mínimo {nmin}: "
+                     "un resultado base no es robustez")
             f["ROBUSTEZ"] = None
         else:
             r["ESTADO"] = "CALCULADA"
             f["ROBUSTEZ"] = {"PCT_VAN_NO_NEGATIVO": r["PCT_VAN_NO_NEGATIVO"], "PEOR_VAN": r["PEOR_VAN"],
                              "P10_VAN": r["P10_VAN"]}.get(crit)
-        if f["alt"]["tipo"] == SQ:
-            r["NOTA"] = "status quo: VAN 0 en todo escenario (robustez trivial; no compite en MAX_ROBUSTEZ)"
         f["ROB"] = r
 
 
@@ -589,7 +655,7 @@ def score_riesgo(fichas, inp, swing_van):
     """Score ∈ [0, 1] (más alto = más riesgo) = Σ w_i·c_i / Σ w_i con pesos de inputs (sin pesos → PENDIENTE).
     Componentes ∈ [0, 1]; PICO_FONDOS_RELATIVO se normaliza min–max dentro del conjunto (relativo, no absoluto).
     Faltante: SEPARAR (score PENDIENTE para esa alternativa) o PENALIZAR (componente = 1). Documentado en
-    metodologia_riesgos_optimizador.md §6."""
+    robustez.md §2."""
     pesos = {c: mr.num(inp.get(f"riesgo.peso.{c}")) for c in COMPONENTES_RIESGO}
     pesos = {c: w for c, w in pesos.items() if w}
     trat = inp.get("riesgo.faltantes") or "SEPARAR"
@@ -599,7 +665,7 @@ def score_riesgo(fichas, inp, swing_van):
     for f in fichas:
         m = f["ev"]["met"]
         if f["alt"]["tipo"] == SQ:
-            f["RIESGO_SCORE"], f["RIESGO_COMP"], f["RIESGO_NOTA"] = None, {}, "NO_APLICA (status quo; el riesgo de no actuar no se modela)"
+            f["SCORE_ORDINAL_RIESGO"], f["RIESGO_COMP"], f["RIESGO_NOTA"] = None, {}, "NO_APLICA (status quo; el riesgo de no actuar no se modela)"
             continue
         c = {}
         c["VAN_NEGATIVO_ESCENARIOS"] = (1 - f["ROB"]["PCT_VAN_NO_NEGATIVO"]) if f.get("ROB", {}).get("PCT_VAN_NO_NEGATIVO") is not None else None
@@ -613,15 +679,15 @@ def score_riesgo(fichas, inp, swing_van):
         c["EVIDENCIA_FALTANTE"] = None if f["cobertura"] is None else 1 - f["cobertura"]
         f["RIESGO_COMP"] = c
         if not pesos:
-            f["RIESGO_SCORE"], f["RIESGO_NOTA"] = None, "PENDIENTE: pesos del score de riesgo no definidos (inputs riesgo.peso.*)"
+            f["SCORE_ORDINAL_RIESGO"], f["RIESGO_NOTA"] = None, "PENDIENTE: pesos del score de riesgo no definidos (inputs riesgo.peso.*)"
             continue
         falt = [k for k in pesos if c.get(k) is None]
         if falt and trat == "SEPARAR":
-            f["RIESGO_SCORE"], f["RIESGO_NOTA"] = None, "PENDIENTE: componentes sin dato (separados): " + ", ".join(falt)
+            f["SCORE_ORDINAL_RIESGO"], f["RIESGO_NOTA"] = None, "PENDIENTE: componentes sin dato (separados): " + ", ".join(falt)
             continue
         val = {k: (1.0 if c.get(k) is None else c[k]) for k in pesos}
-        f["RIESGO_SCORE"] = sum(pesos[k] * val[k] for k in pesos) / sum(pesos.values())
-        f["RIESGO_NOTA"] = ("score operativo relativo (no probabilidad)" +
+        f["SCORE_ORDINAL_RIESGO"] = sum(pesos[k] * val[k] for k in pesos) / sum(pesos.values())
+        f["RIESGO_NOTA"] = ("SCORE_ORDINAL_RIESGO: orden interno relativo al conjunto; NO ES PROBABILIDAD" +
                             (f"; penalizados como 1: {', '.join(falt)}" if falt else ""))
 
 
@@ -631,16 +697,24 @@ def score_riesgo(fichas, inp, swing_van):
 OBJETIVOS = {"MAX_VAN": ("VAN", 1), "MAX_TIR": ("TIR", 1), "MIN_PAYBACK": ("PAYBACK", -1),
              "MIN_FONDOS_INICIALES": ("FONDOS_INICIALES", -1), "MIN_CAPEX": ("CAPEX", -1),
              "MIN_PICO_FONDOS": ("PICO_FONDOS", -1), "MAX_EBITDA": ("EBITDA", 1), "MAX_DSCR": ("DSCR", 1),
-             "MIN_RIESGO": ("RIESGO_SCORE", -1), "MAX_ROBUSTEZ": ("ROBUSTEZ", 1),
+             "MIN_RIESGO": ("SCORE_ORDINAL_RIESGO", -1), "MAX_ROBUSTEZ": ("ROBUSTEZ", 1),
              "MAX_CRECIMIENTO": ("CAPACIDAD_FINAL_AVES_DIA", 1), "BALANCEADO": ("SCORE_BALANCEADO", 1)}
-SQ_COMPITE = {"MAX_VAN", "MAX_EBITDA", "BALANCEADO"}
-SQ_TRIVIAL = {"MIN_FONDOS_INICIALES", "MIN_CAPEX", "MIN_PICO_FONDOS", "MAX_ROBUSTEZ"}
-COMP_BAL = {"rentabilidad": ("VAN", 1), "riesgo": ("RIESGO_SCORE", -1), "capital": ("FONDOS_INICIALES", -1),
+# NO_INVERTIR_AUN no compite en ningún ranking (no es un proyecto productivo). Gana la DECISION_ESCENARIO solo por estas
+# reglas explícitas, evaluadas después del ranking de inversiones (las 3 últimas se activan con un input del usuario):
+REGLAS_STATUS_QUO = {
+    "SQ-1": "NINGUNA_INVERSION_FACTIBLE: ninguna inversión cumple las condiciones de ranking",
+    "SQ-2": "RESTRICCION_DE_CAPITAL: el capital declarado excluye a todas las inversiones restantes",
+    "SQ-3": "VALOR_NEGATIVO: la mejor inversión tiene VAN < 0 en el escenario (no crea valor)",
+    "SQ-4": "STRESS: la mejor inversión tiene VAN < 0 en un stress declarado en decision.sq_stress",
+    "SQ-5": "RIESGO: SCORE_ORDINAL_RIESGO de la mejor > decision.sq_score_ordinal_max",
+    "SQ-6": "EVIDENCIA: cobertura de evidencia de la mejor < decision.sq_cobertura_min",
+}
+COMP_BAL = {"rentabilidad": ("VAN", 1), "riesgo": ("SCORE_ORDINAL_RIESGO", -1), "capital": ("FONDOS_INICIALES", -1),
             "liquidez": ("PICO_FONDOS", -1), "crecimiento": ("CAPACIDAD_FINAL_AVES_DIA", 1), "robustez": ("ROBUSTEZ", 1)}
 
 
 def valor_obj(f, metrica):
-    if metrica in ("RIESGO_SCORE", "ROBUSTEZ", "SCORE_BALANCEADO"):
+    if metrica in ("SCORE_ORDINAL_RIESGO", "ROBUSTEZ", "SCORE_BALANCEADO"):
         v = f.get(metrica)
         return 0.0 if (v is None and "R03" in mr._MUT) else v
     return mr.valor_metrica(f["ev"], metrica)
@@ -697,9 +771,6 @@ def rankear(fichas, objetivo, inp):
     for f in fichas:
         fila = {"RANK": None, "SCORE": None, "MOTIVO": ""}
         mot = rankeable(f, inp)
-        es_sq = f["alt"]["tipo"] == SQ
-        if es_sq and objetivo_eval not in SQ_COMPITE:
-            mot.append("REFERENCIA_TRIVIAL (status quo)" if objetivo_eval in SQ_TRIVIAL else "NO_APLICA_STATUS_QUO")
         if not mot:
             if objetivo_eval == "BALANCEADO":
                 cands.append(f)
@@ -730,7 +801,7 @@ def rankear(fichas, objetivo, inp):
         sc = nrm[f["id"]] - f["SOFT_PENALIZACION"]
         filas[f["id"]] = {"RANK": None, "SCORE": sc, "VALOR_OBJETIVO": vals[f["id"]],
                           "MOTIVO": "penalización SOFT %.4f" % f["SOFT_PENALIZACION"] if f["SOFT_PENALIZACION"] else ""}
-    orden = sorted(cands, key=lambda f: (-filas[f["id"]]["SCORE"], f["id"]))
+    orden = sorted(cands, key=lambda f: ((1 if "R20" in mr._MUT else -1) * filas[f["id"]]["SCORE"], f["id"]))
     for i, f in enumerate(orden, 1):
         filas[f["id"]]["RANK"] = i
     inv = [f for f in orden if f["alt"]["tipo"] != SQ]
@@ -743,7 +814,10 @@ def rankear(fichas, objetivo, inp):
                 continue
             k = (filas[f["id"]]["MOTIVO"] or "?").split(":")[0]
             excl[k] = excl.get(k, 0) + 1
-        dec.update(ESTADO=NINGUNA, MEJOR=SQ if (orden and orden[0]["alt"]["tipo"] == SQ) else SQ + " (status quo por defecto)",
+        cap = any("CAPITAL_DISPONIBLE" in (filas[f["id"]]["MOTIVO"] or "") for f in fichas if f["alt"]["tipo"] != SQ)
+        reglas = ["SQ-1"] + (["SQ-2"] if cap else [])
+        dec.update(ESTADO=NINGUNA, MEJOR="—", SEGUNDA="—", DECISION_ESCENARIO=SQ if any(f["alt"]["tipo"] == SQ for f in fichas) else "—",
+                   REGLA_STATUS_QUO="; ".join(f"{r} {REGLAS_STATUS_QUO[r]}" for r in reglas),
                    POR_QUE="ninguna configuración de inversión cumple las condiciones: " +
                    "; ".join(f"{k} ({n})" for k, n in sorted(excl.items(), key=lambda x: -x[1])),
                    NOTA="no se elige 'la menos mala'; NO_INVERTIR_AUN es la ausencia de inversión, no una recomendación de planta")
@@ -763,13 +837,42 @@ def rankear(fichas, objetivo, inp):
             dec["ROBUSTEZ_DECISION"] = f"{NO_ROB}: empate"
     else:
         dec.update(SEGUNDA="—", NOTA="una sola alternativa rankeable")
+    decidir_status_quo(dec, best, inp)
     return filas, dec, orden
+
+
+def decidir_status_quo(dec, best, inp):
+    """DECISION_ESCENARIO = mejor inversión o NO_INVERTIR_AUN según REGLAS_STATUS_QUO (nunca por comparar contra ceros)."""
+    m = best["ev"]["met"]
+    reglas, posibles = [], []
+    if m.get("VAN") is not None and m["VAN"] < 0:
+        reglas.append("SQ-3")
+    stress_ids = [str(x) for x in mr.como_lista(inp.get("decision.sq_stress"))]
+    neg = [sid for sid, ev in (best.get("ESC") or {}).items() if sid.startswith("STRESS:")
+           and ev["met"].get("VAN") is not None and ev["met"]["VAN"] < 0]
+    if [x for x in neg if x.split(":", 1)[1] in stress_ids]:
+        reglas.append("SQ-4")
+    smax = mr.num(inp.get("decision.sq_score_ordinal_max"))
+    if smax is not None and best.get("SCORE_ORDINAL_RIESGO") is not None and best["SCORE_ORDINAL_RIESGO"] > smax:
+        reglas.append("SQ-5")
+    cmin = mr.num(inp.get("decision.sq_cobertura_min"))
+    if cmin is not None and best.get("cobertura") is not None and best["cobertura"] < cmin:
+        reglas.append("SQ-6")
+    if neg:
+        posibles.append("VAN < 0 de la mejor en " + ", ".join(neg) + " (SQ-4 si se declara ese stress)")
+    if best.get("cobertura") is not None and best["cobertura"] < 1:
+        posibles.append(f"cobertura de evidencia {best['cobertura']:.0%} (SQ-6 si se declara un mínimo)")
+    if m.get("VAN") is not None and m["VAN"] < 0:
+        posibles.append("VAN base < 0 (SQ-3)")
+    dec["DECISION_ESCENARIO"] = SQ if reglas else best["id"]
+    dec["REGLA_STATUS_QUO"] = "; ".join(f"{r} {REGLAS_STATUS_QUO[r]}" for r in reglas) or "ninguna regla de status quo se cumple"
+    dec["POR_QUE_NO_INVERTIR_PODRIA_GANAR"] = "; ".join(posibles) or "con los datos del escenario, ninguna condición explícita"
 
 
 def estabilidad_ganador(fichas_orden, dec, objetivo, escenarios):
     """¿El ganador sigue primero en cada escenario de robustez? (solo objetivos sobre métricas del motor)."""
     metrica, signo = OBJETIVOS[objetivo]
-    if metrica in ("RIESGO_SCORE", "ROBUSTEZ", "SCORE_BALANCEADO", "TIR") or len(fichas_orden) < 2 or not escenarios:
+    if metrica in ("SCORE_ORDINAL_RIESGO", "ROBUSTEZ", "SCORE_BALANCEADO", "TIR") or len(fichas_orden) < 2 or not escenarios:
         return None, []
     cambios, n = [], 0
     for sid, _ in escenarios:
@@ -801,11 +904,24 @@ def _parse_dims(txt):
     return out
 
 
+PARETO_NI = "PARETO_NO_INFORMATIVO_MUESTRA_INSUFICIENTE"
+
+
+def _comparables(fichas):
+    """Solo alternativas de inversión comparables (TRUE / PARCIAL). COMPARABILIDAD FALSE (faltan bloques o distinta
+    base) y el status quo (NO_APLICA) no participan en dominancia, Pareto ni rankings: sus faltantes jamás valen 0."""
+    if "R27" in mr._MUT:
+        return [f for f in fichas if f["alt"]["tipo"] != SQ]
+    return [f for f in fichas if f["COMPARABILIDAD"] in ("TRUE", "PARCIAL")]
+
+
 def dominancia(fichas, inp):
-    dims = _parse_dims(inp.get("dominancia.dimensiones") or "FONDOS_INICIALES:-|VAN:+|RIESGO_SCORE:-")
-    cand = [f for f in fichas if f["COMPARABILIDAD"] != "FALSE" or f["alt"]["tipo"] == SQ]
+    dims = _parse_dims(inp.get("dominancia.dimensiones") or "FONDOS_INICIALES:-|VAN:+|SCORE_ORDINAL_RIESGO:-")
+    cand = _comparables(fichas)
     for f in fichas:
         f["DOMINADA_POR"], f["DOM_DIMS"] = [], ""
+        f["DOM_ESTADO"] = ("EVALUADA" if f in cand else
+                           "NO_APLICA_STATUS_QUO" if f["alt"]["tipo"] == SQ else "NO_EVALUABLE (COMPARABILIDAD FALSE)")
     for b in cand:
         for a in cand:
             if a is b:
@@ -822,30 +938,50 @@ def dominancia(fichas, inp):
 
 
 def pareto(fichas, inp):
+    """Frontera por par de ejes entre alternativas COMPARABLES. Con menos de 2 puntos comparables el par se marca
+    PARETO_NO_INFORMATIVO_MUESTRA_INSUFICIENTE (no se presenta una 'frontera' trivial). Las no comparables quedan
+    visibles como NO_EVALUABLE; el status quo no participa."""
     pares = []
     for p in mr.como_lista(inp.get("pareto.pares") or "VAN:+×FONDOS_INICIALES:-"):
         x, y = str(p).split("×")
         pares.append((_parse_dims(x)[0], _parse_dims(y)[0]))
     filas = []
-    cand = [f for f in fichas if (f["COMPARABILIDAD"] != "FALSE" or f["alt"]["tipo"] == SQ)]
+    cand = _comparables(fichas)
     for (mx, sx), (my, sy) in pares:
         pts = [(f, valor_obj(f, mx), valor_obj(f, my)) for f in cand]
         pts = [p for p in pts if p[1] is not None and p[2] is not None]
-        if not any(p[0]["alt"]["tipo"] != SQ for p in pts):
-            continue                                    # solo el status quo: no hay compromiso que mostrar
+        insuf = len(pts) < 2
+        en_pts = {p[0]["id"] for p in pts}
         for f, vx, vy in pts:
             dom = [g["id"] for g, wx, wy in pts if g is not f and sx * wx >= sx * vx - 1e-9 and sy * wy >= sy * vy - 1e-9
                    and (sx * wx > sx * vx + 1e-9 or sy * wy > sy * vy + 1e-9)]
+            frontera = (not dom) if "R20" not in mr._MUT else bool(dom)
             filas.append({"PAR": f"{mx}×{my}", "ALTERNATIVA": f["id"], "TIPO": f["alt"]["tipo"], "UNIVERSO": f["alt"]["universo"],
                           "EJE_X": mx, "VALOR_X": vx, "EJE_Y": my, "VALOR_Y": vy,
-                          "EN_FRONTERA": not dom, "DOMINADA_EN_PAR_POR": ", ".join(dom),
-                          "CUMPLE_HARD": not f["HARD_INCUMPLE"], "ETIQUETA": etiqueta(f["alt"]["universo"]),
-                          "NOTA": "la frontera no es un ranking: muestra el compromiso entre ejes"})
+                          "EN_FRONTERA": PARETO_NI if insuf else frontera, "DOMINADA_EN_PAR_POR": ", ".join(dom),
+                          "N_PUNTOS_COMPARABLES": len(pts), "CUMPLE_HARD": not f["HARD_INCUMPLE"],
+                          "ETIQUETA": etiqueta(f["alt"]["universo"]),
+                          "NOTA": (f"{PARETO_NI}: menos de 2 alternativas comparables con ambos ejes" if insuf else
+                                   "la frontera no es un ranking: muestra el compromiso entre ejes")})
+        for f in fichas:
+            if f["alt"]["tipo"] == SQ or f["id"] in en_pts:
+                continue
+            filas.append({"PAR": f"{mx}×{my}", "ALTERNATIVA": f["id"], "TIPO": f["alt"]["tipo"], "UNIVERSO": f["alt"]["universo"],
+                          "EJE_X": mx, "EJE_Y": my, "EN_FRONTERA": "NO_EVALUABLE", "N_PUNTOS_COMPARABLES": len(pts),
+                          "ETIQUETA": etiqueta(f["alt"]["universo"]),
+                          "NOTA": (f["COMPARABILIDAD_MOTIVO"] if f["COMPARABILIDAD"] == "FALSE" else "eje sin valor publicable")})
     return filas
 
 
 def etiqueta(universo):
-    return {"EVIDENCIA": "MODO_EVIDENCIA", "ESCENARIO": mr.ETIQ_SIM, "CASO_ARTIFICIAL": mr.ETIQ_ART}[universo]
+    if "R21" in mr._MUT:
+        return "RESULTADO"                              # mutación: se elimina la etiqueta de simulación
+    return {"EVIDENCIA": "MODO_EVIDENCIA", "ESCENARIO": mr.ETIQ_SIM, "ARTIFICIAL_TEST": mr.ETIQ_ART}[universo]
+
+
+def ambito(universo):
+    """PROYECTO (evidencia o escenario del proyecto) vs ARTIFICIAL_TEST (casos de prueba inventados)."""
+    return "ARTIFICIAL_TEST" if universo == "ARTIFICIAL_TEST" else "PROYECTO"
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1123,16 +1259,30 @@ def prioridad_evidencia(E, fichas):
                       "REGISTROS_EN_FALTANTE": ", ".join(sorted(a["REFS"])), "ACCION": acc, "DPV_VINCULADOS": dpv,
                       "DPV_EXISTEN": existe, "NUEVA": nueva, "_orden": orden,
                       "METODO": "faltantes de disponibilidad() del motor × DEPENDENCIAS_FLAG; gates físicos pendientes"})
-    filas.sort(key=lambda r: (-r["INDICADORES_BLOQUEADOS"], -r["N_ALTERNATIVAS_BLOQUEADAS"], r["_orden"], r["ITEM"]))
-    clave = lambda r: (r["INDICADORES_BLOQUEADOS"], r["N_ALTERNATIVAS_BLOQUEADAS"])
+    asignar_rank_compartido(filas, lambda r: (r["INDICADORES_BLOQUEADOS"], r["N_ALTERNATIVAS_BLOQUEADAS"]),
+                            "indicadores bloqueados y alternativas bloqueadas")
     for r in filas:
-        mejores = sum(1 for x in filas if clave(x) > clave(r))
-        empatados = sum(1 for x in filas if clave(x) == clave(r))
-        r["RANK"] = mejores + 1                                  # rango compartido: los empates no se desempatan
-        r["EMPATE"] = (f"empatado con {empatados - 1} ítems (el orden dentro del empate sigue la cadena del motor; "
-                       "no es prioridad)") if empatados > 1 else ""
         r.pop("_orden")
     return filas
+
+
+def asignar_rank_compartido(filas, clave, criterio):
+    """RANK_COMPARTIDO = 1 + # ítems estrictamente mejores según `clave` (mayor = más prioritario). Los empates NO se
+    desempatan por orden de archivo, ID, posición en código ni nombre: quedan con el mismo rango y se informa. El
+    desempate futuro corresponde a sensibilidad, magnitud económica, capacidad de cambiar la decisión y costo del dato."""
+    for r in filas:
+        mejores = sum(1 for x in filas if clave(x) > clave(r))
+        emp = sum(1 for x in filas if clave(x) == clave(r))
+        r["RANK_COMPARTIDO"] = mejores + 1 if "R25" not in mr._MUT else None
+        r["N_EMPATADOS"] = emp
+        r["EMPATE"] = (f"EMPATE entre {emp} ítems por {criterio}: sin desempate (pendiente de sensibilidad, magnitud "
+                       "económica, impacto en la decisión y costo del dato)") if emp > 1 else ""
+    if "R25" in mr._MUT:                                         # mutación: desempate por posición
+        for i, r in enumerate(sorted(filas, key=lambda r: (-clave(r)[0], r["ITEM"])), 1):
+            r["RANK_COMPARTIDO"], r["EMPATE"] = i, ""
+    filas.sort(key=lambda r: (r["RANK_COMPARTIDO"], r["ITEM"]))   # orden de presentación; dentro del empate NO significa nada
+    for r in filas:
+        r["ORDEN_DENTRO_DEL_EMPATE"] = "NO_SIGNIFICATIVO" if r["N_EMPATADOS"] > 1 else ""
 
 
 def prioridad_escenario(oneway, dec_van, fichas):
@@ -1175,27 +1325,34 @@ def prioridad_escenario(oneway, dec_van, fichas):
                       "CERCANIA_ALTERNATIVAS": (gap / sw) if sw > 0 else None, "ACCION": acc, "DPV_VINCULADOS": dpv,
                       "DPV_EXISTEN": existe, "NUEVA": nueva,
                       "METODO": "sensibilidad one-way de la mejor y la segunda (MAX_VAN); sin distribuciones: no es VOI bayesiano"})
-    filas.sort(key=lambda r: (r["PUEDE_CAMBIAR_DECISION"] != "SÍ", -r["SWING_VAN_MEJOR"], r["VARIABLE_RIESGO"]))
-    for i, r in enumerate(filas, 1):
-        r["RANK"] = i
+    asignar_rank_compartido(filas, lambda r: (r["PUEDE_CAMBIAR_DECISION"] == "SÍ", round(r["SWING_VAN_MEJOR"], 6)),
+                            "capacidad de cambiar la decisión y amplitud del VAN")
     return filas
 
 
 def que_hacer_ahora(prio_ev, prio_esc, n=10):
+    """Acciones de las prioridades (evidencia primero, luego escenario). Se incluyen GRUPOS de empate completos: si el
+    corte de n cae dentro de un empate, entra todo el grupo (no se elige arbitrariamente dentro del empate)."""
     out, vistos = [], set()
     for origen, lista in (("PRIORIDAD_EVIDENCIA (bloqueos del motor)", prio_ev), ("PRIORIDAD_ESCENARIO (sensibilidad)", prio_esc)):
+        rango_corte = None
         for r in lista:
+            if rango_corte is not None and r["RANK_COMPARTIDO"] != rango_corte:
+                break
             if r["ACCION"] in vistos:
                 continue
             vistos.add(r["ACCION"])
-            out.append({"ORDEN": len(out) + 1, "RANK_PRIORIDAD": r["RANK"], "EMPATE": r.get("EMPATE", ""), "QUE_HACER_AHORA": r["ACCION"], "ITEM": r["ITEM"], "DPV_VINCULADOS": r["DPV_VINCULADOS"],
+            out.append({"RANK_COMPARTIDO": r["RANK_COMPARTIDO"], "EMPATE": r.get("EMPATE", ""), "QUE_HACER_AHORA": r["ACCION"],
+                        "ITEM": r["ITEM"], "DPV_VINCULADOS": r["DPV_VINCULADOS"],
                         "DPV_EXISTEN": r["DPV_EXISTEN"], "NUEVA": r["NUEVA"], "ORIGEN_RANKING": origen,
                         "RAZON": (f"bloquea {r['INDICADORES_BLOQUEADOS']} indicadores en {r['N_ALTERNATIVAS_BLOQUEADAS']}/{r['N_ALTERNATIVAS']} alternativas"
                                   if "INDICADORES_BLOQUEADOS" in r else
                                   f"amplitud VAN {r['SWING_VAN_MEJOR']:,.0f}; puede cambiar la decisión: {r['PUEDE_CAMBIAR_DECISION']}"),
                         "UNIVERSO": r["UNIVERSO"]})
-            if len(out) >= n:
-                return out
+            if len(out) >= n and rango_corte is None:
+                rango_corte = r["RANK_COMPARTIDO"]
+        if rango_corte is not None:
+            break
     return out
 
 
@@ -1260,7 +1417,8 @@ def correr_universo(alts, inp, universo, stresses=None, dists=None, corrs=None, 
         for f in completas:
             est, res, mu, notas = mr.monte_carlo(E, f["alt"], dists or [], corrs or [], inp.get("montecarlo.n"),
                                                  inp.get("montecarlo.semilla"), universo, capital,
-                                                 con_tir=bool(inp.get("montecarlo.incluir_tir")))
+                                                 con_tir=bool(inp.get("montecarlo.incluir_tir")),
+                                                 supuesto_independencia=bool(inp.get("montecarlo.supuesto_independencia")))
             out["mc"] += mr.filas_mc(f["id"], est, res, notas, universo)
             out["mc_muestras"] += [dict(x, ALTERNATIVA=f["id"]) for x in mu]
             f["MC"] = res if est == "EJECUTADO" else None
@@ -1269,20 +1427,24 @@ def correr_universo(alts, inp, universo, stresses=None, dists=None, corrs=None, 
         filas, dec, orden = rankear(fichas, o, inp)
         if dec["ESTADO"] == NINGUNA and not completas:
             if universo == "EVIDENCIA":
-                dec.update(ESTADO=mr.OPT_REAL_ND, MEJOR="—", POR_QUE="ninguna alternativa con VAN publicable en modo evidencia; "
-                           "ver prioridad_validacion.csv (bloqueos)")
+                dec.update(ESTADO=mr.OPT_REAL_ND, DECISION_ESCENARIO="—", REGLA_STATUS_QUO="NO_APLICA",
+                           POR_QUE="ninguna alternativa con VAN publicable en modo evidencia; ver prioridad_validacion.csv (bloqueos)",
+                           NOTA="sin recomendación real: no se genera explicación de recomendación")
             else:
-                dec.update(ESTADO=mf.NO_DISP_ESC, MEJOR="—", POR_QUE="ninguna alternativa con inputs completos en el escenario "
-                           "(escenario_optimizador.json); no es lo mismo que NINGUNA_CONFIGURACION_FACTIBLE")
+                dec.update(ESTADO=mf.NO_DISP_ESC, DECISION_ESCENARIO="—", REGLA_STATUS_QUO="NO_APLICA",
+                           POR_QUE="ninguna alternativa con inputs completos en el escenario (escenario_optimizador.json); "
+                           "no es lo mismo que NINGUNA_CONFIGURACION_FACTIBLE", NOTA="sin recomendación de escenario")
         est, cambios = estabilidad_ganador(orden, dec, o, escenarios) if dec["ESTADO"] == "MEJOR_EN_ESCENARIO" else (None, [])
         dec["ESTABILIDAD_GANADOR"] = est
+        dec["STRESS_QUE_CAMBIA_DECISION"] = "; ".join(c for c in cambios if c.startswith("STRESS:")) or (
+            "ninguno de los stress evaluados" if dec["ESTADO"] == "MEJOR_EN_ESCENARIO" and est is not None else "NO_EVALUADO")
         if cambios:
             dec["ROBUSTEZ_DECISION"] = (dec.get("ROBUSTEZ_DECISION", "") + " | " if dec.get("ROBUSTEZ_DECISION") else "") + \
                 f"{NO_ROB}: el ganador cambia en " + "; ".join(cambios[:5])
         elif dec["ESTADO"] == "MEJOR_EN_ESCENARIO" and "ROBUSTEZ_DECISION" not in dec:
             dec["ROBUSTEZ_DECISION"] = ("ROBUSTA_EN_ESCENARIOS_EVALUADOS" if est is not None else
                                         "NO_EVALUADA (objetivo sin re-ranking por escenario o sin escenarios)")
-        dec["UNIVERSO"], dec["ETIQUETA"] = universo, etiqueta(universo)
+        dec["UNIVERSO"], dec["ETIQUETA"], dec["AMBITO"] = universo, etiqueta(universo), ambito(universo)
         out["ranking"][o] = filas
         explicar_decision(dec, fichas, out, o)
         out["decisiones"].append(dec)
@@ -1293,9 +1455,19 @@ def correr_universo(alts, inp, universo, stresses=None, dists=None, corrs=None, 
     return out
 
 
+CAMPOS_EXPLICACION = ("QUE_ELIGIO", "CONTRA_QUE", "RESTRICCIONES_CUMPLE", "VARIABLES_CRITICAS", "VARIABLES_QUE_LA_HACEN_GANAR",
+                      "VARIABLES_QUE_PODRIAN_CAMBIARLA", "DATOS_FALTANTES_VALIDAR", "EVIDENCIA_GANADORA",
+                      "POR_QUE_NO_INVERTIR_PODRIA_GANAR")
+
+
 def explicar_decision(dec, fichas, out, objetivo):
+    """Explicación de la recomendación DEL ESCENARIO (nunca del proyecto). Sin ganador no se fabrica explicación."""
     if dec.get("ESTADO") != "MEJOR_EN_ESCENARIO":
-        dec.setdefault("QUE_ELIGIO", dec.get("MEJOR", "—"))
+        for c in CAMPOS_EXPLICACION:
+            dec.setdefault(c, f"NO_APLICA: {dec.get('ESTADO')}")
+        if dec.get("ESTADO") == NINGUNA:
+            dec["QUE_ELIGIO"] = dec.get("DECISION_ESCENARIO", "—")
+            dec["POR_QUE_NO_INVERTIR_PODRIA_GANAR"] = dec.get("REGLA_STATUS_QUO", "")
         return
     F = {f["id"]: f for f in fichas}
     b = F[dec["MEJOR"]]
@@ -1317,6 +1489,13 @@ def explicar_decision(dec, fichas, out, objetivo):
         ((" | " if vs else "") + dec["ROBUSTEZ_DECISION"] if NO_ROB in str(dec.get("ROBUSTEZ_DECISION")) else "")
     dec["DATOS_FALTANTES_VALIDAR"] = b["cobertura_nota"] + ("; gates pendientes: " + ", ".join(
         g["GATE"] for g in b["fisico"]["gates"] if g["ESTADO"] == PEND) if any(g["ESTADO"] == PEND for g in b["fisico"]["gates"]) else "")
+    tor = sorted([t for t in out.get("tornado", []) if t["ALTERNATIVA"] == b["id"] and t["METRICA"] == "VAN" and t.get("RANK")],
+                 key=lambda t: t["RANK"])[:5]
+    dec["VARIABLES_CRITICAS"] = "; ".join(f"{t['VARIABLE']} (amplitud VAN {t['SWING']:,.0f})" for t in tor) or "NO_CALCULADO (sin tornado)"
+    dec["EVIDENCIA_GANADORA"] = (f"COBERTURA_EVIDENCIA {b['cobertura']:.0%}; semáforo {b['SEMAFORO']}"
+                                 if b["cobertura"] is not None else b["cobertura_nota"])
+    if s is None:
+        dec["VARIABLES_QUE_LA_HACEN_GANAR"] = "única alternativa rankeable"
 
 
 def out_rank(out, objetivo, aid):
@@ -1326,10 +1505,10 @@ def out_rank(out, objetivo, aid):
 # ---------------------------------------------------------------------------------------------
 # 13. TABLAS DE SALIDA
 # ---------------------------------------------------------------------------------------------
-CAMPOS_RES = ["ID_CORRIDA", "UNIVERSO", "ALTERNATIVA", "TIPO", "CONFIGURACION", "ESCALA", "VARIANTE", "TRAYECTORIA", "OBJETIVO",
+CAMPOS_RES = ["ID_CORRIDA", "UNIVERSO", "AMBITO", "ALTERNATIVA", "TIPO", "CONFIGURACION", "ESCALA", "VARIANTE", "TRAYECTORIA", "OBJETIVO",
               "ESTADO_OPTIMIZACION", "FACTIBILIDAD_FISICA", "FACTIBILIDAD_ECONOMICA", "FACTIBILIDAD_FINANCIERA",
               "RESPALDO_COMERCIAL", "COMPARABILIDAD", "CAPEX", "FONDOS_INICIALES", "PICO_FONDOS", "EBITDA", "VAN", "TIR",
-              "PAYBACK", "DSCR", "RIESGO", "ROBUSTEZ", "SCORE", "DOMINADA", "RANK", "MOTIVO", "LIMITACION_PRINCIPAL",
+              "PAYBACK", "DSCR", "RIESGO", "RIESGO_TIPO", "ROBUSTEZ", "SCORE", "DOMINADA", "RANK", "MOTIVO", "LIMITACION_PRINCIPAL",
               "DATOS_FALTANTES", "COBERTURA_EVIDENCIA", "SEMAFORO", "ETIQUETA_EVIDENCIA"]
 
 
@@ -1347,19 +1526,23 @@ def filas_resultados(U):
                         "RESPALDO_COMERCIAL": f["R_COMERCIAL"], "COMPARABILIDAD": f["COMPARABILIDAD"],
                         "CAPEX": m.get("CAPEX"), "FONDOS_INICIALES": m.get("FONDOS_INICIALES"), "PICO_FONDOS": m.get("PICO_FONDOS"),
                         "EBITDA": m.get("EBITDA"), "VAN": m.get("VAN"), "TIR": m.get("TIR"), "PAYBACK": m.get("PAYBACK"),
-                        "DSCR": m.get("DSCR"), "RIESGO": f.get("RIESGO_SCORE") if f.get("RIESGO_SCORE") is not None else f.get("RIESGO_NOTA"),
+                        "DSCR": m.get("DSCR"), "RIESGO": f.get("SCORE_ORDINAL_RIESGO") if f.get("SCORE_ORDINAL_RIESGO") is not None else f.get("RIESGO_NOTA"),
+                        "RIESGO_TIPO": "SCORE_ORDINAL_RIESGO (orden interno; NO ES PROBABILIDAD)",
                         "ROBUSTEZ": f.get("ROBUSTEZ") if f.get("ROBUSTEZ") is not None else (f.get("ROB") or {}).get("ESTADO"),
-                        "SCORE": r.get("SCORE"), "DOMINADA": ("DOMINADA_POR: " + ", ".join(f["DOMINADA_POR"])) if f["DOMINADA_POR"] else "NO",
+                        "SCORE": r.get("SCORE"), "DOMINADA": (("DOMINADA_POR: " + ", ".join(f["DOMINADA_POR"])) if f["DOMINADA_POR"] else
+                                                      ("NO" if f.get("DOM_ESTADO") == "EVALUADA" else f.get("DOM_ESTADO"))),
                         "RANK": r.get("RANK"), "MOTIVO": r.get("MOTIVO") or (f["COMPARABILIDAD_MOTIVO"] if f["COMPARABILIDAD"] != "TRUE" else ""),
                         "LIMITACION_PRINCIPAL": limitacion_principal(f), "DATOS_FALTANTES": f["faltantes_cortos"],
                         "COBERTURA_EVIDENCIA": f["cobertura"], "SEMAFORO": f["SEMAFORO"], "ETIQUETA_EVIDENCIA": etiqueta(U["universo"])})
     return out
 
 
-CAMPOS_DEC = ["UNIVERSO", "OBJETIVO", "METRICA", "SENTIDO", "ESTADO", "MEJOR", "VALOR_MEJOR", "SEGUNDA", "VALOR_SEGUNDA",
-              "DIFERENCIA_VALOR", "DIFERENCIA_SCORE", "ROBUSTEZ_DECISION", "ESTABILIDAD_GANADOR", "N_EVALUADAS", "N_RANKEADAS",
-              "QUE_ELIGIO", "POR_QUE", "CONTRA_QUE", "RESTRICCIONES_CUMPLE", "VARIABLES_QUE_LA_HACEN_GANAR",
-              "VARIABLES_QUE_PODRIAN_CAMBIARLA", "DATOS_FALTANTES_VALIDAR", "PESOS_BALANCEADO", "NOTA", "ETIQUETA"]
+CAMPOS_DEC = ["UNIVERSO", "AMBITO", "OBJETIVO", "METRICA", "SENTIDO", "ESTADO", "MEJOR", "VALOR_MEJOR", "SEGUNDA", "VALOR_SEGUNDA",
+              "DIFERENCIA_VALOR", "DIFERENCIA_SCORE", "DECISION_ESCENARIO", "REGLA_STATUS_QUO", "ROBUSTEZ_DECISION",
+              "ESTABILIDAD_GANADOR", "STRESS_QUE_CAMBIA_DECISION", "N_EVALUADAS", "N_RANKEADAS", "QUE_ELIGIO", "POR_QUE",
+              "CONTRA_QUE", "RESTRICCIONES_CUMPLE", "VARIABLES_CRITICAS", "VARIABLES_QUE_LA_HACEN_GANAR",
+              "VARIABLES_QUE_PODRIAN_CAMBIARLA", "DATOS_FALTANTES_VALIDAR", "EVIDENCIA_GANADORA", "POR_QUE_NO_INVERTIR_PODRIA_GANAR",
+              "PESOS_BALANCEADO", "NOTA", "ETIQUETA"]
 
 
 def filas_explicacion(U):
@@ -1415,10 +1598,12 @@ def filas_dashboard(U):
     for f in U["fichas"]:
         m = f["ev"]["met"]
         rec = [f"{d['OBJETIVO']}: 1.ª" for d in dec if d.get("MEJOR") == f["id"]] + \
-              [f"{d['OBJETIVO']}: 2.ª" for d in dec if d.get("SEGUNDA") == f["id"]]
+              [f"{d['OBJETIVO']}: 2.ª" for d in dec if d.get("SEGUNDA") == f["id"]] + \
+              [f"{d['OBJETIVO']}: DECISION_ESCENARIO ({d.get('REGLA_STATUS_QUO', '')[:4]})" for d in dec
+               if f["alt"]["tipo"] == SQ and d.get("DECISION_ESCENARIO") == SQ]
         out.append({"UNIVERSO": U["universo"], "ALTERNATIVA": f["id"], "TIPO": f["alt"]["tipo"], "CAPEX": m.get("CAPEX"),
                     "FONDOS_INICIALES": m.get("FONDOS_INICIALES"), "PICO_FONDOS": m.get("PICO_FONDOS"), "VAN": m.get("VAN"),
-                    "TIR": m.get("TIR"), "PAYBACK": m.get("PAYBACK"), "RIESGO_SCORE": f.get("RIESGO_SCORE"),
+                    "TIR": m.get("TIR"), "PAYBACK": m.get("PAYBACK"), "SCORE_ORDINAL_RIESGO": f.get("SCORE_ORDINAL_RIESGO"),
                     "ROBUSTEZ": f.get("ROBUSTEZ"), "PCT_ESCENARIOS_VAN_NO_NEG": (f.get("ROB") or {}).get("PCT_VAN_NO_NEGATIVO"),
                     "RESTRICCIONES": f"cumple {sum(1 for r in f['R_CUMPLIMIENTO'] if r['ESTADO'] == 'CUMPLE')} / incumple "
                                      f"{sum(1 for r in f['R_CUMPLIMIENTO'] if r['ESTADO'] == 'INCUMPLE')} / no evaluables "
@@ -1453,7 +1638,7 @@ def filas_restricciones(U):
 
 def filas_robustez(U):
     return [dict(f.get("ROB") or {}, UNIVERSO=U["universo"], ALTERNATIVA=f["id"], ROBUSTEZ=f.get("ROBUSTEZ"),
-                 RIESGO_SCORE=f.get("RIESGO_SCORE"), RIESGO_NOTA=f.get("RIESGO_NOTA"),
+                 SCORE_ORDINAL_RIESGO=f.get("SCORE_ORDINAL_RIESGO"), RIESGO_NOTA=f.get("RIESGO_NOTA"),
                  **{f"C_{k}": (f.get("RIESGO_COMP") or {}).get(k) for k in COMPONENTES_RIESGO}) for f in U["fichas"]]
 
 
@@ -1464,6 +1649,7 @@ def _vacio(Us, motivo):
 def escribir_salidas(Us, carpeta, extra):
     """Une los universos en archivos con columna UNIVERSO (los rankings son siempre internos a cada universo)."""
     def w(nombre, filas, campos=None):
+        filas = [dict(f, AMBITO=ambito(f["UNIVERSO"])) if f.get("UNIVERSO") in mr.UNIVERSOS else f for f in filas]
         mr.escribir(os.path.join(carpeta, nombre), filas, campos or sorted({k for f in filas for k in f}) or ["ESTADO"])
     cat = lambda fn: [x for U in Us for x in fn(U)]
     w("resultados_optimizador.csv", cat(filas_resultados), CAMPOS_RES)
@@ -1550,7 +1736,10 @@ def caso_artificial():
             _rub("LAB-PLANTA", "fijo", None, moneda="ARS")], 6, None),
     }
     fis = {
-        "ART-ASSET-LIGHT": [_gate("FACON_FAENA", 100.0, "aves/día", 150.0, "ARTIFICIAL")],
+        "ART-ASSET-LIGHT": [_gate("FACON_FAENA", 100.0, "aves/día", 150.0, "ARTIFICIAL")] +
+                           [_gate(g, 0.0, u, None, "ARTIFICIAL", estado_req="NO_REQUERIDO_POR_ARQUITECTURA",
+                                  nota="ARTIFICIAL: el caso declara que no tiene ningún módulo propio")
+                            for g, u in (("TERRENO", "m²"), ("AGUA", "m³/día"), ("POTENCIA", "kW"))],
         "ART-PLANTA-CHICA": [_gate("TERRENO", 10000.0, "m²", 30000.0, "ARTIFICIAL"), _gate("AGUA", 100.0, "m³/día", 300.0, "ARTIFICIAL"),
                              _gate("POTENCIA", None, "kW", 500.0, "ARTIFICIAL")],
         "ART-PLANTA-GRANDE": [_gate("TERRENO", 20000.0, "m²", 30000.0, "ARTIFICIAL"), _gate("AGUA", 200.0, "m³/día", 300.0, "ARTIFICIAL"),
@@ -1560,12 +1749,12 @@ def caso_artificial():
     }
     alts = []
     for aid, (tipo, esc, dem, capex, rub, con, deu) in defs.items():
-        alts.append({"id": aid, "tipo": tipo, "universo": "CASO_ARTIFICIAL", "configuracion": aid, "variante": "ARTIFICIAL",
+        alts.append({"id": aid, "tipo": tipo, "universo": "ARTIFICIAL_TEST", "configuracion": aid, "variante": "ARTIFICIAL",
                      "escalas": (esc,), "trayectoria": "ESCALA_UNICA",
                      "construir": (lambda a=aid, e=esc, d=dem, c=capex, r=rub, cn=con, dd=deu: (_p_art(a, e, d, c, copy.deepcopy(r), cn, dd), None)),
                      "base_valores": {"mortalidad": 0.05, "condenas": 0.01, "traslado_fx": 0.5, "precio_venta": 10.0},
-                     "fisico": fis[aid], "cobertura": (0.0, "CASO_ARTIFICIAL: ningún bloque tiene evidencia")})
-    alts.append(mr.alternativa_status_quo("CASO_ARTIFICIAL"))
+                     "fisico": fis[aid], "cobertura": (0.0, "ARTIFICIAL_TEST: ningún bloque tiene evidencia")})
+    alts.append(mr.alternativa_status_quo("ARTIFICIAL_TEST"))
     return alts
 
 
@@ -1604,7 +1793,8 @@ def dist_artificiales():
     dists = [mr.validar_distribucion({"VARIABLE": v, "DISTRIBUCION": t, "PARAMETROS": p, "FUENTE": "ARTIFICIAL", "ESTADO": "ARTIFICIAL"})
              for v, t, p in D]
     corrs = [{"A": "precio_venta", "B": "alimento", "RHO": 0.5, "ESTADO": "ARTIFICIAL", "FUENTE": "ARTIFICIAL"},
-             {"A": "demanda", "B": "precio_venta", "RHO": None, "ESTADO": "PENDIENTE", "FUENTE": ""}]
+             {"A": "demanda", "B": "precio_venta", "RHO": 0.0, "ESTADO": "ARTIFICIAL",
+              "FUENTE": "ARTIFICIAL: independencia declarada explícitamente (cero explícito, no faltante)"}]
     return dists, corrs
 
 
@@ -1647,7 +1837,8 @@ def correr_proyecto(inp=None, escenario=None, carpeta=AQUI, verbose=True):
     mr.escribir(os.path.join(carpeta, "registro_variables_riesgo.csv"), mr.registro_variables_filas(inp),
                 list(mr.registro_variables_filas(inp)[0].keys()))
     esp = espacio_decisiones(inp)
-    mr.escribir(os.path.join(carpeta, "espacio_decisiones.csv"), esp, [k.upper() for k in DIMENSIONES] + ["CLASIFICACION", "MOTIVO"])
+    mr.escribir(os.path.join(carpeta, "espacio_decisiones.csv"), esp, ["ID_COMBINACION"] + [k.upper() for k in DIMENSIONES] +
+                ["CLASIFICACION", "CONFIGURACIONES_DEL_MAPA", "ALTERNATIVAS_ECONOMICAS", "MOTIVO"])
     resumen = resumen_corrida([U_ev, U_es], inp, "PROYECTO")
     mr.escribir(os.path.join(carpeta, "resumen_corrida.csv"), resumen, list(resumen[0].keys()))
     if verbose:
@@ -1664,12 +1855,12 @@ def correr_proyecto(inp=None, escenario=None, carpeta=AQUI, verbose=True):
 def correr_artificial(inp=None, carpeta=DIR_CASOS, verbose=True):
     inp = inputs_artificiales(inp or mr.leer_inputs()[0])
     dists, corrs = dist_artificiales()
-    U = correr_universo(caso_artificial(), inp, "CASO_ARTIFICIAL", stress_artificiales(), dists, corrs)
+    U = correr_universo(caso_artificial(), inp, "ARTIFICIAL_TEST", stress_artificiales(), dists, corrs)
     extra = consultas(U, inp)
     U["prio_ev"] = []
     extra["que_hacer"] = que_hacer_ahora([], U["prio_esc"], 10)
     escribir_salidas([U], carpeta, extra)
-    resumen = resumen_corrida([U], inp, "CASO_ARTIFICIAL")
+    resumen = resumen_corrida([U], inp, "ARTIFICIAL_TEST")
     mr.escribir(os.path.join(carpeta, "resumen_corrida.csv"), resumen, list(resumen[0].keys()))
     if verbose:
         for d in U["decisiones"]:

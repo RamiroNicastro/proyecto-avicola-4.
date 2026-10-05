@@ -1,7 +1,7 @@
 # Actualizaciones de gestión — sesión 20 (Riesgos + sensibilidades + optimizador)
 
 **Fecha:** 2026-10-05 · **Rama:** `claude/riesgos-sensibilidades-optimizador-97t4gk` (desde `main` 453d662, posterior al merge de la sesión 19)
-**Estado:** PROPUESTA para la próxima reconciliación. Esta sesión **no** modificó `00_gestion_proyecto/`, `25_fuentes/` ni los modelos fuente (`19_capex`, `20_opex`, `21_modelo_financiero`, `04`, `23`, `02`). IDs **provisionales**: `SUP-20-##`, `DPV-20-##`, `DEC-20-##`, `FTE-20-###`.
+**Estado:** PROPUESTA para la próxima reconciliación (incluye la auditoría final). Esta sesión **no** modificó `00_gestion_proyecto/`, `25_fuentes/` ni los modelos fuente `19_capex`, `20_opex`, `04`, `23`, `02`. En `21_modelo_financiero/modelo_financiero.py` solo agregó el parámetro de interfaz `calcular_tir` (§8). IDs **provisionales**: `SUP-20-##`, `DPV-20-##`, `DEC-20-##`, `FTE-20-###`.
 
 Últimos IDs oficiales al iniciar: **SUP-188, DPV-177, DEC-092, FTE-322**. Los provisionales de la sesión 19 (SUP-19-##, DPV-19-##, DEC-19-##) siguen pendientes de reconciliación y no se renumeran aquí.
 
@@ -14,23 +14,28 @@ Todos son **criterios de la capa de decisión** (cómo se compara), no datos eco
 | ID provisional | Supuesto | Dónde se usa | Relación |
 |---|---|---|---|
 | SUP-20-01 | **Shocks one-way** relativos (−30 % … +30 %), en días (−30 … +30) y en meses (−24 … +24): grillas de análisis configurables; **no implican probabilidad** | `inputs_riesgo_optimizacion.csv`, `shocks_de()` | — |
-| SUP-20-02 | **Evaluación rápida:** en corridas que no piden la TIR, `mf.tir` se sustituye temporalmente por `NO_CALCULADA_EVALUACION_RAPIDA` (nunca 0) y se restaura; VAN, payback, pico, EBITDA y fondos son idénticos (test SENS-08) | `Evaluador`, `_SinTIR` | SUP-19-25 |
-| SUP-20-03 | **NO_INVERTIR_AUN** = status quo: VAN, CAPEX, fondos, pico y EBITDA incrementales = 0 **por definición** (no son faltantes llenados con 0); no incluye costo de oportunidad, valor de la información ni la operación actual de la carnicería | `metricas_status_quo()`, `rankear()` | SUP-003 |
+| SUP-20-02 | **Evaluación rápida** por interfaz explícita `resultados(R, calcular_tir=False)`: TIR y TIR del accionista = `NO_CALCULADA` (≠ 0, ≠ faltante); el resto idéntico; sin reemplazo de funciones globales (tests AUD-01…05) | `Evaluador`, `mf.resultados()` | SUP-19-25 |
+| SUP-20-03 | **NO_INVERTIR_AUN** = alternativa de decisión (status quo), no proyecto productivo: sin métricas financieras (ni ceros ni TIR infinita), fuera de rankings, dominancia, Pareto y robustez; gana la `DECISION_ESCENARIO` solo por las reglas SQ-1…SQ-6 | `metricas_status_quo()`, `decidir_status_quo()` | SUP-003 |
 | SUP-20-04 | **Peso vivo (aproximación):** kg comerciales por ave y costo de alimento proporcionales al peso vivo (FCR constante); el balance 04 publica solo 2,9 kg | `_t_peso_vivo()` | DPV-060 |
 | SUP-20-05 | **FCR (aproximación):** costo de alimento proporcional al FCR a precio y peso constantes | variable `fcr` | — |
 | SUP-20-06 | **Rendimiento de faena (aproximación):** más rendimiento comestible = más kg de productos comestibles; la masa adicional sale de subproductos (la masa por ave no cambia) | `_t_rendimiento()` | DPV-060 |
-| SUP-20-07 | **Parámetros técnicos:** grilla de quiebre 24 puntos + bisección (tol 1e-7); Monte Carlo 1.000 simulaciones y semilla 20261005 (solo con distribuciones respaldadas); mínimo 1 escenario para robustez; 10 acciones en QUE_HACER_AHORA | `inputs_riesgo_optimizacion.csv` | — |
+| SUP-20-07 | **Parámetros técnicos:** grilla de quiebre 24 puntos + bisección (tol 1e-7); Monte Carlo 1.000 simulaciones y semilla 20261005 (solo con distribuciones respaldadas); mínimo 3 escenarios (sin la base) para robustez; 10 acciones en QUE_HACER_AHORA sin cortar empates | `inputs_riesgo_optimizacion.csv` | — |
 | SUP-20-08 | **Preset de pesos `IGUALES`** para el objetivo balanceado (solo si el usuario lo elige; rotulado SUPUESTO) | `pesos_balanceado()` | DEC-20-01 |
 | SUP-20-09 | **Restricción HARD no evaluable excluye** del ranking (FACTIBILIDAD_PENDIENTE ≠ FACTIBLE); exigir gates físicos confirmados es opcional | `rankeable()` | regla 3 |
 | SUP-20-10 | **CAPITAL_DISPONIBLE se compara contra el PICO_FONDOS** por defecto (incluye pérdidas del ramp-up y CT); alternativa: FONDOS_INICIALES | `capital.metrica` | T19-02 |
 | SUP-20-11 | **Componentes faltantes en scores** (riesgo, balanceado): SEPARAR por defecto (score PENDIENTE); PENALIZAR (= peor) opcional | `score_riesgo()`, `score_balanceado()` | — |
 | SUP-20-12 | **Magnitudes de stress ilustrativas** tomadas de `STRESS_PREDEFINIDOS` de 21 (demanda −30 %, alimento +20 %, precio −10 %, CAPEX +25 %, ramp-up ×2); stress financiero sin magnitud | `escenarios_stress.csv` | SUP-19-23 |
-| SUP-20-13 | **Probabilidad cualitativa del registro** = frecuencia **sectorial** de 01 §11 cuando existe (no es probabilidad del proyecto); "Media–alta" / "Medio–alto" se redondean a ALTA | `registro_riesgos.csv` | regla 16 |
+| SUP-20-13 | **Frecuencia sectorial ≠ probabilidad del proyecto:** `PROBABILIDAD` exige método específico del proyecto (hoy PENDIENTE en los 34); la frecuencia o antecedente sectorial de 01 §11 va en `FRECUENCIA_SECTORIAL_REFERENCIA` (con unidad, período y fuente); sin probabilidad no se calcula riesgo esperado | `registro_riesgos.csv`, `leer_registro_riesgos()` | regla 16 |
 | SUP-20-14 | **Matriz cualitativa 3×3** con clases BAJO / MODERADO / ALTO / CRÍTICO; sin producto numérico P × I | `CLASE_CUALITATIVA` | — |
 | SUP-20-15 | **Robustez** = comportamiento en escenarios deterministas (stress activos + extremos one-way de `robustez.variables`); no es una muestra probabilística | `escenarios_robustez()` | — |
-| SUP-20-16 | **Asset-light** (faena a façon): terreno, agua y potencia propios requeridos = 0 para las restricciones físicas | `valor_restriccion()` | DEC-002 |
+| SUP-20-16 | **0 estructural ≠ desconocido:** un requerimiento físico es 0 solo si la arquitectura no tiene el activo (`NO_REQUERIDO_POR_ARQUITECTURA`); C0 no tiene planta de faena propia, pero sus módulos propios (oficina/IT/estructura y otros si la variante los tuviera) quedan `DESCONOCIDO` (no 0) | `_gate()`, `modulos_propios_facon()` | DEC-002 |
 | SUP-20-17 | **COBERTURA_EVIDENCIA** = bloques del motor completos en modo EVIDENCIA ÷ 17 para la misma configuración y escala; mide confianza, no rentabilidad | `cobertura_evidencia()` | SUP-19-02 |
 | SUP-20-18 | **VELOCIDAD, CONTROLABILIDAD, DETECTABILIDAD** del registro de riesgos: estimaciones cualitativas revisables; el IMPACTO sin clasificación de 01 se estima por el bloque del motor que afecta | `registro_riesgos.csv` | — |
+| SUP-20-20 | **SCORE_ORDINAL_RIESGO:** el score de orden del optimizador se llama así y NO ES PROBABILIDAD; BAJA/MEDIA/ALTA del registro son etiquetas sin equivalente numérico | `score_riesgo()` | SUP-20-11 |
+| SUP-20-21 | **Correlación pendiente ≠ 0:** un par relacionado con correlación PENDIENTE impide el Monte Carlo salvo `montecarlo.supuesto_independencia` (rótulo `SUPUESTO_INDEPENDENCIA_ESCENARIO`); un 0 explícito es una declaración | `monte_carlo()` | DPV-20-06 |
+| SUP-20-22 | **RANK_COMPARTIDO:** los empates de prioridad no se desempatan por orden, ID ni nombre | `asignar_rank_compartido()` | DEC-20-08 |
+| SUP-20-23 | **Pareto y dominancia solo entre comparables:** COMPARABILIDAD FALSE → NO_EVALUABLE; menos de 2 puntos → `PARETO_NO_INFORMATIVO_MUESTRA_INSUFICIENTE` | `dominancia()`, `pareto()` | — |
+| SUP-20-24 | **AMBITO** en toda salida: PROYECTO (evidencia o escenario) vs ARTIFICIAL_TEST (casos de prueba; los puntos de quiebre de validación son solo de este ámbito) | `ambito()` | — |
 | SUP-20-19 | **Clasificación de rubros por driver** por prefijo de `COSTO_ID` de 20 (ALI-, POL-, UT-ELE-, LAB-, EMP-, LOG-, FAE-FACON…) y, si falta, por `GRUPO_PROVEEDOR`; el usuario puede declarar `driver_riesgo` | `clasificar_rubro()` | matriz_validacion_opex.csv |
 
 ## 2. Datos por validar propuestos (`datos_por_validar.md`)
@@ -58,6 +63,7 @@ Todos son **criterios de la capa de decisión** (cómo se compara), no datos eco
 | DEC-20-04 | **Umbrales de alerta** del registro de riesgos (UAD) | por indicador | Promotor | gates_expansion.md |
 | DEC-20-05 | **Tolerancia de equivalencia** entre mejor y segunda alternativa | % de diferencia | Inversor | — |
 | DEC-20-06 | **Criterio de robustez y magnitudes de stress** | % escenarios VAN ≥ 0 / peor VAN / P10 VAN; magnitudes por variable | Inversor | SUP-20-12 |
+| DEC-20-08 | **Reglas opcionales de status quo y desempate de prioridades:** stress que obligan a no invertir (SQ-4), score ordinal máximo (SQ-5), cobertura de evidencia mínima (SQ-6); criterio para desempatar la prioridad de validación (sensibilidad, magnitud económica, impacto en la decisión, costo del dato) | umbrales / criterio | Inversor / equipo | SUP-20-03, SUP-20-22 |
 | DEC-20-07 | **Extender la interfaz financiera** a transiciones de arquitectura (C0 → C1 → …) y combinaciones fuera del mapa | sí / no / cuándo | Equipo del estudio | DPV-20-03, T19-04 |
 
 ## 4. Fuentes (`registro_fuentes.csv`)
@@ -66,7 +72,7 @@ Sin fuentes nuevas: la sesión no consultó documentos externos. La probabilidad
 
 ## 5. Estado del proyecto (`estado_proyecto.md`)
 
-Hito a registrar: **Sesión 20 — capa de riesgo, sensibilidades y optimizador v1.0**: 52 tests, 19/19 mutaciones; `OPTIMIZACION_REAL_NO_DISPONIBLE` (0/54 alternativas con VAN publicable en evidencia); universo ESCENARIO listo y vacío; Monte Carlo del proyecto no disponible por falta de distribuciones; registro de 34 riesgos cualitativos; prioridad de validación derivada del motor.
+Hito a registrar: **Sesión 20 — capa de riesgo, sensibilidades y optimizador v1.1** (con auditoría final): 69 tests, 27/27 mutaciones; `OPTIMIZACION_REAL_NO_DISPONIBLE` (0/54 alternativas con VAN publicable en evidencia); universo ESCENARIO listo y vacío; Monte Carlo del proyecto no disponible por falta de distribuciones; registro de 34 riesgos cualitativos; prioridad de validación derivada del motor.
 
 ## 6. Glosario (`glosario.md`)
 
@@ -80,3 +86,15 @@ Términos a agregar: **sensibilidad one-way**, **tornado**, **sensibilidad bidim
 | T20-02 | **Espacio evaluable limitado al mapa:** 1.450 combinaciones válidas no son evaluables por la interfaz financiera | DPV-20-03, DEC-20-07 |
 | T20-03 | **Exposición cambiaria subrepresentada:** el adaptador OPEX de 21 no transporta la moneda original | DPV-20-04 |
 | T20-04 | **Probabilidad sectorial vs del proyecto:** el registro usa frecuencias sectoriales de 01 como mejor información disponible | Evidencia específica del proyecto |
+
+## 8. Cambio de interfaz en el motor financiero (auditoría final)
+
+| Archivo | Cambio | Tipo | Verificación |
+|---|---|---|---|
+| `21_modelo_financiero/modelo_financiero.py` | `indicadores(..., calcular_tir=True)` y `resultados(R, calcular_tir=True)`; constante `TIR_NO_CALCULADA = "NO_CALCULADA"`; `publicabilidad()` informa `PUBLICABLE_TIR = FALSE` con motivo `NO_CALCULADA` cuando no se pidió | INTERFAZ / PERFORMANCE (no cambia lógica financiera) | 70/70 tests del motor; las 10 tablas de 21 regeneradas con el default **sin diferencias**; tests AUD-01…05 |
+
+Reemplaza la sustitución temporal de `mf.tir` de la versión inicial (eliminada). CAPEX (19) y OPEX (20) no se tocan ni usan `resultados()`.
+
+## 9. Documentación reorganizada (auditoría final)
+
+`metodologia_riesgos_optimizador.md` se dividió, sin duplicar contenido, en `metodologia_riesgo.md` (marco e índice), `registro_riesgos.md`, `sensibilidades.md`, `stress_tests.md`, `puntos_quiebre.md`, `monte_carlo.md`, `metodologia_optimizador.md`, `objetivos_optimizacion.md`, `restricciones_optimizacion.md`, `robustez.md`, `pareto.md`, `explicabilidad.md` y `valor_informacion.md`; `conclusiones_riesgos.md` pasó a `conclusiones_riesgo_optimizacion.md`.

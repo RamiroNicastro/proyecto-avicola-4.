@@ -29,7 +29,7 @@ E_STAR = 100 / ANUALIDAD                                     # EBITDA anual con 
 def _alt(aid, **kw):
     kw.setdefault("convencion", "PERIODO_REPORTE")
     bv = kw.pop("base_valores", {})
-    return {"id": aid, "tipo": "PLANTA", "universo": "CASO_ARTIFICIAL", "configuracion": aid, "variante": "ART",
+    return {"id": aid, "tipo": "PLANTA", "universo": "ARTIFICIAL_TEST", "configuracion": aid, "variante": "ART",
             "escalas": (1,), "trayectoria": "ESCALA_UNICA", "construir": (lambda kw=kw: (mf.caso_prueba(**kw), None)),
             "base_valores": bv, "fisico": [], "cobertura": (0.0, "artificial")}
 
@@ -94,7 +94,7 @@ def universo_art():
                     "montecarlo.n": 40, "tornado.metricas": ["VAN"], "robustez.variables": ["precio_venta", "demanda"]})
         dists, corrs = mo.dist_artificiales()
         with redirect_stdout(io.StringIO()):
-            _U["U"] = mo.correr_universo(mo.caso_artificial(), inp, "CASO_ARTIFICIAL", mo.stress_artificiales(), dists, corrs)
+            _U["U"] = mo.correr_universo(mo.caso_artificial(), inp, "ARTIFICIAL_TEST", mo.stress_artificiales(), dists, corrs)
         _U["inp"] = inp
     return _U["U"], _U["inp"]
 
@@ -133,7 +133,7 @@ def ejecutar_tests(verbose=True):
             if d["SOPORTE"] in ("DISCRETA", "NO_SOPORTADA_POR_INTERFAZ"):
                 continue
             s = 10.0 if d["TIPO_SHOCK"] != "RELATIVO" else 0.10
-            P1, info = mr.aplicar_shocks(P0, {v: s}, a["base_valores"], "CASO_ARTIFICIAL")
+            P1, info = mr.aplicar_shocks(P0, {v: s}, a["base_valores"], "ARTIFICIAL_TEST")
             if P1 is None:
                 continue
             n += 1
@@ -276,12 +276,21 @@ def ejecutar_tests(verbose=True):
         x = mr.matriz_riesgos([fila])[0]
         assert x["CLASE_INHERENTE"] == "CRITICO" and x["CLASE_RESIDUAL"] == "BAJO"
 
-    @test("RIE-04", "correlaciones pendientes quedan señaladas (CORRELACIONES_NO_MODELADAS)")
+    @test("RIE-04", "correlación pendiente ≠ 0: no se ejecuta sin supuesto; con supuesto queda SUPUESTO_INDEPENDENCIA_ESCENARIO; 0 explícito artificial se declara")
     def _():
+        assert all(c["ESTADO"] == "PENDIENTE" and c["RHO"] is None for c in mr.leer_correlaciones())
+        a = _alt("RC4", opex_fijo=40.0, opex_var=20.0)
+        ds = [mr.validar_distribucion({"VARIABLE": v, "DISTRIBUCION": "UNIFORME", "PARAMETROS": {"min": -0.1, "max": 0.1},
+                                       "FUENTE": "T", "ESTADO": "ARTIFICIAL"}) for v in ("precio_pollo_entero", "alimento")]
+        pend = [{"A": "precio_pollo_entero", "B": "alimento", "RHO": None, "ESTADO": "PENDIENTE"}]
+        est, _, m, notas = mr.monte_carlo(mr.Evaluador(), a, ds, pend, 10, 1, "ARTIFICIAL_TEST")
+        assert est == mr.MC_CORR_PEND and not m and "≠ 0" in notas[0]
+        est, r, _, _ = mr.monte_carlo(mr.Evaluador(), a, ds, pend, 10, 1, "ARTIFICIAL_TEST", supuesto_independencia=True)
+        assert est == "EJECUTADO" and r["CORRELACIONES"].startswith(mr.SUP_INDEP)
         U, _ = universo_art()
         ej = [r for r in U["mc"] if r.get("ESTADO") == "EJECUTADO"]
-        assert ej and all(mr.CORR_NM in r["CORRELACIONES"] and "demanda–precio_venta" in r["CORRELACIONES"] for r in ej)
-        assert all(c["ESTADO"] == "PENDIENTE" and c["RHO"] is None for c in mr.leer_correlaciones())
+        assert ej and all(r["CORRELACIONES"].startswith("CORRELACIONES_DECLARADAS") and "demanda–precio_venta=0" in r["CORRELACIONES"]
+                          for r in ej)
 
     @test("RIE-05", "el registro rechaza probabilidades numéricas y drivers inexistentes")
     def _():
@@ -304,7 +313,7 @@ def ejecutar_tests(verbose=True):
         a = _alt(aid, opex_fijo=40.0, opex_var=20.0)
         d = dists or [mr.validar_distribucion({"VARIABLE": "precio_venta", "DISTRIBUCION": "TRIANGULAR",
                                                 "PARAMETROS": {"min": -0.3, "moda": 0.0, "max": 0.2}, "FUENTE": "T", "ESTADO": "ARTIFICIAL"})]
-        return mr.monte_carlo(mr.Evaluador(), a, d, corrs or [], n, semilla, "CASO_ARTIFICIAL")
+        return mr.monte_carlo(mr.Evaluador(), a, d, corrs or [], n, semilla, "ARTIFICIAL_TEST")
 
     @test("MC-01", "misma semilla → mismos resultados; otra semilla → distintos")
     def _():
@@ -362,7 +371,7 @@ def ejecutar_tests(verbose=True):
         mx, my = sum(x) / len(x), sum(y) / len(y)
         cov = sum((a - mx) * (b - my) for a, b in zip(x, y))
         rho = cov / (sum((a - mx) ** 2 for a in x) * sum((b - my) ** 2 for b in y)) ** 0.5
-        assert rho > 0.75 and r["CORRELACIONES"] == "CORRELACIONES_DECLARADAS", rho
+        assert rho > 0.75 and r["CORRELACIONES"].startswith("CORRELACIONES_DECLARADAS"), rho
 
     # ------------------------------------------------------------------ OPTIMIZADOR (48)
     @test("OPT-01", "ningún ganador ni alternativa rankeada es hard-infeasible o físicamente no factible")
@@ -417,26 +426,28 @@ def ejecutar_tests(verbose=True):
         fs = [dict(f) for f in U["fichas"]]
         mo.reaplicar_restricciones(fs, mo.leer_restricciones(inp2), inp2)
         _, dec, orden = mo.rankear(fs, "MAX_VAN", inp2)
-        assert dec["ESTADO"] == mo.NINGUNA and mo.SQ in dec["MEJOR"] and all(f["alt"]["tipo"] == mo.SQ for f in orden)
+        assert dec["ESTADO"] == mo.NINGUNA and dec["DECISION_ESCENARIO"] == mo.SQ and not orden
+        assert "SQ-1" in dec["REGLA_STATUS_QUO"] and "SQ-2" in dec["REGLA_STATUS_QUO"] and dec["MEJOR"] == "—"
 
-    @test("OPT-06", "NO_INVERTIR_AUN existe y gana MAX_VAN cuando toda inversión tiene VAN < 0 (no obliga a construir)")
+    @test("OPT-06", "NO_INVERTIR_AUN existe y gana la DECISION por regla explícita (SQ-3) si toda inversión tiene VAN < 0")
     def _():
         assert any(a["id"] == mo.SQ for a in mo.caso_artificial())
         assert any(a["id"] == mo.SQ for a in mo.alternativas_reales(mr.leer_inputs()[0], "EVIDENCIA"))
-        alts = [_alt("NEG1", ventas_anio=50.0), _alt("NEG2", ventas_anio=55.0), mr.alternativa_status_quo("CASO_ARTIFICIAL")]
+        alts = [_alt("NEG1", ventas_anio=50.0), _alt("NEG2", ventas_anio=55.0), mr.alternativa_status_quo("ARTIFICIAL_TEST")]
         inp = mr.leer_inputs()[0]
         U = mo.correr_universo(alts, dict(inp, **{"sensibilidad.variables": [], "sens2d.pares": [], "quiebre.variables": [],
-                                                   "robustez.variables": []}), "CASO_ARTIFICIAL")
-        d = next(x for x in U["decisiones"] if x["OBJETIVO"] == "MAX_VAN")
-        assert d["MEJOR"] == mo.SQ, d
+                                                   "robustez.variables": []}), "ARTIFICIAL_TEST")
+        for d in U["decisiones"]:
+            if d["ESTADO"] == "MEJOR_EN_ESCENARIO":
+                assert d["MEJOR"] != mo.SQ and d["DECISION_ESCENARIO"] == mo.SQ and "SQ-3" in d["REGLA_STATUS_QUO"], d["OBJETIVO"]
 
     @test("OPT-07", "dominancia: estricta en al menos una dimensión; iguales no se dominan; dimensiones declaradas")
     def _():
         def fk(i, cap, van):
             return {"id": i, "alt": {"tipo": "PLANTA", "universo": "X"}, "COMPARABILIDAD": "TRUE",
-                    "ev": {"met": {"FONDOS_INICIALES": cap, "VAN": van}}, "RIESGO_SCORE": None}
+                    "ev": {"met": {"FONDOS_INICIALES": cap, "VAN": van}}, "SCORE_ORDINAL_RIESGO": None}
         fs = [fk("A", 100, 50), fk("B", 120, 40), fk("C", 100, 50), fk("D", 80, 10)]
-        mo.dominancia(fs, {"dominancia.dimensiones": ["FONDOS_INICIALES:-", "VAN:+", "RIESGO_SCORE:-"]})
+        mo.dominancia(fs, {"dominancia.dimensiones": ["FONDOS_INICIALES:-", "VAN:+", "SCORE_ORDINAL_RIESGO:-"]})
         d = {f["id"]: f["DOMINADA_POR"] for f in fs}
         assert d["B"] == ["A", "C"] and d["A"] == [] and d["C"] == [] and d["D"] == []
         assert fs[1]["DOM_DIMS"] == "FONDOS_INICIALES, VAN"
@@ -444,7 +455,7 @@ def ejecutar_tests(verbose=True):
     @test("OPT-08", "frontera de Pareto correcta en un caso conocido")
     def _():
         def fk(i, cap, van):
-            return {"id": i, "alt": {"tipo": "PLANTA", "universo": "CASO_ARTIFICIAL"}, "COMPARABILIDAD": "TRUE", "HARD_INCUMPLE": [],
+            return {"id": i, "alt": {"tipo": "PLANTA", "universo": "ARTIFICIAL_TEST"}, "COMPARABILIDAD": "TRUE", "HARD_INCUMPLE": [],
                     "ev": {"met": {"FONDOS_INICIALES": cap, "VAN": van}}}
         fs = [fk("A", 10, 5), fk("B", 20, 9), fk("C", 15, 4), fk("D", 30, 9), fk("E", 5, 1)]
         p = mo.pareto(fs, {"pareto.pares": ["VAN:+×FONDOS_INICIALES:-"]})
@@ -469,7 +480,7 @@ def ejecutar_tests(verbose=True):
         for _i in range(2):
             mo._COB.clear()
             U = mo.correr_universo(mo.caso_artificial(), dict(inp, **{"sensibilidad.variables": ["precio_venta"], "sens2d.pares": [],
-                                   "quiebre.variables": [], "montecarlo.n": 20}), "CASO_ARTIFICIAL", mo.stress_artificiales(), dists, corrs)
+                                   "quiebre.variables": [], "montecarlo.n": 20}), "ARTIFICIAL_TEST", mo.stress_artificiales(), dists, corrs)
             r.append((mo.filas_resultados(U), U["decisiones"], U["mc"]))
         strip = lambda t: mr.fmt(t)
         assert strip(r[0]) == strip(r[1])
@@ -503,7 +514,7 @@ def ejecutar_tests(verbose=True):
         fs = [{"id": "A", "alt": {"tipo": "PLANTA"}, "completa": True, "ev": {"met": {"PICO_FONDOS": 1.0, "VAN": 1.0,
                "DEMANDA_ASEGURADA_PCT": None}}, "ROB": {}, "fisico": {"gates": []}, "cobertura": None}]
         mo.score_riesgo(fs, inp, {})
-        assert fs[0]["RIESGO_SCORE"] is None and "PENDIENTE" in fs[0]["RIESGO_NOTA"]
+        assert fs[0]["SCORE_ORDINAL_RIESGO"] is None and "PENDIENTE" in fs[0]["RIESGO_NOTA"]
 
     @test("OPT-13", "objetivo distinto → criterio distinto (MIN_FONDOS ≠ MAX_VAN en el caso artificial)")
     def _():
@@ -511,6 +522,7 @@ def ejecutar_tests(verbose=True):
         d = {x["OBJETIVO"]: x for x in U["decisiones"]}
         assert d["MAX_VAN"]["MEJOR"] != d["MIN_FONDOS_INICIALES"]["MEJOR"]
         assert d["MIN_FONDOS_INICIALES"]["MEJOR"] == "ART-ASSET-LIGHT"
+        assert d["MIN_RIESGO"]["MEJOR"] != d["MAX_VAN"]["MEJOR"]                 # el riesgo no se ignora
 
     @test("OPT-14", "DECISION_NO_ROBUSTA si el ganador cambia entre escenarios o mejor/segunda son casi iguales")
     def _():
@@ -526,10 +538,16 @@ def ejecutar_tests(verbose=True):
     def _():
         inp = mr.leer_inputs()[0]
         esp = mo.espacio_decisiones(inp)
-        assert all(r["CLASIFICACION"] != "EN_MAPA_EVALUADA" or "INVALID" not in r["MOTIVO"] for r in esp)
-        inval = [r for r in esp if r["CLASIFICACION"] == "INVALIDA_FISICAMENTE"]
+        inval = [r for r in esp if r["CLASIFICACION"] == "FISICAMENTE_INVALIDA"]
         assert any(r.get("RENDERING") is True and r["FAENA"] == "facon" for r in inval)
-        assert not any(r.get("RENDERING") is True and r["FAENA"] == "facon" for r in esp if r["CLASIFICACION"] != "INVALIDA_FISICAMENTE")
+        assert not any(r.get("RENDERING") is True and r["FAENA"] == "facon" for r in esp if r["CLASIFICACION"] != "FISICAMENTE_INVALIDA")
+        cnt = {}
+        for r in esp:
+            cnt[r["CLASIFICACION"]] = cnt.get(r["CLASIFICACION"], 0) + 1
+        assert (cnt["FISICAMENTE_INVALIDA"], cnt["FISICAMENTE_POSIBLE_NO_MODELADA_ECONOMICAMENTE"],
+                cnt["HABILITADA_EN_MAPA_PARA_EVALUACION"]) == (1134, 1450, 8), cnt
+        assert sum(r["ALTERNATIVAS_ECONOMICAS"] for r in esp if r["CLASIFICACION"] == "HABILITADA_EN_MAPA_PARA_EVALUACION") == 54
+        assert len({r["ID_COMBINACION"] for r in esp}) == len(esp)
         alts = mo.alternativas_reales(inp, "EVIDENCIA")
         assert all(a["tipo"] == mo.ASSET_LIGHT for a in alts if a["configuracion"] == "C0")
         assert len(alts) == 5 * 4 + 19 + 5 * 3 + 1
@@ -625,7 +643,7 @@ def ejecutar_tests(verbose=True):
         assert mo.etiqueta("ESCENARIO") == mr.ETIQ_SIM
         alts = mo.caso_artificial()[:1] + [mr.alternativa_status_quo("ESCENARIO")]
         try:
-            mo.correr_universo(alts, mr.leer_inputs()[0], "CASO_ARTIFICIAL")
+            mo.correr_universo(alts, mr.leer_inputs()[0], "ARTIFICIAL_TEST")
             raise AssertionError("mezcló universos")
         except mr.ErrorRiesgo:
             pass
@@ -699,6 +717,220 @@ def ejecutar_tests(verbose=True):
         q3 = mr.punto_quiebre(E, _alt("Q7c"), "mortalidad")
         assert q3["ESTADO"] == mr.NO_CALC
 
+    # ------------------------------------------------------------------ AUDITORÍA FINAL (sesión 20)
+    def _deuda():
+        return [{"id": "D", "monto": 50.0, "tasa": 0.08, "tipo_tasa": "EFECTIVA_ANUAL", "base_tasa": "REAL", "plazo_meses": 36,
+                 "gracia_meses": 0, "metodo": "FRANCES", "frecuencia_meses": 1, "mes_desembolso": 0}]
+
+    @test("AUD-01", "modo completo (default) = resultados originales de la sesión 19")
+    def _():
+        for kw in ({"convencion": "PERIODO_REPORTE"}, {"convencion": "MENSUAL", "dias_cobro": 30.0, "tasa_gan": 0.3}):
+            R = mf.simular(mf.caso_prueba(**kw))
+            a, b = mf.resultados(R), mf.resultados(R, calcular_tir=True)
+            assert mr.fmt(a) == mr.fmt(b)
+        r = mf.resultados(mf.simular(mf.caso_prueba(convencion="PERIODO_REPORTE")))
+        assert _cerca(r["VAN"], -100 + 40 * ANUALIDAD) and _cerca(r["TIR"], 0.2864929, 1e-5) and r["TIR_ESTADO"] == "UNICA"
+
+    @test("AUD-02", "modo rápido: VAN, FCFF, EBITDA, payback, CT, fondos y todo lo demás idéntico; solo se omite la TIR")
+    def _():
+        P = mf.caso_prueba(H=6, dias_cobro=30.0, dias_pago=15.0, tasa_gan=0.3, deudas=_deuda(), convencion="PERIODO_REPORTE")
+        P["tasa_descuento_accionista"] = 0.15
+        R = mf.simular(P)
+        full, rap = mf.resultados(R), mf.resultados(R, calcular_tir=False)
+        dif = {k for k in set(full) | set(rap) if mr.fmt(full.get(k)) != mr.fmt(rap.get(k))}
+        assert dif <= {"TIR", "TIR_MENSUAL", "TIR_ESTADO", "PUBLICABLE_TIR", "PUBLICABLE_TIR_MOTIVO", "TIR_ACCIONISTA",
+                       "TIR_ACCIONISTA_ESTADO"}, dif
+        assert full["TIR_ESTADO"] != "NO_CALCULADA" and full["TIR_ACCIONISTA"] is not None
+        assert rap["TIR"] is None and rap["TIR_ACCIONISTA"] is None and rap["TIR_ESTADO"] == mf.TIR_NO_CALCULADA == "NO_CALCULADA"
+        assert rap["PUBLICABLE_TIR_MOTIVO"].startswith("NO_CALCULADA") and rap["TIR_ACCIONISTA_ESTADO"] == "NO_CALCULADA"
+        for k in ("VAN", "EBITDA_ULTIMO_ANIO", "PAYBACK_SIMPLE_ANIOS", "CT_MAXIMO", "FONDOS_INICIALES", "PICO_REQUERIMIENTO_FONDOS",
+                  "DSCR_MINIMO", "VAN_ACCIONISTA", "MIRR"):
+            assert mr.fmt(full[k]) == mr.fmt(rap[k]), k
+        a = _alt("A02", tasa_gan=0.3, dias_cobro=30.0)
+        e1, e2 = mr.Evaluador().evaluar(a)["met"], mr.Evaluador().evaluar(a, tir=True)["met"]
+        assert {k for k in e1 if mr.fmt(e1[k]) != mr.fmt(e2[k])} == {"TIR", "TIR_ESTADO"}
+        assert e1["TIR_ESTADO"] == "NO_CALCULADA" and e1["TIR"] is None
+
+    @test("AUD-03", "ninguna función global del motor es reemplazada (sin monkeypatch)")
+    def _():
+        antes = {k: id(v) for k, v in vars(mf).items() if callable(v)}
+        E = mr.Evaluador()
+        for t in (False, True, False):
+            E.evaluar(_alt(f"A03{t}"), {"precio_venta": 0.1}, tir=t)
+        assert {k: id(v) for k, v in vars(mf).items() if callable(v)} == antes
+        src = open(os.path.join(AQUI, "motor_riesgo.py"), encoding="utf-8").read()
+        assert "mf.tir =" not in src and "setattr(mf" not in src and "_SinTIR" not in src
+
+    @test("AUD-04", "una excepción durante una evaluación no altera evaluaciones posteriores")
+    def _():
+        E = mr.Evaluador()
+        def mala():
+            raise mf.ErrorFinanciero("fallo sembrado")
+        malo = dict(_alt("A04x"), construir=mala)
+        P = mf.caso_prueba(convencion="PERIODO_REPORTE")
+        P["etapas"][0]["curva_desembolso"] = [(-1, 0.5)]               # no suma 1 → error estructural del motor
+        roto = dict(_alt("A04y"), construir=lambda P=P: (P, None))
+        assert E.evaluar(malo)["estado"] == "ERROR_CONSTRUCCION" and E.evaluar(roto)["estado"] == "ERROR_MOTOR"
+        ok = E.evaluar(_alt("A04z"), {"capex": 0.1})
+        ref = mr.Evaluador().evaluar(_alt("A04z"), {"capex": 0.1})
+        assert mr.fmt(ok["met"]) == mr.fmt(ref["met"]) and ok["met"]["TIR_ESTADO"] == "NO_CALCULADA"
+
+    @test("AUD-05", "dos evaluaciones consecutivas con modos distintos son independientes")
+    def _():
+        E = mr.Evaluador()
+        a = _alt("A05")
+        r1 = E.evaluar(a)["met"]
+        r2 = E.evaluar(a, tir=True)["met"]
+        r3 = E.evaluar(a)["met"]
+        assert r1["TIR"] is None and r2["TIR"] is not None and r3["TIR"] is None and r3["TIR_ESTADO"] == "NO_CALCULADA"
+        assert r1["VAN"] == r2["VAN"] == r3["VAN"]
+
+    @test("AUD-06", "frecuencia sectorial ≠ probabilidad del proyecto; sin probabilidad no hay riesgo esperado")
+    def _():
+        import tempfile, csv
+        con = [r for r in reg if r["FRECUENCIA_SECTORIAL_REFERENCIA"]]
+        assert len(con) >= 7 and all(r["PROBABILIDAD"] == "PENDIENTE" for r in con)
+        assert all(r["UNIDAD_FRECUENCIA"] and r["PERIODO_REFERENCIA"] and r["FUENTE"] for r in con)
+        assert all(x["RIESGO_ESPERADO"] is None for x in mr.matriz_riesgos(reg))
+        with tempfile.NamedTemporaryFile("w", suffix=".csv", delete=False, encoding="utf-8", newline="") as fh:
+            w = csv.DictWriter(fh, fieldnames=list(reg[0]))
+            w.writeheader()
+            w.writerow(dict(con[0], PROBABILIDAD="ALTA"))
+        try:
+            mr.leer_registro_riesgos(fh.name)
+            raise AssertionError("aceptó frecuencia sectorial como probabilidad")
+        except mr.ErrorRiesgo:
+            pass
+        finally:
+            os.unlink(fh.name)
+
+    @test("AUD-07", "BAJA/MEDIA/ALTA son etiquetas; el score de orden se llama SCORE_ORDINAL_RIESGO y no es probabilidad")
+    def _():
+        assert all(mr.probabilidad_numerica(x) is None for x in mr.NIVELES_CUAL)
+        U, _ = universo_art()
+        filas = mo.filas_resultados(U)
+        assert all("NO ES PROBABILIDAD" in r["RIESGO_TIPO"] for r in filas)
+        conscore = [f for f in U["fichas"] if f.get("SCORE_ORDINAL_RIESGO") is not None]
+        assert conscore and all("NO ES PROBABILIDAD" in f["RIESGO_NOTA"] for f in conscore)
+        src = open(os.path.join(AQUI, "modelo_optimizador.py"), encoding="utf-8").read()
+        assert '"RIESGO_SCORE"' not in src
+
+    @test("AUD-08", "las 1.450 combinaciones no modeladas no se evalúan: toda alternativa sale de una combinación habilitada")
+    def _():
+        inp = mr.leer_inputs()[0]
+        hab = {tuple(r[k.upper()] for k in mo.DIMENSIONES) for r in mo.espacio_decisiones(inp)
+               if r["CLASIFICACION"] == "HABILITADA_EN_MAPA_PARA_EVALUACION"}
+        for a in mo.alternativas_reales(inp, "ESCENARIO", mo.leer_escenario()):
+            if a["tipo"] != mo.SQ:
+                assert mo._dims(a["cc"]) in hab, a["id"]
+
+    @test("AUD-09", "NO_INVERTIR_AUN: sin TIR/payback/VAN ficticios, fuera de rankings, dominancia, Pareto y robustez")
+    def _():
+        m = mr.metricas_status_quo()
+        assert all(m[k] is None for k in mr.METRICAS)
+        U, _ = universo_art()
+        sq = next(f for f in U["fichas"] if f["id"] == mo.SQ)
+        assert not any(rk[mo.SQ].get("RANK") for rk in U["ranking"].values())
+        assert sq["COMPARABILIDAD"] == "NO_APLICA" and sq["ROB"]["ESTADO"] == "NO_APLICA_STATUS_QUO"
+        assert not any(r["ALTERNATIVA"] == mo.SQ for r in U["pareto"])
+        assert not any(mo.SQ in f["DOMINADA_POR"] for f in U["fichas"])
+        assert all(r["ESTADO"] == "NO_APLICA_STATUS_QUO" for r in sq["R_CUMPLIMIENTO"])
+
+    @test("AUD-10", "C0: 0 estructural (NO_REQUERIDO_POR_ARQUITECTURA) ≠ DESCONOCIDO; módulos propios no desaparecen")
+    def _():
+        a = next(x for x in mo.alternativas_reales(mr.leer_inputs()[0], "EVIDENCIA") if x["id"] == "C0|BASE|10000|ESCALA_UNICA")
+        gs = {g["GATE"]: g for g in mo.factibilidad_fisica_real(a)["gates"]}
+        for k in ("TERRENO", "AGUA", "POTENCIA"):
+            assert gs[k]["REQUERIDO"] is None and gs[k]["ESTADO_REQUERIMIENTO"] == "DESCONOCIDO" and gs[k]["ESTADO"] == mo.PEND
+            assert "NO_REQUERIDO_POR_ARQUITECTURA" in gs[k]["NOTA"] and "oficina" in gs[k]["NOTA"]
+        f = {"alt": a, "ev": {"met": {}}, "fisico": {"gates": list(gs.values())}}
+        assert mo.valor_restriccion(f, "AGUA", {}) is None
+        cc = dict(a["cc"], frio="B_refrigerado_congelado")
+        assert any("frío propio" in m for m in mo.modulos_propios_facon(cc))
+        U, _ = universo_art()
+        al = next(x for x in U["fichas"] if x["id"] == "ART-ASSET-LIGHT")
+        r = next(x for x in al["R_CUMPLIMIENTO"] if x["NOMBRE"] == "AGUA")
+        assert r["ESTADO"] == "CUMPLE" and r["VALOR_ALTERNATIVA"] == 0.0
+        g = next(x for x in al["fisico"]["gates"] if x["GATE"] == "AGUA")
+        assert g["ESTADO_REQUERIMIENTO"] == "NO_REQUERIDO_POR_ARQUITECTURA"
+
+    @test("AUD-11", "puntos de quiebre artificiales rotulados ARTIFICIAL_TEST; el proyecto no tiene umbrales")
+    def _():
+        U, _ = universo_art()
+        assert U["quiebres"] and all(q["ALTERNATIVA"].startswith("ART-") for q in U["quiebres"])
+        assert mo.ambito(U["universo"]) == "ARTIFICIAL_TEST" and mo.ambito("ESCENARIO") == mo.ambito("EVIDENCIA") == "PROYECTO"
+        import csv as _csv
+        ruta = os.path.join(AQUI, "puntos_quiebre.csv")
+        if os.path.exists(ruta):
+            assert not any(r.get("ESTADO") == "ENCONTRADO" for r in _csv.DictReader(open(ruta, encoding="utf-8")))
+
+    @test("AUD-12", "Monte Carlo: PROBABILIDAD_SIMULADA ≠ histórica ≠ del proyecto")
+    def _():
+        U, _ = universo_art()
+        pr = [r for r in U["mc"] if r.get("ESTADISTICO") == "PROBABILIDAD_SIMULADA"]
+        assert pr and all(r["TIPO_PROBABILIDAD"] == "PROBABILIDAD_SIMULADA" and r["ES_PROBABILIDAD_HISTORICA"] is False
+                          and r["ES_PROBABILIDAD_DEL_PROYECTO"] is False and mr.PROB_SIM in r["ETIQUETA"] for r in pr)
+        assert mr.TIPOS_PROBABILIDAD == ("PROBABILIDAD_SIMULADA", "PROBABILIDAD_HISTORICA", "PROBABILIDAD_DEL_PROYECTO")
+
+    @test("AUD-13", "el empate de prioridad permanece empate (RANK_COMPARTIDO) y QUE_HACER_AHORA no corta un empate")
+    def _():
+        inp = dict(mr.leer_inputs()[0], **{"espacio.configuraciones": ["C0", "C1"], "espacio.escalas": [10000],
+                                            "espacio.trayectorias": [], "espacio.incluir_variantes": False})
+        U = mo.correr_universo(mo.alternativas_reales(inp, "EVIDENCIA"), inp, "EVIDENCIA")
+        pr = mo.prioridad_evidencia(U["E"], U["fichas"])
+        top = [r for r in pr if r["RANK_COMPARTIDO"] == 1]
+        assert len(top) >= 2 and all(r["EMPATE"] and r["ORDEN_DENTRO_DEL_EMPATE"] == "NO_SIGNIFICATIVO" for r in top)
+        q = mo.que_hacer_ahora(pr, [], n=2)
+        acciones_top = {r["ACCION"] for r in top}
+        assert acciones_top <= {x["QUE_HACER_AHORA"] for x in q}
+
+    @test("AUD-14", "una alternativa incompleta (COMPARABILIDAD FALSE) nunca domina ni entra a Pareto o ranking")
+    def _():
+        def fk(i, cap, van, comp):
+            return {"id": i, "alt": {"tipo": "PLANTA", "universo": "ARTIFICIAL_TEST"}, "COMPARABILIDAD": comp, "HARD_INCUMPLE": [],
+                    "HARD_PENDIENTE": [], "F_FISICA": mo.FACTIBLE, "SOFT_PENALIZACION": 0.0, "COMPARABILIDAD_MOTIVO": "faltan bloques",
+                    "ev": {"met": {"FONDOS_INICIALES": cap, "VAN": van}}}
+        fs = [fk("COMPLETA", 100.0, 50.0, "TRUE"), fk("INCOMPLETA", 1.0, 1e9, "FALSE"), fk("OTRA", 90.0, 40.0, "TRUE")]
+        mo.dominancia(fs, {"dominancia.dimensiones": ["FONDOS_INICIALES:-", "VAN:+"]})
+        assert not any("INCOMPLETA" in f["DOMINADA_POR"] for f in fs) and fs[1]["DOM_ESTADO"].startswith("NO_EVALUABLE")
+        p = mo.pareto(fs, {"pareto.pares": ["VAN:+×FONDOS_INICIALES:-"]})
+        assert next(r for r in p if r["ALTERNATIVA"] == "INCOMPLETA")["EN_FRONTERA"] == "NO_EVALUABLE"
+        rk, dec, _ = mo.rankear(fs, "MAX_VAN", {})
+        assert rk["INCOMPLETA"]["RANK"] is None and dec["MEJOR"] == "COMPLETA"
+
+    @test("AUD-15", "Pareto con menos de 2 alternativas comparables se marca PARETO_NO_INFORMATIVO_MUESTRA_INSUFICIENTE")
+    def _():
+        f = {"id": "UNICA", "alt": {"tipo": "PLANTA", "universo": "ARTIFICIAL_TEST"}, "COMPARABILIDAD": "TRUE", "HARD_INCUMPLE": [],
+             "ev": {"met": {"FONDOS_INICIALES": 10.0, "VAN": 5.0}}}
+        p = mo.pareto([f], {"pareto.pares": ["VAN:+×FONDOS_INICIALES:-"]})
+        assert p and p[0]["EN_FRONTERA"] == mo.PARETO_NI and p[0]["ALTERNATIVA"] == "UNICA"
+
+    @test("AUD-16", "robustez necesita varios escenarios (la base no es robustez); proyecto real sin robustez")
+    def _():
+        a = _alt("A16", opex_fijo=40.0, opex_var=20.0)
+        E = mr.Evaluador()
+        fs = [mo.ficha(E, a, {}, [])]
+        mo.finalizar_fichas(fs, {})
+        mo.robustez(E, fs, {"robustez.min_escenarios": 3}, [], [("S1", {"precio_venta": -0.1})])
+        assert fs[0]["ROBUSTEZ"] is None and fs[0]["ROB"]["ESTADO"] == "PENDIENTE"
+        esc = [("S1", {"precio_venta": -0.1}), ("S2", {"capex": 0.2}), ("S3", {"alimento": 0.2})]
+        mo.robustez(E, fs, {"robustez.min_escenarios": 3}, [], esc)
+        assert fs[0]["ROB"]["ESTADO"] == "CALCULADA" and fs[0]["ROB"]["N_ESCENARIOS"] == 3
+        assert int(mr.leer_inputs()[0]["robustez.min_escenarios"]) >= 2
+
+    @test("AUD-17", "explicabilidad: el ganador del escenario trae todos los campos; sin ganador no se fabrica explicación")
+    def _():
+        U, _ = universo_art()
+        d = next(x for x in U["decisiones"] if x["OBJETIVO"] == "MAX_VAN")
+        for c in mo.CAMPOS_EXPLICACION + ("SEGUNDA", "DIFERENCIA_VALOR", "DECISION_ESCENARIO", "STRESS_QUE_CAMBIA_DECISION"):
+            assert d.get(c) not in (None, "") and not str(d[c]).startswith("NO_APLICA"), c
+        inp = dict(mr.leer_inputs()[0], **{"espacio.configuraciones": ["C1"], "espacio.escalas": [10000],
+                                            "espacio.trayectorias": [], "espacio.incluir_variantes": False})
+        Ue = mo.correr_universo(mo.alternativas_reales(inp, "EVIDENCIA"), inp, "EVIDENCIA")
+        for d in Ue["decisiones"]:
+            assert d["ESTADO"] == mr.OPT_REAL_ND and d["DECISION_ESCENARIO"] == "—"
+            assert all(str(d[c]).startswith("NO_APLICA") for c in mo.CAMPOS_EXPLICACION)
+
     fallas = []
     for tid, desc, fn in T:
         try:
@@ -718,18 +950,28 @@ def ejecutar_tests(verbose=True):
 # ---------------------------------------------------------------------------------------------
 MUTACIONES = {
     "R01": "quitar el límite de capital", "R02": "permitir ventas > demanda (motor M02)", "R03": "convertir faltante en cero",
-    "R04": "elegir siempre máximo VAN ignorando el objetivo/riesgo", "R05": "excluir NO_INVERTIR_AUN",
+    "R04": "elegir siempre máximo VAN ignorando el objetivo y el riesgo", "R05": "excluir NO_INVERTIR_AUN",
     "R06": "duplicar subproductos (esqueleto + CMS; motor M11)", "R07": "ignorar el CAPEX en fondos", "R08": "ignorar el capital de trabajo",
     "R09": "el shock se filtra a otra variable", "R10": "tornado por impacto con signo", "R11": "Monte Carlo sin semilla / sin caché",
     "R12": "rankear sin comparabilidad", "R13": "costos faltantes completados con 0", "R14": "restricción HARD tratada como SOFT",
-    "R15": "dominancia no estricta", "R16": "punto de quiebre devuelve el borde del rango", "R17": "aceptar Monte Carlo/evidencia sin respaldo",
+    "R15": "dominancia no estricta", "R16": "punto de quiebre devuelve el borde del rango", "R17": "aceptar Monte Carlo sin respaldo",
     "R18": "probabilidad numérica para niveles cualitativos", "R19": "la mitigación borra el riesgo inherente",
+    "R20": "invertir el ranking y la frontera de Pareto", "R21": "eliminar la etiqueta de simulación hipotética",
+    "R22": "requerimiento físico DESCONOCIDO de C0 tomado como 0", "R23": "frecuencia sectorial convertida en probabilidad",
+    "R24": "NO_INVERTIR_AUN tratado como proyecto con ceros", "R25": "desempatar la prioridad por posición",
+    "R26": "correlación pendiente tratada como 0 sin rotular", "R27": "alternativas no comparables en dominancia y Pareto",
 }
 MOTOR = {"R02": "M02", "R06": "M11"}
+# Mutaciones exigidas expresamente por el encargo (punto 51, incluido lo que quedó cortado)
+REQUERIDAS = (("quitar límite de capital", "R01"), ("permitir ventas > demanda", "R02"), ("convertir faltante en cero", "R03"),
+              ("convertir faltante en cero (costos del motor)", "R13"), ("elegir siempre máximo VAN ignorando riesgo", "R04"),
+              ("excluir NO_INVERTIR_AUN", "R05"), ("duplicar subproductos", "R06"), ("ignorar CAPEX", "R07"),
+              ("ignorar capital de trabajo", "R08"), ("invertir ranking/frontera Pareto", "R20"),
+              ("eliminar etiqueta de simulación hipotética", "R21"))
 
 
-def prueba_mutaciones():
-    det = 0
+def prueba_mutaciones(ruta_tabla=os.path.join(AQUI, "cobertura_mutaciones.csv")):
+    det, filas = 0, []
     for m, desc in MUTACIONES.items():
         mr._MUT = {m} if m not in MOTOR else set()
         mf._MUT = {MOTOR[m]} if m in MOTOR else set()
@@ -746,6 +988,10 @@ def prueba_mutaciones():
             _U.clear()
         ok = bool(fallas)
         det += ok
-        print(f"  [{'DETECTADA' if ok else 'NO DETECTADA'}] {m} {desc}" + (f" → {fallas[0][0]}" if ok else ""))
-    print(f"Mutaciones detectadas: {det}/{len(MUTACIONES)}")
+        req = [r for r, x in REQUERIDAS if x == m]
+        filas.append({"MUTACION": m, "DESCRIPCION": desc, "REQUERIDA_EN_ENCARGO": "; ".join(req) or "adicional (auditoría)",
+                      "TEST_QUE_LA_DETECTA": ", ".join(f[0] for f in fallas), "RESULTADO": "DETECTADA" if ok else "NO_DETECTADA"})
+        print(f"  [{'DETECTADA' if ok else 'NO DETECTADA'}] {m} {desc}" + (f" → {', '.join(f[0] for f in fallas[:4])}" if ok else ""))
+    mr.escribir(ruta_tabla, filas, list(filas[0].keys()))
+    print(f"Mutaciones detectadas: {det}/{len(MUTACIONES)}  (tabla: {os.path.basename(ruta_tabla)})")
     return det == len(MUTACIONES)

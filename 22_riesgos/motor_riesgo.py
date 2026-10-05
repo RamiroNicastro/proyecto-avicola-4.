@@ -67,9 +67,13 @@ OPT_REAL_ND = "OPTIMIZACION_REAL_NO_DISPONIBLE"
 MC_ND = "NO_DISPONIBLE_POR_FALTA_DE_DISTRIBUCIONES"
 CORR_NM = "CORRELACIONES_NO_MODELADAS"
 PROB_SIM = "PROBABILIDAD_SIMULADA_NO_HISTORICA"
+# Tres tipos de probabilidad que NUNCA se confunden. Monte Carlo solo produce la primera.
+TIPOS_PROBABILIDAD = ("PROBABILIDAD_SIMULADA", "PROBABILIDAD_HISTORICA", "PROBABILIDAD_DEL_PROYECTO")
+SUP_INDEP = "SUPUESTO_INDEPENDENCIA_ESCENARIO"
+MC_CORR_PEND = "NO_EJECUTADO_CORRELACION_PENDIENTE"
 NO_CALC = "NO_CALCULABLE"
 NO_ENC = "NO_ENCONTRADO_EN_RANGO"
-UNIVERSOS = ("EVIDENCIA", "ESCENARIO", "CASO_ARTIFICIAL")
+UNIVERSOS = ("EVIDENCIA", "ESCENARIO", "ARTIFICIAL_TEST")
 
 ARCH_INPUTS = os.path.join(AQUI, "inputs_riesgo_optimizacion.csv")
 ARCH_STRESS = os.path.join(AQUI, "escenarios_stress.csv")
@@ -713,11 +717,13 @@ def metricas(res, R):
 
 
 def metricas_status_quo():
-    """NO_INVERTIR_AUN: valores DEFINICIONALES del status quo (flujo incremental nulo), no faltantes llenados con 0.
-    No incluye el valor de la información ni el costo de oportunidad; la carnicería actual no se modela."""
+    """NO_INVERTIR_AUN es una ALTERNATIVA DE DECISIÓN (status quo), no un proyecto productivo: no tiene VAN, TIR, payback,
+    CAPEX ni EBITDA propios. No se le asignan ceros (que la harían "ganar" MIN_CAPEX o MIN_PAYBACK por ausencia de
+    inversión) ni TIR infinita. Gana solo por las reglas explícitas de decisión del optimizador (REGLAS_STATUS_QUO)."""
     m = {k: None for k in METRICAS}
-    m.update(VAN=0.0, CAPEX=0.0, FONDOS_INICIALES=0.0, PICO_FONDOS=0.0, EBITDA=0.0, INGRESOS=0.0, FCFF_TOTAL=0.0,
-             CAPACIDAD_FINAL_AVES_DIA=0.0, DEUDA=0.0, TIR_ESTADO="NO_APLICA (status quo)", PAYBACK_ESTADO="NO_APLICA (status quo)")
+    if "R24" in _MUT:                                             # mutación: se la trata como proyecto con ceros
+        m.update(VAN=0.0, CAPEX=0.0, FONDOS_INICIALES=0.0, PICO_FONDOS=0.0, EBITDA=0.0, PAYBACK=0.0)
+    m.update(TIR_ESTADO="NO_APLICA_STATUS_QUO", PAYBACK_ESTADO="NO_APLICA_STATUS_QUO")
     return m
 
 
@@ -725,29 +731,17 @@ def alternativa_status_quo(universo):
     return {"id": STATUS_QUO, "tipo": STATUS_QUO, "universo": universo, "configuracion": STATUS_QUO, "variante": "—",
             "escalas": (), "trayectoria": "—", "construir": None, "base_valores": {}, "fisico": None,
             "descripcion": "No ejecutar inversión todavía: mantener operación actual, pilotear / validar demanda, "
-                           "esperar información. VAN incremental 0 por definición."}
+                           "esperar información. Alternativa de decisión, no proyecto productivo: sin métricas financieras."}
 
 
-TIR_OMITIDA = "NO_CALCULADA_EVALUACION_RAPIDA"
-
-
-class _SinTIR:
-    """Evaluación RÁPIDA: durante la llamada, mf.tir devuelve (None, TIR_OMITIDA). El barrido de la TIR del motor
-    (4.000 puntos) es ~97 % del tiempo de una corrida; VAN, payback, MIRR, flujos y break-even NO dependen de ella
-    (test RIE-PERF-01). El archivo del motor no se modifica y la función original se restaura siempre."""
-
-    def __enter__(self):
-        self.orig = mf.tir
-        mf.tir = lambda flujos, tiempos, *a, **k: (None, TIR_OMITIDA)
-
-    def __exit__(self, *exc):
-        mf.tir = self.orig
-        return False
+TIR_OMITIDA = mf.TIR_NO_CALCULADA      # evaluación rápida: la TIR no se pidió (≠ 0, ≠ faltante de datos)
 
 
 class Evaluador:
-    """Evalúa (alternativa, shocks) con el motor financiero. Caché por (alternativa, universo, shocks, con/sin TIR).
-    Una evaluación completa (con TIR) sirve también para un pedido rápido."""
+    """Evalúa (alternativa, shocks) con el motor financiero. Caché por (alternativa, universo, shocks, modo).
+    Modo RÁPIDO (tir=False): mf.resultados(R, calcular_tir=False) — interfaz explícita del motor (sesión 20); no se
+    reemplaza ninguna función global, así que evaluadores concurrentes o una excepción no se afectan entre sí.
+    Cada modo tiene su propia entrada de caché (un pedido rápido nunca devuelve una TIR no solicitada)."""
 
     def __init__(self, guardar_R=False):
         self.cache, self.bases = {}, {}
@@ -764,12 +758,10 @@ class Evaluador:
         return self.bases[alt["id"]]
 
     def evaluar(self, alt, shocks=None, tir=False):
-        k0 = (alt["id"], alt["universo"], clave_shocks(shocks))
-        key = k0 + (bool(tir),)
-        for kk in ((key,) if tir else (k0 + (True,), key)):
-            if kk in self.cache and "R11" not in _MUT:
-                self.n_hit += 1
-                return self.cache[kk]
+        key = (alt["id"], alt["universo"], clave_shocks(shocks), bool(tir))
+        if key in self.cache and "R11" not in _MUT:
+            self.n_hit += 1
+            return self.cache[key]
         self.n_eval += 1
         out = {"alt": alt["id"], "shocks": dict(shocks or {}), "estado": "OK", "motivo": "", "flags": [], "res": {},
                "met": {k: None for k in METRICAS}, "cambios": {}}
@@ -797,11 +789,7 @@ class Evaluador:
             return out
         try:
             R = mf.simular(P1)
-            if tir:
-                res = mf.resultados(R)
-            else:
-                with _SinTIR():
-                    res = mf.resultados(R)
+            res = mf.resultados(R, calcular_tir=bool(tir))
         except mf.ErrorFinanciero as e:
             out.update(estado="ERROR_MOTOR", motivo=str(e))
             self.cache[key] = out
@@ -1173,13 +1161,16 @@ def cholesky(M):
     return L
 
 
-def monte_carlo(E, alt, dists, corrs, n, semilla, universo, capital=None, exigir_respaldo=True, con_tir=False):
+def monte_carlo(E, alt, dists, corrs, n, semilla, universo, capital=None, exigir_respaldo=True, con_tir=False,
+                supuesto_independencia=False):
     """Devuelve (estado, resumen, muestras, notas). Proyecto real: toda distribución usada debe estar RESPALDADA.
-    Correlaciones: solo las declaradas con coeficiente (cópula gaussiana); pares PENDIENTES → CORRELACIONES_NO_MODELADAS."""
+    Correlaciones: solo las declaradas con coeficiente (cópula gaussiana; un 0 explícito es una declaración). Un par
+    relacionado con correlación PENDIENTE no se toma como 0: la corrida no se ejecuta (NO_EJECUTADO_CORRELACION_PENDIENTE)
+    salvo que el usuario declare supuesto_independencia → rótulo SUPUESTO_INDEPENDENCIA_ESCENARIO con los pares."""
     notas = []
     usadas = [d for d in dists if d["ESTADO"] != "PENDIENTE"]
     pend = [d["VARIABLE"] for d in dists if d["ESTADO"] == "PENDIENTE"]
-    if universo != "CASO_ARTIFICIAL" and "R17" not in _MUT:      # mutación R17: acepta distribuciones sin respaldo
+    if universo != "ARTIFICIAL_TEST" and "R17" not in _MUT:      # mutación R17: acepta distribuciones sin respaldo
         if any(d["ESTADO"] == "ARTIFICIAL" for d in usadas):
             raise ErrorRiesgo("distribuciones ARTIFICIALES solo en casos artificiales")
         if exigir_respaldo and (pend or not usadas):
@@ -1199,18 +1190,27 @@ def monte_carlo(E, alt, dists, corrs, n, semilla, universo, capital=None, exigir
         notas.append("SOLAPAMIENTO_DE_CAMPOS: " + ", ".join(sol))
     idx = {v: i for i, v in enumerate(var)}
     M = [[1.0 if i == j else 0.0 for j in range(len(var))] for i in range(len(var))]
-    no_mod = []
+    no_mod, decl = [], []
     for c in corrs:
         if c["A"] in idx and c["B"] in idx:
             if c["ESTADO"] == "PENDIENTE" or c["RHO"] is None:
                 no_mod.append(f"{c['A']}–{c['B']}")
             else:
-                if universo != "CASO_ARTIFICIAL" and c["ESTADO"] == "ARTIFICIAL":
+                if universo != "ARTIFICIAL_TEST" and c["ESTADO"] == "ARTIFICIAL":
                     raise ErrorRiesgo("correlación ARTIFICIAL fuera de un caso artificial")
                 M[idx[c["A"]]][idx[c["B"]]] = M[idx[c["B"]]][idx[c["A"]]] = c["RHO"]
-    estado_corr = (CORR_NM + ": " + ", ".join(no_mod)) if no_mod else (
-        "CORRELACIONES_DECLARADAS" if any(M[i][j] for i in range(len(var)) for j in range(len(var)) if i != j)
-        else CORR_NM + " (ningún par declarado: independencia NO verificada)")
+                decl.append(f"{c['A']}–{c['B']}={c['RHO']:g}")
+    if no_mod and not supuesto_independencia and "R26" not in _MUT:
+        return MC_CORR_PEND, {}, [], [f"{CORR_NM}: correlación PENDIENTE (≠ 0) en {', '.join(no_mod)}; declarar el coeficiente "
+                                      f"o el {SUP_INDEP} (montecarlo.supuesto_independencia)"]
+    if no_mod and "R26" in _MUT:
+        estado_corr = "CORRELACIONES_DECLARADAS"                  # mutación: pendiente tratada como 0 sin rotular
+    elif no_mod:
+        estado_corr = f"{SUP_INDEP}: " + ", ".join(no_mod) + ("; declaradas: " + ", ".join(decl) if decl else "")
+    elif decl:
+        estado_corr = "CORRELACIONES_DECLARADAS: " + ", ".join(decl)
+    else:
+        estado_corr = "SIN_PARES_RELACIONADOS_DECLARADOS (independencia no verificada)"
     L = cholesky(M)
     rng = random.Random(semilla if "R11" not in _MUT else None)
     muestras = []
@@ -1250,7 +1250,8 @@ def filas_mc(alt_id, estado, res, notas, universo):
                  "VALOR": None, "NOTA": "; ".join(notas)}]
     out = []
     base = {"ALTERNATIVA": alt_id, "UNIVERSO": universo, "ESTADO": estado, "N_TOTAL": res["N"], "SEMILLA": res["SEMILLA"],
-            "CORRELACIONES": res["CORRELACIONES"], "ETIQUETA": PROB_SIM + (f" | {ETIQ_ART}" if universo == "CASO_ARTIFICIAL" else f" | {ETIQ_SIM}"),
+            "TIPO_PROBABILIDAD": TIPOS_PROBABILIDAD[0], "ES_PROBABILIDAD_HISTORICA": False, "ES_PROBABILIDAD_DEL_PROYECTO": False,
+            "CORRELACIONES": res["CORRELACIONES"], "ETIQUETA": PROB_SIM + (f" | {ETIQ_ART}" if universo == "ARTIFICIAL_TEST" else f" | {ETIQ_SIM}"),
             "NOTA": "; ".join(notas)}
     for m in ("VAN", "TIR", "PICO_FONDOS", "DSCR", "PAYBACK"):
         for k, v in res[m].items():
@@ -1269,11 +1270,12 @@ def filas_mc(alt_id, estado, res, notas, universo):
 # 10. REGISTRO Y MATRIZ DE RIESGOS (cualitativos; sin probabilidad numérica inventada)
 # ---------------------------------------------------------------------------------------------
 NIVELES_CUAL = ("BAJA", "MEDIA", "ALTA", "PENDIENTE")
-CAMPOS_REGISTRO = ("ID_RIESGO", "CATEGORIA", "RIESGO", "DRIVER_AFECTADO", "PROBABILIDAD", "IMPACTO", "VELOCIDAD",
+CAMPOS_REGISTRO = ("ID_RIESGO", "CATEGORIA", "RIESGO", "DRIVER_AFECTADO", "PROBABILIDAD", "METODO_PROBABILIDAD",
+                   "FRECUENCIA_SECTORIAL_REFERENCIA", "UNIDAD_FRECUENCIA", "PERIODO_REFERENCIA", "FUENTE", "IMPACTO", "VELOCIDAD",
                    "CONTROLABILIDAD", "DETECTABILIDAD", "INTERDEPENDENCIAS", "MITIGACION", "ESTADO_MITIGACION",
                    "PROBABILIDAD_RESIDUAL", "IMPACTO_RESIDUAL", "INDICADOR_ALERTA", "UMBRAL_ALERTA", "EVIDENCIA", "ESTADO",
                    "OBSERVACIONES")
-# Matriz cualitativa 3×3 (etiquetas, NO números). Documentada en metodologia_riesgos_optimizador.md §3.
+# Matriz cualitativa 3×3 (etiquetas, NO números). Documentada en registro_riesgos.md §3.
 CLASE_CUALITATIVA = {("BAJA", "BAJA"): "BAJO", ("BAJA", "MEDIA"): "BAJO", ("BAJA", "ALTA"): "MODERADO",
                      ("MEDIA", "BAJA"): "BAJO", ("MEDIA", "MEDIA"): "MODERADO", ("MEDIA", "ALTA"): "ALTO",
                      ("ALTA", "BAJA"): "MODERADO", ("ALTA", "MEDIA"): "ALTO", ("ALTA", "ALTA"): "CRITICO"}
@@ -1293,6 +1295,13 @@ def leer_registro_riesgos(ruta=ARCH_REG_RIESGOS):
         for c in ("PROBABILIDAD", "IMPACTO", "PROBABILIDAD_RESIDUAL", "IMPACTO_RESIDUAL"):
             if f[c] and f[c] not in NIVELES_CUAL:
                 raise ErrorRiesgo(f"{f['ID_RIESGO']}: {c} = {f[c]!r} (admitidos {NIVELES_CUAL}; sin números)")
+        # PROBABILIDAD = probabilidad ESPECÍFICA del proyecto (cualitativa). Exige método explícito; una frecuencia o
+        # antecedente sectorial NO es probabilidad futura del proyecto y va en FRECUENCIA_SECTORIAL_REFERENCIA.
+        if f["PROBABILIDAD"] not in ("", "PENDIENTE"):
+            m = f["METODO_PROBABILIDAD"].strip().upper()
+            if not m or "FRECUENCIA_SECTORIAL" in m or "01 §11" in m:
+                raise ErrorRiesgo(f"{f['ID_RIESGO']}: PROBABILIDAD {f['PROBABILIDAD']} sin METODO_PROBABILIDAD específico del "
+                                  "proyecto (una frecuencia sectorial no es probabilidad: dejar PENDIENTE)")
         for d in [x.strip() for x in f["DRIVER_AFECTADO"].split("|") if x.strip()]:
             if d not in VARIABLES:
                 raise ErrorRiesgo(f"{f['ID_RIESGO']}: driver {d} no está en el registro de variables")
@@ -1310,6 +1319,8 @@ def matriz_riesgos(registro, tornado_por_var=None):
     out = []
     for f in registro:
         p, i = f["PROBABILIDAD"] or "PENDIENTE", f["IMPACTO"] or "PENDIENTE"
+        if "R23" in _MUT and p == "PENDIENTE" and f.get("FRECUENCIA_SECTORIAL_REFERENCIA"):
+            p = "ALTA" if "Alta" in f["FRECUENCIA_SECTORIAL_REFERENCIA"] else "MEDIA"   # mutación: frecuencia → probabilidad
         inh = CLASE_CUALITATIVA.get((p, i), "PENDIENTE")
         impl = f["ESTADO_MITIGACION"] == "IMPLEMENTADA_CON_EVIDENCIA"
         pr = (f["PROBABILIDAD_RESIDUAL"] or "PENDIENTE") if impl else p
@@ -1321,11 +1332,16 @@ def matriz_riesgos(registro, tornado_por_var=None):
         sw = [(d, tornado_por_var[d]) for d in drivers if tornado_por_var and tornado_por_var.get(d) is not None]
         out.append({"ID_RIESGO": f["ID_RIESGO"], "CATEGORIA": f["CATEGORIA"], "RIESGO": f["RIESGO"],
                     "PROBABILIDAD_INHERENTE": p, "IMPACTO_INHERENTE": i, "CELDA_INHERENTE": f"{p}×{i}",
+                    "FRECUENCIA_SECTORIAL_REFERENCIA": f.get("FRECUENCIA_SECTORIAL_REFERENCIA", ""),
+                    "NOTA_FRECUENCIA": ("frecuencia/antecedente SECTORIAL: no es probabilidad del proyecto"
+                                        if f.get("FRECUENCIA_SECTORIAL_REFERENCIA") else ""),
                     "CLASE_INHERENTE": inh, "ESTADO_MITIGACION": f["ESTADO_MITIGACION"],
                     "PROBABILIDAD_RESIDUAL": pr, "IMPACTO_RESIDUAL": ir, "CELDA_RESIDUAL": f"{pr}×{ir}", "CLASE_RESIDUAL": res,
                     "RESIDUAL_IGUAL_INHERENTE": "SÍ (mitigación no implementada o sin evidencia)" if not impl else "NO",
-                    "TIPO_MATRIZ": "CUALITATIVA (sin producto numérico P×I)",
+                    "TIPO_MATRIZ": "CUALITATIVA (BAJA/MEDIA/ALTA son etiquetas; sin producto numérico P×I)",
                     "PROB_NUMERICA": probabilidad_numerica(p), "IMPACTO_USD": None, "EXPOSICION_USD": None,
+                    "RIESGO_ESPERADO": None if "R23" not in _MUT else 0.0,
+                    "RIESGO_ESPERADO_ESTADO": "NO_CALCULADO: no existe probabilidad específica del proyecto",
                     "ESTADO_CUANTITATIVO": "FUTURO: requiere distribución respaldada y escenario completo",
                     "SWING_VAN_SIMULADO": "; ".join(f"{d}: {v:,.0f}" for d, v in sw) if sw else "",
                     "DRIVERS": " | ".join(drivers)})

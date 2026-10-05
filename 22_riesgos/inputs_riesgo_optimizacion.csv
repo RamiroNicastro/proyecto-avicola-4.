@@ -69,14 +69,14 @@ RI-067,MONTECARLO,montecarlo.semilla,20261005,—,PARAMETRO_DE_ANALISIS,SUP-20-0
 RI-068,MONTECARLO,montecarlo.incluir_tir,FALSE,bool,PARAMETRO_DE_ANALISIS,SUP-20-07,La TIR multiplica ~25× el tiempo de cada corrida
 RI-069,ROBUSTEZ,robustez.criterio,PCT_VAN_NO_NEGATIVO,PCT_VAN_NO_NEGATIVO | PEOR_VAN | P10_VAN,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,"Robustez = comportamiento en varios escenarios, no una rentabilidad base"
 RI-070,ROBUSTEZ,robustez.variables,precio_venta|alimento|demanda|capex|utilizacion|dias_cobro,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,Extremos one-way que se suman a los stress para medir robustez
-RI-071,ROBUSTEZ,robustez.min_escenarios,1,escenarios,PARAMETRO_DE_ANALISIS,SUP-20-07,Menos escenarios evaluables → ROBUSTEZ = PENDIENTE
+RI-071,ROBUSTEZ,robustez.min_escenarios,3,escenarios,PARAMETRO_DE_ANALISIS,SUP-20-07,"Mínimo de escenarios evaluables (sin contar la base) para calcular ROBUSTEZ; menos → PENDIENTE (parámetro técnico, SUP-20-07)"
 RI-072,RIESGO,riesgo.peso.VAN_NEGATIVO_ESCENARIOS,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
 RI-073,RIESGO,riesgo.peso.SENSIBILIDAD_VAN,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
 RI-074,RIESGO,riesgo.peso.PICO_FONDOS_RELATIVO,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
 RI-075,RIESGO,riesgo.peso.DEMANDA_NO_RESPALDADA,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
 RI-076,RIESGO,riesgo.peso.FISICO_PENDIENTE,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
 RI-077,RIESGO,riesgo.peso.EVIDENCIA_FALTANTE,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
-RI-078,RIESGO,riesgo.faltantes,SEPARAR,SEPARAR | PENALIZAR,PARAMETRO_DE_ANALISIS,SUP-20-11,Componente faltante: SEPARAR (score PENDIENTE) o PENALIZAR (= 1)
+RI-078,RIESGO,riesgo.faltantes,SEPARAR,SEPARAR | PENALIZAR,PARAMETRO_DE_ANALISIS,SUP-20-11,"SCORE_ORDINAL_RIESGO (orden interno, NO ES PROBABILIDAD): componente faltante SEPARAR (score PENDIENTE) o PENALIZAR (= 1)"
 RI-079,BALANCEADO,balanceado.peso.rentabilidad,,peso relativo (se normaliza),PENDIENTE,,Objetivo balanceado: sin pesos → PESOS_NO_DEFINIDOS
 RI-080,BALANCEADO,balanceado.peso.riesgo,,peso relativo (se normaliza),PENDIENTE,,Objetivo balanceado: sin pesos → PESOS_NO_DEFINIDOS
 RI-081,BALANCEADO,balanceado.peso.capital,,peso relativo (se normaliza),PENDIENTE,,Objetivo balanceado: sin pesos → PESOS_NO_DEFINIDOS
@@ -85,8 +85,8 @@ RI-083,BALANCEADO,balanceado.peso.crecimiento,,peso relativo (se normaliza),PEND
 RI-084,BALANCEADO,balanceado.peso.robustez,,peso relativo (se normaliza),PENDIENTE,,Objetivo balanceado: sin pesos → PESOS_NO_DEFINIDOS
 RI-085,BALANCEADO,balanceado.preset,,IGUALES | vacío,PENDIENTE,,Un preset se marca [SUPUESTO] SUP-20-08
 RI-086,BALANCEADO,balanceado.faltantes,SEPARAR,SEPARAR | PENALIZAR,PARAMETRO_DE_ANALISIS,SUP-20-11,
-RI-087,DOMINANCIA,dominancia.dimensiones,FONDOS_INICIALES:-|VAN:+|RIESGO_SCORE:-,métrica:sentido,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,"Capital, retorno y riesgo; dimensiones sin dato se omiten y se declara cuáles se usaron"
-RI-088,PARETO,pareto.pares,VAN:+×FONDOS_INICIALES:-|VAN:+×RIESGO_SCORE:-|VAN:+×PICO_FONDOS:-|VAN:+×PAYBACK:-,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,
+RI-087,DOMINANCIA,dominancia.dimensiones,FONDOS_INICIALES:-|VAN:+|SCORE_ORDINAL_RIESGO:-,métrica:sentido,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,"Capital, retorno y riesgo; dimensiones sin dato se omiten y se declara cuáles se usaron"
+RI-088,PARETO,pareto.pares,VAN:+×FONDOS_INICIALES:-|VAN:+×SCORE_ORDINAL_RIESGO:-|VAN:+×PICO_FONDOS:-|VAN:+×PAYBACK:-,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,
 RI-089,DECISION,decision.tolerancia_equivalencia,,fracción,PENDIENTE,,Diferencia relativa bajo la cual mejor y segunda se consideran equivalentes (DECISION_NO_ROBUSTA); vacío = solo se usa el cambio de ganador entre escenarios
 RI-090,CONSULTA,consulta.capital_usd,,USD,PENDIENTE,,«Tengo X de capital» (no se asume USD 2 M)
 RI-091,CONSULTA,consulta.demanda_t_dia,,t/día calendario,PENDIENTE,,«Tengo X t/día de demanda asegurada»
@@ -94,3 +94,7 @@ RI-092,CONSULTA,consulta.payback_max_anios,,años,PENDIENTE,,«Quiero recuperar 
 RI-093,CONSULTA,consulta.objetivos,MAX_VAN,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,Objetivo(s) para la mejor alternativa de la consulta de capital
 RI-094,CONSULTA,consulta.payback_variables,precio_venta|capex|demanda|alimento,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,"Variables para el cambio mínimo que permitiría cumplir el payback (informado, no aplicado)"
 RI-095,SALIDA,que_hacer.n,10,acciones,PARAMETRO_DE_ANALISIS,SUP-20-07,Largo de la lista QUE_HACER_AHORA
+RI-096,MONTECARLO,montecarlo.supuesto_independencia,FALSE,bool,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,TRUE solo en escenarios hipotéticos: un par con correlación PENDIENTE se trata como independiente y la corrida queda rotulada SUPUESTO_INDEPENDENCIA_ESCENARIO; FALSE → NO_EJECUTADO_CORRELACION_PENDIENTE
+RI-097,DECISION,decision.sq_stress,,IDs de escenarios_stress.csv,PENDIENTE,,"Regla SQ-4: si la mejor inversión tiene VAN < 0 en alguno de estos stress, la decisión del escenario es NO_INVERTIR_AUN"
+RI-098,DECISION,decision.sq_score_ordinal_max,,"score 0–1 (ordinal, no probabilidad)",PENDIENTE,,Regla SQ-5: máximo SCORE_ORDINAL_RIESGO aceptado para la mejor inversión
+RI-099,DECISION,decision.sq_cobertura_min,,fracción de bloques con evidencia,PENDIENTE,,Regla SQ-6: cobertura de evidencia mínima de la mejor inversión
