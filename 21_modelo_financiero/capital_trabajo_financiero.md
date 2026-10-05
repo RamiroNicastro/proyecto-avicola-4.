@@ -10,7 +10,7 @@ CT_OPERATIVO  = INVENTARIOS_PROPIOS + CUENTAS_POR_COBRAR + CAJA_OPERATIVA − CU
 Σ ΔCT         = CT al cierre del horizonte
 ```
 
-Base de días: `DIAS_MES = 365 ÷ 12` (días calendario; SUP-19-11).
+Base de días: `DIAS_MES = 365 ÷ 12` (días calendario; SUP-197).
 
 | Componente | Cálculo | Por | Input (hoy) |
 |---|---|---|---|
@@ -42,4 +42,4 @@ Bases de valuación por defecto (`BASE_INVENTARIO`): alimento → rubros del gru
 
 ## 4. Capital de trabajo inicial (para fondos iniciales)
 
-`CT_INICIAL` = máximo CT alcanzado hasta el fin del ramp-up de la etapa inicial (SUP-19-19). `CT_MAXIMO` = máximo del horizonte. Ver [`flujo_caja.md`](flujo_caja.md) §3.
+`CT_INICIAL` = máximo CT alcanzado hasta el fin del ramp-up de la etapa inicial (SUP-205). `CT_MAXIMO` = máximo del horizonte. Ver [`flujo_caja.md`](flujo_caja.md) §3.

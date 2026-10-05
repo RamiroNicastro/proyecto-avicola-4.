@@ -14,10 +14,10 @@ Qué hace este archivo (el optimizador está en modelo_optimizador.py):
   * REGISTRO DE VARIABLES DE RIESGO: cada variable declara QUÉ campo de la entrada del motor toca, cómo
     (RELATIVO = × (1 + s); ABSOLUTO_DIAS / ABSOLUTO_MESES = + s), y su SOPORTE:
       SOPORTADA                   el motor tiene el campo; el shock lo modifica tal cual
-      APROXIMACION                transformación declarada sobre campos existentes (SUP-20-04…06)
+      APROXIMACION                transformación declarada sobre campos existentes (SUP-215 a SUP-217)
       REQUIERE_BASE               necesita un valor base declarado (mortalidad, condenas, FCR absoluto, FX)
       DISCRETA                    se evalúa como stress o como alternativa, no como shock continuo
-      NO_SOPORTADA_POR_INTERFAZ   el motor no tiene el campo: se informa, no se simula (DPV-20-xx)
+      NO_SOPORTADA_POR_INTERFAZ   el motor no tiene el campo: se informa, no se simula (TF-001, TF-002)
   * EVALUADOR con caché (misma alternativa + mismos shocks = misma corrida; base de cada alternativa
     construida una sola vez). La base nunca se modifica: cada shock trabaja sobre una copia profunda.
   * SENSIBILIDAD ONE-WAY, TORNADO, SENSIBILIDAD 2D, STRESS (multivariable), PUNTOS DE QUIEBRE (grilla +
@@ -33,7 +33,7 @@ Reglas que el código hace cumplir (tests en tests_riesgo_optimizador.py):
   * Toda probabilidad de Monte Carlo es SIMULADA (PROBABILIDAD_SIMULADA_NO_HISTORICA).
 
 Unidades: USD (moneda del motor), kg, días, meses, fracciones. CSV con punto decimal.
-IDs provisionales: SUP-20-##, DPV-20-##, DEC-20-## (ver actualizaciones_gestion_20.md).
+IDs reconciliados en 00_gestion_proyecto/reconciliacion_sesiones_19_20.md (SUP-212 a SUP-235; DPV-179, DPV-180; DEC-097 a DEC-104).
 """
 import copy
 import csv
@@ -356,7 +356,7 @@ def _t_rubros(driver, campo="costo_pleno_usd_anio", absoluto=False):
 
 
 def _t_peso_vivo(P, s, ctx):
-    """APROXIMACIÓN (SUP-20-04): kg comerciales por ave ∝ peso vivo y alimento ∝ peso vivo (FCR constante).
+    """APROXIMACIÓN (SUP-215): kg comerciales por ave ∝ peso vivo y alimento ∝ peso vivo (FCR constante).
     El balance 04 solo publica 2,9 kg: la linealidad no está verificada."""
     f = _factor(s)
     if not P.get("productos"):
@@ -376,7 +376,7 @@ def _t_peso_vivo(P, s, ctx):
 
 
 def _t_rendimiento(P, s, ctx):
-    """APROXIMACIÓN (SUP-20-05): más rendimiento comestible = más kg de productos comestibles; la masa agregada
+    """APROXIMACIÓN (SUP-216): más rendimiento comestible = más kg de productos comestibles; la masa agregada
     sale de subproductos (la masa total por ave no cambia). Si no alcanza la masa → ShockInvalido."""
     f = _factor(s)
     prods = P.get("productos")
@@ -430,7 +430,7 @@ def _t_fx(P, s, ctx):
     expuesto = any((v or {}).get("moneda_original") == "ARS" for v in P["precios"].values()) or any(
         r.get("moneda_original") == "ARS" for e in P["etapas"] for r in (e.get("opex_rubros") or []))
     if not expuesto:
-        raise NoAplica("sin ítems con moneda_original = ARS: exposición cambiaria no declarada (DPV-20-04)")
+        raise NoAplica("sin ítems con moneda_original = ARS: exposición cambiaria no declarada (DPV-179)")
     if s <= -1:
         raise ShockInvalido("devaluación ≤ −100 %")
     st = P["stress"]
@@ -556,14 +556,14 @@ _var("utilizacion", "OPERATIVA", "Utilización técnica (curva de ramp-up; tope 
      _t_rampup("utilizacion", 1.0), "etapas[].rampup.utilizacion", "RAMPUP", "DEC-090", +1, (-0.95, 0.0),
      nota="Si la demanda limita las ventas, más utilización técnica no cambia nada")
 _var("peso_vivo", "OPERATIVA", "Peso vivo de faena", R_, "APROXIMACION", _t_peso_vivo, "productos.*.kg_ave + rubros alimento",
-     "PRODUCCION", "DPV-060", None, (-0.5, 0.5), nota="SUP-20-04: linealidad no verificada")
+     "PRODUCCION", "DPV-060", None, (-0.5, 0.5), nota="SUP-215: linealidad no verificada")
 _var("mortalidad", "OPERATIVA", "Mortalidad en granja", R_, "REQUIERE_BASE", _t_mortalidad, "stress.mortalidad", "OPEX",
      "DPV-019", -1, (0.0, 20.0), nota="Semántica del motor: solo encarece el pollito por ave faenada")
 _var("fcr", "OPERATIVA", "Conversión alimenticia (FCR)", R_, "APROXIMACION", _t_rubros("alimento"),
      "rubros alimento × FCR/FCR_base", "OPEX", "DPV-019", -1, (-0.5, 5.0),
-     nota="SUP-20-05: costo de alimento ∝ FCR a precio y peso constantes")
+     nota="SUP-216: costo de alimento ∝ FCR a precio y peso constantes")
 _var("rendimiento_faena", "OPERATIVA", "Rendimiento comestible de faena", R_, "APROXIMACION", _t_rendimiento,
-     "productos.*.kg_ave", "PRODUCCION", "DPV-060", +1, (-0.5, 0.3), nota="SUP-20-06: masa adicional sale de subproductos")
+     "productos.*.kg_ave", "PRODUCCION", "DPV-060", +1, (-0.5, 0.3), nota="SUP-217: masa adicional sale de subproductos")
 _var("condenas", "OPERATIVA", "Condenas / decomisos", R_, "REQUIERE_BASE", _t_condenas, "productos.*.kg_ave", "PRODUCCION",
      "DPV-060", -1, (0.0, 20.0))
 _var("merma", "OPERATIVA", "Merma del ramp-up", R_, "SOPORTADA", _t_rampup("merma", 1.0), "etapas[].rampup.merma", "RAMPUP",
@@ -572,7 +572,7 @@ _var("eficiencia_linea", "OPERATIVA", "Eficiencia de línea (variables ÷ eficie
      _t_rampup("eficiencia"), "etapas[].rampup.eficiencia", "RAMPUP", "DEC-090, DPV-097", +1, (-0.9, 0.5))
 _var("dias_operativos", "OPERATIVA", "Días operativos por año", "DISCRETO", "NO_SOPORTADA_POR_INTERFAZ",
      _no_soportada("cambiar días sin recalcular OPEX rompe la coherencia costo/capacidad; se evalúa con la variante "
-                   "C1-6dias del mapa (DPV-20-01)"), "etapas[].dias_operativos_anio", "PRODUCCION", "DEC-033")
+                   "C1-6dias del mapa (TF-001)"), "etapas[].dias_operativos_anio", "PRODUCCION", "DEC-033")
 _var("rampup", "OPERATIVA", "Velocidad del ramp-up (factor de estiramiento)", R_, "SOPORTADA",
      _t_stress_mult("rampup_lento_factor", 0.0), "stress.rampup_lento_factor", "RAMPUP", "DEC-090", -1, (-0.9, 5.0))
 # COSTOS
@@ -601,7 +601,7 @@ for _b in ("equipos", "obra", "frio", "efluentes", "terreno", "instalacion", "im
          nota="Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167)")
 # FINANCIERAS
 _var("fx", "FINANCIERA", "Devaluación del ARS (solo ítems con moneda_original ARS)", R_, "REQUIERE_BASE", _t_fx,
-     "stress.devaluacion", "PRECIOS", "DPV-20-04", None, (-0.5, 3.0))
+     "stress.devaluacion", "PRECIOS", "DPV-179", None, (-0.5, 3.0))
 _var("tasa_descuento", "FINANCIERA", "Tasa de descuento (anual efectiva)", R_, "SOPORTADA", _t_campo("tasa_descuento"),
      "tasa_descuento", "DESCUENTO", "DEC-007, DPV-001", -1, (-0.99, 20.0))
 _var("tasa_deuda", "FINANCIERA", "Tasa de la deuda", R_, "SOPORTADA", _t_deuda("tasa"), "financiamiento.deudas[].tasa",
@@ -615,7 +615,7 @@ _var("tasa_ganancias", "FINANCIERA", "Alícuota de ganancias", R_, "SOPORTADA", 
 _var("iibb", "FINANCIERA", "Ingresos brutos", R_, "SOPORTADA", _t_campo("impuestos.pct_iibb"), "impuestos.pct_iibb",
      "IMPUESTOS_INGRESOS", "DPV-043", -1)
 _var("recuperacion_iva", "FINANCIERA", "Plazo de recupero del IVA", "DISCRETO", "NO_SOPORTADA_POR_INTERFAZ",
-     _no_soportada("el IVA SIMPLIFICADO del motor arrastra saldo técnico sin plazo de recupero parametrizable (DPV-20-02)"),
+     _no_soportada("el IVA SIMPLIFICADO del motor arrastra saldo técnico sin plazo de recupero parametrizable (TF-002)"),
      "iva", "IVA", "DPV-169")
 # ESTRATÉGICAS (discretas: stress o alternativa / gate físico)
 for _v, _desc, _dpv, _camp in (

@@ -4,7 +4,7 @@
 
 ## 1. Demanda: seis categorías que no se suman
 
-Usa el marco de [`02_clientes_demanda/modelo_demanda.md`](../02_clientes_demanda/modelo_demanda.md) §1 (A/B/C/D). Correspondencia (SUP-19-05):
+Usa el marco de [`02_clientes_demanda/modelo_demanda.md`](../02_clientes_demanda/modelo_demanda.md) §1 (A/B/C/D). Correspondencia (SUP-193):
 
 | Categoría del financiero | Equivale en 02 | Evidencia mínima | ¿Vende en MODO EVIDENCIA? | ¿Vende en MODO ESCENARIO? |
 |---|---|---|---|---|
@@ -33,8 +33,8 @@ ventas_kg(línea)     ≤ mín(producción + inventario, demanda)
 ```
 
 - **Parte limitante** (mismo criterio que 23, `aves_por_mix`): se faenan las aves que necesita el producto más exigido; las demás partes generan **excedente**.
-- **Inventario** (FIFO por producto): el excedente puede guardarse hasta `inventario_max_meses` meses; por defecto **0** (SUP-19-16): lo no vendido en el mes se informa como `kg_excedente_sin_venta` y **no** se monetiza. El inventario desplaza ventas entre meses pero nunca crea producto (tests F03, F03b; mutación M16).
-- **Asignación entre canales:** por `prioridad` de la línea; prorrata dentro de la misma prioridad; las líneas `toma_todo` (p. ej. un comprador de subproductos) reciben solo lo que sobra (SUP-19-17).
+- **Inventario** (FIFO por producto): el excedente puede guardarse hasta `inventario_max_meses` meses; por defecto **0** (SUP-202): lo no vendido en el mes se informa como `kg_excedente_sin_venta` y **no** se monetiza. El inventario desplaza ventas entre meses pero nunca crea producto (tests F03, F03b; mutación M16).
+- **Asignación entre canales:** por `prioridad` de la línea; prorrata dentro de la misma prioridad; las líneas `toma_todo` (p. ej. un comprador de subproductos) reciben solo lo que sobra (SUP-203).
 - Un producto con 0 kg/ave en la ruta elegida no se produce: su demanda no se atiende y se anota.
 
 ## 3. Productos y mix (balance 04, sin copiar fórmulas)
@@ -65,7 +65,7 @@ Los kg por ave salen de `mb.balance()` agrupados con `ITEMS` de 23 (una sola agr
 
 Además, `validar_entrada()` rechaza cualquier conjunto de productos cuya masa supere peso vivo + agua incorporada (test F04).
 
-**Arquitectura y propiedad del producto:** en C0 (faena a façon) el destino y la propiedad de los subproductos dependen del contrato (FAE-FACON-SUB): sus kg quedan **PENDIENTES**. En CF el rendering es FUTURO: en la etapa inicial los C se venden crudos (SUP-19-21).
+**Arquitectura y propiedad del producto:** en C0 (faena a façon) el destino y la propiedad de los subproductos dependen del contrato (FAE-FACON-SUB): sus kg quedan **PENDIENTES**. En CF el rendering es FUTURO: en la etapa inicial los C se venden crudos (SUP-207).
 
 ## 4. Precios de venta
 
@@ -81,7 +81,7 @@ Precio **constante real** o **serie por año** (`{"tipo": "SERIE", "base": "REAL
 
 ## 5. Canales y condiciones comerciales
 
-Canales: `supermercados`, `mayoristas`, `carnicerias_pollerias`, `gastronomia`, `industria`, `exportacion`, `otros`. Cada canal declara (todo PENDIENTE hoy, DPV-039 ampliado a todos los canales: DPV-19-02):
+Canales: `supermercados`, `mayoristas`, `carnicerias_pollerias`, `gastronomia`, `industria`, `exportacion`, `otros`. Cada canal declara (todo PENDIENTE hoy, DPV-039 ampliado a todos los canales: DPV-040):
 
 | Campo | Efecto |
 |---|---|
@@ -99,7 +99,7 @@ VENTA BRUTA            = Σ kg vendidos × precio
 = INGRESO NETO                                              (test I01)
 ```
 
-Separados por categoría: `VENTA_PRODUCTO_PRINCIPAL`, `VENTA_MENUDENCIAS`, `VENTA_PATAS_GARRAS`, `VENTA_SUBPRODUCTOS`, `VENTA_RENDERING`, `VENTA_OTROS`. Los subproductos **no se netean** contra costos: si un subproducto tiene costo de retiro, va al OPEX (DPV-072); si tiene precio, a ingresos (DPV-19-11).
+Separados por categoría: `VENTA_PRODUCTO_PRINCIPAL`, `VENTA_MENUDENCIAS`, `VENTA_PATAS_GARRAS`, `VENTA_SUBPRODUCTOS`, `VENTA_RENDERING`, `VENTA_OTROS`. Los subproductos **no se netean** contra costos: si un subproducto tiene costo de retiro, va al OPEX (DPV-072); si tiene precio, a ingresos (DPV-072).
 
 ## 7. Exportación (arquitectura preparada, sin valores)
 

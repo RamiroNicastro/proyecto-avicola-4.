@@ -4,15 +4,15 @@ IN-002,EVIDENCIA,TIEMPO,fecha_inicio,,AAAA-MM-DD,PENDIENTE,,EVIDENCIA,,PENDIENTE
 IN-003,EVIDENCIA,TIEMPO,meses_preoperacion,,meses,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Permisos, ingeniería, habilitaciones previas (DPV-086)"
 IN-004,EVIDENCIA,TIEMPO,meses_construccion,,meses,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Obra civil, fabricación y montaje (DPV-086, DPV-167)"
 IN-005,EVIDENCIA,TIEMPO,meses_commissioning,,meses,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Pruebas FAT/SAT, puesta en marcha, habilitación SENASA (DPV-086)"
-IN-006,EVIDENCIA,TIEMPO,meses_detalle,24,meses,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-06,SUPUESTO,"Convención de reporte: mensual los primeros 24 meses, anual después (SUP-19-06). No es dato económico"
-IN-007,EVIDENCIA,MONEDA,modelo_monetario,REAL,—,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-07,SUPUESTO,"USD constantes de la fecha base 2026-10-01; sin inflación por defecto (SUP-19-07, DEC-006)"
-IN-008,EVIDENCIA,MONEDA,base_tasa,REAL,—,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-07,SUPUESTO,La tasa debe estar en la misma base que los flujos (SUP-19-07)
+IN-006,EVIDENCIA,TIEMPO,meses_detalle,24,meses,SUPUESTO_MODELO,,EVIDENCIA,SUP-194,SUPUESTO,"Convención de reporte: mensual los primeros 24 meses, anual después (SUP-194). No es dato económico"
+IN-007,EVIDENCIA,MONEDA,modelo_monetario,REAL,—,SUPUESTO_MODELO,,EVIDENCIA,SUP-195,SUPUESTO,"USD constantes de la fecha base 2026-10-01; sin inflación por defecto (SUP-195, DEC-006)"
+IN-008,EVIDENCIA,MONEDA,base_tasa,REAL,—,SUPUESTO_MODELO,,EVIDENCIA,SUP-195,SUPUESTO,La tasa debe estar en la misma base que los flujos (SUP-195)
 IN-009,EVIDENCIA,MONEDA,inflacion_anual,,fracción/año,PENDIENTE,,EVIDENCIA,,PENDIENTE,Solo modelo NOMINAL (DEC-006)
 IN-010,EVIDENCIA,DESCUENTO,tasa_descuento,,fracción/año efectiva,PENDIENTE,,EVIDENCIA,,PENDIENTE,"TASA_DESCUENTO del proyecto (DEC-007, DPV-001); no se inventa un WACC"
 IN-011,EVIDENCIA,DESCUENTO,tasa_descuento_accionista,,fracción/año efectiva,PENDIENTE,,EVIDENCIA,,PENDIENTE,Costo del capital propio (DPV-001)
 IN-012,EVIDENCIA,DESCUENTO,tasa_reinversion,,fracción/año efectiva,PENDIENTE,,EVIDENCIA,,PENDIENTE,Solo para MIRR (opcional)
-IN-013,EVIDENCIA,VALOR_TERMINAL,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-12,SUPUESTO,"Por defecto sin valor terminal para no inflar resultados; VALOR_LIBRO / EXPLICITO / PERPETUIDAD disponibles, ninguno elegido (SUP-19-12)"
-IN-014,EVIDENCIA,VALOR_TERMINAL,valor_terminal.recuperar_ct,FALSE,bool,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-12,SUPUESTO,Sin recupero del capital de trabajo al cierre por defecto (SUP-19-12)
+IN-013,EVIDENCIA,VALOR_TERMINAL,valor_terminal.metodo,SIN_VALOR_TERMINAL,—,SUPUESTO_MODELO,,EVIDENCIA,SUP-198,SUPUESTO,"Por defecto sin valor terminal para no inflar resultados; VALOR_LIBRO / EXPLICITO / PERPETUIDAD disponibles, ninguno elegido (SUP-198)"
+IN-014,EVIDENCIA,VALOR_TERMINAL,valor_terminal.recuperar_ct,FALSE,bool,SUPUESTO_MODELO,,EVIDENCIA,SUP-198,SUPUESTO,Sin recupero del capital de trabajo al cierre por defecto (SUP-198)
 IN-015,EVIDENCIA,PRODUCCION,propiedad_rendimientos_validados,,bool,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Rendimientos del balance 04 v1.1 sin ensayo en planta (DPV-060, DEC-028)"
 IN-016,EVIDENCIA,RAMPUP,curva_rampup,,nombre de curva,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Curva de utilización, merma, eficiencia y costos extra del arranque (DEC-090)"
 IN-017,EVIDENCIA,DEMANDA,demanda.pollo_entero.carnicerias_pollerias.INTERNO.DOCUMENTADA,,kg/dia,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Carnicería familiar: categoría A sin cuantificar (DPV-004). Otras líneas A/B: ninguna (DPV-002, DPV-020, DPV-037, DPV-040)"
@@ -25,7 +25,7 @@ IN-023,EVIDENCIA,IMPUESTOS,impuestos.anios_quebranto,,años,PENDIENTE,,EVIDENCIA
 IN-024,EVIDENCIA,IVA,iva.modo,,EXCLUIDO | SIMPLIFICADO,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Tratamiento del IVA (débito, crédito, saldo técnico, recupero; DPV-169, DPV-043)"
 IN-025,EVIDENCIA,IVA,iva.alicuota_ventas,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Alícuota (DPV-043, DPV-169); no se hardcodea"
 IN-026,EVIDENCIA,IVA,iva.alicuota_compras,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Alícuota (DPV-043, DPV-169); no se hardcodea"
-IN-027,EVIDENCIA,IVA,iva.alicuota_capex,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Alícuota (DPV-043, DPV-169); no se hardcodea"
+IN-027,EVIDENCIA,IVA,iva.alicuota_capex,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Alícuota (DPV-043, DPV-169); no se hardcodea; global (compatibilidad): el crédito fiscal del IVA de CAPEX exige además la declaración por etapa etapas[].iva_capex (base neta, IVA, tasa, condición fiscal y elegibilidad); sin ella CREDITO_FISCAL_IVA_CAPEX = PENDIENTE (TF-076)"
 IN-028,EVIDENCIA,CANALES,canales.supermercados.dias_cobro,,días,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Plazo de cobro promedio (0 = contado; no se asume que el supermercado paga contado) (DPV-039, DPV-175)"
 IN-029,EVIDENCIA,CANALES,canales.supermercados.pct_descuentos,,fracción de venta bruta,PENDIENTE,,EVIDENCIA,,PENDIENTE,Descuentos en factura (DPV-039)
 IN-030,EVIDENCIA,CANALES,canales.supermercados.pct_bonificaciones,,fracción,PENDIENTE,,EVIDENCIA,,PENDIENTE,Bonificaciones y rebates (DPV-039)
@@ -87,18 +87,20 @@ IN-085,EVIDENCIA,CT,dias_stock.activo_biologico,,días de costo,PENDIENTE,,EVIDE
 IN-086,EVIDENCIA,CT,dias_stock.otros,,días de costo,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Días de stock valuados al costo (DEC-089, DEC-091, DPV-175)"
 IN-087,EVIDENCIA,CT,dias_caja_operativa,,días de OPEX,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Política de caja (DEC-091); sin política = NO_ASIGNADA (0, como en 20_opex)"
 IN-088,EVIDENCIA,FINANCIAMIENTO,financiamiento,,estructura,PENDIENTE,,EVIDENCIA,,PENDIENTE,"Equity / deuda / mixto (DEC-092); USD 2 M no es capital confirmado (SUP-003, DEC-010)"
-IN-089,PLANTILLA_CONSERVADOR,RAMPUP,curva_rampup,CONSERVADOR,nombre de curva,SUPUESTO_MODELO,,ESCENARIO,SUP-19-09,SUPUESTO,"Plantilla ilustrativa sin fuente (SUP-19-09): solo utilización; merma, eficiencia y extras PENDIENTES"
+IN-089,PLANTILLA_CONSERVADOR,RAMPUP,curva_rampup,CONSERVADOR,nombre de curva,SUPUESTO_MODELO,,ESCENARIO,SUP-196,SUPUESTO,"Plantilla ilustrativa sin fuente (SUP-196): solo utilización; merma, eficiencia y extras PENDIENTES"
 IN-090,PLANTILLA_CONSERVADOR,DEMANDA,demanda_referencia_02,ESC-CON,id de 02,SUPUESTO_MODELO,,ESCENARIO,02_clientes_demanda/escenarios_demanda.csv,SUPUESTO,"Escenario comercial de PRUEBA de 02 (SUPUESTO, no demanda; categoría ESCENARIO)"
 IN-091,PLANTILLA_CONSERVADOR,TIEMPO,horizonte_anios,,años,PENDIENTE,,ESCENARIO,,PENDIENTE,"El usuario elige 10, 15 o 20 (DEC-007)"
 IN-092,PLANTILLA_CONSERVADOR,DEMANDA,mix_demanda,,fracción por producto,PENDIENTE,,ESCENARIO,,PENDIENTE,Mix por producto (M1–M3 de 02 u otro) a declarar por el usuario (DPV-037)
-IN-093,PLANTILLA_BASE,RAMPUP,curva_rampup,BASE,nombre de curva,SUPUESTO_MODELO,,ESCENARIO,SUP-19-09,SUPUESTO,"Plantilla ilustrativa sin fuente (SUP-19-09): solo utilización; merma, eficiencia y extras PENDIENTES"
+IN-093,PLANTILLA_BASE,RAMPUP,curva_rampup,BASE,nombre de curva,SUPUESTO_MODELO,,ESCENARIO,SUP-196,SUPUESTO,"Plantilla ilustrativa sin fuente (SUP-196): solo utilización; merma, eficiencia y extras PENDIENTES"
 IN-094,PLANTILLA_BASE,DEMANDA,demanda_referencia_02,ESC-BAS,id de 02,SUPUESTO_MODELO,,ESCENARIO,02_clientes_demanda/escenarios_demanda.csv,SUPUESTO,"Escenario comercial de PRUEBA de 02 (SUPUESTO, no demanda; categoría ESCENARIO)"
 IN-095,PLANTILLA_BASE,TIEMPO,horizonte_anios,,años,PENDIENTE,,ESCENARIO,,PENDIENTE,"El usuario elige 10, 15 o 20 (DEC-007)"
 IN-096,PLANTILLA_BASE,DEMANDA,mix_demanda,,fracción por producto,PENDIENTE,,ESCENARIO,,PENDIENTE,Mix por producto (M1–M3 de 02 u otro) a declarar por el usuario (DPV-037)
-IN-097,PLANTILLA_EXPANSIVO,RAMPUP,curva_rampup,RAPIDO,nombre de curva,SUPUESTO_MODELO,,ESCENARIO,SUP-19-09,SUPUESTO,"Plantilla ilustrativa sin fuente (SUP-19-09): solo utilización; merma, eficiencia y extras PENDIENTES"
+IN-097,PLANTILLA_EXPANSIVO,RAMPUP,curva_rampup,RAPIDO,nombre de curva,SUPUESTO_MODELO,,ESCENARIO,SUP-196,SUPUESTO,"Plantilla ilustrativa sin fuente (SUP-196): solo utilización; merma, eficiencia y extras PENDIENTES"
 IN-098,PLANTILLA_EXPANSIVO,DEMANDA,demanda_referencia_02,ESC-EXP,id de 02,SUPUESTO_MODELO,,ESCENARIO,02_clientes_demanda/escenarios_demanda.csv,SUPUESTO,"Escenario comercial de PRUEBA de 02 (SUPUESTO, no demanda; categoría ESCENARIO)"
 IN-099,PLANTILLA_EXPANSIVO,TIEMPO,horizonte_anios,,años,PENDIENTE,,ESCENARIO,,PENDIENTE,"El usuario elige 10, 15 o 20 (DEC-007)"
 IN-100,PLANTILLA_EXPANSIVO,DEMANDA,mix_demanda,,fracción por producto,PENDIENTE,,ESCENARIO,,PENDIENTE,Mix por producto (M1–M3 de 02 u otro) a declarar por el usuario (DPV-037)
-IN-101,EVIDENCIA,METODOLOGIA,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-02,SUPUESTO,"UMBRAL_EVIDENCIA_PUBLICACION: default conservador (SUP-19-02). Se cambia aquí, sin tocar código, cuando se decida DEC-19-01 / DEC-084. E4 [PVDP] no pasa este default"
-IN-102,EVIDENCIA,METODOLOGIA,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-25,SUPUESTO,Cada flujo mensual se descuenta en su mes con (1 + r)^(1/12) − 1; PERIODO_REPORTE descuenta flujos agregados al fin de cada período (SUP-19-25)
-IN-103,EVIDENCIA,METODOLOGIA,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,SUPUESTO_MODELO,,EVIDENCIA,SUP-19-25,SUPUESTO,La TASA_DESCUENTO (aún PENDIENTE) se interpreta como anual efectiva salvo declaración expresa (SUP-19-25)
+IN-101,EVIDENCIA,METODOLOGIA,umbral_evidencia_publicacion,E1|E2|E3,niveles separados por |,SUPUESTO_MODELO,,EVIDENCIA,SUP-190,SUPUESTO,"UMBRAL_EVIDENCIA_PUBLICACION: default conservador (SUP-190). Se cambia aquí, sin tocar código, cuando se decida DEC-084. E4 [PVDP] no pasa este default"
+IN-102,EVIDENCIA,METODOLOGIA,convencion_descuento,MENSUAL,MENSUAL | PERIODO_REPORTE,SUPUESTO_MODELO,,EVIDENCIA,SUP-192,SUPUESTO,Cada flujo mensual se descuenta en su mes con (1 + r)^(1/12) − 1; PERIODO_REPORTE descuenta flujos agregados al fin de cada período (SUP-192)
+IN-103,EVIDENCIA,METODOLOGIA,tipo_tasa_descuento,EFECTIVA_ANUAL,EFECTIVA_ANUAL | NOMINAL_ANUAL_CAP_MENSUAL,SUPUESTO_MODELO,,EVIDENCIA,SUP-192,SUPUESTO,La TASA_DESCUENTO (aún PENDIENTE) se interpreta como anual efectiva salvo declaración expresa (SUP-192)
+IN-104,EVIDENCIA,IMPUESTOS,impuestos.iibb_aplica_domestico,,TRUE | FALSE,PENDIENTE,,EVIDENCIA,,PENDIENTE,IIBB_APLICA_DOMESTICO: regla de la base del IIBB para ventas domésticas por jurisdicción (DPV-043). Con pct_iibb > 0 y regla vacía: NO_CALCULABLE_REGLA_FISCAL_PENDIENTE (TF-005). No se asume alcanzada ni exenta
+IN-105,EVIDENCIA,IMPUESTOS,impuestos.iibb_aplica_exportacion,,TRUE | FALSE,PENDIENTE,,EVIDENCIA,,PENDIENTE,"IIBB_APLICA_EXPORTACION: regla de la base del IIBB para ventas de exportación (DPV-043, DPV-169). Con pct_iibb > 0, ventas de exportación y regla vacía: NO_CALCULABLE_REGLA_FISCAL_PENDIENTE (TF-005). No se asume alcanzada ni exenta"

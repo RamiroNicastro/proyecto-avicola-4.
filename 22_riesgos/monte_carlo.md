@@ -6,12 +6,12 @@
 
 Cada variable declara `DISTRIBUCION`, `PARAMETROS` (en la unidad del shock), `FUENTE` y `ESTADO` (PENDIENTE / RESPALDADA / ARTIFICIAL). Tipos: triangular, normal truncada, uniforme, lognormal, discreta, determinista, empírica. Muestreo por **inversa de la CDF**; con correlaciones declaradas, **cópula gaussiana** (Cholesky; matriz no definida positiva → error).
 
-- **Proyecto:** exige todas las distribuciones usadas RESPALDADAS → hoy `NO_DISPONIBLE_POR_FALTA_DE_DISTRIBUCIONES` (14 variables declaradas sin distribución; DPV-20-05). En el universo EVIDENCIA, además, no se perturba la evidencia.
+- **Proyecto:** exige todas las distribuciones usadas RESPALDADAS → hoy `NO_DISPONIBLE_POR_FALTA_DE_DISTRIBUCIONES` (14 variables declaradas sin distribución; DPV-180). En el universo EVIDENCIA, además, no se perturba la evidencia.
 - **Caso artificial:** ejecutable con distribuciones ARTIFICIALES (solo permitidas en `ARTIFICIAL_TEST`; fuera de él → error).
 
 ## 2. Correlaciones
 
-- 9 pares con relación evidente (pollo/alimento, maíz/soja, FX/precio, FX/alimento, demanda/precio, utilización/eficiencia, inflación–FX/salarios y tarifas, alimento/FCR) con **`CORRELACION = PENDIENTE`** (coeficiente vacío, ESTADO PENDIENTE; DPV-20-06). Pendiente **no** es 0.
+- 9 pares con relación evidente (pollo/alimento, maíz/soja, FX/precio, FX/alimento, demanda/precio, utilización/eficiencia, inflación–FX/salarios y tarifas, alimento/FCR) con **`CORRELACION = PENDIENTE`** (coeficiente vacío, ESTADO PENDIENTE; DPV-180). Pendiente **no** es 0.
 - Si un par pendiente afecta variables muestreadas, la corrida **no se ejecuta** (`NO_EJECUTADO_CORRELACION_PENDIENTE`), salvo que el usuario declare `montecarlo.supuesto_independencia = TRUE` en un escenario hipotético: entonces se rotula **`SUPUESTO_INDEPENDENCIA_ESCENARIO`** con los pares.
 - Un 0 explícito es una declaración (el caso artificial declara demanda–precio = 0 como `ARTIFICIAL`) y se informa en `CORRELACIONES_DECLARADAS`.
 - Tests RIE-04, MC-05; mutación R26.

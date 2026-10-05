@@ -4,7 +4,7 @@
 
 ## 1. Campos
 
-34 riesgos (comerciales, operativos, costos, inversión, financieros, estratégicos) con: `ID_RIESGO`, `CATEGORIA`, `RIESGO`, `DRIVER_AFECTADO` (variables del registro de variables), `PROBABILIDAD`, `METODO_PROBABILIDAD`, `FRECUENCIA_SECTORIAL_REFERENCIA`, `UNIDAD_FRECUENCIA`, `PERIODO_REFERENCIA`, `FUENTE`, `IMPACTO`, `VELOCIDAD`, `CONTROLABILIDAD`, `DETECTABILIDAD`, `INTERDEPENDENCIAS`, `MITIGACION`, `ESTADO_MITIGACION`, `PROBABILIDAD_RESIDUAL`, `IMPACTO_RESIDUAL`, `INDICADOR_ALERTA`, `UMBRAL_ALERTA` (UAD, DEC-20-04), `EVIDENCIA`, `ESTADO`, `OBSERVACIONES`.
+34 riesgos (comerciales, operativos, costos, inversión, financieros, estratégicos) con: `ID_RIESGO`, `CATEGORIA`, `RIESGO`, `DRIVER_AFECTADO` (variables del registro de variables), `PROBABILIDAD`, `METODO_PROBABILIDAD`, `FRECUENCIA_SECTORIAL_REFERENCIA`, `UNIDAD_FRECUENCIA`, `PERIODO_REFERENCIA`, `FUENTE`, `IMPACTO`, `VELOCIDAD`, `CONTROLABILIDAD`, `DETECTABILIDAD`, `INTERDEPENDENCIAS`, `MITIGACION`, `ESTADO_MITIGACION`, `PROBABILIDAD_RESIDUAL`, `IMPACTO_RESIDUAL`, `INDICADOR_ALERTA`, `UMBRAL_ALERTA` (UAD, DEC-100), `EVIDENCIA`, `ESTADO`, `OBSERVACIONES`.
 
 ## 2. Frecuencia sectorial ≠ probabilidad del proyecto
 
@@ -16,8 +16,8 @@
 ## 3. Escala cualitativa
 
 - BAJA / MEDIA / ALTA / PENDIENTE son **etiquetas**. No se mapean a 1/2/3 ni a probabilidades (`PROB_NUMERICA` siempre vacío; test RIE-01, AUD-07; mutación R18).
-- **Impacto:** clasificación de 01 §11 cuando existe; en el resto, `[ESTIMACIÓN]` cualitativa según el bloque del motor que el driver bloquea o mueve. VELOCIDAD, CONTROLABILIDAD y DETECTABILIDAD son estimaciones cualitativas revisables (SUP-20-18).
-- **Matriz:** celda `P×I` y clase por tabla 3×3 de etiquetas (BAJO / MODERADO / ALTO / CRÍTICO; SUP-20-14), sin producto numérico. Con probabilidad PENDIENTE la clase es PENDIENTE (hoy, los 34). `IMPACTO_USD` y `EXPOSICION_USD` vacíos: cuantificación futura con distribución respaldada.
+- **Impacto:** clasificación de 01 §11 cuando existe; en el resto, `[ESTIMACIÓN]` cualitativa según el bloque del motor que el driver bloquea o mueve. VELOCIDAD, CONTROLABILIDAD y DETECTABILIDAD son estimaciones cualitativas revisables (SUP-229).
+- **Matriz:** celda `P×I` y clase por tabla 3×3 de etiquetas (BAJO / MODERADO / ALTO / CRÍTICO; SUP-225), sin producto numérico. Con probabilidad PENDIENTE la clase es PENDIENTE (hoy, los 34). `IMPACTO_USD` y `EXPOSICION_USD` vacíos: cuantificación futura con distribución respaldada.
 
 ## 4. Inherente vs residual
 

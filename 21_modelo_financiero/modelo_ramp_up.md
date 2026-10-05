@@ -9,11 +9,11 @@
 | T0 | instante 0 | Solo desembolsos (CAPEX, aportes, deuda) |
 | PREOPERACION | `meses_preoperacion` | CAPEX según curva; sin operación |
 | CONSTRUCCION | `meses_construccion` | CAPEX según curva; intereses de deuda si la hay |
-| COMMISSIONING | `meses_commissioning` | CAPEX (los preoperativos PRE-* de 19_capex viven en CAPEX); **OPEX = 0** para no duplicarlos (SUP-19-10) |
+| COMMISSIONING | `meses_commissioning` | CAPEX (los preoperativos PRE-* de 19_capex viven en CAPEX); **OPEX = 0** para no duplicarlos (SUP-181) |
 | RAMP_UP | desde el mes `inicio_op` hasta el último mes de la curva | Utilización técnica creciente; ineficiencias de arranque |
 | OPERACION_MADURA | después | Rige el último valor de la curva |
 
-`inicio_op = preoperación + construcción + commissioning + 1`. Las duraciones son **inputs** (hoy PENDIENTES: DPV-086 ampliado como DPV-19-03). El CAPEX no ocurre todo en T0: la **CURVA_DE_DESEMBOLSO_CAPEX** reparte el monto de cada etapa en meses relativos a su entrada en operación (`[[−12, 0,1], [−8, 0,5], [−3, 0,4]]`; test N18). Hoy está PENDIENTE (cronograma de obra, anticipos y plazos de entrega: DPV-086, DPV-167, DPV-19-01).
+`inicio_op = preoperación + construcción + commissioning + 1`. Las duraciones son **inputs** (hoy PENDIENTES: DPV-086 ampliado como DPV-086). El CAPEX no ocurre todo en T0: la **CURVA_DE_DESEMBOLSO_CAPEX** reparte el monto de cada etapa en meses relativos a su entrada en operación (`[[−12, 0,1], [−8, 0,5], [−3, 0,4]]`; test N18). Hoy está PENDIENTE (cronograma de obra, anticipos y plazos de entrega: DPV-086, DPV-167).
 
 ## 2. Tres utilizaciones (más una cuarta para decidir)
 
@@ -32,13 +32,13 @@ Formato (`curvas_rampup.csv` o JSON): `MES` (desde la entrada de la etapa, escal
 
 | Curva (plantilla) | Utilización técnica (mes: valor) | Merma / eficiencia / extras | Origen |
 |---|---|---|---|
-| CONSERVADOR | 1: 0,25 · 3: 0,40 · 6: 0,55 · 9: 0,65 · 12: 0,75 · 18: 0,85 · 24: 1,0 | PENDIENTES | SUP-19-09: **ilustrativa, sin fuente** |
-| BASE | 1: 0,35 · 3: 0,55 · 6: 0,70 · 9: 0,80 · 12: 0,90 · 18: 1,0 | PENDIENTES | SUP-19-09 |
-| RAPIDO | 1: 0,50 · 2: 0,70 · 4: 0,85 · 6: 0,95 · 9: 1,0 | PENDIENTES | SUP-19-09 |
+| CONSERVADOR | 1: 0,25 · 3: 0,40 · 6: 0,55 · 9: 0,65 · 12: 0,75 · 18: 0,85 · 24: 1,0 | PENDIENTES | SUP-196: **ilustrativa, sin fuente** |
+| BASE | 1: 0,35 · 3: 0,55 · 6: 0,70 · 9: 0,80 · 12: 0,90 · 18: 1,0 | PENDIENTES | SUP-196 |
+| RAPIDO | 1: 0,50 · 2: 0,70 · 4: 0,85 · 6: 0,95 · 9: 1,0 | PENDIENTES | SUP-196 |
 
 - Son **plantillas**, no la curva del proyecto (DEC-090 abierta). En modo evidencia no se usa ninguna.
 - El 1,0 final es la capacidad **operativa** (definición de 23), no implica vender: la utilización efectiva la limita la demanda.
-- Sin merma, eficiencia y extras declarados, el bloque RAMPUP queda incompleto. El usuario puede declararlos (`rampup_ineficiencias`) y quedan trazados como escenario (DPV-19-07).
+- Sin merma, eficiencia y extras declarados, el bloque RAMPUP queda incompleto. El usuario puede declararlos (`rampup_ineficiencias`) y quedan trazados como escenario (DPV-088).
 - Stress `rampup_lento_factor` estira la curva en el tiempo (test N19).
 
 ## 4. Qué afecta el ramp-up

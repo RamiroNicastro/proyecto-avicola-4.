@@ -64,6 +64,9 @@ NINGUNA = "NINGUNA_CONFIGURACION_FACTIBLE"
 SQ = mr.STATUS_QUO
 ASSET_LIGHT = "OPERAR_ASSET_LIGHT"
 NO_ROB = "DECISION_NO_ROBUSTA"
+# Columna futura de prioridad (auditoría final 21): cuánto puede cambiar la decisión obtener el dato. En el universo
+# EVIDENCIA no puede calcularse (no hay escenario que perturbar): queda NO_CALCULADO, nunca 0 ni un orden inventado.
+POTENCIAL_NO_CALC = "NO_CALCULADO"
 
 
 # ---------------------------------------------------------------------------------------------
@@ -104,7 +107,7 @@ def espacio_decisiones(inp):
     """Enumera TODAS las combinaciones de atributos y las clasifica (nada se descarta en silencio):
       FISICAMENTE_INVALIDA                            validar_config() de 19 la rechaza (motivo informado)
       FISICAMENTE_POSIBLE_NO_MODELADA_ECONOMICAMENTE  CAPEX la acepta, pero no existe en el mapa: no se le inventa
-                                                      CAPEX/OPEX y no se evalúa (DPV-20-03)
+                                                      CAPEX/OPEX y no se evalúa (DEC-103)
       HABILITADA_EN_MAPA_PARA_EVALUACION              coincide con configuraciones del mapa → genera alternativas económicas
     Las alternativas económicas = Σ sobre las filas del mapa de n_alternativas_mapa() (+ NO_INVERTIR_AUN)."""
     mapa = {}
@@ -130,7 +133,7 @@ def espacio_decisiones(inp):
             clase = CLASES_ESPACIO[2] if en else CLASES_ESPACIO[1]
             motivo = ("configuraciones del mapa: " + ", ".join(x for x, _ in en)) if en else (
                 "físicamente posible para CAPEX, pero no está en el mapa de arquitecturas: no hay CAPEX/OPEX modelado "
-                "(no se inventa) y no se evalúa; requiere ampliar el mapa (DPV-20-03)")
+                "(no se inventa) y no se evalúa; requiere ampliar el mapa (DEC-103)")
         except mcx.ErrorCapex as e:
             clase, motivo = CLASES_ESPACIO[0], str(e)
         filas.append({"ID_COMBINACION": f"COMB-{len(filas) + 1:04d}", **{k.upper(): v for k, v in d.items()},
@@ -350,8 +353,9 @@ _COB = {}
 
 
 def cobertura_evidencia(alt):
-    """Fracción de bloques del motor completos EN MODO EVIDENCIA para la misma configuración y escala(s).
-    No es una probabilidad: mide cuánto del resultado descansa en evidencia dentro del umbral (E1–E3 por defecto)."""
+    """Fracción de bloques APLICABLES del motor con evidencia presente EN MODO EVIDENCIA (misma configuración y
+    escala): CON_EVIDENCIA ÷ (bloques − NO_APLICA). Un bloque VACIO (sin faltantes pero sin contenido) o PENDIENTE no
+    suma (auditoría final 21, TF-011). No es una probabilidad: mide cuánto descansa en evidencia dentro del umbral."""
     if alt["tipo"] == SQ:
         return None, "NO_APLICA (status quo)"
     if alt["universo"] == "ARTIFICIAL_TEST":
@@ -361,9 +365,11 @@ def cobertura_evidencia(alt):
         var = None if alt["variante"] == "BASE" else alt["variante"]
         with redirect_stdout(io.StringIO()):
             P, _ = mf.construir_entrada("COB", alt["configuracion"], alt["escalas"], "EVIDENCIA", None, None, var)
-        F = mf.disponibilidad(P)
-        sin = [b for b, v in F.items() if v]
-        _COB[key] = ((len(F) - len(sin)) / len(F), "bloques sin evidencia: " + ", ".join(sin) if sin else "todos los bloques con evidencia")
+        est = mf.estado_bloques(P)                 # TF-011: VACIO y PENDIENTE no suman; NO_APLICA sale del denominador
+        cob = mf.cobertura_bloques(est)
+        por = {e: [b for b, x in est.items() if x == e] for e in mf.ESTADOS_BLOQUE}
+        nota = "; ".join(f"{e} ({len(v)}): {', '.join(v)}" for e, v in por.items() if v)
+        _COB[key] = (cob if cob is not None else 0.0, nota)
     return _COB[key]
 
 
@@ -453,7 +459,8 @@ def firma_comparabilidad(E, alt):
             "BASE_TASA": P["base_tasa"], "CONVENCION": P["convencion_descuento"], "TIPO_TASA": P["tipo_tasa_descuento"],
             "TASA": P["tasa_descuento"], "MONEDA": mf.MONEDA, "BASE_FLUJO": None,
             "PRODUCTO": (P.get("meta_productos") or {}).get("config_producto", "DECLARADO_EN_CASO"),
-            "FISCAL": "AFTER_TAX" if P["impuestos"].get("tasa_ganancias") is not None else "PRE_TAX"}
+            "FISCAL": "AFTER_TAX" if P["impuestos"].get("tasa_ganancias") is not None else "PRE_TAX",
+            "OVERRIDE_TOTAL": bool(P.get("override_total"))}
 
 
 def comparabilidad(fa, ref, cob_max=None):
@@ -468,7 +475,8 @@ def comparabilidad(fa, ref, cob_max=None):
     if ref is None:
         return "FALSE", "sin referencia comparable"
     mot = [f"{k} {fs[k]!r} ≠ {ref[k]!r}" for k in ("UNIVERSO", "HORIZONTE", "MODELO_MONETARIO", "BASE_TASA", "CONVENCION",
-                                                     "TIPO_TASA", "TASA", "MONEDA", "BASE_FLUJO", "PRODUCTO", "FISCAL")
+                                                     "TIPO_TASA", "TASA", "MONEDA", "BASE_FLUJO", "PRODUCTO", "FISCAL",
+                                                     "OVERRIDE_TOTAL")
            if fs.get(k) != ref.get(k)]
     if mot:
         return "FALSE", "; ".join(mot)
@@ -725,7 +733,7 @@ def pesos_balanceado(inp):
     w = {c: x for c, x in w.items() if x}
     origen = "USUARIO"
     if not w and inp.get("balanceado.preset") == "IGUALES":
-        w, origen = {c: 1.0 for c in COMP_BAL}, "PRESET_IGUALES [SUPUESTO] SUP-20-08"
+        w, origen = {c: 1.0 for c in COMP_BAL}, "PRESET_IGUALES [SUPUESTO] SUP-219"
     if not w:
         return None, "PESOS_NO_DEFINIDOS"
     s = sum(w.values())
@@ -1258,6 +1266,7 @@ def prioridad_evidencia(E, fichas):
                       "N_ALTERNATIVAS_BLOQUEADAS": len(a["ALTS"]), "N_ALTERNATIVAS": n_alt,
                       "REGISTROS_EN_FALTANTE": ", ".join(sorted(a["REFS"])), "ACCION": acc, "DPV_VINCULADOS": dpv,
                       "DPV_EXISTEN": existe, "NUEVA": nueva, "_orden": orden,
+                      "POTENCIAL_DE_CAMBIAR_DECISION": POTENCIAL_NO_CALC,
                       "METODO": "faltantes de disponibilidad() del motor × DEPENDENCIAS_FLAG; gates físicos pendientes"})
     asignar_rank_compartido(filas, lambda r: (r["INDICADORES_BLOQUEADOS"], r["N_ALTERNATIVAS_BLOQUEADAS"]),
                             "indicadores bloqueados y alternativas bloqueadas")
@@ -1323,6 +1332,7 @@ def prioridad_escenario(oneway, dec_van, fichas):
                       "BLOQUE": mr.VARIABLES[var]["BLOQUE_MOTOR"], "SWING_VAN_MEJOR": sw,
                       "PUEDE_CAMBIAR_DECISION": "SÍ" if flip else "NO", "COMO_CAMBIA": " | ".join(flip[:3]),
                       "CERCANIA_ALTERNATIVAS": (gap / sw) if sw > 0 else None, "ACCION": acc, "DPV_VINCULADOS": dpv,
+                      "POTENCIAL_DE_CAMBIAR_DECISION": ("SÍ" if flip else "NO") + " (one-way dentro del escenario; no es VOI)",
                       "DPV_EXISTEN": existe, "NUEVA": nueva,
                       "METODO": "sensibilidad one-way de la mejor y la segunda (MAX_VAN); sin distribuciones: no es VOI bayesiano"})
     asignar_rank_compartido(filas, lambda r: (r["PUEDE_CAMBIAR_DECISION"] == "SÍ", round(r["SWING_VAN_MEJOR"], 6)),
@@ -1345,6 +1355,7 @@ def que_hacer_ahora(prio_ev, prio_esc, n=10):
             out.append({"RANK_COMPARTIDO": r["RANK_COMPARTIDO"], "EMPATE": r.get("EMPATE", ""), "QUE_HACER_AHORA": r["ACCION"],
                         "ITEM": r["ITEM"], "DPV_VINCULADOS": r["DPV_VINCULADOS"],
                         "DPV_EXISTEN": r["DPV_EXISTEN"], "NUEVA": r["NUEVA"], "ORIGEN_RANKING": origen,
+                        "POTENCIAL_DE_CAMBIAR_DECISION": r.get("POTENCIAL_DE_CAMBIAR_DECISION", POTENCIAL_NO_CALC),
                         "RAZON": (f"bloquea {r['INDICADORES_BLOQUEADOS']} indicadores en {r['N_ALTERNATIVAS_BLOQUEADAS']}/{r['N_ALTERNATIVAS']} alternativas"
                                   if "INDICADORES_BLOQUEADOS" in r else
                                   f"amplitud VAN {r['SWING_VAN_MEJOR']:,.0f}; puede cambiar la decisión: {r['PUEDE_CAMBIAR_DECISION']}"),

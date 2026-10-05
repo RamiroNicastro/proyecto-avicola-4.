@@ -4,7 +4,7 @@
 
 ## 1. Método: margen de contribución del año maduro
 
-Sobre el **último año del horizonte** (año maduro), con el **mismo mix y los mismos precios** de la corrida (SUP-19-20):
+Sobre el **último año del horizonte** (año maduro), con el **mismo mix y los mismos precios** de la corrida (SUP-206):
 
 ```
 Ingreso neto (∝ precio)              R

@@ -21,6 +21,8 @@
     "impuestos.otros_impuestos_usd_anio": null,
     "impuestos.tasa_ganancias": null,
     "impuestos.anios_quebranto": null,
+    "impuestos.iibb_aplica_domestico": null,
+    "impuestos.iibb_aplica_exportacion": null,
     "iva.modo": null,
     "iva.alicuota_ventas": null,
     "iva.alicuota_compras": null,
@@ -56,8 +58,11 @@
     "supermercados": {"dias_cobro": null, "pct_descuentos": null, "pct_bonificaciones": null, "pct_devoluciones": null,
                       "pct_comisiones": null, "costo_logistico_usd_kg": null}
   },
+  "OVERRIDE_TOTAL_ARQUITECTURA": false,
+  "_OVERRIDE_TOTAL_ARQUITECTURA": "Solo con true se aceptan CAPEX/OPEX del usuario sin verificar contra la arquitectura; la corrida queda SIMULACION_HIPOTETICA_OVERRIDE_TOTAL con trazabilidad parcial (TF-004)",
   "etapas": [
-    {"capex_usd": null, "curva_desembolso": null, "_curva_desembolso": "[[offset_mes_respecto_de_la_entrada, fraccion], ...] que suma 1; offset negativo = antes del inicio de operación",
+    {"capex_usd": null, "capex_meta": null, "_capex_meta": "obligatorio si se carga capex_usd o activos: {\"CONFIGURACION\": \"C1\", \"ESCALA\": 10000, \"VARIANTE\": \"BASE\" o la referencia de la variante, \"MODULO\": \"TOTAL_ETAPA\" o un módulo de CAPEX de la arquitectura, \"UNIVERSO\": \"FAENA_PROPIA\"..., \"ORIGEN\": \"COTIZACION|ESCENARIO_USUARIO|...\"}; cada rubro de opex_rubros lleva \"meta\" con los mismos campos y MODULO = módulo OPEX de la arquitectura (p. ej. FAENA_PROPIA, ALIMENTO_COMPRADO); un override incompatible → OVERRIDE_INCOMPATIBLE_CON_ARQUITECTURA",
+     "iva_capex": null, "_iva_capex": "crédito fiscal del IVA de CAPEX solo con {\"base\": \"NETA\", \"iva_estado\": \"DECLARADO\", \"tasa\": x, \"condicion_fiscal\": \"...\", \"elegible_credito\": true, \"criterio\": \"...\"}; si no, CREDITO_FISCAL_IVA_CAPEX = PENDIENTE (TF-076)", "curva_desembolso": null, "_curva_desembolso": "[[offset_mes_respecto_de_la_entrada, fraccion], ...] que suma 1; offset negativo = antes del inicio de operación",
      "opex_rubros": null, "activos": null,
      "entrada": null, "_entrada": "solo expansiones: {\"tipo\": \"FECHA\", \"mes\": n} o {\"tipo\": \"CONDICION\", \"condiciones\": {\"utilizacion_min\": x}, \"meses_consecutivos\": n, \"meses_obra\": n}"}
   ],

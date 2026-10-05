@@ -16,7 +16,7 @@ Un motor mensual que conecta demanda → utilización → producción → ventas
 ## 3. Qué todavía es simulación (o ni siquiera eso)
 
 - **Todo** número de rentabilidad del proyecto: hoy ni siquiera hay simulación de proyecto, porque las plantillas no tienen precios, mix, cronograma ni impuestos (no se inventan).
-- Las curvas de ramp-up CONSERVADOR / BASE / RÁPIDO (SUP-19-09): ilustrativas, sin fuente.
+- Las curvas de ramp-up CONSERVADOR / BASE / RÁPIDO (SUP-196): ilustrativas, sin fuente.
 - Los escenarios de demanda de 02 (incluidos los ~90 supermercados): supuestos de prueba, no demanda.
 - Los montos E4 parciales de CAPEX (p. ej. USD 5,66 M de galpones en C3) y de OPEX (pollito, maíz): no son totales ni comparables.
 
@@ -24,13 +24,13 @@ Un motor mensual que conecta demanda → utilización → producción → ventas
 
 1. **No hay un solo bloque completo en ninguna configuración**: ingresos y costos están a la vez sin datos. El cuello de botella es comercial (precios y demanda), no de modelado.
 2. **El capital necesario no es el CAPEX**: con ramp-up y cobro a plazo, el pico de fondos supera al CAPEX inicial (casos de prueba CP-SIN-RECUPERO y CP-COBRO-30D). USD 2 M no puede compararse con nada todavía.
-3. **El modo evidencia exige hoy rendimientos validados en planta** (DPV-060): aunque hubiera precios, los ingresos seguirían sin publicarse en ese modo hasta el ensayo o hasta que se decida aceptar el balance 04 como metodología (DEC-19-01).
+3. **El modo evidencia exige hoy rendimientos validados en planta** (DPV-060): aunque hubiera precios, los ingresos seguirían sin publicarse en ese modo hasta el ensayo o hasta que se decida aceptar el balance 04 como metodología (DEC-084).
 4. **C0 no puede tener ingresos de subproductos** hasta conocer el contrato de façon; **C0 tampoco tiene propiedad definida** del alimento y materias primas (DEC-024), por lo que su CT es incompleto por diseño.
 5. **Crecer por fases** cambia el CAPEX por etapa (72–75 conceptos sin costo por etapa en C1) y requiere la prima de ampliación y el valor residual de lo reemplazado: sin eso, cualquier comparación entre trayectorias sería artificial.
 
 ## 5. Próximos pasos (sin decidir nada)
 
 1. Reconciliación de esta sesión ([`actualizaciones_gestion_19.md`](actualizaciones_gestion_19.md)).
-2. Decidir el umbral de publicación (DEC-084 / DEC-19-01), horizonte y tasa (DEC-007), valor terminal (DEC-19-03).
+2. Decidir el umbral de publicación (DEC-084), horizonte y tasa (DEC-007), valor terminal (DEC-093).
 3. Trabajo de campo comercial y de costos según [`evidencia_financiera.md`](evidencia_financiera.md) §5.
 4. Recién con datos: escenarios del promotor, stress, comparación de trayectorias; después Monte Carlo y optimización (fuera de esta sesión).

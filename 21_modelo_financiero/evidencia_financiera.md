@@ -13,13 +13,13 @@
 | DEMANDA | PENDIENTE | PARCIAL (referencia de 02 sin mix) | Volumen A/B cuantificado por producto y canal | DPV-002, DPV-004, DPV-020, DPV-037, DPV-040 |
 | PRODUCCION | PARCIAL | PARCIAL | Rendimientos 04 sin ensayo en planta; curva de ramp-up; horizonte y fases | DPV-060, DEC-028, DEC-090, DPV-086, DEC-007 |
 | PRECIOS | PENDIENTE | PENDIENTE | 42 combinaciones producto × canal × mercado vacías; 2 referencias E4 no usables | DPV-013, DPV-039, DPV-070, DPV-026 |
-| INGRESOS | PARCIAL | PARCIAL | Lo anterior + condiciones comerciales por canal | DPV-039, DPV-19-02 |
+| INGRESOS | PARCIAL | PARCIAL | Lo anterior + condiciones comerciales por canal | DPV-039, DPV-040 |
 | OPEX | PARCIAL | PARCIAL | Ninguna arquitectura costeable; costeo por bloques 0–10 % | T18-02, DPV-047, 050, 052, 148, 157, 170–177 |
-| CAPEX | PARCIAL | PARCIAL | Sin total (cobertura 0–2,3 %); sin curva de desembolso; vidas útiles vacías | T18-01, DPV-160–169, DPV-086, DPV-19-01 |
+| CAPEX | PARCIAL | PARCIAL | Sin total (cobertura 0–2,3 %); sin curva de desembolso; vidas útiles vacías | T18-01, DPV-160–169, DPV-086, DPV-167 |
 | CT | PARCIAL | PARCIAL | Días de stock, cobro y pago; propiedad PENDIENTE en C0 | DPV-175, DEC-089, DEC-091, DEC-024 |
-| IMPUESTOS | PENDIENTE | PENDIENTE | IIBB, tasas, ganancias, quebrantos, IVA | DPV-043, DPV-169, DPV-19-06 |
-| FINANCIACION | PENDIENTE | PENDIENTE | Estructura (equity / deuda / mixto) | DEC-092, DPV-19-05 |
-| DESCUENTO | PENDIENTE | PENDIENTE | Tasa de descuento | DEC-007, DPV-001, DPV-19-04 |
+| IMPUESTOS | PENDIENTE | PENDIENTE | IIBB, tasas, ganancias, quebrantos, IVA | DPV-043, DPV-169 |
+| FINANCIACION | PENDIENTE | PENDIENTE | Estructura (equity / deuda / mixto) | DEC-092, DPV-178 |
+| DESCUENTO | PENDIENTE | PENDIENTE | Tasa de descuento | DEC-007, DPV-001 |
 | EXPORTACION | NO_APLICA | NO_APLICA | Base sin exportación (SUP-022) | — |
 
 PARCIAL nunca habilita un resultado: indica que existe estructura o datos parciales.
@@ -37,7 +37,7 @@ Reflejan **qué concepto tiene precio**, no el costo de cada opción (T18-14): n
 
 ## 4. Qué puede usarse hoy para decidir
 
-**Umbral usado:** `UMBRAL_EVIDENCIA_PUBLICACION = E1|E2|E3` (default conservador configurable en `inputs_financieros.csv`; DEC-19-01 abierta; columna `UMBRAL_EVIDENCIA` de cada corrida). Con cualquier umbral razonable el resultado no cambia hoy: no existen precios ni totales de CAPEX/OPEX, y los únicos montos son E4 parciales.
+**Umbral usado:** `UMBRAL_EVIDENCIA_PUBLICACION = E1|E2|E3` (default conservador configurable en `inputs_financieros.csv`; DEC-084 abierta; columna `UMBRAL_EVIDENCIA` de cada corrida). Con cualquier umbral razonable el resultado no cambia hoy: no existen precios ni totales de CAPEX/OPEX, y los únicos montos son E4 parciales.
 
 | Sí (como herramienta) | No (todavía) |
 |---|---|
@@ -48,11 +48,11 @@ Reflejan **qué concepto tiene precio**, no el costo de cada opción (T18-14): n
 
 ## 5. Datos que desbloquean más resultados (orden sugerido)
 
-1. **Precios por producto y canal + condiciones comerciales** (DPV-013, DPV-039, DPV-070, DPV-19-02) → habilita ingresos con un mix.
+1. **Precios por producto y canal + condiciones comerciales** (DPV-013, DPV-039, DPV-070, DPV-040) → habilita ingresos con un mix.
 2. **Mix y volumen de demanda A/B** (DPV-037, DPV-020, DPV-002) → habilita ventas en modo evidencia.
 3. **OPEX costeable** de al menos una arquitectura (alimento, pollito, salarios, utilities, façon) → habilita EBITDA y break-even.
 4. **CAPEX con cotizaciones + cronograma de desembolso + vidas útiles** (DPV-160–169, DPV-086) → habilita flujo, VAN, TIR, payback.
 5. **Reglas fiscales** (DPV-043, DPV-169) → flujo after-tax.
 6. **Tasa de descuento y horizonte** (DEC-007) → VAN publicable.
-7. **Financiamiento disponible** (DEC-092, DPV-19-05) → flujo del accionista y DSCR.
-8. **Validación de rendimientos en planta** (DPV-060) y decisión de umbral (DEC-084 / DEC-19-01) → modo evidencia completo.
+7. **Financiamiento disponible** (DEC-092, DPV-178) → flujo del accionista y DSCR.
+8. **Validación de rendimientos en planta** (DPV-060) y decisión de umbral (DEC-084) → modo evidencia completo.

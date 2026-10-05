@@ -1,0 +1,32 @@
+SUITE,MODULO,COMANDO,TESTS,MUTACIONES,RESULTADO,OBSERVACIONES
+03,Producción primaria,python3 03_produccion_primaria/modelo_escenarios_produccion.py,10/10,,OK,10 chequeos sobre 72–216 casos; regenera escenarios_produccion.csv (idéntico)
+04,Balance de masa,python3 04_balance_masa/modelo_balance_masa.py --solo-tests,21/21,,OK,
+07,Productos y subproductos,python3 07_subproductos/modelo_subproductos.py --solo-tests,9/9,,OK,
+23,Escala,python3 23_plan_expansion/modelo_escala.py --solo-tests,23/23,,OK,
+23m,Escala,python3 23_plan_expansion/modelo_escala.py --mutaciones,,22/22,OK,
+05,Proceso industrial,python3 05_proceso_industrial/modelo_capacidad_proceso.py --solo-tests,18/18,,OK,
+05m,Proceso industrial,python3 05_proceso_industrial/modelo_capacidad_proceso.py --mutaciones,,9/9,OK,
+11,"Agua, efluentes, energía y frío",python3 11_agua_efluentes/modelo_utilities.py --solo-tests,30/30,,OK,un mismo modelo cubre 11 y 12
+11m,"Agua, efluentes, energía y frío",python3 11_agua_efluentes/modelo_utilities.py --mutaciones,,20/20,OK,
+10,Localización,python3 10_localizacion/modelo_localizacion.py --solo-tests,28/28,,OK,
+13,Logística,python3 13_logistica/modelo_logistica.py --solo-tests,28/28,,OK,
+09,Layout y obra civil,python3 09_layout_obra_civil/modelo_superficies.py --solo-tests,22/22,,OK,
+09m,Layout y obra civil,python3 09_layout_obra_civil/modelo_superficies.py --mutaciones,,7/7,OK,
+18,Recursos humanos,python3 18_recursos_humanos/modelo_rrhh.py --solo-tests,24/24,,OK,
+18m,Recursos humanos,python3 18_recursos_humanos/modelo_rrhh.py --mutaciones,,13/13,OK,
+14,"Upstream (incubación, alimento, integración)",python3 14_alimento_balanceado/modelo_upstream.py,21/21,,OK,regenera su CSV (idéntico) y prueba; un modelo cubre 14 y 15
+19,CAPEX,python3 19_capex/modelo_capex.py --solo-tests,82/82,,OK,
+19m,CAPEX,python3 19_capex/modelo_capex.py --mutaciones,,10/10,OK,
+20,OPEX y capital de trabajo,python3 20_opex/modelo_opex.py --solo-tests,78/78,,OK,
+20m,OPEX y capital de trabajo,python3 20_opex/modelo_opex.py --mutaciones,,14/14,OK,
+21,Modelo financiero,python3 21_modelo_financiero/modelo_financiero.py --solo-tests,70/70,,OK,
+21m,Modelo financiero,python3 21_modelo_financiero/modelo_financiero.py --mutaciones,,25/25,OK,
+22,Riesgo y optimizador,python3 22_riesgos/modelo_optimizador.py --solo-tests,69/69,,OK,
+22m,Riesgo y optimizador,python3 22_riesgos/modelo_optimizador.py --mutaciones,,27/27,OK,escribe 22_riesgos/cobertura_mutaciones.csv
+sim,Simulador HTML v0.1,node validar_simulador.js,20/20,,OK,se corre desde 23_plan_expansion/simulador_html
+INT,Integración final del motor,python3 00_gestion_proyecto/tests_integracion_motor.py,70/70,,OK,tests de integración final (sesión 21)
+INTm,Integración final del motor,(incluida en INT),,15/15,OK,mutaciones de integración (misma corrida que INT)
+08,Maquinaria conceptual,—,,,NO_APLICA,sin suite propia: catálogo consumido y probado por 19 (CAPEX)
+16,Normativa,—,,,NO_APLICA,"documental, sin modelo"
+01/17,Mercado y exportación,—,,,NO_APLICA,"documentales, sin modelo (exportación = módulo futuro de mercado)"
+02,Demanda,—,,,NO_APLICA,"escenarios en CSV; probados por 21 (E08, F02, F10) e integración (DM01–DM03)"

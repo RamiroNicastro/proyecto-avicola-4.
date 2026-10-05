@@ -4,9 +4,9 @@ RI-002,ESPACIO,espacio.escalas,2500|5000|10000|20000,aves/día operativo,PARAMET
 RI-003,ESPACIO,espacio.trayectorias,T1_2500_5000_10000_20000|T2_5000_10000_20000|T3_10000_20000,—,PARAMETRO_DE_ANALISIS,21 TRAYECTORIAS_FIN,Trayectorias multietapa del motor (misma configuración por etapa: LIMITACION_ACTUAL_EXPANSION)
 RI-004,ESPACIO,espacio.incluir_variantes,TRUE,bool,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,Variantes del mapa a su escala de referencia (10.000)
 RI-005,OBJETIVO,optimizador.objetivos,TODOS,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,TODOS = se rankea por cada objetivo por separado; ninguno se elige como 'el' criterio empresarial
-RI-006,OBJETIVO,optimizador.hard_pendiente_excluye,TRUE,bool,PARAMETRO_DE_ANALISIS,SUP-20-09,Una restricción HARD no evaluable (dato faltante) excluye del ranking (FACTIBILIDAD_PENDIENTE ≠ FACTIBLE)
-RI-007,OBJETIVO,optimizador.exigir_fisico_confirmado,FALSE,bool,PARAMETRO_DE_ANALISIS,SUP-20-09,TRUE = solo rankear alternativas con todos los gates físicos FACTIBLES
-RI-008,CAPITAL,capital.metrica,PICO_FONDOS,PICO_FONDOS | FONDOS_INICIALES,PARAMETRO_DE_ANALISIS,SUP-20-10,Contra qué se compara el CAPITAL_DISPONIBLE: el pico de fondos incluye pérdidas del ramp-up y CT (sesión 19)
+RI-006,OBJETIVO,optimizador.hard_pendiente_excluye,TRUE,bool,PARAMETRO_DE_ANALISIS,SUP-220,Una restricción HARD no evaluable (dato faltante) excluye del ranking (FACTIBILIDAD_PENDIENTE ≠ FACTIBLE)
+RI-007,OBJETIVO,optimizador.exigir_fisico_confirmado,FALSE,bool,PARAMETRO_DE_ANALISIS,SUP-220,TRUE = solo rankear alternativas con todos los gates físicos FACTIBLES
+RI-008,CAPITAL,capital.metrica,PICO_FONDOS,PICO_FONDOS | FONDOS_INICIALES,PARAMETRO_DE_ANALISIS,SUP-221,Contra qué se compara el CAPITAL_DISPONIBLE: el pico de fondos incluye pérdidas del ramp-up y CT (sesión 19)
 RI-009,RESTRICCION,restriccion.CAPITAL_DISPONIBLE.valor,,USD,PENDIENTE,,Capital del inversor: NO se asume USD 2 M (SUP-003); vacío = sin restricción
 RI-010,RESTRICCION,restriccion.CAPITAL_DISPONIBLE.tipo,HARD,HARD | SOFT,PARAMETRO_DE_ANALISIS,,HARD elimina; SOFT penaliza el score
 RI-011,RESTRICCION,restriccion.CAPITAL_DISPONIBLE.penalizacion,,puntos de score por unidad de violación relativa,PENDIENTE,,Obligatoria si el tipo es SOFT
@@ -53,8 +53,8 @@ RI-051,RESTRICCION,restriccion.RIESGO.valor,,score 0–1,PENDIENTE,,Opcional; va
 RI-052,RESTRICCION,restriccion.RIESGO.tipo,HARD,HARD | SOFT,PARAMETRO_DE_ANALISIS,,HARD elimina; SOFT penaliza el score
 RI-053,RESTRICCION,restriccion.RIESGO.penalizacion,,puntos de score por unidad de violación relativa,PENDIENTE,,Obligatoria si el tipo es SOFT
 RI-054,SENSIBILIDAD,sensibilidad.shocks_relativos,-0.30|-0.20|-0.10|0|0.10|0.20|0.30,fracción,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,Shocks one-way relativos; no implican probabilidad
-RI-055,SENSIBILIDAD,sensibilidad.shocks_dias,-30|-20|-10|0|10|20|30,días,PARAMETRO_DE_ANALISIS,SUP-20-07,"Shocks absolutos para plazos (cobro, pago); grilla de análisis, no dato"
-RI-056,SENSIBILIDAD,sensibilidad.shocks_meses,-24|-12|0|12|24,meses,PARAMETRO_DE_ANALISIS,SUP-20-07,Shocks absolutos de plazo de deuda
+RI-055,SENSIBILIDAD,sensibilidad.shocks_dias,-30|-20|-10|0|10|20|30,días,PARAMETRO_DE_ANALISIS,SUP-218,"Shocks absolutos para plazos (cobro, pago); grilla de análisis, no dato"
+RI-056,SENSIBILIDAD,sensibilidad.shocks_meses,-24|-12|0|12|24,meses,PARAMETRO_DE_ANALISIS,SUP-218,Shocks absolutos de plazo de deuda
 RI-057,SENSIBILIDAD,sensibilidad.variables,precio_venta|precio_pollo_entero|precio_cortes|precio_menudencias|precio_patas_garras|precio_subproductos|alimento|maiz|soja|pollito|demanda|utilizacion|capex|mortalidad|fcr|fx|electricidad|gas|agua|salarios|packaging|mantenimiento|logistica|facon|dias_cobro|dias_pago|descuentos|devoluciones|tasa_descuento|tasa_deuda|plazo_deuda|tasa_ganancias|iibb|rampup|merma|eficiencia_linea|peso_vivo|rendimiento_faena|condenas|capex_equipos|capex_obra|capex_frio|dias_operativos|recuperacion_iva|mix,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,Las variables DISCRETAS o NO_SOPORTADAS se listan con su estado (no se simulan)
 RI-058,SENSIBILIDAD,tornado.metricas,VAN,VAN | EBITDA | TIR | PAYBACK | PICO_FONDOS | DSCR,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,Métrica(s) del tornado; VAN por defecto
 RI-059,SENSIBILIDAD,sens2d.pares,precio_venta×alimento|demanda×capex|utilizacion×precio_venta|demanda×precio_venta|capex×tasa_descuento,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,Pares de sensibilidad bidimensional
@@ -63,28 +63,28 @@ RI-061,SENSIBILIDAD,umbral.payback_2d,,años,PENDIENTE,,Umbral de payback para z
 RI-062,QUIEBRE,quiebre.variables,precio_venta|alimento|demanda|utilizacion|capex|dias_cobro|tasa_deuda|mortalidad|fcr|tasa_descuento,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,tasa_deuda se evalúa sobre VAN_ACCIONISTA (no afecta el FCFF)
 RI-063,QUIEBRE,quiebre.metrica,VAN,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,
 RI-064,QUIEBRE,quiebre.objetivo,0,USD,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,VAN = 0
-RI-065,QUIEBRE,quiebre.n_grilla,24,puntos,PARAMETRO_DE_ANALISIS,SUP-20-07,Grilla previa a la bisección (más puntos = detecta más cruces)
-RI-066,MONTECARLO,montecarlo.n,1000,simulaciones,PARAMETRO_DE_ANALISIS,SUP-20-07,Solo se usa si todas las distribuciones están RESPALDADAS (hoy: no)
-RI-067,MONTECARLO,montecarlo.semilla,20261005,—,PARAMETRO_DE_ANALISIS,SUP-20-07,Semilla reproducible
-RI-068,MONTECARLO,montecarlo.incluir_tir,FALSE,bool,PARAMETRO_DE_ANALISIS,SUP-20-07,La TIR multiplica ~25× el tiempo de cada corrida
+RI-065,QUIEBRE,quiebre.n_grilla,24,puntos,PARAMETRO_DE_ANALISIS,SUP-218,Grilla previa a la bisección (más puntos = detecta más cruces)
+RI-066,MONTECARLO,montecarlo.n,1000,simulaciones,PARAMETRO_DE_ANALISIS,SUP-218,Solo se usa si todas las distribuciones están RESPALDADAS (hoy: no)
+RI-067,MONTECARLO,montecarlo.semilla,20261005,—,PARAMETRO_DE_ANALISIS,SUP-218,Semilla reproducible
+RI-068,MONTECARLO,montecarlo.incluir_tir,FALSE,bool,PARAMETRO_DE_ANALISIS,SUP-218,La TIR multiplica ~25× el tiempo de cada corrida
 RI-069,ROBUSTEZ,robustez.criterio,PCT_VAN_NO_NEGATIVO,PCT_VAN_NO_NEGATIVO | PEOR_VAN | P10_VAN,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,"Robustez = comportamiento en varios escenarios, no una rentabilidad base"
 RI-070,ROBUSTEZ,robustez.variables,precio_venta|alimento|demanda|capex|utilizacion|dias_cobro,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,Extremos one-way que se suman a los stress para medir robustez
-RI-071,ROBUSTEZ,robustez.min_escenarios,3,escenarios,PARAMETRO_DE_ANALISIS,SUP-20-07,"Mínimo de escenarios evaluables (sin contar la base) para calcular ROBUSTEZ; menos → PENDIENTE (parámetro técnico, SUP-20-07)"
+RI-071,ROBUSTEZ,robustez.min_escenarios,3,escenarios,PARAMETRO_DE_ANALISIS,SUP-218,"Mínimo de escenarios evaluables (sin contar la base) para calcular ROBUSTEZ; menos → PENDIENTE (parámetro técnico, SUP-218)"
 RI-072,RIESGO,riesgo.peso.VAN_NEGATIVO_ESCENARIOS,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
 RI-073,RIESGO,riesgo.peso.SENSIBILIDAD_VAN,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
 RI-074,RIESGO,riesgo.peso.PICO_FONDOS_RELATIVO,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
 RI-075,RIESGO,riesgo.peso.DEMANDA_NO_RESPALDADA,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
 RI-076,RIESGO,riesgo.peso.FISICO_PENDIENTE,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
 RI-077,RIESGO,riesgo.peso.EVIDENCIA_FALTANTE,,peso relativo,PENDIENTE,,Sin pesos → score de riesgo PENDIENTE (no se cargan pesos 'correctos')
-RI-078,RIESGO,riesgo.faltantes,SEPARAR,SEPARAR | PENALIZAR,PARAMETRO_DE_ANALISIS,SUP-20-11,"SCORE_ORDINAL_RIESGO (orden interno, NO ES PROBABILIDAD): componente faltante SEPARAR (score PENDIENTE) o PENALIZAR (= 1)"
+RI-078,RIESGO,riesgo.faltantes,SEPARAR,SEPARAR | PENALIZAR,PARAMETRO_DE_ANALISIS,SUP-222,"SCORE_ORDINAL_RIESGO (orden interno, NO ES PROBABILIDAD): componente faltante SEPARAR (score PENDIENTE) o PENALIZAR (= 1)"
 RI-079,BALANCEADO,balanceado.peso.rentabilidad,,peso relativo (se normaliza),PENDIENTE,,Objetivo balanceado: sin pesos → PESOS_NO_DEFINIDOS
 RI-080,BALANCEADO,balanceado.peso.riesgo,,peso relativo (se normaliza),PENDIENTE,,Objetivo balanceado: sin pesos → PESOS_NO_DEFINIDOS
 RI-081,BALANCEADO,balanceado.peso.capital,,peso relativo (se normaliza),PENDIENTE,,Objetivo balanceado: sin pesos → PESOS_NO_DEFINIDOS
 RI-082,BALANCEADO,balanceado.peso.liquidez,,peso relativo (se normaliza),PENDIENTE,,Objetivo balanceado: sin pesos → PESOS_NO_DEFINIDOS
 RI-083,BALANCEADO,balanceado.peso.crecimiento,,peso relativo (se normaliza),PENDIENTE,,Objetivo balanceado: sin pesos → PESOS_NO_DEFINIDOS
 RI-084,BALANCEADO,balanceado.peso.robustez,,peso relativo (se normaliza),PENDIENTE,,Objetivo balanceado: sin pesos → PESOS_NO_DEFINIDOS
-RI-085,BALANCEADO,balanceado.preset,,IGUALES | vacío,PENDIENTE,,Un preset se marca [SUPUESTO] SUP-20-08
-RI-086,BALANCEADO,balanceado.faltantes,SEPARAR,SEPARAR | PENALIZAR,PARAMETRO_DE_ANALISIS,SUP-20-11,
+RI-085,BALANCEADO,balanceado.preset,,IGUALES | vacío,PENDIENTE,,Un preset se marca [SUPUESTO] SUP-219
+RI-086,BALANCEADO,balanceado.faltantes,SEPARAR,SEPARAR | PENALIZAR,PARAMETRO_DE_ANALISIS,SUP-222,
 RI-087,DOMINANCIA,dominancia.dimensiones,FONDOS_INICIALES:-|VAN:+|SCORE_ORDINAL_RIESGO:-,métrica:sentido,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,"Capital, retorno y riesgo; dimensiones sin dato se omiten y se declara cuáles se usaron"
 RI-088,PARETO,pareto.pares,VAN:+×FONDOS_INICIALES:-|VAN:+×SCORE_ORDINAL_RIESGO:-|VAN:+×PICO_FONDOS:-|VAN:+×PAYBACK:-,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,
 RI-089,DECISION,decision.tolerancia_equivalencia,,fracción,PENDIENTE,,Diferencia relativa bajo la cual mejor y segunda se consideran equivalentes (DECISION_NO_ROBUSTA); vacío = solo se usa el cambio de ganador entre escenarios
@@ -93,7 +93,7 @@ RI-091,CONSULTA,consulta.demanda_t_dia,,t/día calendario,PENDIENTE,,«Tengo X t
 RI-092,CONSULTA,consulta.payback_max_anios,,años,PENDIENTE,,«Quiero recuperar en máximo X años»
 RI-093,CONSULTA,consulta.objetivos,MAX_VAN,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,Objetivo(s) para la mejor alternativa de la consulta de capital
 RI-094,CONSULTA,consulta.payback_variables,precio_venta|capex|demanda|alimento,—,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,"Variables para el cambio mínimo que permitiría cumplir el payback (informado, no aplicado)"
-RI-095,SALIDA,que_hacer.n,10,acciones,PARAMETRO_DE_ANALISIS,SUP-20-07,Largo de la lista QUE_HACER_AHORA
+RI-095,SALIDA,que_hacer.n,10,acciones,PARAMETRO_DE_ANALISIS,SUP-218,Largo de la lista QUE_HACER_AHORA
 RI-096,MONTECARLO,montecarlo.supuesto_independencia,FALSE,bool,PARAMETRO_DE_ANALISIS,ENCARGO_SESION_20,TRUE solo en escenarios hipotéticos: un par con correlación PENDIENTE se trata como independiente y la corrida queda rotulada SUPUESTO_INDEPENDENCIA_ESCENARIO; FALSE → NO_EJECUTADO_CORRELACION_PENDIENTE
 RI-097,DECISION,decision.sq_stress,,IDs de escenarios_stress.csv,PENDIENTE,,"Regla SQ-4: si la mejor inversión tiene VAN < 0 en alguno de estos stress, la decisión del escenario es NO_INVERTIR_AUN"
 RI-098,DECISION,decision.sq_score_ordinal_max,,"score 0–1 (ordinal, no probabilidad)",PENDIENTE,,Regla SQ-5: máximo SCORE_ORDINAL_RIESGO aceptado para la mejor inversión

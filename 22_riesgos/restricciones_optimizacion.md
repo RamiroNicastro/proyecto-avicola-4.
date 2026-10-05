@@ -8,7 +8,7 @@ Todas opcionales (vacío = no hay); **ninguna viene cargada** y nunca se asume U
 
 | Nombre | Métrica | Sentido |
 |---|---|---|
-| CAPITAL_DISPONIBLE | pico de fondos (o fondos iniciales, `capital.metrica`; SUP-20-10) | ≤ |
+| CAPITAL_DISPONIBLE | pico de fondos (o fondos iniciales, `capital.metrica`; SUP-221) | ≤ |
 | FONDOS_INICIALES, PICO_FONDOS, DEUDA | métricas del motor | ≤ |
 | PAYBACK | payback simple (NO_RECUPERADO = incumple) | ≤ |
 | VAN, TIR, DSCR | métricas del motor | ≥ |
@@ -18,7 +18,7 @@ Todas opcionales (vacío = no hay); **ninguna viene cargada** y nunca se asume U
 | CAPACIDAD | capacidad final (aves/día) | ≤ |
 | RIESGO | SCORE_ORDINAL_RIESGO | ≤ |
 
-- **HARD** excluye del ranking; **SOFT** resta `penalización × violación relativa` al score (sin penalización declarada → error). Una HARD no evaluable excluye por defecto (SUP-20-09).
+- **HARD** excluye del ranking; **SOFT** resta `penalización × violación relativa` al score (sin penalización declarada → error). Una HARD no evaluable excluye por defecto (SUP-220).
 - NO_INVERTIR_AUN: todas `NO_APLICA_STATUS_QUO`.
 - Tests OPT-01, OPT-02, OPT-04, OPT-11, OPT-18; mutaciones R01, R14.
 

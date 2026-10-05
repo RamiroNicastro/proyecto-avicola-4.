@@ -34,7 +34,7 @@ saldo_final = saldo_inicial + altas − amortización          (test I07; mutaci
 interés     = saldo × i_período                en cada fecha de pago (frecuencia f meses)
 ```
 
-**Convención de tasa (obligatoria, SUP-19-26; test R05; mutación M24):**
+**Convención de tasa (obligatoria, SUP-200; test R05; mutación M24):**
 
 | `tipo_tasa` | Tasa del período de servicio `i_período` | Condición |
 |---|---|---|

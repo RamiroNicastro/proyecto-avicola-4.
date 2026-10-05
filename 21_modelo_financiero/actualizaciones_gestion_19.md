@@ -1,5 +1,7 @@
 # Actualizaciones de gestión — sesión 19 (Modelo financiero integral)
 
+> **ARCHIVO HISTÓRICO (2026-10-05).** Las propuestas de este documento se integraron en los registros centrales en la [reconciliación de las sesiones 19–20](../00_gestion_proyecto/reconciliacion_sesiones_19_20.md) (sesión 21); el mapa ID provisional → ID central está en su §2 (SUP-189 a SUP-211, DPV-178, DEC-093 a DEC-096, más consolidaciones en registros existentes). Los IDs provisionales `SUP-19-##`, `DPV-19-##` y `DEC-19-##` que aparecen abajo **ya no están activos**; no editar este archivo.
+
 **Fecha:** 2026-10-04 · **Rama:** `claude/modelo-financiero-integral-llcp3s` (desde `main` 733a166, posterior al merge de la reconciliación 18)
 **Estado:** PROPUESTA para la próxima reconciliación. Esta sesión **no** modificó `00_gestion_proyecto/`, `25_fuentes/` ni los modelos fuente (`19_capex`, `20_opex`, `04`, `23`, `02`). IDs **provisionales**: `SUP-19-##`, `DPV-19-##`, `DEC-19-##`, `FTE-19-###`.
 

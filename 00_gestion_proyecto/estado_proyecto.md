@@ -1,7 +1,7 @@
 # Estado del proyecto
 
 **Fase actual:** FASE 0 — DEFINICIÓN Y PREFACTIBILIDAD
-**Última actualización:** 2026-10-03 (reconciliación de las sesiones 16–17, CAPEX + OPEX + capital de trabajo: [`reconciliacion_sesiones_16_17.md`](reconciliacion_sesiones_16_17.md); antes, reconciliación de las sesiones 14A–14B: [`reconciliacion_sesiones_14.md`](reconciliacion_sesiones_14.md); antes, reconciliación 12A–12C: [`reconciliacion_sesiones_12.md`](reconciliacion_sesiones_12.md), plan de validación de campo: [`plan_trabajo_campo.md`](plan_trabajo_campo.md), y reconciliación 09A–09D: [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md))
+**Última actualización:** 2026-10-05 (sesión 21: **auditoría + reconciliación final integral del motor v1**: [`auditoria_final_motor_v1.md`](auditoria_final_motor_v1.md), reconciliación de las sesiones 19–20: [`reconciliacion_sesiones_19_20.md`](reconciliacion_sesiones_19_20.md), estado final en la sección [ESTADO FINAL MOTOR V1](#estado-final-motor-v1); antes, 2026-10-03, reconciliación de las sesiones 16–17, CAPEX + OPEX + capital de trabajo: [`reconciliacion_sesiones_16_17.md`](reconciliacion_sesiones_16_17.md); antes, reconciliación de las sesiones 14A–14B: [`reconciliacion_sesiones_14.md`](reconciliacion_sesiones_14.md); antes, reconciliación 12A–12C: [`reconciliacion_sesiones_12.md`](reconciliacion_sesiones_12.md), plan de validación de campo: [`plan_trabajo_campo.md`](plan_trabajo_campo.md), y reconciliación 09A–09D: [`reconciliacion_sesiones_09.md`](reconciliacion_sesiones_09.md))
 
 ## Situación de partida
 
@@ -13,7 +13,7 @@
 
 Detalle de premisas: [`supuestos.md`](supuestos.md).
 
-## Tablero de estado (2026-10-03)
+## Tablero de estado (2026-10-05)
 
 **Cómo leerlo:** *Modelo preliminar completado* = el método, el documento y (si corresponde) el modelo reproducible existen y pasan sus pruebas. **No** significa validado en campo. *Evidencia de campo pendiente* = sus cifras todavía no fueron contrastadas con datos reales (plantas argentinas, compradores, proveedores, organismos, sitios). En toda la Fase 0 **ninguna** cifra externa pudo leerse en su documento original desde el entorno de análisis (DPV-009).
 
@@ -41,7 +41,9 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | CAPEX (`19`) | **MOTOR DE INVERSIÓN COMPLETADO ESTRUCTURALMENTE** v1.2 (175 conceptos de base; BOQ por arquitectura C0–CF y escala; terreno, expansión, importación por capas, RFQ; 82 tests, 10/10 mutaciones). **No hay CAPEX total confiable**: 8 conceptos con referencia monetaria, todas E4 `[PVDP]` (2 con precio aplicado; cobertura por conceptos 0–2,3 %; por valor NO CALCULABLE) | Pendiente: cotizaciones, precios de obra, terreno, equipos, instalación, importación, indirectos y contingencias | [`conclusiones_capex.md`](../19_capex/conclusiones_capex.md) · [`interfaz_capex_finanzas.md`](interfaz_capex_finanzas.md) |
 | OPEX y capital de trabajo (`20`) | **MOTOR DE COSTOS OPERATIVOS Y CAPITAL DE TRABAJO COMPLETADO ESTRUCTURALMENTE** v1.1 (359 conceptos de base; registro por concepto, completitud de arquitecturas, costo laboral, CT por propiedad; 78 tests, 14/14 mutaciones). **No hay OPEX total ni costo por ave/kg ni CT confiable**: 2 conceptos con precio, ambos E4 `[PVDP]`; ninguna arquitectura costeable; `CAPITAL_TRABAJO = PENDIENTE` | Pendiente: precios, salarios, utilities, contratos, logística, parámetros de capital de trabajo, upstream (dotación y consumos) | [`conclusiones_opex.md`](../20_opex/conclusiones_opex.md) · [`interfaz_opex_finanzas.md`](interfaz_opex_finanzas.md) |
 | Puente económico (reconciliación 16–17) | **Interfaz preparada** para el modelo financiero: arquitecturas C0–CF únicas en CAPEX y OPEX ([`mapa_arquitecturas_economicas.csv`](mapa_arquitecturas_economicas.csv)), completitud económica ([`matriz_completitud_economica.csv`](matriz_completitud_economica.csv)) | — | Rentabilidad **no calculable**: demanda, precios de venta, CAPEX, OPEX, CT, impuestos y financiamiento incompletos |
-| Modelo financiero (`21`) y riesgo financiero (`22`) | **Pendiente** (no iniciado). **Próximo módulo: MODELO FINANCIERO INTEGRAL** (estructura; sin publicar EBITDA/VAN/TIR/payback mientras falten bloques materiales, DEC-084) | Pendiente | — |
+| Modelo financiero (`21`) | **MODELO FINANCIERO ESTRUCTURAL COMPLETADO** v1.1 (motor mensual; modos EVIDENCIA y ESCENARIO; 61 corridas de referencia; 70 tests, 25/25 mutaciones). **RENTABILIDAD = NO CALCULABLE**: 0 de 61 corridas publicables; demanda contable 0; ningún bloque económico con evidencia | Pendiente — precios, demanda A/B, CAPEX y OPEX costeables, fiscal, tasa, financiamiento | [`conclusiones_financieras.md`](../21_modelo_financiero/conclusiones_financieras.md) |
+| Riesgo, sensibilidades y optimizador (`22`) | **CAPA DE DECISIÓN COMPLETADA ESTRUCTURALMENTE** v1.1 (registro de 34 riesgos cualitativos; one-way, 2D, stress, quiebre; optimizador sobre el motor financiero; 69 tests, 27/27 mutaciones). **OPTIMIZACION_REAL_NO_DISPONIBLE** (0/54 alternativas con VAN publicable); Monte Carlo del proyecto NO_DISPONIBLE (sin distribuciones respaldadas) | Pendiente — probabilidades del proyecto, distribuciones, objetivos y restricciones del inversor | [`conclusiones_riesgo_optimizacion.md`](../22_riesgos/conclusiones_riesgo_optimizacion.md) |
+| **Auditoría final del motor v1** (sesión 21) | **MOTOR ESTRUCTURAL COMPLETO**; datos reales incompletos; decisión de inversión no disponible (ver [ESTADO FINAL MOTOR V1](#estado-final-motor-v1)); 70 tests de integración y 15/15 mutaciones de integración; cierre: TF-004 y TF-011 corregidas, TF-076 mitigada, TF-005 con defensa técnica | No aplica (auditoría del sistema) | [`auditoria_final_motor_v1.md`](auditoria_final_motor_v1.md) · [`interfaz_app_v1.md`](interfaz_app_v1.md) · [`plan_validacion_final.md`](plan_validacion_final.md) |
 | Decisión de escala (DEC-001, DEC-033) | **Pendiente** (no tomada) | Pendiente | — |
 | Documentación final para inversores (`24`) | **Pendiente** | — | — |
 
@@ -52,7 +54,7 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 3. Validar (o descartar) la demanda del canal supermercados. ⏳ Marco listo; trabajo de campo pendiente.
 4. Construir el balance de masa y escenarios de escala sin fijar capacidad a priori. ✅ como modelo preliminar (sin escala elegida).
 5. Evaluar cada eslabón de la cadena: hacer / comprar / tercerizar / postergar. ⏳ Parcial (producción primaria, subproductos, faena a façon, pollito, alimento y granjas como escenarios de comparación sin decisión; limpieza, mantenimiento, flota y laboratorio como modalidades sin elegir).
-6. Estimar CAPEX y OPEX por escenario y construir el modelo financiero. ⏳ Motores CAPEX y OPEX + capital de trabajo **completados estructuralmente** y reconciliados (2026-10-03), **sin totales** (precios casi inexistentes); modelo financiero no iniciado.
+6. Estimar CAPEX y OPEX por escenario y construir el modelo financiero. ⏳ Motores CAPEX, OPEX + capital de trabajo, financiero, riesgo y optimizador **completados estructuralmente**, reconciliados y auditados como sistema (2026-10-05), **sin totales ni indicadores publicables** (precios, demanda y costos casi inexistentes).
 7. Emitir conclusión de prefactibilidad (viable / viable con condiciones / no viable) y definir si se pasa a Fase 1 (factibilidad). ⏳ No iniciado.
 
 ## Restricciones vigentes en esta fase
@@ -93,7 +95,9 @@ Detalle de premisas: [`supuestos.md`](supuestos.md).
 | 2026-10-02 | Motor CAPEX v1.2 (`19_capex`; sesión 16): BOQ por arquitectura y escala, procedencia de drivers, terreno con cuatro definiciones, expansión, importación por capas, 13 RFQ | **Construido**, sin CAPEX total (82 tests, 10/10 mutaciones) |
 | 2026-10-02 | Motor OPEX + capital de trabajo v1.1 (`20_opex`; sesión 17): registro por concepto, completitud de arquitecturas, costo laboral por FTE, CT por propiedad, ramp-up | **Construido**, sin OPEX total ni CT (78 tests, 14/14 mutaciones) |
 | 2026-10-03 | Reconciliación de las sesiones 16–17 en los registros maestros + interfaz al modelo financiero | Completada: 34 SUP, 18 DPV, 13 DEC y 13 FTE nuevos; consolidaciones en registros existentes: 8 SUP, 15 DPV (en 14 DPV), 3 DEC y 2 FTE; fusiones entre propuestas: 3 SUP, 3 DPV y 2 DEC; 1 DEC derivada (DEC-092); puente de arquitecturas, interfaces CAPEX/OPEX → finanzas y matriz de completitud económica; nomenclatura M0–MF (14B) ≠ C0–CF. Ver [`reconciliacion_sesiones_16_17.md`](reconciliacion_sesiones_16_17.md) |
-| — | Modelo financiero integral | Pendiente (próximo módulo) |
+| 2026-10-04 | Modelo financiero integral v1.1 (`21_modelo_financiero`; sesión 19): motor mensual, modos EVIDENCIA/ESCENARIO, umbral de evidencia configurable, override de simulación, deuda, IVA, CT, valor terminal | **Construido**, rentabilidad NO CALCULABLE (70 tests, 25/25 mutaciones) |
+| 2026-10-05 | Riesgos, sensibilidades y optimizador v1.1 (`22_riesgos`; sesión 20): registro de riesgos, one-way, 2D, stress, quiebre, Monte Carlo (sin distribuciones del proyecto), optimizador con status quo, Pareto y robustez | **Construido**, OPTIMIZACION_REAL_NO_DISPONIBLE (69 tests, 27/27 mutaciones) |
+| 2026-10-05 | **Auditoría + reconciliación final integral del motor v1** (sesión 21): reconciliación 19–20 (47 SUP, 3 DPV, 12 DEC nuevos; 0 IDs provisionales activos), tabla maestra de arquitecturas, 76 tensiones, completitud, trazabilidad, cobertura transversal, contrato de la app, plan de validación final, 61 tests de integración y 11/11 mutaciones de integración (70 y 15/15 tras las correcciones de cierre TF-004, TF-011, TF-005, TF-076); 2 correcciones inequívocas (serie de valor terminal; atributos de 3 variantes del mapa) | **Completada**: motor estructural COMPLETO; datos reales INCOMPLETOS; decisión de inversión NO DISPONIBLE. Ver [`auditoria_final_motor_v1.md`](auditoria_final_motor_v1.md) |
 | — | Informe de prefactibilidad | Pendiente |
 
 ## Resultado del relevamiento de mercado (2026-09-29)
@@ -260,6 +264,29 @@ Síntesis en [`plan_trabajo_campo.md`](plan_trabajo_campo.md); matriz en [`matri
 11. ~~Próximos módulos técnicamente habilitados: localización, logística, layout~~ (realizados 2026-10-01 como modelos preliminares, sesiones 12A–12C, y reconciliados). Pendiente de campo: ruteo, exposición sanitaria, terrenos, retiros y FOS, capacidades y tiempos reales de transporte, CD de la red, densidad de subproductos, footprints, dotación, requisitos edilicios SENASA (lista en [`reconciliacion_sesiones_12.md`](reconciliacion_sesiones_12.md) §4).
 12. ~~Recursos humanos, incubación y alimento balanceado~~ (realizados 2026-10-01 como modelos preliminares, sesiones 14A–14B, y reconciliados 2026-10-02). Pendiente de campo: convenio, factor de cobertura, costo laboral, productividad, mantenimiento, limpieza, inspección oficial (DPV-146 a DPV-152 y consolidados), incubadoras, huevo fértil, fábricas y façon, granos, integradores y sincronización granja–faena (DPV-153 a DPV-159, DPV-047, DPV-133).
 13. ~~CAPEX y OPEX~~ (motores construidos 2026-10-02, sesiones 16–17, y reconciliados 2026-10-03). Pendiente de campo: precios y cotizaciones (DPV-160 a DPV-169, DPV-087, DPV-051, DPV-093), costos operativos (DPV-050, 047, 148, 052, 170 a 177) y parámetros de capital de trabajo (DPV-175).
-14. **Próximo módulo: MODELO FINANCIERO INTEGRAL** (`21`), **solo cuando el promotor lo indique**: consumir [`interfaz_capex_finanzas.md`](interfaz_capex_finanzas.md) e [`interfaz_opex_finanzas.md`](interfaz_opex_finanzas.md) por período, con utilización y ramp-up como inputs; definir antes el umbral de publicación (DEC-084). Con la evidencia actual será un modelo **estructural**: EBITDA, VAN, TIR y payback **NO PUBLICABLES** mientras falten demanda, precios de venta, CAPEX, OPEX, CT, impuestos y financiamiento ([`matriz_completitud_economica.csv`](matriz_completitud_economica.csv)).
+14. ~~Modelo financiero integral~~ (construido 2026-10-04, sesión 19; riesgo y optimizador 2026-10-05, sesión 20; auditados en la sesión 21). Texto original del paso: consumir [`interfaz_capex_finanzas.md`](interfaz_capex_finanzas.md) e [`interfaz_opex_finanzas.md`](interfaz_opex_finanzas.md) por período, con utilización y ramp-up como inputs; definir antes el umbral de publicación (DEC-084). Con la evidencia actual será un modelo **estructural**: EBITDA, VAN, TIR y payback **NO PUBLICABLES** mientras falten demanda, precios de venta, CAPEX, OPEX, CT, impuestos y financiamiento ([`matriz_completitud_economica.csv`](matriz_completitud_economica.csv)).
+
+15. **Próximo paso: trabajo de campo** por paquetes ([`plan_validacion_final.md`](plan_validacion_final.md)); la app v1 puede construirse sobre el contrato [`interfaz_app_v1.md`](interfaz_app_v1.md) **solo cuando el promotor lo indique**, como herramienta de escenarios rotulados (no de decisión real).
 
 Ver [`decisiones_pendientes.md`](decisiones_pendientes.md) y [`datos_por_validar.md`](datos_por_validar.md).
+
+## ESTADO FINAL MOTOR V1
+
+**Fecha:** 2026-10-05 (sesión 21). Fuente: [`auditoria_final_motor_v1.md`](auditoria_final_motor_v1.md) §30; detalle por módulo en [`completitud_final_motor.csv`](completitud_final_motor.csv); tensiones en [`tensiones_finales.csv`](tensiones_finales.csv); tests en [`registro_tests_final.csv`](registro_tests_final.csv).
+
+| Dimensión | Estado |
+|---|---|
+| **MOTOR ESTRUCTURAL** | **COMPLETO** — todas las suites de módulo e integración pasan; 15/15 mutaciones de integración detectadas; overrides de usuario validados contra la arquitectura (TF-004); cobertura de evidencia sobre bloques aplicables (TF-011); C0–CF idénticas en CAPEX, OPEX, CT, financiero, riesgo, optimizador y dashboard ([`arquitecturas_maestras.csv`](arquitecturas_maestras.csv)) |
+| **DATOS REALES** | **INCOMPLETOS** — 0 de 180 DPV validados; 0 precios de venta y 0 conceptos de CAPEX/OPEX con evidencia E1–E3; demanda contable = 0 |
+| **DECISIÓN DE INVERSIÓN** | **NO DISPONIBLE AÚN** — 0 de 61 corridas y 0 de 54 alternativas con indicadores publicables en modo evidencia |
+| **APP v1** | Contrato listo ([`interfaz_app_v1.md`](interfaz_app_v1.md)) para escenarios rotulados; la app no está diseñada |
+
+| Categoría | Módulos |
+|---|---|
+| **TERMINADOS ESTRUCTURALMENTE** | Demanda (02), producción primaria (03), balance de masa (04), productos y subproductos (06/07), escala (23), proceso (05), maquinaria conceptual (08), normativa (16), agua y efluentes (11), energía y frío (12), localización (10), logística (13), layout (09), RR. HH. (18), upstream (14/15), CAPEX (19), OPEX y capital de trabajo (20), modelo financiero (21), riesgo y optimizador (22), simulador físico v0.1, integración del motor (00) |
+| **TERMINADOS Y VALIDADOS** | **Ninguno** con datos reales de campo. Validadas solo las identidades internas (tests y mutaciones) |
+| **PENDIENTES DE DATOS** | Todos los anteriores para uso real: demanda A/B, precios, cotizaciones de CAPEX, costos de OPEX, salarios, utilities y consumos upstream, terreno, logística, fiscal, financiamiento, rendimientos en planta (12 paquetes de [`plan_validacion_final.md`](plan_validacion_final.md)) |
+| **PENDIENTES DE DECISIÓN** | 104 decisiones abiertas; las que condicionan publicar resultados: DEC-084, DEC-007, DEC-093, DEC-096, DEC-006; las que condicionan decidir: DEC-001, DEC-033, DEC-010, DEC-092, DEC-097, DEC-098, DEC-003, DEC-020, DEC-023, DEC-024, DEC-074 |
+| **FUTUROS** | Exportación y Halal (módulo futuro de mercado), rendering y reproductoras (CF), transiciones de arquitectura (DEC-103), días operativos continuos (TF-001), recupero de IVA parametrizable (TF-002), Monte Carlo del proyecto (DPV-180), app v1 |
+
+**Sin recomendación de inversión:** no se recomienda comprar o no comprar planta, invertir un monto ni elegir arquitectura o escala.

@@ -1,5 +1,7 @@
 # Actualizaciones de gestión — sesión 20 (Riesgos + sensibilidades + optimizador)
 
+> **ARCHIVO HISTÓRICO (2026-10-05).** Las propuestas de este documento se integraron en los registros centrales en la [reconciliación de las sesiones 19–20](../00_gestion_proyecto/reconciliacion_sesiones_19_20.md) (sesión 21); el mapa ID provisional → ID central está en su §2 (SUP-212 a SUP-235, DPV-179, DPV-180, DEC-097 a DEC-104, más consolidaciones en registros existentes). Los IDs provisionales `SUP-20-##`, `DPV-20-##` y `DEC-20-##` que aparecen abajo **ya no están activos**; no editar este archivo.
+
 **Fecha:** 2026-10-05 · **Rama:** `claude/riesgos-sensibilidades-optimizador-97t4gk` (desde `main` 453d662, posterior al merge de la sesión 19)
 **Estado:** PROPUESTA para la próxima reconciliación (incluye la auditoría final). Esta sesión **no** modificó `00_gestion_proyecto/`, `25_fuentes/` ni los modelos fuente `19_capex`, `20_opex`, `04`, `23`, `02`. En `21_modelo_financiero/modelo_financiero.py` solo agregó el parámetro de interfaz `calcular_tir` (§8). IDs **provisionales**: `SUP-20-##`, `DPV-20-##`, `DEC-20-##`, `FTE-20-###`.
 

@@ -18,7 +18,7 @@ variantes) consumiendo, sin modificarlos ni copiar sus fórmulas:
 
 DOS MODOS (nunca se mezclan)
   EVIDENCIA : solo datos dentro de UMBRAL_EVIDENCIA_PUBLICACION (default E1–E3, configurable en
-              inputs_financieros.csv sin tocar código; DEC-19-01 abierta) y los supuestos
+              inputs_financieros.csv sin tocar código; DEC-084 abierta) y los supuestos
               metodológicos permitidos (SUPUESTOS_METODOLOGICOS). Si falta un bloque material, NO publica
               (NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE) y lista exactamente qué falta.
   ESCENARIO : acepta inputs del usuario (precios, demanda, CAPEX, OPEX, utilización, ramp-up, financiamiento,
@@ -69,7 +69,7 @@ Uso
     python3 21_modelo_financiero/modelo_financiero.py --escenario mi_escenario.json   # MODO ESCENARIO
 
 El script se DETIENE (código 1) si falla cualquier prueba. Unidades métricas; CSV con punto decimal; USD.
-IDs provisionales de la sesión: SUP-19-##, DPV-19-##, DEC-19-##, FTE-19-### (ver actualizaciones_gestion_19.md).
+IDs reconciliados en 00_gestion_proyecto/reconciliacion_sesiones_19_20.md (SUP-189 a SUP-211; DPV-178; DEC-093 a DEC-096).
 """
 import argparse
 import copy
@@ -103,6 +103,7 @@ TOL = 1e-9
 _MUT: set = set()                              # mutaciones sembradas (solo prueba_mutaciones)
 
 ARCHIVO_MAPA_ARQ = os.path.join(RAIZ, "00_gestion_proyecto", "mapa_arquitecturas_economicas.csv")
+ARCHIVO_ARQ_MAESTRAS = os.path.join(RAIZ, "00_gestion_proyecto", "arquitecturas_maestras.csv")
 ARCHIVO_MATRIZ_ECO = os.path.join(RAIZ, "00_gestion_proyecto", "matriz_completitud_economica.csv")
 ARCHIVO_DEMANDA = os.path.join(RAIZ, "02_clientes_demanda", "escenarios_demanda.csv")
 ARCHIVO_PRECIOS = os.path.join(AQUI, "base_precios_venta.csv")
@@ -117,9 +118,9 @@ MODOS = ("EVIDENCIA", "ESCENARIO")
 ORIGENES = ("EVIDENCIA_REAL", "ESCENARIO_USUARIO", "SUPUESTO_MODELO", "PENDIENTE")
 NIVELES = ("E1", "E2", "E3", "E4", "E5")
 # UMBRAL_EVIDENCIA_PUBLICACION: niveles que el modo evidencia acepta. Se lee de inputs_financieros.csv (variable
-# `umbral_evidencia_publicacion`, p. ej. "E1|E2|E3") para poder cambiarlo SIN tocar código (DEC-19-01 abierta).
+# `umbral_evidencia_publicacion`, p. ej. "E1|E2|E3") para poder cambiarlo SIN tocar código (DEC-084 abierta).
 # Este valor es solo el default conservador si la fila no existe. E4 [PVDP] no pasa el default.
-UMBRAL_EVIDENCIA_DEFAULT = ("E1", "E2", "E3")             # SUP-19-02
+UMBRAL_EVIDENCIA_DEFAULT = ("E1", "E2", "E3")             # SUP-190
 NIVELES_EVIDENCIA_ACEPTADOS = UMBRAL_EVIDENCIA_DEFAULT    # compatibilidad: default, no decisión
 ETIQUETA_SIM = "SIMULACION_HIPOTETICA_NO_VALIDADA"
 NO_PUB = "NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE"
@@ -127,20 +128,28 @@ NO_DISP_ESC = "NO_DISPONIBLE_FALTAN_INPUTS_DEL_ESCENARIO"
 # Interfaz de performance (sesión 20): resultados(R, calcular_tir=False) omite SOLO la TIR. La métrica queda en este
 # estado (no es 0 ni un faltante de datos); el default True reproduce exactamente la sesión 19.
 TIR_NO_CALCULADA = "NO_CALCULADA"
-# Convenciones que el MODO EVIDENCIA admite como SUPUESTO_MODELO (no son datos económicos; SUP-19-03)
+# Defensas de la auditoría final 21 (TF-004, TF-005, TF-076)
+OVERRIDE_INCOMPATIBLE = "OVERRIDE_INCOMPATIBLE_CON_ARQUITECTURA"
+ETIQUETA_OVERRIDE_TOTAL = "SIMULACION_HIPOTETICA_OVERRIDE_TOTAL"
+CAMPOS_META_OVERRIDE = ("CONFIGURACION", "ESCALA", "VARIANTE", "MODULO", "UNIVERSO", "ORIGEN")
+NO_CALC_FISCAL = "NO_CALCULABLE_REGLA_FISCAL_PENDIENTE"
+CREDITO_IVA_CAPEX_PEND = "CREDITO_FISCAL_IVA_CAPEX = PENDIENTE"
+ESTADOS_IVA_CAPEX_INCIERTO = ("DESCONOCIDO", "INCIERTO", "NO_DECLARADO")
+ESTADOS_BLOQUE = ("CON_EVIDENCIA", "PENDIENTE", "VACIO", "NO_APLICA")
+# Convenciones que el MODO EVIDENCIA admite como SUPUESTO_MODELO (no son datos económicos; SUP-191)
 SUPUESTOS_METODOLOGICOS = {"modelo_monetario", "base_tasa", "meses_detalle", "valor_terminal.metodo",
                            "valor_terminal.recuperar_ct", "moneda_funcional", "convencion_descuento",
                            "tipo_tasa_descuento", "umbral_evidencia_publicacion"}
-# Convenciones de tasa (SUP-19-25/26). La tasa de descuento es ANUAL EFECTIVA salvo declaración expresa.
+# Convenciones de tasa (SUP-192 / SUP-200). La tasa de descuento es ANUAL EFECTIVA salvo declaración expresa.
 TIPOS_TASA_DESCUENTO = ("EFECTIVA_ANUAL", "NOMINAL_ANUAL_CAP_MENSUAL")
 TIPOS_TASA_DEUDA = ("EFECTIVA_ANUAL", "NOMINAL_ANUAL", "PERIODICA")
 CONVENCIONES_DESCUENTO = ("MENSUAL", "PERIODO_REPORTE")
 CLAVES_IMPUESTOS = ("tasa_ganancias", "anios_quebranto", "pct_iibb", "pct_tasas_municipales", "otros_impuestos_usd_anio",
-                    "intereses_deducibles")   # los derechos de exportación NO van aquí: solo en canales.exportacion
+                    "intereses_deducibles", "iibb_aplica_domestico", "iibb_aplica_exportacion")   # los derechos de exportación NO van aquí: solo en canales.exportacion
 
 # Demanda (02 §1): A = asegurada / documentada; B = negociada; entre B y C = interesada; C/D = potencial
 CATEGORIAS_DEMANDA = ("DOCUMENTADA", "ASEGURADA", "NEGOCIADA", "INTERESADA", "POTENCIAL", "ESCENARIO")
-CATEGORIAS_DEMANDA_EVIDENCIA = ("DOCUMENTADA", "ASEGURADA")   # únicas que el modo evidencia vende (SUP-19-05)
+CATEGORIAS_DEMANDA_EVIDENCIA = ("DOCUMENTADA", "ASEGURADA")   # únicas que el modo evidencia vende (SUP-193)
 CANALES = ("supermercados", "mayoristas", "carnicerias_pollerias", "gastronomia", "industria", "exportacion", "otros")
 CATEGORIAS_INGRESO = ("PRODUCTO_PRINCIPAL", "MENUDENCIAS", "PATAS_GARRAS", "SUBPRODUCTOS", "RENDERING", "OTROS")
 # Productos = claves ITEMS de 23 (una sola agrupación del balance 04, sin doble conteo). None = no vendible.
@@ -401,11 +410,14 @@ def entrada_vacia(nombre="sin_nombre", modo="ESCENARIO"):
         "precios": {}, "canales": {}, "inventario_max_meses": {},
         "inventarios": None, "dias_caja_operativa": None,
         "impuestos": {"tasa_ganancias": None, "anios_quebranto": None, "pct_iibb": None,
-                      "pct_tasas_municipales": None, "otros_impuestos_usd_anio": None, "intereses_deducibles": True},
+                      "pct_tasas_municipales": None, "otros_impuestos_usd_anio": None, "intereses_deducibles": True,
+                      # base del IIBB separada (TF-005): None = regla PENDIENTE (no se asume alcanzado ni exento)
+                      "iibb_aplica_domestico": None, "iibb_aplica_exportacion": None},
         "iva": {"modo": None, "alicuota_ventas": None, "alicuota_compras": None, "alicuota_capex": None},
         "financiamiento": None,
         "valor_terminal": {"metodo": "SIN_VALOR_TERMINAL", "monto": None, "g": None, "recuperar_ct": False},
         "stress": {},
+        "override_total": False,                   # OVERRIDE_TOTAL_ARQUITECTURA declarado por el usuario (TF-004)
     }
 
 
@@ -414,7 +426,11 @@ def etapa_vacia(id_etapa, escala, dias, tipo="INICIAL"):
             "entrada": {"tipo": tipo, "mes": None, "condiciones": {}, "logica": "TODAS", "meses_consecutivos": 1,
                         "meses_obra": None},
             "capex_usd": None, "curva_desembolso": None, "rampup": None, "opex_rubros": None, "activos": None,
-            "tipo_capex": "INICIAL" if tipo == "INICIAL" else "EXPANSION"}
+            "tipo_capex": "INICIAL" if tipo == "INICIAL" else "EXPANSION",
+            # IVA del CAPEX de la etapa (TF-076): crédito fiscal solo con declaración completa (iva_capex_declarado())
+            "iva_capex": None,
+            # módulos OPEX de la arquitectura que un OPEX de usuario debe cubrir (TF-004); None = OPEX del módulo 20
+            "opex_modulos_requeridos": None}
 
 
 BLOQUES = ("TIEMPO", "RAMPUP", "PRODUCCION", "DEMANDA", "PRECIOS", "CANALES", "OPEX", "IMPUESTOS_INGRESOS",
@@ -459,6 +475,9 @@ def validar_entrada(P):
     for c_, ch in (P["canales"] or {}).items():
         if c_ != "exportacion" and ch and ch.get("pct_derechos_exportacion") is not None:
             raise ErrorFinanciero("derechos de exportación solo en el canal exportacion")
+    for k in ("iibb_aplica_domestico", "iibb_aplica_exportacion"):
+        if P["impuestos"].get(k) not in (None, True, False):
+            raise ErrorFinanciero(f"{k}: TRUE / FALSE / vacío (PENDIENTE); no se admite otro valor")
     if P["valor_terminal"]["metodo"] not in METODOS_VT:
         raise ErrorFinanciero(f"valor terminal: {METODOS_VT}")
     prev = 0
@@ -525,6 +544,62 @@ def _clave_precio(l):
     return f"{l['producto']}|{l['canal']}|{l.get('mercado', 'INTERNO')}"
 
 
+def iva_capex_declarado(d):
+    """(True, "") solo si la etapa declara EXPLÍCITAMENTE el IVA de su CAPEX (TF-076): base neta (sin IVA), IVA
+    declarado, tasa, condición fiscal y elegibilidad al crédito con su criterio. Un IVA DESCONOCIDO / INCIERTO /
+    NO_DECLARADO no genera crédito fiscal ni se convierte en costo: queda CREDITO_FISCAL_IVA_CAPEX = PENDIENTE."""
+    if not d:
+        return False, "sin declaración de IVA del CAPEX"
+    estado = str(d.get("iva_estado") or "NO_DECLARADO").upper()
+    if estado in ESTADOS_IVA_CAPEX_INCIERTO or estado != "DECLARADO":
+        return False, f"IVA del CAPEX {estado}"
+    falt = [k for k in ("condicion_fiscal", "criterio") if not d.get(k)]
+    if d.get("base") != "NETA":
+        falt.append("base NETA (sin IVA)")
+    if not isinstance(d.get("tasa"), (int, float)) or d["tasa"] < 0:
+        falt.append("tasa")
+    if d.get("elegible_credito") is not True:
+        falt.append("elegible_credito = TRUE")
+    return (not falt), ("falta " + ", ".join(falt)) if falt else ""
+
+
+def estado_bloques(P, F=None):
+    """Estado de cada bloque del motor (TF-011): CON_EVIDENCIA (completo con datos presentes para el modo) ·
+    PENDIENTE (tiene faltantes) · VACIO (sin faltantes declarados pero sin contenido: no es evidencia) · NO_APLICA
+    (el bloque no corresponde: puede salir del denominador). Un bloque VACIO o PENDIENTE nunca suma al numerador."""
+    F = F if F is not None else disponibilidad(P)
+    out = {}
+    vt = P["valor_terminal"]
+    etapas = P["etapas"] or []
+    hay_activos = bool(etapas) and all(e["activos"] for e in etapas)
+    N = 12 * P["horizonte_anios"] if P["horizonte_anios"] else None
+    for b in BLOQUES:
+        if F[b]:
+            out[b] = "PENDIENTE"
+        elif b == "VALOR_TERMINAL":
+            out[b] = "NO_APLICA" if vt["metodo"] == "SIN_VALOR_TERMINAL" and not vt.get("recuperar_ct") else "CON_EVIDENCIA"
+        elif b == "REPOSICION":
+            if not hay_activos:
+                out[b] = "VACIO"           # sin activos declarados no hay faltante… ni contenido
+            else:
+                rep_ = [a for e in etapas for a in e["activos"] if a.get("depreciable", True) and N
+                        and (a.get("vida_util_anios") or 0) * 12 < N]
+                out[b] = "CON_EVIDENCIA" if rep_ else "NO_APLICA"
+        elif b == "IVA" and P["iva"]["modo"] == "EXCLUIDO":
+            out[b] = "NO_APLICA"
+        elif b == "FINANCIAMIENTO" and not (P["financiamiento"] or {}).get("deudas") and not (P["financiamiento"] or {}).get("aportes"):
+            out[b] = "VACIO"
+        else:
+            out[b] = "CON_EVIDENCIA"
+    return out
+
+
+def cobertura_bloques(estados):
+    """Cobertura = bloques CON_EVIDENCIA ÷ bloques aplicables (todos menos NO_APLICA). None si nada aplica."""
+    aplic = [b for b, e in estados.items() if e != "NO_APLICA"]
+    return (sum(1 for b in aplic if estados[b] == "CON_EVIDENCIA") / len(aplic)) if aplic else None
+
+
 def disponibilidad(P):
     """Qué falta, por bloque. Lista vacía = bloque completo para el modo."""
     F = {b: [] for b in BLOQUES}
@@ -563,6 +638,13 @@ def disponibilidad(P):
         if e["opex_rubros"] is None:
             F["OPEX"].append(f"{eid}: OPEX por rubro ({e.get('motivo_opex', 'sin total publicable')})")
         else:
+            req_mod = e.get("opex_modulos_requeridos")
+            if req_mod:
+                cubiertos = {(r.get("meta") or {}).get("MODULO") for r in e["opex_rubros"]}
+                faltan = sorted(set(req_mod) - cubiertos)
+                if faltan:
+                    F["OPEX"].append(f"{eid}: OPEX del usuario sin rubros de los módulos {', '.join(faltan)} de la "
+                                     "arquitectura (completitud TF-004: una arquitectura incompleta no gana por costos faltantes)")
             for r in e["opex_rubros"]:
                 if r["costo_pleno_usd_anio"] is None:
                     F["OPEX"].append(f"{eid}: rubro {r['rubro']} sin costo")
@@ -623,6 +705,13 @@ def disponibilidad(P):
     for k in ("pct_iibb", "pct_tasas_municipales", "otros_impuestos_usd_anio"):
         if imp.get(k) is None:
             F["IMPUESTOS_INGRESOS"].append(f"{k} (DPV-043)")
+    if imp.get("pct_iibb"):                           # TF-005: con alícuota > 0, la base exige regla por mercado
+        lc = _lineas_contables(P) if P["demanda"] is not None else []
+        for flag, hay in (("iibb_aplica_domestico", any(l.get("mercado", "INTERNO") == "INTERNO" for l in lc)),
+                          ("iibb_aplica_exportacion", any(l.get("mercado", "INTERNO") != "INTERNO" for l in lc))):
+            if hay and imp.get(flag) is None:
+                F["IMPUESTOS_INGRESOS"].append(f"{NO_CALC_FISCAL}: {flag} (jurisdicción y tratamiento de la base; "
+                                               "no se asume alcanzada ni exenta; DPV-043, DPV-169)")
     for k in ("tasa_ganancias", "anios_quebranto"):
         if imp.get(k) is None:
             F["GANANCIAS"].append(f"{k} (DPV-169)")
@@ -639,8 +728,15 @@ def disponibilidad(P):
     iva = P["iva"]
     if iva["modo"] is None:
         F["IVA"].append("tratamiento del IVA (débito, crédito, saldo técnico, recupero de IVA de CAPEX; DPV-169, DPV-043)")
-    elif iva["modo"] == "SIMPLIFICADO" and any(iva.get(k) is None for k in ("alicuota_ventas", "alicuota_compras", "alicuota_capex")):
-        F["IVA"].append("alícuotas de IVA (ventas, compras, bienes de capital)")
+    elif iva["modo"] == "SIMPLIFICADO" and any(iva.get(k) is None for k in ("alicuota_ventas", "alicuota_compras")):
+        F["IVA"].append("alícuotas de IVA (ventas, compras)")
+    if iva["modo"] == "SIMPLIFICADO":                 # TF-076: crédito de IVA de CAPEX solo con declaración explícita
+        for e in P["etapas"]:
+            if e["capex_usd"] or any(a.get("costo_reemplazo_usd") for a in (e["activos"] or [])):
+                ok_, mot = iva_capex_declarado(e.get("iva_capex"))
+                if not ok_:
+                    F["IVA"].append(f"{CREDITO_IVA_CAPEX_PEND}: {e['id']} — {mot} (base neta, IVA, tasa, condición fiscal y "
+                                    "elegibilidad; el IVA incierto no es costo ni crédito; DPV-093, DPV-169)")
     if P["financiamiento"] is None:
         F["FINANCIAMIENTO"].append("estructura de financiamiento (DEC-092); USD 2 M no es capital confirmado (SUP-003)")
     if P["tasa_descuento"] is None:
@@ -684,7 +780,7 @@ def flags_calculo(F, P):
 # 4. DEUDA (cronograma independiente de la operación)
 # ---------------------------------------------------------------------------------------------
 def tasa_deuda_periodo(d):
-    """Tasa efectiva de cada período de servicio (frecuencia f meses), según el TIPO declarado (SUP-19-26):
+    """Tasa efectiva de cada período de servicio (frecuencia f meses), según el TIPO declarado (SUP-200):
       EFECTIVA_ANUAL : (1 + TEA)^(f/12) − 1
       NOMINAL_ANUAL  : TNA × f ÷ 12, solo si la capitalización declarada coincide con la frecuencia de pago
       PERIODICA      : tasa del período, solo si su período declarado coincide con la frecuencia de pago
@@ -845,7 +941,9 @@ def simular(P):
         "iva_saldo_favor", "iva_pago_fisco", "flujo_iva", "impuesto_operativo", "impuesto_con_deuda",
         "valor_terminal", "fcff_pre", "fcff", "deuda_alta", "deuda_interes", "deuda_amort", "deuda_comision",
         "deuda_saldo_ini", "deuda_saldo_fin", "deuda_remanente_cierre", "fcfe_pre", "fcfe", "aportes",
-        "dividendos", "caja", "cfads", "servicio_deuda", "valor_libro")}
+        "dividendos", "caja", "cfads", "servicio_deuda", "valor_libro",
+        "venta_bruta_domestica", "venta_bruta_exportacion", "iva_credito_capex", "iva_capex_pendiente_base")}
+    iva_capex_ok = {e["id"]: (iva_capex_declarado(e.get("iva_capex"))[0], (e.get("iva_capex") or {}).get("tasa")) for e in etapas}
     for c in CATEGORIAS_INGRESO:
         S[f"venta_{c}"] = z()
     S["fase"] = [""] * (N + 1)
@@ -913,6 +1011,11 @@ def simular(P):
                         raise ErrorFinanciero("desembolso antes de T0")
                     monto = e["capex_usd"] * fr * idx[k] * st.get("capex", 1.0)
                     S["capex_inicial" if i == 0 else "capex_expansion"][k] += monto
+                    ok_iva, tasa_iva = iva_capex_ok[e["id"]]
+                    if ok_iva:                     # TF-076: crédito solo con IVA declarado (base neta, tasa, elegible)
+                        S["iva_credito_capex"][k] += monto * tasa_iva
+                    else:
+                        S["iva_capex_pendiente_base"][k] += monto   # informativo: ni costo ni crédito
         if any(entrada[i] + off < 0 for i, e in enumerate(etapas) if entrada[i] is not None
                for off, _ in (e["curva_desembolso"] or [])):
             raise ErrorFinanciero("la curva de desembolso cae antes de T0")
@@ -930,6 +1033,11 @@ def simular(P):
             if a[4] and a[2] > 0 and k == a[3] + a[2] and a[7] is not None:
                 costo_r = a[7] * idx[k] * st.get("capex", 1.0)
                 S["capex_reposicion"][k] += costo_r
+                ok_iva, tasa_iva = iva_capex_ok.get(a[6], (False, None))
+                if ok_iva:
+                    S["iva_credito_capex"][k] += costo_r * tasa_iva
+                else:
+                    S["iva_capex_pendiente_base"][k] += costo_r
                 nuevos.append([costo_r, a[1], a[2], k, True, a[5] + " (reposición)", a[6], a[7]])
         activos_vivos += nuevos
         dep = 0.0
@@ -1065,6 +1173,7 @@ def simular(P):
                                    ("ingreso_neto", neto)):
                         S[nom][k] += v
                     S[f"venta_{pr['categoria_ingreso']}"][k] += bruto
+                    S["venta_bruta_exportacion" if exp_ else "venta_bruta_domestica"][k] += bruto
                     S["costos_logistica_canal"][k] += kg_v * g("costo_logistico_usd_kg") * idx[k]
                     if exp_:
                         S["costos_exportacion"][k] += kg_v * g("costo_exportacion_usd_kg") * idx[k]
@@ -1099,8 +1208,12 @@ def simular(P):
                     S["iva_credito"][k] += mes * (iva_p.get("alicuota_compras") or 0.0)
             S["opex_total"][k] = opex_mes
             S["costos_extra_rampup"][k] = extra
-            S["impuestos_sobre_ingresos"][k] = S["venta_bruta"][k] * ((imp.get("pct_iibb") or 0.0) +
-                                                                     (imp.get("pct_tasas_municipales") or 0.0))
+            # IIBB sobre la base declarada por mercado (TF-005): una base con regla PENDIENTE no se grava ni se exime en
+            # silencio; disponibilidad() deja el bloque IMPUESTOS_INGRESOS como NO_CALCULABLE_REGLA_FISCAL_PENDIENTE
+            base_iibb = (S["venta_bruta_domestica"][k] * (1.0 if imp.get("iibb_aplica_domestico") else 0.0) +
+                         S["venta_bruta_exportacion"][k] * (1.0 if imp.get("iibb_aplica_exportacion") else 0.0))
+            S["impuestos_sobre_ingresos"][k] = ((imp.get("pct_iibb") or 0.0) * base_iibb +
+                                               S["venta_bruta"][k] * (imp.get("pct_tasas_municipales") or 0.0))
             S["otros_impuestos"][k] = (imp.get("otros_impuestos_usd_anio") or 0.0) / 12 * idx[k]
         elif k >= 1:
             hist_u.append(0.0)
@@ -1134,7 +1247,7 @@ def simular(P):
         S["delta_ct"][k] = S["ct"][k] - (S["ct"][k - 1] if k else 0.0)
         # --- IVA (simplificado: arrastre del saldo a favor; efecto de caja = −Δ saldo) ---
         if iva_p["modo"] == "SIMPLIFICADO":
-            S["iva_credito"][k] += S["capex_total"][k] * (iva_p.get("alicuota_capex") or 0.0)
+            S["iva_credito"][k] += S["iva_credito_capex"][k]   # TF-076: solo IVA de CAPEX declarado y elegible
             neto_iva = S["iva_debito"][k] - S["iva_credito"][k]
             pago = max(0.0, neto_iva - saldo_favor)
             nuevo_saldo = max(0.0, saldo_favor - neto_iva)
@@ -1142,7 +1255,7 @@ def simular(P):
             saldo_favor = nuevo_saldo
             S["iva_saldo_favor"][k] = saldo_favor
         else:
-            S["iva_debito"][k] = S["iva_credito"][k] = 0.0
+            S["iva_debito"][k] = S["iva_credito"][k] = S["iva_credito_capex"][k] = S["iva_capex_pendiente_base"][k] = 0.0
         # --- deuda ---
         for d in deudas:
             for a_, b_ in (("deuda_alta", "alta"), ("deuda_interes", "interes"), ("deuda_amort", "amort"),
@@ -1190,8 +1303,9 @@ def simular(P):
                 raise ErrorFinanciero("perpetuidad: la tasa debe superar al crecimiento g")
             ult = (sum(S["fcff_pre"][N - 11:N + 1]) - S["valor_terminal"][N]
                    - sum(S["impuesto_operativo"][N - 11:N + 1]))
-            S["valor_terminal"][k] = ult * (1 + g_) / (r_ - g_)
-            S["fcff_pre"][k] += S["valor_terminal"][k]
+            perp = ult * (1 + g_) / (r_ - g_)
+            S["valor_terminal"][k] += perp             # suma al CT recuperado (si lo hay): la serie cierra la identidad del FCFF
+            S["fcff_pre"][k] += perp
         S["fcff"][k] = S["fcff_pre"][k] - S["impuesto_operativo"][k]
         financ = (- S["deuda_interes"][k] - S["deuda_comision"][k] + S["deuda_alta"][k] - S["deuda_amort"][k]
                   - S["deuda_remanente_cierre"][k])
@@ -1222,7 +1336,7 @@ def simular(P):
         "fisico": ("capacidad_aves", "aves_disponibles", "aves_requeridas", "aves_requeridas_aseguradas", "aves_faenadas",
                    "u_tecnica", "u_comercial", "u_efectiva", "kg_producidos", "kg_vendidos", "kg_excedente_sin_venta",
                    "kg_inventario", "kg_merma_rampup"),
-        "bruto": ("venta_bruta",) + tuple(f"venta_{c}" for c in CATEGORIAS_INGRESO),
+        "bruto": ("venta_bruta", "venta_bruta_domestica", "venta_bruta_exportacion") + tuple(f"venta_{c}" for c in CATEGORIAS_INGRESO),
         "neto": ("descuentos", "bonificaciones", "devoluciones", "comisiones", "derechos_exportacion", "ingreso_neto",
                  "costos_logistica_canal", "costos_exportacion", "cxc"),
         "opex": ("opex_variable", "opex_fijo", "opex_semifijo", "opex_semivariable", "opex_total", "costos_extra_rampup"),
@@ -1231,7 +1345,8 @@ def simular(P):
         "capex": ("capex_inicial", "capex_expansion", "capex_reposicion", "capex_total"),
         "ct": ("inv_materias_primas", "inv_alimento", "inv_packaging", "inv_repuestos", "inv_producto_terminado",
                "inv_activo_biologico", "inv_otros", "inventarios", "caja_operativa", "cxp", "ct", "delta_ct"),
-        "iva": ("iva_debito", "iva_credito", "iva_saldo_favor", "iva_pago_fisco", "flujo_iva"),
+        "iva": ("iva_debito", "iva_credito", "iva_saldo_favor", "iva_pago_fisco", "flujo_iva", "iva_credito_capex",
+                "iva_capex_pendiente_base"),
         "fcff_pre": ("fcff_pre", "valor_terminal"), "fcff_post": ("impuesto_operativo", "fcff"),
         "fin": ("deuda_alta", "deuda_interes", "deuda_amort", "deuda_comision", "deuda_saldo_ini", "deuda_saldo_fin",
                 "deuda_remanente_cierre", "servicio_deuda"),
@@ -1555,8 +1670,8 @@ def publicabilidad(R):
             falt = ["sin deuda en la estructura: DSCR no aplica"]
         val = not falt
         if val:
-            extra = ETIQUETA_SIM if P["modo"] == "ESCENARIO" else \
-                f"EVIDENCIA completa dentro del umbral {'|'.join(P['umbral_evidencia'])} (DEC-19-01 abierta)"
+            extra = (ETIQUETA_OVERRIDE_TOTAL if P.get("override_total") else ETIQUETA_SIM) if P["modo"] == "ESCENARIO" else \
+                f"EVIDENCIA completa dentro del umbral {'|'.join(P['umbral_evidencia'])} (DEC-084 abierta)"
         pref = "TIR_NO_DEFINIDA_MATEMATICAMENTE" if falt and falt[0].startswith("TIR matemática") else \
             "NO_APLICA" if falt and falt[0].startswith("sin deuda") else (NO_PUB if P["modo"] == "EVIDENCIA" else NO_DISP_ESC)
         motivo = extra if val else pref + " — falta: " + " | ".join(falt)
@@ -1570,7 +1685,9 @@ def resultados(R, calcular_tir=True):
     P = R["P"]
     out = {"ESCENARIO": P["nombre"], "MODO": P["modo"], "CONFIGURACION": P["configuracion"], "TRAYECTORIA": P["trayectoria"],
            "HORIZONTE_ANIOS": P["horizonte_anios"], "MODELO_MONETARIO": P["modelo_monetario"],
-           "ETIQUETA": ETIQUETA_SIM if P["modo"] == "ESCENARIO" else "MODO_EVIDENCIA",
+           "ETIQUETA": (ETIQUETA_OVERRIDE_TOTAL if P.get("override_total") else ETIQUETA_SIM) if P["modo"] == "ESCENARIO" else "MODO_EVIDENCIA",
+           "TRAZABILIDAD": ("PARCIAL: OVERRIDE_TOTAL_ARQUITECTURA (CAPEX/OPEX del usuario sin verificar contra la arquitectura)"
+                            if P.get("override_total") else "COMPLETA"),
            "UMBRAL_EVIDENCIA": "|".join(P.get("umbral_evidencia") or UMBRAL_EVIDENCIA_DEFAULT),
            "OVERRIDES_SIMULACION": ", ".join(P.get("overrides_simulacion") or []),
            "CONVENCION_DESCUENTO": P["convencion_descuento"]}
@@ -1774,6 +1891,10 @@ def capex_desde_modulo(cc, umbral=None):
     nunca se usa como total (devuelve None + motivo)."""
     filas, res, _ = _correr_capex(cc)
     T = res["TOTAL"]
+    inciertos = [f for f in filas if f["COSTEA"] and f["TITULAR"] == "EMPRESA" and "IVA_INCIERTO" in (f.get("ALERTAS") or "")]
+    if T["TOTAL_PRELIMINAR_USD"] is not None and inciertos:
+        return None, "PENDIENTE", (f"CAPEX con IVA_INCIERTO en {len(inciertos)} conceptos: el total no se usa (ni el IVA como costo ni "
+                                   "como crédito) hasta declarar el tratamiento del IVA (TF-076, DPV-093)")
     if T["TOTAL_PRELIMINAR_USD"] is not None and _niveles_con_monto(T, "CAPEX") <= set(umbral or UMBRAL_EVIDENCIA_DEFAULT):
         niv = "E1" if not T["N_CONCEPTOS_E3"] else "E3"
         return T["TOTAL_PRELIMINAR_USD"], niv, ""
@@ -1930,6 +2051,72 @@ def _get_path(P, path):
     return d
 
 
+UNIVERSO_DIM = {   # universo declarado en un override → atributo de la arquitectura que debe tenerlo (TF-004)
+    "FAENA_PROPIA": ("faena", {"propia"}), "FAENA_FACON": ("faena", {"facon"}), "FACON": ("faena", {"facon"}),
+    "INCUBACION": ("pollito", {"incubacion"}), "INCUBACION_PROPIA": ("pollito", {"incubacion"}),
+    "POLLITO_COMPRADO": ("pollito", {"compra"}), "PLANTA_ALIMENTO": ("alimento", {"propia"}),
+    "PLANTA_ALIMENTO_PROPIA": ("alimento", {"propia"}), "ALIMENTO_PROPIO": ("alimento", {"propia"}),
+    "ALIMENTO_COMPRADO": ("alimento", {"compra"}), "ALIMENTO_FACON": ("alimento", {"facon"}),
+    "GRANJAS_PROPIAS": ("granjas", {"propias", "mixto"}), "GRANJAS_INTEGRADAS": ("granjas", {"integradas", "mixto"}),
+    "FLOTA_PROPIA": ("flota", {"propia", "mixto"}), "RENDERING": ("rendering", {True}), "REPRODUCTORAS": ("reproductoras", {True})}
+DIMS_ARQ = ("faena", "granjas", "pollito", "alimento", "flota", "frio", "subproductos", "rendering", "reproductoras")
+COL_MAESTRA = {"faena": "FAENA", "granjas": "GRANJAS", "pollito": "POLLITO", "alimento": "ALIMENTO", "flota": "FLOTA",
+               "frio": "FRIO", "subproductos": "SUBPRODUCTOS", "rendering": "RENDERING", "reproductoras": "UPSTREAM_REPRODUCTORAS"}
+
+
+def fila_maestra(configuracion, variante):
+    """Fila de 00_gestion_proyecto/arquitecturas_maestras.csv de la corrida (base o variante)."""
+    filas = leer_csv(ARCHIVO_ARQ_MAESTRAS)
+    if variante and variante != "BASE":
+        f = [r for r in filas if r["ESCENARIO_REFERENCIA"] == variante]
+    else:
+        f = [r for r in filas if r["CONFIGURACION"] == configuracion and r["TIPO"] == "CONFIGURACION_BASE"]
+    if not f:
+        raise ErrorFinanciero(f"{OVERRIDE_INCOMPATIBLE}: {configuracion}/{variante} no figura en arquitecturas_maestras.csv")
+    return f[0]
+
+
+def contexto_override(configuracion, variante, escala, cc, co):
+    """Arquitectura y módulos de la corrida contra los que se valida un override de usuario."""
+    m = fila_maestra(configuracion, variante)
+    dims_m = {k: m[c].split(" ")[0] for k, c in COL_MAESTRA.items()}
+    if any(dims_m[k] != str(cc[k]) for k in DIMS_ARQ):
+        raise ErrorFinanciero(f"{OVERRIDE_INCOMPATIBLE}: arquitecturas_maestras.csv no coincide con la corrida {configuracion}/{variante}")
+    filas_c, _, _ = _correr_capex(cc)
+    filas_o = _correr_opex(co)[0]
+    return {"CONFIGURACION": configuracion, "VARIANTE": variante or "BASE", "ESCALA": escala, "cc": cc,
+            "capex_mod": {f["MODULO"] for f in filas_c if f["COSTEA"] and f["TITULAR"] == "EMPRESA"} | {"TOTAL_ETAPA"},
+            "opex_mod": {f["MODULO_ARQ"] for f in filas_o if f["COSTEA"] and f.get("MODULO_ARQ")}}
+
+
+def verificar_override(meta, ctx, tipo, modulo=None):
+    """Compatibilidad de un override de usuario (CAPEX u OPEX) con la arquitectura de la corrida (TF-004). Devuelve la
+    lista de incompatibilidades (vacía = compatible). Nunca corrige el escenario ni usa el valor en silencio."""
+    meta = meta or {}
+    mot = [f"falta {k}" for k in CAMPOS_META_OVERRIDE if meta.get(k) in (None, "")]
+    if mot:
+        return mot
+    if meta["CONFIGURACION"] != ctx["CONFIGURACION"]:
+        mot.append(f"CONFIGURACION {meta['CONFIGURACION']} ≠ corrida {ctx['CONFIGURACION']}")
+    if str(meta["VARIANTE"]) != ctx["VARIANTE"]:
+        mot.append(f"VARIANTE {meta['VARIANTE']} ≠ corrida {ctx['VARIANTE']}")
+    try:
+        if int(meta["ESCALA"]) != int(ctx["ESCALA"]):
+            mot.append(f"ESCALA {meta['ESCALA']} ≠ etapa {ctx['ESCALA']}")
+    except (TypeError, ValueError):
+        mot.append(f"ESCALA {meta['ESCALA']!r} inválida")
+    mod = modulo or meta["MODULO"]
+    permitidos = ctx["capex_mod"] if tipo == "CAPEX" else ctx["opex_mod"]
+    if mod not in permitidos:
+        mot.append(f"MÓDULO {tipo} {mod} no existe en {ctx['CONFIGURACION']}/{ctx['VARIANTE']} ({', '.join(sorted(permitidos))})")
+    u = str(meta["UNIVERSO"]).upper()
+    if u in UNIVERSO_DIM:
+        dim, vals = UNIVERSO_DIM[u]
+        if ctx["cc"][dim] not in vals:
+            mot.append(f"UNIVERSO {u} requiere {dim} ∈ {sorted(map(str, vals))}; la arquitectura tiene {dim} = {ctx['cc'][dim]}")
+    return mot
+
+
 VARIABLES_ESPECIALES = ("curva_rampup", "demanda_referencia_02", "mix_demanda", "dias_pago", "dias_stock",
                         "propiedad_rendimientos_validados", "demanda", "financiamiento", "umbral_evidencia_publicacion")
 
@@ -2002,10 +2189,37 @@ def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usua
     curvas = leer_curvas()
     nombre_curva = resueltos.get("curva_rampup")
     usr_et = usuario.get("etapas", [])
+    override_total = usuario.get("OVERRIDE_TOTAL_ARQUITECTURA") is True
+    if usuario.get("OVERRIDE_TOTAL_ARQUITECTURA") not in (None, True, False):
+        raise ErrorFinanciero("OVERRIDE_TOTAL_ARQUITECTURA: TRUE / FALSE (declaración explícita)")
+    P["override_total"] = override_total
     for j, E in enumerate(escalas):
         cc, co = configs(escenario_capex if (escenario_capex and len(escalas) == 1) else f"{configuracion}-{E}")
         e = etapa_vacia(f"E{j + 1}-{E}", E, mcx.dias_anio(cc), "INICIAL" if j == 0 else "FECHA")
         ue = usr_et[j] if j < len(usr_et) else {}
+        if modo == "ESCENARIO" and any(ue.get(c) is not None for c in ("capex_usd", "activos", "opex_rubros")):
+            if override_total:
+                T.add(f"{e['id']}.OVERRIDE_TOTAL_ARQUITECTURA", True, "—", "ESCENARIO_USUARIO", "escenario del usuario",
+                      "OVERRIDE_TOTAL_ARQUITECTURA", "", f"{ETIQUETA_OVERRIDE_TOTAL}: CAPEX/OPEX del usuario NO verificados contra "
+                      "la arquitectura; PERDIDA_DE_TRAZABILIDAD_PARCIAL (módulos, universos y completitud sin control)")
+            else:
+                ctx = contexto_override(configuracion, escenario_capex if len(escalas) == 1 else None, E, cc, co)
+                malos = []
+                if ue.get("capex_usd") is not None or ue.get("activos") is not None:
+                    malos += [f"CAPEX: {m}" for m in verificar_override(ue.get("capex_meta"), ctx, "CAPEX")]
+                    for a in ue.get("activos") or []:
+                        am = a.get("meta") or ue.get("capex_meta")
+                        mod_a = (a.get("meta") or {}).get("MODULO") or (a["clase"].split(":")[0] if ":" in a["clase"] else None)
+                        if mod_a is None:
+                            malos.append(f"activo {a['clase']}: sin MODULO")
+                        else:
+                            malos += [f"activo {a['clase']}: {m}" for m in verificar_override(am, ctx, "CAPEX", mod_a)]
+                for r in ue.get("opex_rubros") or []:
+                    malos += [f"OPEX {r.get('rubro')}: {m}" for m in verificar_override(r.get("meta"), ctx, "OPEX")]
+                if malos:
+                    raise ErrorFinanciero(f"{OVERRIDE_INCOMPATIBLE} ({e['id']}): " + "; ".join(dict.fromkeys(malos)))
+                if ue.get("opex_rubros") is not None:
+                    e["opex_modulos_requeridos"] = sorted(ctx["opex_mod"])
         if j == 0:
             cap, niv, mot = capex_desde_modulo(cc, umbral)
         else:
@@ -2046,8 +2260,9 @@ def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usua
                   "merma / eficiencia / costos extra", "", "declaración del usuario (no es dato)")
         T.add(f"{e['id']}.rampup", nombre_curva if (curva and not ue.get("rampup")) else ("usuario" if curva else None), "curva",
               "ESCENARIO_USUARIO" if ue.get("rampup") else ("SUPUESTO_MODELO" if curva else "PENDIENTE"), "curvas_rampup.csv",
-              "CURVA", "", "plantilla ilustrativa SIN fuente (SUP-19-09)" if curva else "curva de ramp-up PENDIENTE (DEC-090)")
+              "CURVA", "", "plantilla ilustrativa SIN fuente (SUP-196)" if curva else "curva de ramp-up PENDIENTE (DEC-090)")
         e["curva_desembolso"] = ue.get("curva_desembolso") if modo == "ESCENARIO" else None
+        e["iva_capex"] = copy.deepcopy(ue.get("iva_capex")) if modo == "ESCENARIO" else None   # TF-076
         T.add(f"{e['id']}.curva_desembolso", e["curva_desembolso"], "[offset_mes, fracción]",
               "ESCENARIO_USUARIO" if e["curva_desembolso"] else "PENDIENTE", "", "CURVA_DE_DESEMBOLSO_CAPEX", "",
               "cronograma de obra, anticipos y plazos de entrega PENDIENTES (DPV-086, DPV-167)")
@@ -2932,10 +3147,18 @@ def ejecutar_tests(verbose=True):
     def _():
         iva = {"modo": "SIMPLIFICADO", "alicuota_ventas": 0.105, "alicuota_compras": 0.21, "alicuota_capex": 0.21}
         a = simular(caso_prueba())["series"]
-        b = simular(caso_prueba(iva=iva))["series"]
+        Pb = caso_prueba(iva=iva)
+        Pb["etapas"][0]["iva_capex"] = {"base": "NETA", "iva_estado": "DECLARADO", "tasa": 0.21,
+                                        "condicion_fiscal": "TEST", "elegible_credito": True, "criterio": "caso de prueba"}
+        b = simular(Pb)["series"]
         assert all(_cerca(x, y, 1e-12) for x, y in zip(a["ebitda"], b["ebitda"]))
         assert _cerca(b["iva_saldo_favor"][0], 21.0) and b["flujo_iva"][0] < 0
         assert _cerca(sum(b["flujo_iva"]), -b["iva_saldo_favor"][-1], 1e-9)
+        # sin declaración (TF-076): CREDITO_FISCAL_IVA_CAPEX = PENDIENTE; ni crédito en caja ni costo
+        Rc = simular(caso_prueba(iva=iva))
+        assert any(CREDITO_IVA_CAPEX_PEND in x for x in Rc["faltantes"]["IVA"])
+        assert Rc["series"]["flujo_iva"] is None and Rc["series"]["fcff_pre"] is None
+        assert all(_cerca(x, y, 1e-12) for x, y in zip(a["ebitda"], Rc["series"]["ebitda"]))
 
     @test("N16", "Impuesto a las ganancias anual con quebrantos")
     def _():
