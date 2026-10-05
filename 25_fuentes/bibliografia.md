@@ -22,6 +22,8 @@ Formato sugerido: `FTE-### — Autor/Organismo (año). Título. Editorial/Sitio.
 
 > **Nota (2026-10-03, reconciliación de las sesiones 16–17):** FTE-310 a FTE-322 provienen de las sesiones de CAPEX (16: FTE-310–316) y OPEX (17: FTE-317–322), renumeradas desde IDs provisionales (mapa en [`../00_gestion_proyecto/reconciliacion_sesiones_16_17.md`](../00_gestion_proyecto/reconciliacion_sesiones_16_17.md) §2). **Todas siguen `[PVDP]`** (extractos de buscador; sitios bloqueados). FTE-322 queda registrada como **descartada** (contradicción con FTE-029). Dos fuentes provisionales se consolidaron en FTE-029 (misma URL) y FTE-300 (mismo documento).
 
+> **Nota (2026-10-05, reconciliación de las sesiones 19–20 y auditoría final del motor, sesión 21):** las sesiones 19 (modelo financiero) y 20 (riesgo y optimizador) **no agregaron fuentes** (no se asignó ningún `FTE-19-###` ni `FTE-20-###`). El financiero reutiliza FTE-004 y FTE-032 (ya registradas, `[PVDP]`) solo como referencias `REFERENCIA_E4_NO_USABLE` en `21_modelo_financiero/base_precios_venta.csv`; el registro de riesgos reutiliza las fuentes de `01_mercado/mercado_avicola_argentina.md` §11 como frecuencia sectorial (no probabilidad del proyecto). Último ID vigente: **FTE-322**. Mapa en [`../00_gestion_proyecto/reconciliacion_sesiones_19_20.md`](../00_gestion_proyecto/reconciliacion_sesiones_19_20.md) §2.
+
 ## Organismos oficiales argentinos
 _(SENASA, Secretaría de Agricultura, Ganadería y Pesca, INTA, INTI, INDEC, organismos provinciales)_
 

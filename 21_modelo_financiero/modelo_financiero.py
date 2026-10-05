@@ -18,7 +18,7 @@ variantes) consumiendo, sin modificarlos ni copiar sus fórmulas:
 
 DOS MODOS (nunca se mezclan)
   EVIDENCIA : solo datos dentro de UMBRAL_EVIDENCIA_PUBLICACION (default E1–E3, configurable en
-              inputs_financieros.csv sin tocar código; DEC-19-01 abierta) y los supuestos
+              inputs_financieros.csv sin tocar código; DEC-084 abierta) y los supuestos
               metodológicos permitidos (SUPUESTOS_METODOLOGICOS). Si falta un bloque material, NO publica
               (NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE) y lista exactamente qué falta.
   ESCENARIO : acepta inputs del usuario (precios, demanda, CAPEX, OPEX, utilización, ramp-up, financiamiento,
@@ -69,7 +69,7 @@ Uso
     python3 21_modelo_financiero/modelo_financiero.py --escenario mi_escenario.json   # MODO ESCENARIO
 
 El script se DETIENE (código 1) si falla cualquier prueba. Unidades métricas; CSV con punto decimal; USD.
-IDs provisionales de la sesión: SUP-19-##, DPV-19-##, DEC-19-##, FTE-19-### (ver actualizaciones_gestion_19.md).
+IDs reconciliados en 00_gestion_proyecto/reconciliacion_sesiones_19_20.md (SUP-189 a SUP-211; DPV-178; DEC-093 a DEC-096).
 """
 import argparse
 import copy
@@ -117,9 +117,9 @@ MODOS = ("EVIDENCIA", "ESCENARIO")
 ORIGENES = ("EVIDENCIA_REAL", "ESCENARIO_USUARIO", "SUPUESTO_MODELO", "PENDIENTE")
 NIVELES = ("E1", "E2", "E3", "E4", "E5")
 # UMBRAL_EVIDENCIA_PUBLICACION: niveles que el modo evidencia acepta. Se lee de inputs_financieros.csv (variable
-# `umbral_evidencia_publicacion`, p. ej. "E1|E2|E3") para poder cambiarlo SIN tocar código (DEC-19-01 abierta).
+# `umbral_evidencia_publicacion`, p. ej. "E1|E2|E3") para poder cambiarlo SIN tocar código (DEC-084 abierta).
 # Este valor es solo el default conservador si la fila no existe. E4 [PVDP] no pasa el default.
-UMBRAL_EVIDENCIA_DEFAULT = ("E1", "E2", "E3")             # SUP-19-02
+UMBRAL_EVIDENCIA_DEFAULT = ("E1", "E2", "E3")             # SUP-190
 NIVELES_EVIDENCIA_ACEPTADOS = UMBRAL_EVIDENCIA_DEFAULT    # compatibilidad: default, no decisión
 ETIQUETA_SIM = "SIMULACION_HIPOTETICA_NO_VALIDADA"
 NO_PUB = "NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE"
@@ -127,11 +127,11 @@ NO_DISP_ESC = "NO_DISPONIBLE_FALTAN_INPUTS_DEL_ESCENARIO"
 # Interfaz de performance (sesión 20): resultados(R, calcular_tir=False) omite SOLO la TIR. La métrica queda en este
 # estado (no es 0 ni un faltante de datos); el default True reproduce exactamente la sesión 19.
 TIR_NO_CALCULADA = "NO_CALCULADA"
-# Convenciones que el MODO EVIDENCIA admite como SUPUESTO_MODELO (no son datos económicos; SUP-19-03)
+# Convenciones que el MODO EVIDENCIA admite como SUPUESTO_MODELO (no son datos económicos; SUP-191)
 SUPUESTOS_METODOLOGICOS = {"modelo_monetario", "base_tasa", "meses_detalle", "valor_terminal.metodo",
                            "valor_terminal.recuperar_ct", "moneda_funcional", "convencion_descuento",
                            "tipo_tasa_descuento", "umbral_evidencia_publicacion"}
-# Convenciones de tasa (SUP-19-25/26). La tasa de descuento es ANUAL EFECTIVA salvo declaración expresa.
+# Convenciones de tasa (SUP-192 / SUP-200). La tasa de descuento es ANUAL EFECTIVA salvo declaración expresa.
 TIPOS_TASA_DESCUENTO = ("EFECTIVA_ANUAL", "NOMINAL_ANUAL_CAP_MENSUAL")
 TIPOS_TASA_DEUDA = ("EFECTIVA_ANUAL", "NOMINAL_ANUAL", "PERIODICA")
 CONVENCIONES_DESCUENTO = ("MENSUAL", "PERIODO_REPORTE")
@@ -140,7 +140,7 @@ CLAVES_IMPUESTOS = ("tasa_ganancias", "anios_quebranto", "pct_iibb", "pct_tasas_
 
 # Demanda (02 §1): A = asegurada / documentada; B = negociada; entre B y C = interesada; C/D = potencial
 CATEGORIAS_DEMANDA = ("DOCUMENTADA", "ASEGURADA", "NEGOCIADA", "INTERESADA", "POTENCIAL", "ESCENARIO")
-CATEGORIAS_DEMANDA_EVIDENCIA = ("DOCUMENTADA", "ASEGURADA")   # únicas que el modo evidencia vende (SUP-19-05)
+CATEGORIAS_DEMANDA_EVIDENCIA = ("DOCUMENTADA", "ASEGURADA")   # únicas que el modo evidencia vende (SUP-193)
 CANALES = ("supermercados", "mayoristas", "carnicerias_pollerias", "gastronomia", "industria", "exportacion", "otros")
 CATEGORIAS_INGRESO = ("PRODUCTO_PRINCIPAL", "MENUDENCIAS", "PATAS_GARRAS", "SUBPRODUCTOS", "RENDERING", "OTROS")
 # Productos = claves ITEMS de 23 (una sola agrupación del balance 04, sin doble conteo). None = no vendible.
@@ -684,7 +684,7 @@ def flags_calculo(F, P):
 # 4. DEUDA (cronograma independiente de la operación)
 # ---------------------------------------------------------------------------------------------
 def tasa_deuda_periodo(d):
-    """Tasa efectiva de cada período de servicio (frecuencia f meses), según el TIPO declarado (SUP-19-26):
+    """Tasa efectiva de cada período de servicio (frecuencia f meses), según el TIPO declarado (SUP-200):
       EFECTIVA_ANUAL : (1 + TEA)^(f/12) − 1
       NOMINAL_ANUAL  : TNA × f ÷ 12, solo si la capitalización declarada coincide con la frecuencia de pago
       PERIODICA      : tasa del período, solo si su período declarado coincide con la frecuencia de pago
@@ -1190,8 +1190,9 @@ def simular(P):
                 raise ErrorFinanciero("perpetuidad: la tasa debe superar al crecimiento g")
             ult = (sum(S["fcff_pre"][N - 11:N + 1]) - S["valor_terminal"][N]
                    - sum(S["impuesto_operativo"][N - 11:N + 1]))
-            S["valor_terminal"][k] = ult * (1 + g_) / (r_ - g_)
-            S["fcff_pre"][k] += S["valor_terminal"][k]
+            perp = ult * (1 + g_) / (r_ - g_)
+            S["valor_terminal"][k] += perp             # suma al CT recuperado (si lo hay): la serie cierra la identidad del FCFF
+            S["fcff_pre"][k] += perp
         S["fcff"][k] = S["fcff_pre"][k] - S["impuesto_operativo"][k]
         financ = (- S["deuda_interes"][k] - S["deuda_comision"][k] + S["deuda_alta"][k] - S["deuda_amort"][k]
                   - S["deuda_remanente_cierre"][k])
@@ -1556,7 +1557,7 @@ def publicabilidad(R):
         val = not falt
         if val:
             extra = ETIQUETA_SIM if P["modo"] == "ESCENARIO" else \
-                f"EVIDENCIA completa dentro del umbral {'|'.join(P['umbral_evidencia'])} (DEC-19-01 abierta)"
+                f"EVIDENCIA completa dentro del umbral {'|'.join(P['umbral_evidencia'])} (DEC-084 abierta)"
         pref = "TIR_NO_DEFINIDA_MATEMATICAMENTE" if falt and falt[0].startswith("TIR matemática") else \
             "NO_APLICA" if falt and falt[0].startswith("sin deuda") else (NO_PUB if P["modo"] == "EVIDENCIA" else NO_DISP_ESC)
         motivo = extra if val else pref + " — falta: " + " | ".join(falt)
@@ -2046,7 +2047,7 @@ def construir_entrada(nombre, configuracion, escalas, modo, plantilla=None, usua
                   "merma / eficiencia / costos extra", "", "declaración del usuario (no es dato)")
         T.add(f"{e['id']}.rampup", nombre_curva if (curva and not ue.get("rampup")) else ("usuario" if curva else None), "curva",
               "ESCENARIO_USUARIO" if ue.get("rampup") else ("SUPUESTO_MODELO" if curva else "PENDIENTE"), "curvas_rampup.csv",
-              "CURVA", "", "plantilla ilustrativa SIN fuente (SUP-19-09)" if curva else "curva de ramp-up PENDIENTE (DEC-090)")
+              "CURVA", "", "plantilla ilustrativa SIN fuente (SUP-196)" if curva else "curva de ramp-up PENDIENTE (DEC-090)")
         e["curva_desembolso"] = ue.get("curva_desembolso") if modo == "ESCENARIO" else None
         T.add(f"{e['id']}.curva_desembolso", e["curva_desembolso"], "[offset_mes, fracción]",
               "ESCENARIO_USUARIO" if e["curva_desembolso"] else "PENDIENTE", "", "CURVA_DE_DESEMBOLSO_CAPEX", "",

@@ -64,6 +64,9 @@ NINGUNA = "NINGUNA_CONFIGURACION_FACTIBLE"
 SQ = mr.STATUS_QUO
 ASSET_LIGHT = "OPERAR_ASSET_LIGHT"
 NO_ROB = "DECISION_NO_ROBUSTA"
+# Columna futura de prioridad (auditoría final 21): cuánto puede cambiar la decisión obtener el dato. En el universo
+# EVIDENCIA no puede calcularse (no hay escenario que perturbar): queda NO_CALCULADO, nunca 0 ni un orden inventado.
+POTENCIAL_NO_CALC = "NO_CALCULADO"
 
 
 # ---------------------------------------------------------------------------------------------
@@ -104,7 +107,7 @@ def espacio_decisiones(inp):
     """Enumera TODAS las combinaciones de atributos y las clasifica (nada se descarta en silencio):
       FISICAMENTE_INVALIDA                            validar_config() de 19 la rechaza (motivo informado)
       FISICAMENTE_POSIBLE_NO_MODELADA_ECONOMICAMENTE  CAPEX la acepta, pero no existe en el mapa: no se le inventa
-                                                      CAPEX/OPEX y no se evalúa (DPV-20-03)
+                                                      CAPEX/OPEX y no se evalúa (DEC-103)
       HABILITADA_EN_MAPA_PARA_EVALUACION              coincide con configuraciones del mapa → genera alternativas económicas
     Las alternativas económicas = Σ sobre las filas del mapa de n_alternativas_mapa() (+ NO_INVERTIR_AUN)."""
     mapa = {}
@@ -130,7 +133,7 @@ def espacio_decisiones(inp):
             clase = CLASES_ESPACIO[2] if en else CLASES_ESPACIO[1]
             motivo = ("configuraciones del mapa: " + ", ".join(x for x, _ in en)) if en else (
                 "físicamente posible para CAPEX, pero no está en el mapa de arquitecturas: no hay CAPEX/OPEX modelado "
-                "(no se inventa) y no se evalúa; requiere ampliar el mapa (DPV-20-03)")
+                "(no se inventa) y no se evalúa; requiere ampliar el mapa (DEC-103)")
         except mcx.ErrorCapex as e:
             clase, motivo = CLASES_ESPACIO[0], str(e)
         filas.append({"ID_COMBINACION": f"COMB-{len(filas) + 1:04d}", **{k.upper(): v for k, v in d.items()},
@@ -725,7 +728,7 @@ def pesos_balanceado(inp):
     w = {c: x for c, x in w.items() if x}
     origen = "USUARIO"
     if not w and inp.get("balanceado.preset") == "IGUALES":
-        w, origen = {c: 1.0 for c in COMP_BAL}, "PRESET_IGUALES [SUPUESTO] SUP-20-08"
+        w, origen = {c: 1.0 for c in COMP_BAL}, "PRESET_IGUALES [SUPUESTO] SUP-219"
     if not w:
         return None, "PESOS_NO_DEFINIDOS"
     s = sum(w.values())
@@ -1258,6 +1261,7 @@ def prioridad_evidencia(E, fichas):
                       "N_ALTERNATIVAS_BLOQUEADAS": len(a["ALTS"]), "N_ALTERNATIVAS": n_alt,
                       "REGISTROS_EN_FALTANTE": ", ".join(sorted(a["REFS"])), "ACCION": acc, "DPV_VINCULADOS": dpv,
                       "DPV_EXISTEN": existe, "NUEVA": nueva, "_orden": orden,
+                      "POTENCIAL_DE_CAMBIAR_DECISION": POTENCIAL_NO_CALC,
                       "METODO": "faltantes de disponibilidad() del motor × DEPENDENCIAS_FLAG; gates físicos pendientes"})
     asignar_rank_compartido(filas, lambda r: (r["INDICADORES_BLOQUEADOS"], r["N_ALTERNATIVAS_BLOQUEADAS"]),
                             "indicadores bloqueados y alternativas bloqueadas")
@@ -1323,6 +1327,7 @@ def prioridad_escenario(oneway, dec_van, fichas):
                       "BLOQUE": mr.VARIABLES[var]["BLOQUE_MOTOR"], "SWING_VAN_MEJOR": sw,
                       "PUEDE_CAMBIAR_DECISION": "SÍ" if flip else "NO", "COMO_CAMBIA": " | ".join(flip[:3]),
                       "CERCANIA_ALTERNATIVAS": (gap / sw) if sw > 0 else None, "ACCION": acc, "DPV_VINCULADOS": dpv,
+                      "POTENCIAL_DE_CAMBIAR_DECISION": ("SÍ" if flip else "NO") + " (one-way dentro del escenario; no es VOI)",
                       "DPV_EXISTEN": existe, "NUEVA": nueva,
                       "METODO": "sensibilidad one-way de la mejor y la segunda (MAX_VAN); sin distribuciones: no es VOI bayesiano"})
     asignar_rank_compartido(filas, lambda r: (r["PUEDE_CAMBIAR_DECISION"] == "SÍ", round(r["SWING_VAN_MEJOR"], 6)),
@@ -1345,6 +1350,7 @@ def que_hacer_ahora(prio_ev, prio_esc, n=10):
             out.append({"RANK_COMPARTIDO": r["RANK_COMPARTIDO"], "EMPATE": r.get("EMPATE", ""), "QUE_HACER_AHORA": r["ACCION"],
                         "ITEM": r["ITEM"], "DPV_VINCULADOS": r["DPV_VINCULADOS"],
                         "DPV_EXISTEN": r["DPV_EXISTEN"], "NUEVA": r["NUEVA"], "ORIGEN_RANKING": origen,
+                        "POTENCIAL_DE_CAMBIAR_DECISION": r.get("POTENCIAL_DE_CAMBIAR_DECISION", POTENCIAL_NO_CALC),
                         "RAZON": (f"bloquea {r['INDICADORES_BLOQUEADOS']} indicadores en {r['N_ALTERNATIVAS_BLOQUEADAS']}/{r['N_ALTERNATIVAS']} alternativas"
                                   if "INDICADORES_BLOQUEADOS" in r else
                                   f"amplitud VAN {r['SWING_VAN_MEJOR']:,.0f}; puede cambiar la decisión: {r['PUEDE_CAMBIAR_DECISION']}"),

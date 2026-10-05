@@ -12,10 +12,10 @@ descuentos,COMERCIAL,Descuentos en factura (todos los canales),RELATIVO,SOPORTAD
 devoluciones,COMERCIAL,Devoluciones (todos los canales),RELATIVO,SOPORTADA,canales.*.pct_devoluciones,CANALES,DPV-039,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
 canal,COMERCIAL,Reparto por canal,DISCRETO,DISCRETA,demanda[].canal,DEMANDA,DPV-039,,NO_MONOTONA / NO_APLICA,-0.95 a 3,
 utilizacion,OPERATIVA,Utilización técnica (curva de ramp-up; tope 100 %),RELATIVO,SOPORTADA,etapas[].rampup.utilizacion,RAMPUP,DEC-090,"Si la demanda limita las ventas, más utilización técnica no cambia nada",CRECIENTE,-0.95 a 0,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
-peso_vivo,OPERATIVA,Peso vivo de faena,RELATIVO,APROXIMACION,productos.*.kg_ave + rubros alimento,PRODUCCION,DPV-060,SUP-20-04: linealidad no verificada,NO_MONOTONA / NO_APLICA,-0.5 a 0.5,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+peso_vivo,OPERATIVA,Peso vivo de faena,RELATIVO,APROXIMACION,productos.*.kg_ave + rubros alimento,PRODUCCION,DPV-060,SUP-215: linealidad no verificada,NO_MONOTONA / NO_APLICA,-0.5 a 0.5,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
 mortalidad,OPERATIVA,Mortalidad en granja,RELATIVO,REQUIERE_BASE,stress.mortalidad,OPEX,DPV-019,Semántica del motor: solo encarece el pollito por ave faenada,DECRECIENTE,0 a 20,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
-fcr,OPERATIVA,Conversión alimenticia (FCR),RELATIVO,APROXIMACION,rubros alimento × FCR/FCR_base,OPEX,DPV-019,SUP-20-05: costo de alimento ∝ FCR a precio y peso constantes,DECRECIENTE,-0.5 a 5,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
-rendimiento_faena,OPERATIVA,Rendimiento comestible de faena,RELATIVO,APROXIMACION,productos.*.kg_ave,PRODUCCION,DPV-060,SUP-20-06: masa adicional sale de subproductos,CRECIENTE,-0.5 a 0.3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+fcr,OPERATIVA,Conversión alimenticia (FCR),RELATIVO,APROXIMACION,rubros alimento × FCR/FCR_base,OPEX,DPV-019,SUP-216: costo de alimento ∝ FCR a precio y peso constantes,DECRECIENTE,-0.5 a 5,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+rendimiento_faena,OPERATIVA,Rendimiento comestible de faena,RELATIVO,APROXIMACION,productos.*.kg_ave,PRODUCCION,DPV-060,SUP-217: masa adicional sale de subproductos,CRECIENTE,-0.5 a 0.3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
 condenas,OPERATIVA,Condenas / decomisos,RELATIVO,REQUIERE_BASE,productos.*.kg_ave,PRODUCCION,DPV-060,,DECRECIENTE,0 a 20,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
 merma,OPERATIVA,Merma del ramp-up,RELATIVO,SOPORTADA,etapas[].rampup.merma,RAMPUP,DEC-090,,DECRECIENTE,-0.95 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
 eficiencia_linea,OPERATIVA,Eficiencia de línea (variables ÷ eficiencia),RELATIVO,SOPORTADA,etapas[].rampup.eficiencia,RAMPUP,"DEC-090, DPV-097",,CRECIENTE,-0.9 a 0.5,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
@@ -43,7 +43,7 @@ capex_terreno,INVERSION,CAPEX del bloque terreno,RELATIVO,SOPORTADA,etapas[].act
 capex_instalacion,INVERSION,CAPEX del bloque instalacion,RELATIVO,SOPORTADA,etapas[].activos[clase INSTALACION],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
 capex_importacion,INVERSION,CAPEX del bloque importacion,RELATIVO,SOPORTADA,etapas[].activos[clase IMPORTACION],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
 capex_contingencia,INVERSION,CAPEX del bloque contingencia,RELATIVO,SOPORTADA,etapas[].activos[clase CONTINGENCIA],CAPEX,DPV-167,Requiere activos con clase; hoy los activos del BOQ no tienen vida útil (DPV-167),DECRECIENTE,-0.95 a 10,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
-fx,FINANCIERA,Devaluación del ARS (solo ítems con moneda_original ARS),RELATIVO,REQUIERE_BASE,stress.devaluacion,PRECIOS,DPV-20-04,,NO_MONOTONA / NO_APLICA,-0.5 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
+fx,FINANCIERA,Devaluación del ARS (solo ítems con moneda_original ARS),RELATIVO,REQUIERE_BASE,stress.devaluacion,PRECIOS,DPV-179,,NO_MONOTONA / NO_APLICA,-0.5 a 3,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
 tasa_descuento,FINANCIERA,Tasa de descuento (anual efectiva),RELATIVO,SOPORTADA,tasa_descuento,DESCUENTO,"DEC-007, DPV-001",,DECRECIENTE,-0.99 a 20,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
 tasa_deuda,FINANCIERA,Tasa de la deuda,RELATIVO,SOPORTADA,financiamiento.deudas[].tasa,FINANCIAMIENTO,DEC-092,No cambia el VAN del proyecto (FCFF): usar VAN_ACCIONISTA o DSCR,NO_MONOTONA / NO_APLICA,-0.99 a 20,-0.3|-0.2|-0.1|0|0.1|0.2|0.3
 plazo_deuda,FINANCIERA,Plazo de la deuda,ABSOLUTO_MESES,SOPORTADA,financiamiento.deudas[].plazo_meses,FINANCIAMIENTO,DEC-092,,NO_MONOTONA / NO_APLICA,-120 a 120,-24|-12|0|12|24

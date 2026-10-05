@@ -9,7 +9,7 @@
 | Clasificación | Cantidad | Qué significa | ¿Se evalúa? |
 |---|---|---|---|
 | `FISICAMENTE_INVALIDA` | 1.134 | CAPEX la rechaza (p. ej. rendering sin faena propia; reproductoras sin incubación); motivo informado | No |
-| `FISICAMENTE_POSIBLE_NO_MODELADA_ECONOMICAMENTE` | 1.450 | CAPEX la acepta, pero no está en el mapa de arquitecturas: no hay CAPEX/OPEX modelado y **no se inventa** | No (DPV-20-03) |
+| `FISICAMENTE_POSIBLE_NO_MODELADA_ECONOMICAMENTE` | 1.450 | CAPEX la acepta, pero no está en el mapa de arquitecturas: no hay CAPEX/OPEX modelado y **no se inventa** | No (DEC-103) |
 | `HABILITADA_EN_MAPA_PARA_EVALUACION` | 8 | coincide con configuraciones del mapa | Sí → genera las alternativas económicas |
 
 Las 8 combinaciones habilitadas agrupan las 24 filas del mapa (5 bases + 19 variantes; varias variantes comparten atributos con su base y difieren en automatización, terreno, días, halal, etc.). Las **alternativas económicas** salen de las filas del mapa, no de las combinaciones:
@@ -32,13 +32,13 @@ Por combinación: COMB-0001 (C1 + 13 variantes) 20 · COMB-1385 (C0 + B1 + B2) 9
 | FINANCIERA | SÍ / NO / PENDIENTE / SIN_RESTRICCION_FINANCIERA_DECLARADA | restricciones de capital, DSCR y deuda |
 | COMERCIAL | RESPALDADO / PARCIAL / NO_RESPALDADO | % de la capacidad con demanda DOCUMENTADA/ASEGURADA |
 
-**0 estructural ≠ desconocido** (`ESTADO_REQUERIMIENTO` de cada gate): `DIMENSIONADO` (valor de los drivers), `NO_REQUERIDO_POR_ARQUITECTURA` (la arquitectura no tiene el activo: requerimiento 0 y gate NO_APLICA) o `DESCONOCIDO` (no dimensionado: nunca 0). En **C0**, la planta de faena, su terreno industrial, frío y utilities no son de la empresa (NO_REQUERIDO para ese componente), pero la oficina/IT/estructura del CAPEX de C0 —y frío, flota, alimento, granjas, incubación o subproductos propios si una variante los tuviera— no tienen requerimiento dimensionado: TERRENO, AGUA y POTENCIA quedan `DESCONOCIDO` / PENDIENTE (una restricción de agua sobre C0 es NO_EVALUABLE, no CUMPLE). Solo el caso artificial `ART-ASSET-LIGHT`, que declara no tener módulos propios, usa 0 estructural (SUP-20-16; test AUD-10; mutación R22).
+**0 estructural ≠ desconocido** (`ESTADO_REQUERIMIENTO` de cada gate): `DIMENSIONADO` (valor de los drivers), `NO_REQUERIDO_POR_ARQUITECTURA` (la arquitectura no tiene el activo: requerimiento 0 y gate NO_APLICA) o `DESCONOCIDO` (no dimensionado: nunca 0). En **C0**, la planta de faena, su terreno industrial, frío y utilities no son de la empresa (NO_REQUERIDO para ese componente), pero la oficina/IT/estructura del CAPEX de C0 —y frío, flota, alimento, granjas, incubación o subproductos propios si una variante los tuviera— no tienen requerimiento dimensionado: TERRENO, AGUA y POTENCIA quedan `DESCONOCIDO` / PENDIENTE (una restricción de agua sobre C0 es NO_EVALUABLE, no CUMPLE). Solo el caso artificial `ART-ASSET-LIGHT`, que declara no tener módulos propios, usa 0 estructural (SUP-227; test AUD-10; mutación R22).
 
 ## 3. Comparabilidad y confianza
 
 `COMPARABILIDAD = FALSE` si difieren universo, horizonte, modelo real/nominal, base de la tasa, convención, tipo y valor de la tasa, moneda, base de flujo (pre/after-tax), tratamiento fiscal o definición de producto, o si **faltan bloques económicos** (VAN no publicable). `PARCIAL` si solo difiere la cobertura de evidencia (se rankea, declarado). `NO_APLICA` para NO_INVERTIR_AUN. Una alternativa FALSE no participa en rankings, dominancia ni Pareto (aparece como `NO_EVALUABLE`): un CAPEX/OPEX/precio faltante nunca se interpreta como 0 (tests COMP-02, AUD-14; mutaciones R12, R13, R27).
 
-`COBERTURA_EVIDENCIA` = bloques del motor completos en **modo evidencia** ÷ 17 para la misma configuración y escala: mide confianza, no rentabilidad (SUP-20-17).
+`COBERTURA_EVIDENCIA` = bloques del motor completos en **modo evidencia** ÷ 17 para la misma configuración y escala: mide confianza, no rentabilidad (SUP-228).
 
 ## 4. Semáforo (sin cortes económicos)
 
@@ -46,7 +46,7 @@ GRIS = no evaluable (incompleta, no comparable o status quo). ROJO = incumple un
 
 ## 5. NO_INVERTIR_AUN (status quo)
 
-Es una **alternativa de decisión**, no un proyecto productivo: no tiene VAN, TIR, payback, CAPEX, EBITDA ni robustez propios (todo `None`, estados `NO_APLICA_STATUS_QUO`); no se le asignan ceros que la harían ganar MIN_CAPEX o MIN_PAYBACK, ni TIR infinita (SUP-20-03, revisado). No entra a ningún ranking, ni a dominancia ni a Pareto. Después del ranking de inversiones, `DECISION_ESCENARIO` es la mejor inversión o NO_INVERTIR_AUN según reglas explícitas (`REGLAS_STATUS_QUO`):
+Es una **alternativa de decisión**, no un proyecto productivo: no tiene VAN, TIR, payback, CAPEX, EBITDA ni robustez propios (todo `None`, estados `NO_APLICA_STATUS_QUO`); no se le asignan ceros que la harían ganar MIN_CAPEX o MIN_PAYBACK, ni TIR infinita (SUP-214, revisado). No entra a ningún ranking, ni a dominancia ni a Pareto. Después del ranking de inversiones, `DECISION_ESCENARIO` es la mejor inversión o NO_INVERTIR_AUN según reglas explícitas (`REGLAS_STATUS_QUO`):
 
 | Regla | Gana NO_INVERTIR_AUN si… | Activación |
 |---|---|---|

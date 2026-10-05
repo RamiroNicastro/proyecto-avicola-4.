@@ -16,7 +16,7 @@
 | MAX_CRECIMIENTO | capacidad final alcanzada (aves/día) | máx |
 | BALANCEADO | score ponderado | máx |
 
-`optimizador.objetivos = TODOS` (default): un ranking por objetivo. **Ninguno es "el" criterio empresarial** (DEC-20-01).
+`optimizador.objetivos = TODOS` (default): un ranking por objetivo. **Ninguno es "el" criterio empresarial** (DEC-097).
 
 ## 2. Conjunto rankeable y score
 
@@ -24,7 +24,7 @@ Entra al ranking una alternativa de inversión del mismo universo, comparable (T
 
 ## 3. Objetivo balanceado
 
-Pesos de rentabilidad (VAN), riesgo (SCORE_ORDINAL_RIESGO), capital (fondos), liquidez (pico), crecimiento y robustez, normalizados a 1. Sin pesos → `PESOS_NO_DEFINIDOS` (no se cargan pesos "correctos"); preset `IGUALES` solo si el usuario lo pide, rotulado SUP-20-08. Componente faltante: SEPARAR (default) o PENALIZAR.
+Pesos de rentabilidad (VAN), riesgo (SCORE_ORDINAL_RIESGO), capital (fondos), liquidez (pico), crecimiento y robustez, normalizados a 1. Sin pesos → `PESOS_NO_DEFINIDOS` (no se cargan pesos "correctos"); preset `IGUALES` solo si el usuario lo pide, rotulado SUP-219. Componente faltante: SEPARAR (default) o PENALIZAR.
 
 ## 4. Mejor, segunda y robustez de la decisión
 

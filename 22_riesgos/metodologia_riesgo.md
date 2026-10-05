@@ -46,13 +46,13 @@ Una corrida contiene un solo universo (`correr_universo` rechaza mezclas). Los a
 | Soporte | Significado | Ejemplos |
 |---|---|---|
 | SOPORTADA | el motor tiene el campo; el shock lo modifica | precios por grupo, demanda (`stress.demanda`), días de cobro/pago, utilización (curva, tope 100 %), rubros de OPEX por driver, CAPEX (`stress.capex`), CAPEX por clase de activo, tasas, ganancias, IIBB, ramp-up |
-| APROXIMACION | transformación declarada | peso vivo (SUP-20-04), FCR (SUP-20-05), rendimiento de faena (SUP-20-06) |
+| APROXIMACION | transformación declarada | peso vivo (SUP-215), FCR (SUP-216), rendimiento de faena (SUP-217) |
 | REQUIERE_BASE | necesita valor base en `base_valores` | mortalidad, condenas, FX (traslado a precios ARS) |
 | DISCRETA | se evalúa como stress o alternativa | mix, canal, exportación, halal, integrados, proveedor de alimento, façon, financiamiento, terreno/utilities |
-| NO_SOPORTADA_POR_INTERFAZ | el motor no tiene el campo: se informa, no se simula | días operativos (DPV-20-01), recupero de IVA (DPV-20-02) |
+| NO_SOPORTADA_POR_INTERFAZ | el motor no tiene el campo: se informa, no se simula | días operativos (TF-001), recupero de IVA (TF-002) |
 
 - **Tipos de shock:** RELATIVO (× (1 + s)), ABSOLUTO_DIAS (+ s días), ABSOLUTO_MESES (+ s meses). Grillas en [`inputs_riesgo_optimizacion.csv`](inputs_riesgo_optimizacion.csv); **no implican probabilidad**.
-- **Rubros por driver:** prefijo de `COSTO_ID` de 20_opex (ALI-, POL-, UT-ELE-, LAB-, EMP-, LOG-, FAE-FACON…), luego `GRUPO_PROVEEDOR`; el usuario puede declarar `driver_riesgo` (SUP-20-19).
+- **Rubros por driver:** prefijo de `COSTO_ID` de 20_opex (ALI-, POL-, UT-ELE-, LAB-, EMP-, LOG-, FAE-FACON…), luego `GRUPO_PROVEEDOR`; el usuario puede declarar `driver_riesgo` (SUP-230).
 - **Resultados de un shock:** OK, `NO_APLICA`, `NO_CALCULABLE`, `SHOCK_INVALIDO`; base 0 con shock relativo → `BASE_CERO_SIN_EFECTO`; tope físico → `TOPE_…`.
 
 ## 3. Performance sin parches globales
@@ -70,8 +70,8 @@ Una corrida contiene un solo universo (`correr_universo` rechaza mezclas). Los a
 ## 5. Limitaciones conocidas
 
 1. Las transiciones de arquitectura (C0 → C1 → …) no existen en 19/20/21: las trayectorias expanden la **misma** configuración.
-2. 1.450 combinaciones físicamente posibles no están modeladas económicamente y no se evalúan (DPV-20-03).
-3. La exposición cambiaria solo se modela en ítems con `moneda_original = ARS` (DPV-20-04).
+2. 1.450 combinaciones físicamente posibles no están modeladas económicamente y no se evalúan (DEC-103).
+3. La exposición cambiaria solo se modela en ítems con `moneda_original = ARS` (DPV-179).
 4. Mortalidad: semántica del motor (encarece el pollito por ave faenada).
 5. Peso vivo, FCR y rendimiento: aproximaciones lineales declaradas.
 6. El SCORE_ORDINAL_RIESGO y la normalización min–max son **relativos** al conjunto evaluado.

@@ -1,7 +1,7 @@
 {
   "_comentario": "UNIVERSO ESCENARIO del optimizador (sesión 20). Todo null = PENDIENTE. 'comun' tiene la MISMA estructura que 21_modelo_financiero/plantilla_escenario_usuario.json y se aplica a todas las alternativas; 'por_alternativa' completa o reemplaza por ID de alternativa (CONFIG|VARIANTE|ESCALAS|TRAYECTORIA, p. ej. 'C1|BASE|10000|ESCALA_UNICA', 'C1|C1-10000-HALAL|10000|ESCALA_UNICA', 'C1|BASE|5000-10000-20000|T2_5000_10000_20000'), típicamente 'etapas' con capex_usd, curva_desembolso, opex_rubros y activos. Resultados rotulados SIMULACION_HIPOTETICA_NO_VALIDADA. Nada de este archivo entra al universo EVIDENCIA.",
   "plantilla": null,
-  "_plantilla": "PLANTILLA_CONSERVADOR | PLANTILLA_BASE | PLANTILLA_EXPANSIVO | null (aporta curva de ramp-up ilustrativa SUP-19-09 y demanda de prueba de 02)",
+  "_plantilla": "PLANTILLA_CONSERVADOR | PLANTILLA_BASE | PLANTILLA_EXPANSIVO | null (aporta curva de ramp-up ilustrativa SUP-196 y demanda de prueba de 02)",
   "comun": {
     "valores": {
       "horizonte_anios": null,

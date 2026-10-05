@@ -20,3 +20,7 @@ Variables ordenadas por (¿pueden invertir el orden mejor/segunda o llevar el VA
 ## 4. QUE_HACER_AHORA
 
 Acción por ítem (tabla de correspondencia ítem → acción), con DPV/DEC vinculados verificados contra `datos_por_validar.md` y `decisiones_pendientes.md`; ítems sin registro → `NUEVA`. Se listan acciones hasta `que_hacer.n` (10), pero **un grupo de empate nunca se corta**: si el límite cae dentro de un empate, entra el grupo completo. Cada fila lleva su `RANK_COMPARTIDO`; no hay numeración secuencial que sugiera un orden inexistente.
+
+## 5. Columna futura `POTENCIAL_DE_CAMBIAR_DECISION` (auditoría final 21)
+
+`prioridad_validacion.csv` y `que_hacer_ahora.csv` llevan la columna `POTENCIAL_DE_CAMBIAR_DECISION`, preparada para el desempate futuro del §3. En el universo **EVIDENCIA** vale `NO_CALCULADO` (constante `POTENCIAL_NO_CALC`): sin un escenario no hay sensibilidad que medir y no se completa con un orden inventado. En **ESCENARIO** y en el caso artificial repite el resultado one-way de `prioridad_escenario()` (`SÍ` / `NO`, "dentro del escenario; no es VOI"). Los empates siguen siendo empates (test de integración OP07).

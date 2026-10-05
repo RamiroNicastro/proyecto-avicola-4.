@@ -24,7 +24,7 @@ FLUJO EFECTIVO DEL ACCIONISTA = − aportes + dividendos (+ caja remanente al ci
 ```
 
 - El FCFE responde a la deuda (test N10) e incorpora el escudo fiscal de los intereses.
-- La deuda que quede al cierre del horizonte se cancela en el FCFE del último mes (SUP-19-12): conservador para el accionista.
+- La deuda que quede al cierre del horizonte se cancela en el FCFE del último mes (SUP-198): conservador para el accionista.
 - **No** se mezcla con el FCFF: el VAN y la TIR del proyecto usan FCFF; los del accionista usan el flujo efectivo con su propia tasa (`tasa_descuento_accionista`).
 
 ## 3. ¿Cuánto capital necesita? — tres medidas que no se confunden
@@ -32,7 +32,7 @@ FLUJO EFECTIVO DEL ACCIONISTA = − aportes + dividendos (+ caja remanente al ci
 | Medida | Definición | Para qué sirve |
 |---|---|---|
 | `CAPEX_INICIAL` | Σ desembolsos de la etapa inicial | Inversión en activos. **No** es la inversión total |
-| `FONDOS_INICIALES` | CAPEX inicial + `CT_INICIAL` + `OTROS_REQUERIMIENTOS_CAJA` | Concepto de la interfaz CAPEX §1. `CT_INICIAL` = máximo CT hasta el fin del ramp-up; `OTROS` = máximo saldo de IVA a favor antes de operar + intereses y comisiones antes de operar + reservas declaradas (SUP-19-19) |
+| `FONDOS_INICIALES` | CAPEX inicial + `CT_INICIAL` + `OTROS_REQUERIMIENTOS_CAJA` | Concepto de la interfaz CAPEX §1. `CT_INICIAL` = máximo CT hasta el fin del ramp-up; `OTROS` = máximo saldo de IVA a favor antes de operar + intereses y comisiones antes de operar + reservas declaradas (SUP-205) |
 | `PICO_REQUERIMIENTO_FONDOS` | − mínimo del FCFF acumulado (y `MES_VALLE_CAJA`) | Lo que realmente hay que fondear: incluye las **pérdidas del ramp-up** y el ΔCT. Responde "¿cuánto financiamiento necesita durante el ramp-up?" |
 
 En el caso de prueba CP-SIN-RECUPERO (pre-tax, EBITDA negativo) los fondos iniciales son 100 pero el pico es 200: un proyecto que pierde dinero consume más que su CAPEX.
@@ -43,7 +43,7 @@ En el caso de prueba CP-SIN-RECUPERO (pre-tax, EBITDA negativo) los fondos inici
 |---|---|
 | `null` | PENDIENTE: el flujo no es publicable (el IVA del CAPEX es un requerimiento de fondos material) |
 | `EXCLUIDO` | Declaración del usuario: flujos sin IVA, efecto financiero ignorado (rotulado) |
-| `SIMPLIFICADO` | Débito = alícuota × venta interna neta de descuentos, bonificaciones y devoluciones; crédito = alícuota × compras marcadas + alícuota de bienes de capital × CAPEX; el saldo a favor se **arrastra**; efecto de caja = − Δ saldo a favor (SUP-19-15). Sin recupero anticipado, percepciones ni retenciones (DPV-169) |
+| `SIMPLIFICADO` | Débito = alícuota × venta interna neta de descuentos, bonificaciones y devoluciones; crédito = alícuota × compras marcadas + alícuota de bienes de capital × CAPEX; el saldo a favor se **arrastra**; efecto de caja = − Δ saldo a favor (SUP-201). Sin recupero anticipado, percepciones ni retenciones (DPV-169) |
 
 El IVA del CAPEX **no** entra al EBITDA (test N15; mutación M17). La exportación no genera débito.
 
@@ -51,12 +51,12 @@ El IVA del CAPEX **no** entra al EBITDA (test N15; mutación M17). La exportaci�
 
 | Método | Valor al cierre | Nota |
 |---|---|---|
-| `SIN_VALOR_TERMINAL` | 0 | **Por defecto** para no inflar resultados (SUP-19-12) |
+| `SIN_VALOR_TERMINAL` | 0 | **Por defecto** para no inflar resultados (SUP-198) |
 | `VALOR_LIBRO` | Σ (costo − depreciación acumulada) de los activos vivos; terreno al costo | Requiere depreciación completa |
 | `EXPLICITO` | Monto declarado | Escenario |
 | `PERPETUIDAD` | FCFF de los últimos 12 meses × (1 + g) ÷ (r − g) | Requiere r > g; domina el VAN con facilidad |
 
-Opción `recuperar_ct` (por defecto no). Test N14.
+Opción `recuperar_ct` (por defecto no). Test N14. Con `recuperar_ct` el CT del cierre se suma a la serie `valor_terminal` también en PERPETUIDAD (corrección de reporte de la auditoría final 21, TF-009: el FCFF y el VAN ya lo incluían; la identidad FCFF = EBITDA − CAPEX − ΔCT ± IVA + VT cierra con cualquier método, test de integración FI03).
 
 ## 6. Real vs nominal y moneda
 

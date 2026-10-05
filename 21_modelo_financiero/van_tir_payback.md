@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-04 (auditoría final 2026-10-05) · Código: `tasa_periodica()`, `tasa_anual_efectiva()`, `van_periodico()`, `van()`, `tir()`, `anualizar()`, `mirr()`, `payback()`, `indicadores()` · Casos: [`casos_prueba_motor.csv`](casos_prueba_motor.csv)
 
-## 0. Convención de tasas y de descuento (SUP-19-25)
+## 0. Convención de tasas y de descuento (SUP-192)
 
 | Concepto | Regla | Test |
 |---|---|---|

@@ -42,11 +42,11 @@ OPEX(mes) = Σ rubros  costo_pleno ÷ 12 × [ PCT_VARIABLE × u_efectiva ÷ efic
 
 ## 3. Depreciación (contable, no fiscal)
 
-Por activo o clase: `capex_usd`, `vida_util_anios`, `valor_residual_usd`, `costo_reemplazo_usd`, `depreciable` (SUP-19-18):
+Por activo o clase: `capex_usd`, `vida_util_anios`, `valor_residual_usd`, `costo_reemplazo_usd`, `depreciable` (SUP-204):
 
 - Método **lineal** desde la entrada en operación de la etapa; terreno no depreciable.
 - Al terminar la vida útil, si hay `costo_reemplazo_usd`, se registra **CAPEX de reposición** (flujo) y se deprecia de nuevo (test N17). La depreciación es contable: **no** es caja ni CAPEX de reposición.
-- Vida fiscal ≠ vida contable: la amortización impositiva definitiva requiere DPV-169; hoy el impuesto usa la depreciación contable como aproximación declarada (DPV-19-08).
+- Vida fiscal ≠ vida contable: la amortización impositiva definitiva requiere DPV-169; hoy el impuesto usa la depreciación contable como aproximación declarada (DPV-167).
 - Hoy los campos `VIDA_UTIL_ANIOS / VALOR_RESIDUAL` del BOQ están vacíos en el 100 % de los activos (DPV-167): **EBIT no calculable**.
 
 ## 4. Módulo de impuestos (separado; sin tasas hardcodeadas)
@@ -55,7 +55,7 @@ Por activo o clase: `capex_usd`, `vida_util_anios`, `valor_residual_usd`, `costo
 |---|---|---|
 | Ingresos brutos y tasas municipales | % de la venta bruta; antes del EBITDA | `impuestos.pct_iibb`, `impuestos.pct_tasas_municipales` — PENDIENTES (DPV-043) |
 | Otros impuestos operativos | USD/año, antes del EBITDA | `impuestos.otros_impuestos_usd_anio` — PENDIENTE |
-| Ganancias | Anual, al cierre de cada año del proyecto, sobre EBIT (vista proyecto) o EBIT − intereses − comisiones (vista accionista); quebrantos con vencimiento en `anios_quebranto`; sin anticipos (SUP-19-13); test N16 | `impuestos.tasa_ganancias`, `impuestos.anios_quebranto` — PENDIENTES (DPV-169) |
+| Ganancias | Anual, al cierre de cada año del proyecto, sobre EBIT (vista proyecto) o EBIT − intereses − comisiones (vista accionista); quebrantos con vencimiento en `anios_quebranto`; sin anticipos (SUP-199); test N16 | `impuestos.tasa_ganancias`, `impuestos.anios_quebranto` — PENDIENTES (DPV-169) |
 | IVA | Módulo aparte, fuera del resultado ([`flujo_caja.md`](flujo_caja.md) §4) | `iva.*` — PENDIENTES |
 | Derechos de exportación | **Ubicación única:** deducción de la venta de exportación (`DERECHOS_EXPORTACION`, [`modelo_ingresos.md`](modelo_ingresos.md) §7). El módulo de impuestos **no** los acepta (`validar_entrada()` rechaza cualquier clave que no sea de su lista) y no se restan otra vez antes del EBITDA (test X01) | `canales.exportacion.pct_derechos_exportacion` — PENDIENTE (DPV-015) |
 

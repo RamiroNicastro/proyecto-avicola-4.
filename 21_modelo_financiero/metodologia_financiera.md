@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-04 · **Sesión:** 19 · **Modelo:** [`modelo_financiero.py`](modelo_financiero.py) v1.0 · **Estado:** motor estructural construido y probado (70 tests, 25/25 mutaciones detectadas). **Ningún resultado de rentabilidad del proyecto es publicable hoy** ([`evidencia_financiera.md`](evidencia_financiera.md)).
 
-> Este documento define **cómo** calcula el modelo. La arquitectura del código está en [`arquitectura_financiera.md`](arquitectura_financiera.md); cada bloque tiene su documento (ver [`README.md`](README.md)). Los IDs `SUP-19-##`, `DPV-19-##` y `DEC-19-##` son provisionales ([`actualizaciones_gestion_19.md`](actualizaciones_gestion_19.md)).
+> Este documento define **cómo** calcula el modelo. La arquitectura del código está en [`arquitectura_financiera.md`](arquitectura_financiera.md); cada bloque tiene su documento (ver [`README.md`](README.md)). Los IDs de supuestos, datos y decisiones son los centrales (reconciliación 19–20: [`reconciliacion_sesiones_19_20.md`](../00_gestion_proyecto/reconciliacion_sesiones_19_20.md)).
 
 ## 1. Qué responde y qué no
 
@@ -25,14 +25,14 @@
 | Qué acepta | Solo datos con nivel dentro de **`UMBRAL_EVIDENCIA_PUBLICACION`** (default **E1–E3**: cotización, precio directo, documento leído en original) y los supuestos **metodológicos** de `SUPUESTOS_METODOLOGICOS` (convenciones de reporte, modelo real, valor terminal por defecto) | Todo lo anterior **más** inputs del usuario (precios, demanda, CAPEX, OPEX, utilización, ramp-up, financiamiento, impuestos, plazos, stress) y las plantillas `SUPUESTO_MODELO` |
 | Si falta un bloque material | **`NO_PUBLICABLE_POR_EVIDENCIA_INSUFICIENTE`** + lista exacta de faltantes | `NO_DISPONIBLE_FALTAN_INPUTS_DEL_ESCENARIO` + lista |
 | Si está todo | Resultado con rótulo "EVIDENCIA completa dentro del umbral …" | Resultado rotulado **`SIMULACION_HIPOTETICA_NO_VALIDADA`** |
-| E4 `[PVDP]` y E5 | **No** pasan el umbral por defecto (SUP-19-02) | Solo si el usuario los carga explícitamente como escenario |
+| E4 `[PVDP]` y E5 | **No** pasan el umbral por defecto (SUP-190) | Solo si el usuario los carga explícitamente como escenario |
 | Stress | Prohibido (error) | Permitido |
 
-**Umbral de publicación configurable (SUP-19-02):** `UMBRAL_EVIDENCIA_PUBLICACION` vive en [`inputs_financieros.csv`](inputs_financieros.csv) (fila `umbral_evidencia_publicacion`, hoy `E1|E2|E3`) y se cambia **sin tocar código** cuando se decida DEC-19-01 / DEC-084. El default es conservador (100 % de los bloques materiales con E1–E3); E4 `[PVDP]` no lo pasa. Cada corrida registra el umbral usado (`UMBRAL_EVIDENCIA` en [`escenarios_financieros.csv`](escenarios_financieros.csv); test U01). **No es una decisión tomada.**
+**Umbral de publicación configurable (SUP-190):** `UMBRAL_EVIDENCIA_PUBLICACION` vive en [`inputs_financieros.csv`](inputs_financieros.csv) (fila `umbral_evidencia_publicacion`, hoy `E1|E2|E3`) y se cambia **sin tocar código** cuando se decida DEC-084. El default es conservador (100 % de los bloques materiales con E1–E3); E4 `[PVDP]` no lo pasa. Cada corrida registra el umbral usado (`UMBRAL_EVIDENCIA` en [`escenarios_financieros.csv`](escenarios_financieros.csv); test U01). **No es una decisión tomada.**
 
 ## 3. Jerarquía de inputs y trazabilidad
 
-Cada variable se resuelve con `resolver()` en este orden (SUP-19-01):
+Cada variable se resuelve con `resolver()` en este orden (SUP-189):
 
 1. **EVIDENCIA_REAL** (dentro del umbral) — nunca la reemplaza un escenario;
 2. **ESCENARIO_USUARIO** — completa lo que falta, solo en modo escenario;
@@ -48,11 +48,11 @@ La traza de cada corrida queda en [`mapa_drivers_financieros.csv`](mapa_drivers_
 | Elemento | Regla |
 |---|---|
 | Motor | **Mensual** interno: `k = 0` es **T0** (instante de `FECHA_INICIO`), `k = 1…12·H` son meses |
-| Reporte | T0 + meses 1…`MESES_DETALLE` (por defecto **24**, SUP-19-06) + años siguientes. Flujos = suma; saldos = fin de período; utilizaciones = aves ÷ capacidad del período |
+| Reporte | T0 + meses 1…`MESES_DETALLE` (por defecto **24**, SUP-194) + años siguientes. Flujos = suma; saldos = fin de período; utilizaciones = aves ÷ capacidad del período |
 | Horizonte | Configurable; **10, 15 o 20 años** son escenarios (DEC-007). El modelo no elige uno |
 | Registro | `FECHA_INICIO`, `PERIODO`, `ANIO_PROYECTO`, `ANIO_OPERATIVO`, `FASE` en cada fila periódica |
 | Fases | `PREOPERACION → CONSTRUCCION → COMMISSIONING → RAMP_UP → OPERACION_MADURA` (duraciones = inputs, DPV-086) |
-| Descuento | `TASA_DESCUENTO` = anual **efectiva** (o `NOMINAL_ANUAL_CAP_MENSUAL` declarada, que se convierte a efectiva). Convención **MENSUAL** por defecto: cada flujo mensual k se descuenta k períodos con `i_m = (1 + r)^(1/12) − 1` (nunca `r/12`); T0 no se descuenta. Convención alternativa `PERIODO_REPORTE`: flujos agregados al fin de cada período de reporte. La usada se registra en cada corrida (SUP-19-04, SUP-19-25; tests R01–R04) |
+| Descuento | `TASA_DESCUENTO` = anual **efectiva** (o `NOMINAL_ANUAL_CAP_MENSUAL` declarada, que se convierte a efectiva). Convención **MENSUAL** por defecto: cada flujo mensual k se descuenta k períodos con `i_m = (1 + r)^(1/12) − 1` (nunca `r/12`); T0 no se descuenta. Convención alternativa `PERIODO_REPORTE`: flujos agregados al fin de cada período de reporte. La usada se registra en cada corrida (SUP-192; tests R01–R04) |
 | TIR y payback | TIR **mensual** sobre la serie mensual → `TIR anual efectiva = (1 + i)^12 − 1` (nunca × 12); se publican ambas rotuladas. Payback en **meses** (índice de mes del motor, no índice de período de reporte) y en **años = meses ÷ 12** |
 
 ## 5. Cadena de cálculo (por mes)
@@ -76,7 +76,7 @@ Detalle de cada eslabón: ingresos [`modelo_ingresos.md`](modelo_ingresos.md); r
 ## 6. Moneda, inflación y precios en el tiempo
 
 - **Moneda funcional USD** (regla 2). Todo valor en ARS exige TC, tipo y fecha (`a_usd()`, test E11). Reporte en ARS solo con un TC por período declarado (`a_moneda_reporte()`, test N22). Moneda original, TC y moneda de reporte se registran por separado.
-- **Modelo REAL por defecto** (USD constantes de la fecha base 2026-10-01, sin inflación; SUP-19-07). Modelo **NOMINAL** solo con inflación declarada; la tasa de descuento debe estar en la **misma base** que los flujos (`validar_entrada()` lo exige; test N08 verifica que con tasas consistentes por Fisher el VAN real y el nominal coinciden). Fisher no se aplica en silencio.
+- **Modelo REAL por defecto** (USD constantes de la fecha base 2026-10-01, sin inflación; SUP-195). Modelo **NOMINAL** solo con inflación declarada; la tasa de descuento debe estar en la **misma base** que los flujos (`validar_entrada()` lo exige; test N08 verifica que con tasas consistentes por Fisher el VAN real y el nominal coinciden). Fisher no se aplica en silencio.
 - **Precio constante real o serie por año.** No hay crecimiento automático (test N08/N21). Una serie incompleta es faltante (no se extrapola).
 
 ## 7. Reglas que el motor hace cumplir (con test)
@@ -104,4 +104,4 @@ Detalle de cada eslabón: ingresos [`modelo_ingresos.md`](modelo_ingresos.md); r
 
 ## 8. Supuestos de modelo de esta sesión
 
-Todos son criterios de cálculo, no datos económicos. Lista completa con ubicación en el código: [`actualizaciones_gestion_19.md`](actualizaciones_gestion_19.md) §1 (SUP-19-01 a SUP-19-29).
+Todos son criterios de cálculo, no datos económicos. Lista completa con ubicación en el código: [`supuestos.md`](../00_gestion_proyecto/supuestos.md) (SUP-189 a SUP-211; mapa de las propuestas de la sesión en [`reconciliacion_sesiones_19_20.md`](../00_gestion_proyecto/reconciliacion_sesiones_19_20.md) §2).
